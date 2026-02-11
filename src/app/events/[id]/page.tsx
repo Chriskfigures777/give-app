@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { EventHero } from "./event-hero";
@@ -6,17 +6,24 @@ import { EventDetailsSection } from "./event-details-section";
 import { EventRegistrationSection } from "./event-registration-section";
 import { SiteFooter } from "@/components/site-footer";
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function looksLikeUuid(param: string): boolean {
+  return UUID_REGEX.test(param);
+}
+
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: event } = await supabase
-    .from("events")
-    .select("name, description")
-    .eq("id", id)
-    .single();
+  let event = (await supabase.from("events").select("name, description").eq("id", id).single())
+    .data;
+  if (!event && !looksLikeUuid(id)) {
+    event = (await supabase.from("events").select("name, description").eq("slug", id).single())
+      .data;
+  }
 
   if (!event) {
     return { title: "Event not found" };
@@ -30,21 +37,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EventPage({ params }: Props) {
-  const { id } = await params;
+  const { id: param } = await params;
   const supabase = await createClient();
 
-  const { data: event, error } = await supabase
-    .from("events")
-    .select(`
-      id, slug, name, description, start_at, end_at,
-      venue_name, venue_address, online_event, image_url,
-      eventbrite_event_id,
-      organizations(name, slug)
-    `)
-    .eq("id", id)
-    .single();
+  const select = `
+    id, slug, name, description, start_at, end_at,
+    venue_name, venue_address, online_event, image_url,
+    eventbrite_event_id,
+    organizations(name, slug)
+  `;
 
-  if (error || !event) notFound();
+  let event = (await supabase.from("events").select(select).eq("id", param).single()).data;
+
+  // If param looks like slug (e.g. "test-2"), try slug and redirect to canonical ID URL
+  if (!event && !looksLikeUuid(param)) {
+    const bySlug = (await supabase.from("events").select("id").eq("slug", param).single()).data;
+    if (bySlug) {
+      redirect(`/events/${(bySlug as { id: string }).id}`);
+    }
+  }
+
+  if (!event) notFound();
 
   const ev = event as {
     id: string;

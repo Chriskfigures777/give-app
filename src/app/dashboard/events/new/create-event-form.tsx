@@ -83,7 +83,12 @@ export function CreateEventForm({ organizationId, organizationName }: Props) {
         return;
       }
 
-      router.push("/dashboard/events");
+      // Redirect to the new event page (uses ID in URL)
+      if (data?.id) {
+        router.push(`/events/${data.id}`);
+      } else {
+        router.push("/dashboard/events");
+      }
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create event");
@@ -116,7 +121,7 @@ export function CreateEventForm({ organizationId, organizationName }: Props) {
       </div>
 
       <div>
-        <label className={labelClass}>URL slug</label>
+        <label className={labelClass}>URL slug (for internal use)</label>
         <input
           type="text"
           value={slug}
@@ -125,7 +130,7 @@ export function CreateEventForm({ organizationId, organizationName }: Props) {
           className={inputClass}
         />
         <p className="text-xs text-slate-500 mt-1">
-          Event URL will be /events/[id] (unique ID assigned after creation)
+          Public URL uses a unique ID (e.g. /events/abc123...) — assigned after creation
         </p>
       </div>
 

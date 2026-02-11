@@ -59,20 +59,37 @@ export default async function EditEventPage({
     ":" +
     String(endLocal.getMinutes()).padStart(2, "0");
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  const eventUrl = baseUrl ? `${baseUrl}/events/${ev.id}` : `/events/${ev.id}`;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <Link
           href="/dashboard/events"
           className="text-slate-600 hover:text-slate-900 text-sm"
         >
           ← Back to events
         </Link>
+        <a
+          href={eventUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+        >
+          View event →
+        </a>
       </div>
       <h1 className="text-2xl font-semibold">Edit event</h1>
       <p className="text-sm text-slate-500">
         Changes save to this site. Eventbrite is not updated on edit.
       </p>
+      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Event URL</p>
+        <p className="mt-1 text-sm text-slate-900 font-mono break-all">{eventUrl}</p>
+      </div>
       <EditEventForm
         eventId={ev.id}
         initial={{
