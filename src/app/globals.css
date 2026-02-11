@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Stripe sample code look (accept-a-payment / embedded checkout) */
+:root {
+  --stripe-light-grey: #f6f9fc;
+  --stripe-dark: #0a2540;
+  --stripe-accent: #635bff;
+  --stripe-radius: 3px;
+  --stripe-form-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --border: 217.2 32.6% 17.5%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Form customization panel — modern, refined */
+.customization-panel .panel-section-title {
+  @apply text-sm font-semibold uppercase tracking-wider text-slate-600;
+}
+.customization-panel .panel-section-title.mb-0 {
+  margin-bottom: 0;
+}
+.customization-panel .panel-field-label {
+  @apply block text-sm font-medium text-slate-700 mb-1;
+}
+.customization-panel .panel-field-hint {
+  @apply text-xs text-slate-500 mt-0.5;
+}
+/* Range slider — theme accent (emerald-teal) */
+.customization-panel input[type="range"] {
+  @apply w-full h-2 rounded-full appearance-none cursor-pointer bg-slate-200;
+}
+.customization-panel input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none w-5 h-5 rounded-full cursor-grab active:cursor-grabbing shadow-md border-2 border-white;
+  background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.customization-panel input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+.customization-panel input[type="range"]::-moz-range-thumb {
+  @apply w-5 h-5 rounded-full cursor-grab border-2 border-white shadow-md;
+  background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.customization-panel input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+/* Toggle switch — theme accent when on */
+.customization-panel .toggle-track {
+  @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2;
+  background-color: #cbd5e1;
+}
+.customization-panel .toggle-track[data-state="on"] {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-600;
+}
+.customization-panel .toggle-thumb {
+  @apply pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow ring-0 transition duration-200;
+  transform: translateX(2px);
+}
+.customization-panel .toggle-track[data-state="on"] .toggle-thumb {
+  transform: translateX(22px);
+}
+/* Panel card — modern card with subtle shadow */
+.customization-panel .panel-card {
+  @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-shadow duration-200;
+}
+.customization-panel .panel-card:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+.customization-panel .panel-input {
+  @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all duration-200;
+}
+.customization-panel .panel-input:hover {
+  @apply border-slate-300;
+}
+.customization-panel .panel-input:focus {
+  @apply border-emerald-400 ring-2 ring-emerald-100/50;
+}
+.customization-panel .panel-row {
+  animation: panelFadeIn 0.25s ease-out backwards;
+}
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

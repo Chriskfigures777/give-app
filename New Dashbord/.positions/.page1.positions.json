@@ -1,0 +1,433 @@
+{
+  "activeOrgsCard2": {
+    "row": 5,
+    "col": 4,
+    "height": 2.6,
+    "width": 4,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "activeOrgsIcon2": {
+    "container": "activeOrgsCard2",
+    "subcontainer": "00030",
+    "col": 9,
+    "height": 1,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "activeOrgsKpi2": {
+    "container": "activeOrgsCard2",
+    "subcontainer": "00030",
+    "height": 0.8,
+    "width": 9,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "addOrgButton2": {
+    "row": 0.4,
+    "col": 9,
+    "height": 1.2,
+    "width": 1
+  },
+  "addOrgModalTitle": {
+    "rowGroup": "header",
+    "subcontainer": "addOrganizationModal",
+    "height": 0.6,
+    "width": 12
+  },
+  "appTitle2": {
+    "row": 0.4,
+    "height": 1.2,
+    "width": 9
+  },
+  "cancelAddOrgButton": {
+    "rowGroup": "footer",
+    "subcontainer": "addOrganizationModal",
+    "height": 1,
+    "width": 2
+  },
+  "clearFiltersButton2": {
+    "container": "filterContainer2",
+    "subcontainer": "00030",
+    "row": 0.8,
+    "col": 11,
+    "height": 1,
+    "width": 1,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "closeDonationButton": {
+    "rowGroup": "footer",
+    "subcontainer": "viewDonationModal",
+    "height": 1,
+    "width": 2
+  },
+  "confirmAddOrgButton": {
+    "rowGroup": "footer",
+    "subcontainer": "addOrganizationModal",
+    "col": 2,
+    "height": 1,
+    "width": 2
+  },
+  "dateRangeFilter2": {
+    "container": "filterContainer2",
+    "subcontainer": "00030",
+    "row": 0.2,
+    "height": 0.2,
+    "width": 4,
+    "stackPosition": {
+      "object": {
+        "ordinal": 3,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "donationDetailsKeyValue": {
+    "subcontainer": "viewDonationModal",
+    "height": 6,
+    "width": 12
+  },
+  "donationTrendsCard2": {
+    "row": 8,
+    "height": 7.6,
+    "width": 6,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "donationTrendsChart2": {
+    "container": "donationTrendsCard2",
+    "subcontainer": "00030",
+    "row": 0.6,
+    "height": 6,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "donationTrendsTitle2": {
+    "container": "donationTrendsCard2",
+    "subcontainer": "00030",
+    "height": 0.8,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "donationsHeaderContainer2": {
+    "row": 28.4,
+    "height": 1,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "donationsTable2": {
+    "row": 30.4,
+    "height": 10,
+    "width": 12
+  },
+  "donationsTableHeader2": {
+    "container": "donationsHeaderContainer2",
+    "subcontainer": "00030",
+    "height": 1,
+    "width": 8,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "exportButton2": {
+    "row": 0.4,
+    "col": 10,
+    "height": 1.2,
+    "width": 1
+  },
+  "filterContainer2": {
+    "row": 2,
+    "height": 2.4,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "newOrgEmail": {
+    "subcontainer": "addOrganizationModal",
+    "row": 0.4,
+    "height": 0.2,
+    "width": 12
+  },
+  "newOrgName": {
+    "subcontainer": "addOrganizationModal",
+    "height": 0.2,
+    "width": 12
+  },
+  "newOrgSlug": {
+    "subcontainer": "addOrganizationModal",
+    "row": 0.2,
+    "height": 0.2,
+    "width": 12
+  },
+  "newOrgType": {
+    "subcontainer": "addOrganizationModal",
+    "row": 0.6,
+    "height": 0.2,
+    "width": 12
+  },
+  "orgDistributionCard2": {
+    "row": 8,
+    "col": 6,
+    "height": 7.6,
+    "width": 6,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "orgDistributionChart2": {
+    "container": "orgDistributionCard2",
+    "subcontainer": "00030",
+    "row": 0.6,
+    "height": 6,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "orgDistributionTitle2": {
+    "container": "orgDistributionCard2",
+    "subcontainer": "00030",
+    "height": 0.8,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "organizationFilter2": {
+    "container": "filterContainer2",
+    "subcontainer": "00030",
+    "row": 0.2,
+    "col": 4,
+    "height": 0.2,
+    "width": 4,
+    "stackPosition": {
+      "object": {
+        "ordinal": 2,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "organizationsHeaderContainer2": {
+    "row": 16,
+    "height": 1,
+    "width": 12,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "organizationsTable2": {
+    "row": 18,
+    "height": 10,
+    "width": 12
+  },
+  "organizationsTableHeader2": {
+    "container": "organizationsHeaderContainer2",
+    "subcontainer": "00030",
+    "height": 1,
+    "width": 8,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "settingsButton2": {
+    "row": 0.4,
+    "col": 11,
+    "height": 1.2,
+    "width": 1
+  },
+  "statusFilter2": {
+    "container": "filterContainer2",
+    "subcontainer": "00030",
+    "row": 0.2,
+    "col": 8,
+    "height": 0.2,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonationsCard2": {
+    "row": 5,
+    "height": 2.6,
+    "width": 4,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonationsIcon2": {
+    "container": "totalDonationsCard2",
+    "subcontainer": "00030",
+    "col": 9,
+    "height": 1,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonationsKpi2": {
+    "container": "totalDonationsCard2",
+    "subcontainer": "00030",
+    "height": 0.8,
+    "width": 9,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonorsCard2": {
+    "row": 5,
+    "col": 8,
+    "height": 2.6,
+    "width": 4,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonorsIcon2": {
+    "container": "totalDonorsCard2",
+    "subcontainer": "00030",
+    "col": 9,
+    "height": 1,
+    "stackPosition": {
+      "object": {
+        "ordinal": 0,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "totalDonorsKpi2": {
+    "container": "totalDonorsCard2",
+    "subcontainer": "00030",
+    "height": 0.8,
+    "width": 9,
+    "stackPosition": {
+      "object": {
+        "ordinal": 1,
+        "widthType": "fixed",
+        "width": 0,
+        "height": 0
+      }
+    }
+  },
+  "viewDonationModalTitle": {
+    "rowGroup": "header",
+    "subcontainer": "viewDonationModal",
+    "height": 0.6,
+    "width": 12
+  }
+}
