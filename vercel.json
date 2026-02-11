@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "images": {
+    "remotePatterns": [
+      { "protocol": "https", "hostname": "images.unsplash.com", "pathname": "/**" },
+      { "protocol": "https", "hostname": "images.pexels.com", "pathname": "/**" },
+      { "protocol": "https", "hostname": "img.evbuc.com", "pathname": "/**" }
+    ]
+  },
+  "functions": {
+    "src/app/api/webhooks/stripe/route.ts": { "maxDuration": 30 },
+    "src/app/api/eventbrite/connect/route.ts": { "maxDuration": 15 },
+    "src/app/api/eventbrite/callback/route.ts": { "maxDuration": 15 },
+    "src/app/api/events/route.ts": { "maxDuration": 30 }
+  }
+}
