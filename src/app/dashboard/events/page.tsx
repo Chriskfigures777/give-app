@@ -130,7 +130,7 @@ export default async function EventsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Link href={`/events/${e.slug}`} target="_blank" rel="noopener noreferrer">
+                  <Link href={`/events/${e.id}`} target="_blank" rel="noopener noreferrer">
                     <Button variant="ghost" size="sm" className="gap-1">
                       <ExternalLink className="h-4 w-4" />
                       View

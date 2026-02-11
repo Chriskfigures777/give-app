@@ -125,7 +125,7 @@ export function CreateEventForm({ organizationId, organizationName }: Props) {
           className={inputClass}
         />
         <p className="text-xs text-slate-500 mt-1">
-          Used in the event URL: /events/{slug || "your-slug"}
+          Event URL will be /events/[id] (unique ID assigned after creation)
         </p>
       </div>
 
