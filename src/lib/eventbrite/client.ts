@@ -52,6 +52,25 @@ async function eventbriteFetch<T>(
   return res.json() as Promise<T>;
 }
 
+/** Get the authenticated user (requires OAuth token). */
+export async function getEventbriteUser(accessToken: string): Promise<{
+  id: string;
+  name?: string;
+}> {
+  const data = await eventbriteFetch<{
+    id: string;
+    name?: string;
+    profile?: { first_name?: string; last_name?: string };
+  }>("/users/me/", { token: accessToken });
+  const profile = data.profile;
+  const name =
+    data.name ??
+    (profile?.first_name || profile?.last_name
+      ? [profile.first_name, profile.last_name].filter(Boolean).join(" ")
+      : undefined);
+  return { id: data.id, name };
+}
+
 /** Get user's Eventbrite organizations (requires OAuth token). */
 export async function getEventbriteOrganizations(
   accessToken: string
@@ -61,6 +80,37 @@ export async function getEventbriteOrganizations(
     { token: accessToken }
   );
   return data.organizations ?? [];
+}
+
+/**
+ * Get an Eventbrite organization ID for the token. Uses organizations list if
+ * available; otherwise falls back to the user's own ID (Eventbrite uses
+ * user_id as default org when user has no explicit organizations).
+ */
+export async function getEventbriteOrgId(accessToken: string): Promise<{
+  orgId: string;
+  orgName: string;
+}> {
+  const orgs = await getEventbriteOrganizations(accessToken);
+  if (orgs.length > 0) {
+    const first = orgs[0];
+    return {
+      orgId: first.id,
+      orgName: typeof first.name === "string" ? first.name : (first.name as { text?: string })?.text ?? "Organization",
+    };
+  }
+  const user = await getEventbriteUser(accessToken);
+  return {
+    orgId: user.id,
+    orgName: user.name ?? "My Organization",
+  };
+}
+
+/** Format UTC datetime for Eventbrite: YYYY-MM-DDThh:mm:ssZ (no milliseconds). */
+function toEventbriteUtc(isoOrDate: string | Date): string {
+  const d = typeof isoOrDate === "string" ? new Date(isoOrDate) : isoOrDate;
+  const iso = d.toISOString();
+  return iso.slice(0, 19) + "Z";
 }
 
 /** Create an event on Eventbrite. */
@@ -85,11 +135,11 @@ export async function createEventbriteEvent(
       name: { html: params.name.replace(/</g, "&lt;") },
       start: {
         timezone: params.timezone,
-        utc: params.startUtc,
+        utc: toEventbriteUtc(params.startUtc),
       },
       end: {
         timezone: params.timezone,
-        utc: params.endUtc,
+        utc: toEventbriteUtc(params.endUtc),
       },
       currency: params.currency ?? "USD",
       online_event: params.onlineEvent ?? false,

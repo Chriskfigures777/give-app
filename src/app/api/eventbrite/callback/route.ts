@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import {
   exchangeEventbriteCode,
-  getEventbriteOrganizations,
+  getEventbriteOrgId,
 } from "@/lib/eventbrite/client";
 
 /**
@@ -49,15 +49,7 @@ export async function GET(req: NextRequest) {
       redirectUri
     );
 
-    const orgs = await getEventbriteOrganizations(accessToken);
-    if (orgs.length === 0) {
-      return NextResponse.json(
-        { error: "No Eventbrite organizations found for this account" },
-        { status: 400 }
-      );
-    }
-
-    const eventbriteOrgId = orgs[0].id;
+    const { orgId: eventbriteOrgId } = await getEventbriteOrgId(accessToken);
 
     const supabase = createServiceClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
