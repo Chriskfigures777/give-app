@@ -15,6 +15,7 @@
     }
   ],
   "images": {
+    "sizes": [256, 640, 1080, 2048, 3840],
     "remotePatterns": [
       { "protocol": "https", "hostname": "images.unsplash.com", "pathname": "/**" },
       { "protocol": "https", "hostname": "images.pexels.com", "pathname": "/**" },
