@@ -19,7 +19,7 @@ export type PanelPage = "home" | "peers" | "messages" | "notifications";
 const PANEL_TABS: {
   id: PanelPage;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   gradient: string;
 }[] = [
   { id: "home", label: "Network", icon: Globe, gradient: "from-emerald-500 to-teal-500" },

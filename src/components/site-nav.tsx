@@ -48,13 +48,13 @@ const dropdownVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 },
+    transition: { type: "spring" as const, stiffness: 400, damping: 30, mass: 0.8 },
   },
   exit: {
     opacity: 0,
     scale: 0.97,
     y: -4,
-    transition: { duration: 0.15, ease: "easeIn" },
+    transition: { duration: 0.15, ease: "easeIn" as const },
   },
 };
 
@@ -63,7 +63,7 @@ const menuItemVariants = {
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: i * 0.04, type: "spring", stiffness: 300, damping: 24 },
+    transition: { delay: i * 0.04, type: "spring" as const, stiffness: 300, damping: 24 },
   }),
 };
 
@@ -273,7 +273,7 @@ export function SiteNav() {
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                        transition={{ type: "spring" as const, stiffness: 500, damping: 25 }}
                         className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white shadow-lg shadow-rose-500/30 ring-2 ring-white"
                       >
                         {unreadCount > 9 ? "9+" : unreadCount}
@@ -318,7 +318,7 @@ export function SiteNav() {
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                        transition={{ type: "spring" as const, stiffness: 500, damping: 25 }}
                         className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white shadow-lg shadow-rose-500/30 ring-2 ring-white"
                       >
                         {connectionRequestCount > 9 ? "9+" : connectionRequestCount}
@@ -486,7 +486,7 @@ export function SiteNav() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                        transition={{ type: "spring" as const, stiffness: 500, damping: 25 }}
                         className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white ring-2 ring-white"
                       >
                         {unreadCount > 9 ? "9+" : unreadCount}
@@ -529,7 +529,7 @@ export function SiteNav() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                        transition={{ type: "spring" as const, stiffness: 500, damping: 25 }}
                         className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white ring-2 ring-white"
                       >
                         {connectionRequestCount > 9 ? "9+" : connectionRequestCount}
@@ -744,7 +744,7 @@ export function SiteNav() {
                   key={item.href}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+                  transition={{ delay: i * 0.05, type: "spring" as const, stiffness: 300, damping: 24 }}
                 >
                   <Link
                     href={item.href}
@@ -767,7 +767,7 @@ export function SiteNav() {
                     key={link.href}
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: (i + 1) * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+                    transition={{ delay: (i + 1) * 0.05, type: "spring" as const, stiffness: 300, damping: 24 }}
                   >
                     {link.href === "/pricing" ? (
                       <button
@@ -817,7 +817,7 @@ export function SiteNav() {
                       key={item.href}
                       initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 + i * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+                      transition={{ delay: 0.2 + i * 0.05, type: "spring" as const, stiffness: 300, damping: 24 }}
                     >
                       <Link
                         href={item.href}
@@ -832,7 +832,7 @@ export function SiteNav() {
                   <motion.div
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 24 }}
+                    transition={{ delay: 0.3, type: "spring" as const, stiffness: 300, damping: 24 }}
                   >
                     <form action="/api/auth/signout" method="POST">
                       <button

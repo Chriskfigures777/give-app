@@ -71,7 +71,7 @@ export function DonationsProvider({ children }: { children: ReactNode }) {
         }
       )
       .subscribe();
-    return () => supabase.removeChannel(channel);
+    return () => { void supabase.removeChannel(channel); };
   }, []);
 
   return (

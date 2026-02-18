@@ -50,13 +50,13 @@ const dropdownVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 },
+    transition: { type: "spring" as const, stiffness: 400, damping: 30, mass: 0.8 },
   },
   exit: {
     opacity: 0,
     scale: 0.97,
     y: -4,
-    transition: { duration: 0.15, ease: "easeIn" },
+    transition: { duration: 0.15, ease: "easeIn" as const },
   },
 };
 
@@ -65,7 +65,7 @@ const itemVariants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.05, type: "spring", stiffness: 300, damping: 24 },
+    transition: { delay: i * 0.05, type: "spring" as const, stiffness: 300, damping: 24 },
   }),
   exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
 };
