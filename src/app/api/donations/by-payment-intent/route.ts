@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
         .single();
       const acct = (org as { stripe_connect_account_id: string | null } | null)?.stripe_connect_account_id;
       if (acct) {
-        piObj = await stripe.paymentIntents.retrieve(pi, { expand: ["latest_charge"], stripeAccount: acct });
+        piObj = await stripe.paymentIntents.retrieve(pi, { expand: ["latest_charge"] }, { stripeAccount: acct });
       }
     }
     if (!piObj) return NextResponse.json({ found: false }, { status: 200 });
