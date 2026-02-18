@@ -11,6 +11,8 @@ type Props = {
   fontFamily?: string;
   /** Font weight for title (e.g. 700, 900) */
   titleFontWeight?: number;
+  /** When true, use huge centered text (for fullscreen embed) */
+  fullscreen?: boolean;
 };
 
 /**
@@ -23,6 +25,7 @@ export function FormCardMedia({
   className = "",
   fontFamily,
   titleFontWeight = 700,
+  fullscreen = false,
 }: Props) {
   const mediaUrl = set.media_url?.trim() || null;
   const isVideo = set.media_type === "video" && mediaUrl;
@@ -53,26 +56,36 @@ export function FormCardMedia({
         />
       )}
       <div
-        className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-        aria-hidden
-      />
-      <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
+        className={`absolute inset-0 flex flex-col text-white ${
+          fullscreen
+            ? "justify-center items-center text-center px-6 md:px-12 lg:px-16"
+            : "justify-end p-5"
+        }`}
+      >
         <h2
-          className="text-2xl font-bold leading-tight mb-1"
+          className={
+            fullscreen
+              ? "text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-2 md:mb-3 max-w-4xl"
+              : "text-2xl font-bold leading-tight mb-1"
+          }
           style={{
             fontFamily: fontFamily ?? undefined,
             fontWeight: titleFontWeight,
-            textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+            textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)",
           }}
         >
           {set.title?.trim() || "Make a Donation"}
         </h2>
         {set.subtitle?.trim() ? (
           <p
-            className="text-sm opacity-95"
+            className={
+              fullscreen
+                ? "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl max-w-3xl"
+                : "text-sm"
+            }
             style={{
               fontFamily: fontFamily ?? undefined,
-              textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+              textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)",
             }}
           >
             {set.subtitle}

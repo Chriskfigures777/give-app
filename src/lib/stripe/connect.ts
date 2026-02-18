@@ -59,7 +59,6 @@ export async function attachConnectAccountToOrganization(
 ): Promise<void> {
   const { error } = await supabase
     .from("organizations")
-    // @ts-expect-error - Supabase client infers update payload as never in some setups
     .update({ stripe_connect_account_id: stripeAccountId, updated_at: new Date().toISOString() })
     .eq("id", organizationId);
   if (error) throw new Error("Failed to attach Connect account");
@@ -104,6 +103,29 @@ export async function createAccountSessionForOnboarding(stripeAccountId: string)
         enabled: true,
         features: {
           disable_stripe_user_authentication: true,
+        },
+      },
+    },
+  });
+  if (!session.client_secret) throw new Error("Account session missing client_secret");
+  return { clientSecret: session.client_secret };
+}
+
+/**
+ * Create an Account Session for embedded account management (Connect.js account-management component).
+ * Lets connected accounts view and edit: business/personal info, bank accounts (routing, account number), and payout settings.
+ */
+export async function createAccountSessionForAccountManagement(
+  stripeAccountId: string
+): Promise<{ clientSecret: string }> {
+  const session = await stripe.accountSessions.create({
+    account: stripeAccountId,
+    components: {
+      account_management: {
+        enabled: true,
+        features: {
+          disable_stripe_user_authentication: true,
+          external_account_collection: true,
         },
       },
     },

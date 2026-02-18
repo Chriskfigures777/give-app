@@ -14,6 +14,7 @@ export function PaymentStep({
   buttonColor,
   buttonTextColor,
   slug,
+  redirecting = false,
 }: {
   onSuccess: () => void;
   onBack: () => void;
@@ -21,6 +22,7 @@ export function PaymentStep({
   buttonColor?: string | null;
   buttonTextColor?: string | null;
   slug?: string;
+  redirecting?: boolean;
 }) {
   const accentColor = buttonColor || "#374151";
   const accentText = buttonTextColor || "#fff";
@@ -92,7 +94,7 @@ export function PaymentStep({
           </button>
           <button
             type="submit"
-            disabled={!stripe || loading}
+            disabled={!stripe || loading || redirecting}
             style={{
               flex: 1,
               padding: "14px 20px",
@@ -102,15 +104,15 @@ export function PaymentStep({
               color: accentText,
               fontWeight: 600,
               fontSize: "15px",
-              cursor: !stripe || loading ? "not-allowed" : "pointer",
-              opacity: !stripe || loading ? 0.5 : 1,
+              cursor: !stripe || loading || redirecting ? "not-allowed" : "pointer",
+              opacity: !stripe || loading || redirecting ? 0.5 : 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
             }}
           >
-            {loading ? "Processing…" : "Pay now"}
+            {redirecting ? "Loading your receipt…" : loading ? "Processing…" : "Pay now"}
             <Lock className="w-4 h-4 shrink-0" strokeWidth={2} />
           </button>
         </div>

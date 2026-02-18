@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Share2 } from "lucide-react";
 
 type Props = {
   orgName: string;
+  organizationId?: string | null;
+  slug?: string;
   className?: string;
 };
 
-export function ShareComplete({ orgName, className }: Props) {
+export function ShareComplete({ orgName, organizationId, slug, className }: Props) {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -16,6 +19,19 @@ export function ShareComplete({ orgName, className }: Props) {
       ? `I just gave to ${orgName}!`
       : "I just made a donation!";
     try {
+      // Create feed item so the share appears on the feed
+      if (organizationId || slug) {
+        try {
+          await fetch("/api/feed/donation-share", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ organization_id: organizationId ?? undefined, slug }),
+          });
+        } catch {
+          // Non-blocking: feed share failed but native share can still work
+        }
+      }
+
       if (navigator.share) {
         await navigator.share({
           title: "Donation complete",
@@ -24,6 +40,7 @@ export function ShareComplete({ orgName, className }: Props) {
         });
       } else {
         await navigator.clipboard.writeText(text);
+        toast.success("Copied to clipboard");
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }

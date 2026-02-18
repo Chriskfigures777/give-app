@@ -281,7 +281,7 @@ export function CreateEventForm({ organizationId, organizationName }: Props) {
       </div>
 
       <div className="flex gap-3">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="bg-emerald-600 hover:bg-emerald-700 text-white">
           {loading ? "Creating..." : "Create event"}
         </Button>
         <Button

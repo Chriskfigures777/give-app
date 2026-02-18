@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Ministries — Your Church</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--warm:#8B4513;--gold:#D4AF37;--cream:#FFF8DC;--tan:#DEB887;--text:#3E2723;--muted:#8D6E63}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;font-size:16px}
+
+header{background:var(--warm);color:var(--cream);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+.logo{font-family:'Merriweather',serif;font-size:28px;font-weight:700;color:var(--cream);text-decoration:none;letter-spacing:1px}
+nav ul{display:flex;gap:32px;list-style:none}
+nav a{color:var(--cream);text-decoration:none;font-size:14px;font-weight:400;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s;opacity:0.9}
+nav a:hover,.nav a.active{opacity:1;color:var(--gold)}
+.nav-cta{background:var(--gold)!important;color:var(--warm)!important;padding:10px 24px;border-radius:4px;font-weight:700!important;opacity:1!important}
+
+.page-hero{padding:120px 60px 80px;text-align:center;background:linear-gradient(135deg,var(--tan),var(--cream));border-bottom:3px solid var(--gold)}
+.page-hero h1{font-family:'Merriweather',serif;font-size:clamp(40px,5vw,64px);color:var(--warm);margin-bottom:20px;font-weight:700}
+.page-hero p{font-size:20px;color:var(--text);max-width:700px;margin:0 auto;opacity:0.9}
+
+.ministries{max-width:1200px;margin:0 auto;padding:80px 60px 100px}
+.ministries-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:32px}
+.ministry-card{background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:all 0.3s;border:2px solid var(--tan)}
+.ministry-card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.ministry-img{position:relative;height:240px;overflow:hidden}
+.ministry-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s}
+.ministry-card:hover .ministry-img img{transform:scale(1.05)}
+.ministry-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px;background:linear-gradient(to top,rgba(139,69,19,0.95),transparent)}
+.ministry-tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.ministry-overlay h3{font-family:'Merriweather',serif;font-size:22px;color:var(--cream);font-weight:700}
+.ministry-body{padding:28px}
+.ministry-body p{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:20px}
+.ministry-body a{color:var(--warm);font-weight:700;text-decoration:none;font-size:14px;transition:color 0.2s;text-transform:uppercase;letter-spacing:0.5px}
+.ministry-body a:hover{color:var(--gold)}
+
+footer{background:var(--warm);color:var(--cream);padding:80px 60px 40px;border-top:4px solid var(--gold)}
+.footer-grid{max-width:1200px;margin:0 auto 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-brand{font-family:'Merriweather',serif;font-size:28px;font-weight:700;margin-bottom:16px}
+.footer-desc{opacity:0.85;font-size:14px;line-height:1.8;max-width:300px}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.7;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{color:var(--cream);text-decoration:none;font-size:14px;opacity:0.85;transition:opacity 0.2s}
+.footer-col a:hover{opacity:1;color:var(--gold)}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,248,220,0.2);text-align:center;font-size:13px;opacity:0.7}
+
+@media(max-width:900px){
+  header{padding:20px 24px}
+  nav ul{display:none}
+  .page-hero{padding:100px 24px 60px}
+  .ministries{padding:60px 24px 80px}
+  .ministries-grid{grid-template-columns:1fr;gap:24px}
+  footer{padding:60px 24px 32px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Your Church</a>
+  <nav>
+    <ul>
+      <li><a href="about.html" ABOUT>About</a></li>
+      <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+      <li><a href="events.html" EVENTS>Events</a></li>
+      <li><a href="media.html" MEDIA>Media</a></li>
+      <li><a href="give.html" GIVE>Give</a></li>
+    </ul>
+  </nav>
+  <a href="visit.html" class="nav-cta">Visit Us</a>
+</header>
+
+<div class="page-hero">
+  <h1>Ministries for Every Season</h1>
+  <p>Discover opportunities to grow in faith, serve others, and build lasting friendships in Christ.</p>
+</div>
+
+<div class="ministries">
+  <div class="ministries-grid">
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Kids">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">Ages 0-12</div>
+          <h3>Children's Ministry</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>Nurturing young hearts with age-appropriate Bible teaching, worship, and activities in a safe, loving environment.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+    
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/1708936/pexels-photo-1708936.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Youth">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">Ages 13-18</div>
+          <h3>Youth Ministry</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>Helping teenagers navigate life's challenges while building a strong foundation of faith and friendship.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+    
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Young Adults">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">Ages 18-30</div>
+          <h3>Young Adults</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>A community for young adults navigating college, careers, and relationships while pursuing God together.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+    
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Small Groups">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">All Ages</div>
+          <h3>Small Groups</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>Deep fellowship, Bible study, and prayer in homes throughout the week. Find your spiritual family here.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+    
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">Music & Arts</div>
+          <h3>Worship Ministry</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>Lead our congregation in worship through music, vocals, technical arts, and creative expression.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+    
+    <div class="ministry-card">
+      <div class="ministry-img">
+        <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outreach">
+        <div class="ministry-overlay">
+          <div class="ministry-tag">Service</div>
+          <h3>Community Outreach</h3>
+        </div>
+      </div>
+      <div class="ministry-body">
+        <p>Serve our neighbors through food pantries, mentoring, and compassionate ministry to those in need.</p>
+        <a href="#">Learn More →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Your Church</div>
+      <p class="footer-desc">A community rooted in faith, hope, and love. You're always welcome in our church family.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="give.html">Give</a></li>
+        <li><a href="visit.html">Visit</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <ul>
+        <li><a href="visit.html">Contact</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 Your Church. All rights reserved. Built on faith.</div>
+</footer>
+</body>
+</html>

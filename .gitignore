@@ -6,7 +6,7 @@ node_modules
 .next
 out
 
-# Environment
+# Environment – NEVER commit real secrets
 .env
 .env.local
 .env*.local
@@ -15,11 +15,13 @@ out
 npm-debug.log*
 .pnpm-debug.log*
 
-# IDE
+# IDE / Editor
 .idea
 .vscode
+.cursor
 *.swp
 *.swo
+*.code-workspace
 
 # OS
 .DS_Store

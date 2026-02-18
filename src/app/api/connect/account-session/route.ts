@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { stripe } from "@/lib/stripe/client";
 import {
   createConnectAccount,
   attachConnectAccountToOrganization,
   createAccountSessionForOnboarding,
+  createAccountSessionForAccountManagement,
 } from "@/lib/stripe/connect";
 
 /**
@@ -38,12 +40,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body: { organizationId?: string } = {};
+    let body: { organizationId?: string; component?: "account_onboarding" | "account_management" } = {};
     try {
       body = await req.json();
     } catch {
       // no body is ok; we'll use profile org
     }
+    const component = body.component ?? "account_onboarding";
 
     const { data: profileRow } = await supabase
       .from("user_profiles")
@@ -101,6 +104,24 @@ export async function POST(req: Request) {
 
     let stripeAccountId = org.stripe_connect_account_id;
 
+    const isInvalidSeedId = stripeAccountId?.startsWith("acct_seed_");
+    if (isInvalidSeedId) {
+      const serviceSupabase = createServiceClient();
+      await serviceSupabase
+        .from("organizations")
+        .update({ stripe_connect_account_id: null, updated_at: new Date().toISOString() })
+        .eq("id", orgId);
+      stripeAccountId = null;
+    }
+
+    if (stripeAccountId) {
+      try {
+        await stripe.accounts.retrieve(stripeAccountId);
+      } catch {
+        stripeAccountId = null;
+      }
+    }
+
     if (!stripeAccountId) {
       stripeAccountId = await withOrgLock(orgId, async () => {
         const serviceSupabase = createServiceClient();
@@ -109,9 +130,17 @@ export async function POST(req: Request) {
           .select("stripe_connect_account_id")
           .eq("id", orgId)
           .single();
-        const existing = (orgRow2 as { stripe_connect_account_id: string | null } | null)
+        let existing = (orgRow2 as { stripe_connect_account_id: string | null } | null)
           ?.stripe_connect_account_id;
-        if (existing) return existing;
+        if (existing?.startsWith("acct_seed_")) existing = null;
+        if (existing) {
+          try {
+            await stripe.accounts.retrieve(existing);
+            return existing;
+          } catch {
+            existing = null;
+          }
+        }
 
         const { accountId } = await createConnectAccount({
           email: user.email ?? "noreply@example.com",
@@ -123,7 +152,10 @@ export async function POST(req: Request) {
       });
     }
 
-    const { clientSecret } = await createAccountSessionForOnboarding(stripeAccountId);
+    const { clientSecret } =
+      component === "account_management"
+        ? await createAccountSessionForAccountManagement(stripeAccountId)
+        : await createAccountSessionForOnboarding(stripeAccountId);
 
     return NextResponse.json({ client_secret: clientSecret });
   } catch (e) {

@@ -2,17 +2,19 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DonationForm } from "./donation-form";
 import { GiveSignInPrompt } from "./give-sign-in-prompt";
+import { GivePageQRCode } from "@/components/give-page-qr-code";
 import { FormCardMedia } from "@/components/form-card-media";
 import { DEFAULT_HEADER_IMAGE_URL } from "@/lib/form-defaults";
 import { getGoogleFontUrl, getFontFamily, getHeaderFontWeight } from "@/lib/form-fonts";
 import type { DesignSet } from "@/lib/stock-media";
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ frequency?: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ frequency?: string; link?: string }> };
 
 export default async function GivePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { frequency: frequencyParam } = await searchParams;
+  const { frequency: frequencyParam, link: linkParam } = await searchParams;
   const initialFrequency = (typeof frequencyParam === "string" ? frequencyParam : frequencyParam?.[0]) as "monthly" | "yearly" | undefined;
+  const linkSlug = typeof linkParam === "string" ? linkParam : linkParam?.[0];
   const supabase = await createClient();
 
   const { data: orgRow } = await supabase
@@ -22,9 +24,22 @@ export default async function GivePage({ params, searchParams }: Props) {
     .single();
 
   const org = orgRow as { id: string; name: string; slug: string; stripe_connect_account_id: string | null } | null;
-  if (!org?.stripe_connect_account_id) notFound();
+  if (!org) notFound();
 
-  const [{ data: campaignsData }, { data: formCustomRow }] = await Promise.all([
+  let donationLinkId: string | null = null;
+  if (linkSlug) {
+    const { data: linkRow } = await supabase
+      .from("donation_links")
+      .select("id")
+      .eq("organization_id", org.id)
+      .eq("slug", linkSlug)
+      .single();
+    donationLinkId = (linkRow as { id: string } | null)?.id ?? null;
+  }
+
+  if (!donationLinkId && !org.stripe_connect_account_id) notFound();
+
+  const [{ data: campaignsData }, { data: formCustomRow }, { data: endowmentFunds }] = await Promise.all([
     supabase
       .from("donation_campaigns")
       .select("id, name, suggested_amounts, minimum_amount_cents, allow_recurring, allow_anonymous, goal_amount_cents, current_amount_cents")
@@ -35,12 +50,11 @@ export default async function GivePage({ params, searchParams }: Props) {
       .select("*")
       .eq("organization_id", org.id)
       .single(),
+    supabase
+      .from("endowment_funds")
+      .select("id, name")
+      .limit(20),
   ]);
-
-  const { data: endowmentFunds } = await supabase
-    .from("endowment_funds")
-    .select("id, name")
-    .limit(20);
 
   type FormCustom = { suggested_amounts?: number[] | null; show_endowment_selection?: boolean | null; allow_custom_amount?: boolean | null; header_text?: string | null; subheader_text?: string | null; primary_color?: string | null; button_color?: string | null; button_text_color?: string | null; button_border_radius?: string | null; background_color?: string | null; text_color?: string | null; font_family?: string | null; header_image_url?: string | null; design_sets?: DesignSet[] | null };
   const formCustom = formCustomRow as FormCustom | null;
@@ -93,24 +107,20 @@ export default async function GivePage({ params, searchParams }: Props) {
               alt=""
               className="absolute inset-0 w-full h-full object-cover block"
             />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-              aria-hidden
-            />
             <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
               <h1
                 className="text-2xl font-bold leading-tight mb-1"
                 style={{
                   fontFamily,
                   fontWeight: headerFontWeight ?? 700,
-                  textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)",
                 }}
               >
                 {formCustom?.header_text ?? "Make a Donation"}
               </h1>
               <p
-                className="text-sm opacity-95"
-                style={{ fontFamily, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
+                className="text-sm"
+                style={{ fontFamily, textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)" }}
               >
                 {formCustom?.subheader_text ?? `Support ${org.name}`}
               </p>
@@ -134,8 +144,12 @@ export default async function GivePage({ params, searchParams }: Props) {
           slug={slug}
           noCard
           initialFrequency={initialFrequency}
+          donationLinkId={donationLinkId ?? undefined}
         />
           <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+          <div className="mt-4 flex justify-center">
+            <GivePageQRCode slug={slug} organizationName={org.name} />
+          </div>
         </div>
       </div>
     </main>

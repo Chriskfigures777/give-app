@@ -2,20 +2,8 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import { DonationTrendsChart, OrgDistributionChart } from "./dashboard-charts";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,9 +13,23 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { DashboardWelcomeBanner } from "./dashboard-welcome-banner";
+import { DashboardGoalsOverview } from "./dashboard-goals-overview";
 import type { DonationRow, OrganizationRow } from "./dashboard-types";
+import {
+  Building2,
+  Users,
+  DollarSign,
+  TrendingUp,
+  ArrowUpRight,
+  Download,
+  Plus,
+  Filter,
+  X,
+  BarChart3,
+  PieChart,
+  Eye,
+} from "lucide-react";
 
-// Flatten donation for client (match New Dashbord field names where applicable)
 function flattenDonation(d: DonationRow) {
   const orgName = d.organizations?.name ?? (d.organization_id ? `Org ${d.organization_id}` : "—");
   return {
@@ -57,7 +59,7 @@ function buildOrgFlat(
     id: o.id,
     name: o.name,
     slug: o.slug,
-    email: "—", // organizations table has no email; use website_url in future if needed
+    email: "—",
     type: o.org_type ?? null,
     status: o.onboarding_completed ? "active" : "inactive",
     totalDonations,
@@ -70,9 +72,6 @@ const STATUS_OPTIONS = [
   { label: "Pending", value: "pending" },
   { label: "Failed", value: "failed" },
 ];
-
-const CHART_COLORS = ["#11B5AE", "#4046CA", "#F68512", "#DE3C82", "#7E84FA", "#72E06A"];
-const LINE_COLOR = "rgba(181, 191, 218, 1)";
 
 function formatCurrency(cents: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(cents / 100);
@@ -91,23 +90,34 @@ function exportToCsv<T extends Record<string, unknown>>(rows: T[], filename: str
   URL.revokeObjectURL(url);
 }
 
+type CampaignRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  goal_amount_cents: number | null;
+  current_amount_cents: number | null;
+  goal_deadline: string | null;
+  created_at: string | null;
+  is_active: boolean | null;
+};
+
 type Props = {
   donations: DonationRow[];
   organizations: OrganizationRow[];
+  campaigns?: CampaignRow[];
   isPlatformAdmin: boolean;
   userName?: string | null;
   needsVerification?: boolean;
 };
 
-const CARD_STAGGER = 0.08;
-
-export function DashboardOverview({ donations: rawDonations, organizations: rawOrgs, isPlatformAdmin, userName, needsVerification }: Props) {
+export function DashboardOverview({ donations: rawDonations, organizations: rawOrgs, campaigns = [], isPlatformAdmin, userName, needsVerification }: Props) {
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [orgFilter, setOrgFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [viewDonation, setViewDonation] = useState<DonationFlat | null>(null);
   const [addOrgOpen, setAddOrgOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   const donations: DonationFlat[] = useMemo(() => rawDonations.map(flattenDonation), [rawDonations]);
 
@@ -189,6 +199,8 @@ export function DashboardOverview({ donations: rawDonations, organizations: rawO
     return Object.entries(byOrg).map(([org, total]) => ({ org, total }));
   }, [filteredDonations]);
 
+  const hasActiveFilters = dateStart || dateEnd || orgFilter || statusFilter;
+
   const clearFilters = useCallback(() => {
     setDateStart("");
     setDateEnd("");
@@ -215,320 +227,330 @@ export function DashboardOverview({ donations: rawDonations, organizations: rawO
   }, [filteredDonations]);
 
   return (
-    <div className="space-y-6 p-2 sm:p-4">
+    <div className="space-y-6 p-2 sm:p-4 max-w-[1400px] mx-auto">
       {needsVerification && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-amber-200 bg-amber-50 p-4"
-        >
-          <p className="text-sm font-medium text-amber-800">Actions required</p>
-          <p className="mt-1 text-sm text-amber-700">
-            Complete verification to receive payouts. Finish your organization details, identity, and banking.
-          </p>
-          <Button asChild size="sm" className="mt-3 bg-amber-600 hover:bg-amber-700">
-            <Link href="/dashboard/connect/verify">Complete verification</Link>
-          </Button>
-        </motion.div>
+        <div className="dashboard-fade-in rounded-2xl border border-amber-200/60 bg-gradient-to-r from-amber-50 to-orange-50 p-5 dark:border-amber-700/40 dark:from-amber-900/20 dark:to-orange-900/20">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-800/40">
+              <ArrowUpRight className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Actions required</p>
+              <p className="mt-0.5 text-sm text-amber-700 dark:text-amber-300/80">
+                Complete verification to receive payouts. Finish your organization details, identity, and banking.
+              </p>
+              <Button asChild size="sm" className="mt-3 bg-amber-600 hover:bg-amber-700 text-white shadow-sm">
+                <Link href="/dashboard/connect/verify">Complete verification</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
+
       <DashboardWelcomeBanner userName={userName ?? null} />
 
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="flex flex-wrap items-center justify-between gap-4"
-      >
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Give Platform Dashboard</h1>
+      <div className="dashboard-fade-in dashboard-fade-in-delay-1 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-dashboard-text">Overview</h1>
+          <p className="text-sm text-dashboard-text-muted mt-0.5">
+            {filteredDonations.length} donation{filteredDonations.length !== 1 ? "s" : ""} total
+          </p>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowFilters((v) => !v)}
+            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 border ${
+              showFilters || hasActiveFilters
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-700/50 dark:bg-emerald-900/20 dark:text-emerald-400"
+                : "border-dashboard-border bg-dashboard-card text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text"
+            }`}
+          >
+            <Filter className="h-4 w-4" />
+            Filters
+            {hasActiveFilters && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
+                {[dateStart, dateEnd, orgFilter, statusFilter].filter(Boolean).length}
+              </span>
+            )}
+          </button>
           {isPlatformAdmin && (
-            <Button onClick={() => setAddOrgOpen(true)} size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+            <Button onClick={() => setAddOrgOpen(true)} size="sm" className="bg-emerald-600 hover:bg-emerald-700 gap-1.5 rounded-xl shadow-sm">
+              <Plus className="h-4 w-4" />
               Add Org
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={handleExport}>
+          <button
+            type="button"
+            onClick={handleExport}
+            className="inline-flex items-center gap-2 rounded-xl border border-dashboard-border bg-dashboard-card px-4 py-2.5 text-sm font-medium text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text transition-all duration-200"
+          >
+            <Download className="h-4 w-4" />
             Export
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/dashboard/settings">Settings</Link>
-          </Button>
+          </button>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 + CARD_STAGGER }}
-        className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
-      >
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Start date</label>
-            <input
-              type="date"
-              value={dateStart}
-              onChange={(e) => setDateStart(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
+      {/* Collapsible Filters */}
+      {showFilters && (
+        <div className="dashboard-fade-in rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-dashboard-text">Filter donations</h3>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-dashboard-text-muted hover:text-dashboard-text transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                  Clear all
+                </button>
+              )}
+            </div>
           </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">End date</label>
-            <input
-              type="date"
-              value={dateEnd}
-              onChange={(e) => setDateEnd(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Organization</label>
-            <select
-              value={orgFilter}
-              onChange={(e) => setOrgFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            >
-              <option value="">All organizations</option>
-              {organizationFilterOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            >
-              <option value="">All statuses</option>
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-end">
-            <Button variant="outline" size="sm" onClick={clearFilters}>
-              Clear
-            </Button>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">Start date</label>
+              <input
+                type="date"
+                value={dateStart}
+                onChange={(e) => setDateStart(e.target.value)}
+                className="w-full rounded-xl border border-dashboard-input-border bg-dashboard-input px-3 py-2.5 text-sm text-dashboard-text shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">End date</label>
+              <input
+                type="date"
+                value={dateEnd}
+                onChange={(e) => setDateEnd(e.target.value)}
+                className="w-full rounded-xl border border-dashboard-input-border bg-dashboard-input px-3 py-2.5 text-sm text-dashboard-text shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">Organization</label>
+              <select
+                value={orgFilter}
+                onChange={(e) => setOrgFilter(e.target.value)}
+                className="w-full rounded-xl border border-dashboard-input-border bg-dashboard-input px-3 py-2.5 text-sm text-dashboard-text shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              >
+                <option value="">All organizations</option>
+                {organizationFilterOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full rounded-xl border border-dashboard-input-border bg-dashboard-input px-3 py-2.5 text-sm text-dashboard-text shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              >
+                <option value="">All statuses</option>
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
-      </motion.div>
+      )}
+
+      {/* Campaign goals */}
+      {campaigns.length > 0 && <DashboardGoalsOverview campaigns={campaigns} />}
 
       {/* KPI cards */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
-            label: "Active organizations",
-            value: `${activeOrganizations} orgs`,
-            sub: "Currently active organizations",
-            icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
-            color: "bg-violet-500/10 text-violet-600",
-            delay: 0.2,
+            label: "Organizations",
+            value: activeOrganizations.toString(),
+            sub: "Active orgs",
+            icon: Building2,
+            gradient: "from-violet-500/10 to-purple-500/10",
+            iconBg: "bg-violet-100 dark:bg-violet-500/20",
+            iconColor: "text-violet-600 dark:text-violet-400",
+            delay: "dashboard-fade-in-delay-2",
           },
           {
             label: "Total Givers",
-            value: `${totalDonors} givers`,
-            sub: "Unique givers in selection",
-            icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
-            color: "bg-emerald-500/10 text-emerald-600",
-            delay: 0.28,
+            value: totalDonors.toString(),
+            sub: "Unique givers",
+            icon: Users,
+            gradient: "from-blue-500/10 to-cyan-500/10",
+            iconBg: "bg-blue-100 dark:bg-blue-500/20",
+            iconColor: "text-blue-600 dark:text-blue-400",
+            delay: "dashboard-fade-in-delay-3",
           },
           {
             label: "Total Donations",
             value: formatCurrency(totalDonationsCents),
-            sub: "All-time total (filtered)",
-            icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-            color: "bg-amber-500/10 text-amber-600",
-            delay: 0.36,
+            sub: "All-time (filtered)",
+            icon: DollarSign,
+            gradient: "from-emerald-500/10 to-teal-500/10",
+            iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
+            iconColor: "text-emerald-600 dark:text-emerald-400",
+            delay: "dashboard-fade-in-delay-4",
           },
-        ].map((card, i) => (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: card.delay, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ y: -2, transition: { duration: 0.2 } }}
-            className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500">{card.label}</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{card.value}</p>
-                <p className="mt-0.5 text-xs text-slate-400">{card.sub}</p>
-              </div>
-              <div className={`rounded-xl p-2.5 ${card.color}`}>
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={card.icon} />
-                </svg>
+          {
+            label: "Avg. Donation",
+            value: filteredDonations.filter((d) => d.status === "succeeded").length > 0
+              ? formatCurrency(Math.round(totalDonationsCents / filteredDonations.filter((d) => d.status === "succeeded").length))
+              : "$0.00",
+            sub: "Per transaction",
+            icon: TrendingUp,
+            gradient: "from-amber-500/10 to-orange-500/10",
+            iconBg: "bg-amber-100 dark:bg-amber-500/20",
+            iconColor: "text-amber-600 dark:text-amber-400",
+            delay: "dashboard-fade-in-delay-5",
+          },
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={card.label}
+              className={`dashboard-fade-in ${card.delay} kpi-card rounded-2xl border border-dashboard-border bg-gradient-to-br ${card.gradient} bg-dashboard-card p-5`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">{card.label}</p>
+                  <p className="mt-2 text-2xl font-bold tracking-tight text-dashboard-text">{card.value}</p>
+                  <p className="mt-1 text-xs text-dashboard-text-muted">{card.sub}</p>
+                </div>
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${card.iconBg} transition-transform duration-300 group-hover:scale-110`}>
+                  <Icon className={`h-5 w-5 ${card.iconColor}`} />
+                </div>
               </div>
             </div>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Donation trends chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.44 }}
-        className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
-      >
-        <h3 className="mb-4 text-base font-bold text-slate-900">Donation Trends</h3>
-        <div className="h-64">
-          {donationTrends.length === 0 ? (
-            <p className="flex h-full items-center justify-center text-sm text-slate-500">No donation data in range</p>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={donationTrends} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#64748b" />
-                <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `$${v}`} stroke="#64748b" />
-                <Tooltip formatter={(v: number) => [formatCurrency(Math.round(v * 100)), "Total"]} labelFormatter={(l) => `Date: ${l}`} />
-                <Line type="monotone" dataKey="total" name="Total donations" stroke="#0d9488" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
+      {/* Charts row */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-6 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="h-4 w-4 text-dashboard-text-muted" />
+            <h3 className="text-sm font-semibold text-dashboard-text">Donation Trends</h3>
+          </div>
+          <DonationTrendsChart data={donationTrends} />
         </div>
-      </motion.div>
-
-      {/* Distribution by organization */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.52 }}
-        className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
-      >
-        <h3 className="mb-4 text-base font-bold text-slate-900">Distribution by Organization</h3>
-        <div className="h-64">
-          {orgDistribution.length === 0 ? (
-            <p className="flex h-full items-center justify-center text-sm text-slate-500">No data</p>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={orgDistribution}
-                  dataKey="total"
-                  nameKey="org"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  label={({ org, percent }) => `${org} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {orgDistribution.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(v: number) => formatCurrency(Math.round(v * 100))} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
+        <div className="dashboard-fade-in dashboard-fade-in-delay-7 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <PieChart className="h-4 w-4 text-dashboard-text-muted" />
+            <h3 className="text-sm font-semibold text-dashboard-text">Distribution by Organization</h3>
+          </div>
+          <OrgDistributionChart data={orgDistribution} />
         </div>
-      </motion.div>
+      </div>
 
       {/* Organizations table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.6 }}
-        className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm"
-      >
-        <div className="border-b border-slate-200/80 px-5 py-4">
-          <h3 className="text-base font-bold text-slate-900">Organizations</h3>
+      <div className="dashboard-fade-in dashboard-fade-in-delay-8 rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between border-b border-dashboard-border px-5 py-4">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-4 w-4 text-dashboard-text-muted" />
+            <h3 className="text-sm font-semibold text-dashboard-text">Organizations</h3>
+            <span className="text-xs text-dashboard-text-muted">({filteredOrganizations.length})</span>
+          </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50/80">
+          <table className="modern-table">
+            <thead>
               <tr>
-                <th className="text-left p-3 font-semibold text-slate-700">ID</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Organization</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Slug</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Type</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Status</th>
-                <th className="text-right p-3 font-semibold text-slate-700">Total donations</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Created</th>
+                <th>Organization</th>
+                <th>Slug</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th className="text-right">Total donations</th>
+                <th>Created</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrganizations.map((o) => (
-                <tr key={o.id} className="border-t border-slate-100 transition-colors hover:bg-slate-50/50">
-                  <td className="p-3 font-mono text-slate-500">{o.id.slice(0, 8)}</td>
-                  <td className="p-3 font-medium text-slate-900">{o.name}</td>
-                  <td className="p-3 text-slate-500">{o.slug}</td>
-                  <td className="p-3 text-slate-600">{o.type ?? "—"}</td>
-                  <td className="p-3">
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${o.status === "active" ? "bg-emerald-500/15 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                <tr key={o.id}>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300">
+                        {o.name[0]?.toUpperCase()}
+                      </div>
+                      <span className="font-medium text-dashboard-text">{o.name}</span>
+                    </div>
+                  </td>
+                  <td className="text-dashboard-text-muted font-mono text-xs">{o.slug}</td>
+                  <td className="text-dashboard-text-muted">{o.type ?? "—"}</td>
+                  <td>
+                    <span className={`status-badge ${o.status === "active" ? "status-badge-success" : "status-badge-neutral"}`}>
                       {o.status}
                     </span>
                   </td>
-                  <td className="p-3 text-right font-medium text-slate-900">{formatCurrency(Math.round(o.totalDonations * 100))}</td>
-                  <td className="p-3 text-slate-500">{o.createdAt ? new Date(o.createdAt).toLocaleDateString() : "—"}</td>
+                  <td className="text-right font-medium text-dashboard-text tabular-nums">{formatCurrency(Math.round(o.totalDonations * 100))}</td>
+                  <td className="text-dashboard-text-muted">{o.createdAt ? new Date(o.createdAt).toLocaleDateString() : "—"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         {filteredOrganizations.length === 0 && (
-          <p className="p-6 text-center text-slate-500">No organizations found.</p>
+          <EmptyState title="No organizations found" description="Try adjusting your filters or add an organization." variant="organizations" />
         )}
-      </motion.div>
+      </div>
 
       {/* Recent Donations table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.68 }}
-        className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm"
-      >
-        <div className="border-b border-slate-200/80 px-5 py-4">
-          <h3 className="text-base font-bold text-slate-900">Recent Donations</h3>
+      <div className="dashboard-fade-in dashboard-fade-in-delay-9 rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between border-b border-dashboard-border px-5 py-4">
+          <div className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4 text-dashboard-text-muted" />
+            <h3 className="text-sm font-semibold text-dashboard-text">Recent Donations</h3>
+            <span className="text-xs text-dashboard-text-muted">({filteredDonations.length})</span>
+          </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50/80">
+          <table className="modern-table">
+            <thead>
               <tr>
-                <th className="text-left p-3 font-semibold text-slate-700">Date</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Endowment</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Campaign</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Status</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Currency</th>
-                <th className="text-right p-3 font-semibold text-slate-700">Amount</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Email</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Giver</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Organization</th>
-                <th className="text-right p-3 font-semibold text-slate-700">Donation ID</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Action</th>
+                <th>Date</th>
+                <th>Giver</th>
+                <th>Organization</th>
+                <th>Campaign</th>
+                <th>Status</th>
+                <th className="text-right">Amount</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredDonations.slice(0, 50).map((d) => (
-                <tr key={d.id} className="border-t border-slate-100 transition-colors hover:bg-slate-50/50">
-                  <td className="p-3 text-slate-500">{d.createdAt ? new Date(d.createdAt).toLocaleDateString() : "—"}</td>
-                  <td className="p-3 text-slate-600">{d.endowment ?? "—"}</td>
-                  <td className="p-3 text-slate-600">{d.campaign ?? "—"}</td>
-                  <td className="p-3">
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${d.status === "succeeded" ? "bg-emerald-500/15 text-emerald-700" : d.status === "pending" ? "bg-amber-500/15 text-amber-700" : "bg-red-500/15 text-red-700"}`}>
+                <tr key={d.id}>
+                  <td className="text-dashboard-text-muted text-xs tabular-nums">
+                    {d.createdAt ? new Date(d.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                  </td>
+                  <td>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-dashboard-text">{d.donorName ?? "Anonymous"}</span>
+                      <span className="text-xs text-dashboard-text-muted">{d.donorEmail ?? ""}</span>
+                    </div>
+                  </td>
+                  <td className="text-dashboard-text-muted">{d.orgName}</td>
+                  <td className="text-dashboard-text-muted">{d.campaign ?? "—"}</td>
+                  <td>
+                    <span className={`status-badge ${
+                      d.status === "succeeded" ? "status-badge-success" : d.status === "pending" ? "status-badge-warning" : "status-badge-error"
+                    }`}>
                       {d.status}
                     </span>
                   </td>
-                  <td className="p-3 text-slate-600">{d.currency}</td>
-                  <td className="p-3 text-right font-medium text-slate-900">{d.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
-                  <td className="p-3 text-slate-500">{d.donorEmail ?? "—"}</td>
-                  <td className="p-3 text-slate-900">{d.donorName ?? "—"}</td>
-                  <td className="p-3 text-slate-600">{d.orgName}</td>
-                  <td className="p-3 text-right font-mono text-slate-500">{d.id.slice(0, 8)}</td>
-                  <td className="p-3">
-                    <Button variant="ghost" size="sm" onClick={() => setViewDonation(d)} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-500/10">
+                  <td className="text-right font-semibold text-dashboard-text tabular-nums">{formatCurrency(d.amount_cents)}</td>
+                  <td className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setViewDonation(d)}
+                      className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10 transition-colors"
+                    >
+                      <Eye className="h-3 w-3" />
                       View
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -536,47 +558,63 @@ export function DashboardOverview({ donations: rawDonations, organizations: rawO
           </table>
         </div>
         {filteredDonations.length === 0 && (
-          <p className="p-6 text-center text-slate-500">No donations found.</p>
+          <EmptyState title="No donations found" description="Donations will appear here once they come in." variant="donations" />
         )}
-      </motion.div>
+      </div>
 
       {/* View Donation modal */}
       <Dialog open={!!viewDonation} onOpenChange={(open) => !open && setViewDonation(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Donation Details</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <DollarSign className="h-5 w-5 text-emerald-600" />
+              Donation Details
+            </DialogTitle>
           </DialogHeader>
           {viewDonation && (
             <div className="grid gap-3 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span>{viewDonation.createdAt ? new Date(viewDonation.createdAt).toLocaleString() : "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span>{formatCurrency(viewDonation.amount_cents)} {viewDonation.currency}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Status</span><span>{viewDonation.status}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Giver</span><span>{viewDonation.donorName ?? viewDonation.donorEmail ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{viewDonation.donorEmail ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Organization</span><span>{viewDonation.orgName}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Campaign</span><span>{viewDonation.campaign ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Endowment</span><span>{viewDonation.endowment ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Donation ID</span><span className="font-mono">{viewDonation.id}</span></div>
+              {[
+                { label: "Date", value: viewDonation.createdAt ? new Date(viewDonation.createdAt).toLocaleString() : "—" },
+                { label: "Amount", value: `${formatCurrency(viewDonation.amount_cents)} ${viewDonation.currency}` },
+                { label: "Status", value: viewDonation.status },
+                { label: "Giver", value: viewDonation.donorName ?? viewDonation.donorEmail ?? "—" },
+                { label: "Email", value: viewDonation.donorEmail ?? "—" },
+                { label: "Organization", value: viewDonation.orgName },
+                { label: "Campaign", value: viewDonation.campaign ?? "—" },
+                { label: "Endowment", value: viewDonation.endowment ?? "—" },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center justify-between gap-4 py-2 border-b border-dashboard-border last:border-0">
+                  <span className="text-dashboard-text-muted text-xs font-medium uppercase tracking-wider">{row.label}</span>
+                  <span className="text-sm font-medium text-dashboard-text">{row.value}</span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between gap-4 py-2">
+                <span className="text-dashboard-text-muted text-xs font-medium uppercase tracking-wider">Donation ID</span>
+                <span className="font-mono text-xs text-dashboard-text-muted">{viewDonation.id}</span>
+              </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setViewDonation(null)}>Close</Button>
+            <Button variant="outline" onClick={() => setViewDonation(null)} className="rounded-xl">Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Add Organization modal - placeholder; can wire to API later */}
+      {/* Add Organization modal */}
       <Dialog open={addOrgOpen} onOpenChange={setAddOrgOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Organization</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-emerald-600" />
+              Add New Organization
+            </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            To add an organization, go to Settings or use the platform admin flow. This modal can be wired to an API later.
+            To add an organization, go to Settings or use the platform admin flow.
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddOrgOpen(false)}>Cancel</Button>
-            <Button asChild>
+            <Button variant="outline" onClick={() => setAddOrgOpen(false)} className="rounded-xl">Cancel</Button>
+            <Button asChild className="rounded-xl">
               <Link href="/dashboard/settings" onClick={() => setAddOrgOpen(false)}>Open Settings</Link>
             </Button>
           </DialogFooter>

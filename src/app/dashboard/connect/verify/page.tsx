@@ -2,6 +2,10 @@ import Link from "next/link";
 import { requireAuth } from "@/lib/auth";
 import { stripe } from "@/lib/stripe/client";
 import { ConnectOnboardingWrapper } from "./connect-onboarding-wrapper";
+import { RefreshVerifyButton } from "./refresh-verify-button";
+import { VerifyStatusFetcher } from "./verify-status-fetcher";
+
+export const dynamic = "force-dynamic";
 
 /**
  * Embedded Stripe Connect onboarding for organizations.
@@ -14,15 +18,17 @@ export default async function ConnectVerifyPage() {
 
   let needsVerification = true;
   let verifiedMessage: string | null = null;
+  let accountDisplayName: string | null = null;
+  let accountError: string | null = null;
 
   if (orgId && profile?.role !== "platform_admin") {
     const { data: orgRow } = await supabase
       .from("organizations")
-      .select("stripe_connect_account_id")
+      .select("id, name, stripe_connect_account_id")
       .eq("id", orgId)
       .single();
-    const stripeAccountId = (orgRow as { stripe_connect_account_id: string | null } | null)
-      ?.stripe_connect_account_id;
+    const org = orgRow as { id: string; name: string; stripe_connect_account_id: string | null } | null;
+    const stripeAccountId = org?.stripe_connect_account_id;
 
     if (stripeAccountId) {
       try {
@@ -37,9 +43,18 @@ export default async function ConnectVerifyPage() {
           verifiedMessage = isVerified
             ? "Your account is fully verified and ready to receive payouts."
             : "No additional verification steps are required at this time.";
+          accountDisplayName =
+            (account.business_profile as { name?: string } | null)?.name ??
+            account.email ??
+            org?.name ??
+            null;
         }
-      } catch {
-        // Keep needsVerification true if we can't fetch
+      } catch (e) {
+        if (stripeAccountId.startsWith("acct_seed_")) {
+          accountError = "This organization has a test placeholder account ID. Complete Connect onboarding to create a real payout account.";
+        } else {
+          accountError = "Could not load account. The stored payout account may be invalid or no longer exist.";
+        }
       }
     }
   }
@@ -50,10 +65,11 @@ export default async function ConnectVerifyPage() {
     "";
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
+    <div className="space-y-6 p-2 sm:p-4">
+      <VerifyStatusFetcher />
+      <div className="dashboard-fade-in flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             {needsVerification ? "Complete account verification" : "Payout account"}
           </h1>
           <p className="mt-1 text-slate-600">
@@ -62,25 +78,64 @@ export default async function ConnectVerifyPage() {
               : verifiedMessage}
           </p>
         </div>
-        <Link
-          href="/dashboard/settings"
-          className="shrink-0 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-        >
-          Back to settings
-        </Link>
-      </div>
-
-      {needsVerification ? (
-        <ConnectOnboardingWrapper publishableKey={publishableKey || undefined} />
-      ) : (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-600">{verifiedMessage}</p>
+        <div className="flex shrink-0 gap-2">
+          <RefreshVerifyButton />
           <Link
             href="/dashboard/settings"
-            className="mt-4 inline-flex items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900"
           >
             Back to settings
           </Link>
+        </div>
+      </div>
+
+      {accountError && (
+        <div className="dashboard-fade-in rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
+          <p className="font-medium">Account setup issue</p>
+          <p className="mt-1 text-sm">{accountError}</p>
+          <p className="mt-2 text-xs">
+            Complete the verification form below to create a real payout account. The invalid placeholder will be replaced automatically.
+          </p>
+        </div>
+      )}
+
+      {needsVerification ? (
+        <div className="dashboard-fade-in dashboard-fade-in-delay-1">
+          <ConnectOnboardingWrapper publishableKey={publishableKey || undefined} />
+        </div>
+      ) : (
+        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="rounded-xl bg-emerald-500/10 p-3">
+              <svg className="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-base font-bold text-slate-900">Account verified</h2>
+              {accountDisplayName && (
+                <p className="mt-1 text-sm font-medium text-slate-700">{accountDisplayName}</p>
+              )}
+              <p className="mt-1 text-sm text-slate-600">{verifiedMessage}</p>
+              <p className="mt-3 text-sm text-slate-500">
+                Payouts are sent automatically based on your account schedule.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link
+                  href="/dashboard/connect/manage"
+                  className="inline-flex items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+                >
+                  Update bank account & billing
+                </Link>
+                <Link
+                  href="/dashboard/settings"
+                  className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Back to settings
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

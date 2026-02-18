@@ -1,11 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { requireOrgAdmin } from "@/lib/auth";
 import {
   createEventbriteEvent,
   createEventbriteTicketClass,
   publishEventbriteEvent,
 } from "@/lib/eventbrite/client";
+
+/**
+ * GET: List upcoming events for an organization (used by CMS page).
+ */
+export async function GET(req: NextRequest) {
+  try {
+    const { supabase, organizationId } = await requireOrgAdmin();
+    const orgId = req.nextUrl.searchParams.get("organizationId") ?? organizationId;
+    if (!orgId) {
+      return NextResponse.json({ error: "organizationId required" }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from("events")
+      .select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category")
+      .eq("organization_id", orgId)
+      .gte("start_at", new Date().toISOString())
+      .order("start_at", { ascending: true });
+
+    if (error) {
+      console.error("events GET:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json(data ?? []);
+  } catch (e) {
+    console.error("events GET error", e);
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Failed to fetch events" },
+      { status: 500 }
+    );
+  }
+}
 
 type TicketClassInput = {
   name: string;

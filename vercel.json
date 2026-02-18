@@ -5,27 +5,83 @@
   "buildCommand": "pnpm run build",
   "headers": [
     {
+      "source": "/give/:slug/embed",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors *"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ],
   "images": {
     "sizes": [256, 640, 1080, 2048, 3840],
     "remotePatterns": [
-      { "protocol": "https", "hostname": "images.unsplash.com", "pathname": "/**" },
-      { "protocol": "https", "hostname": "images.pexels.com", "pathname": "/**" },
-      { "protocol": "https", "hostname": "img.evbuc.com", "pathname": "/**" }
+      {
+        "protocol": "https",
+        "hostname": "images.unsplash.com",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "images.pexels.com",
+        "pathname": "/**"
+      },
+      {
+        "protocol": "https",
+        "hostname": "img.evbuc.com",
+        "pathname": "/**"
+      }
     ]
   },
   "functions": {
-    "src/app/api/webhooks/stripe/route.ts": { "maxDuration": 30 },
-    "src/app/api/eventbrite/connect/route.ts": { "maxDuration": 15 },
-    "src/app/api/eventbrite/callback/route.ts": { "maxDuration": 15 },
-    "src/app/api/events/route.ts": { "maxDuration": 30 }
+    "src/app/api/webhooks/stripe/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/events/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/auth/signup/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/create-payment-intent/route.ts": {
+      "maxDuration": 15
+    },
+    "src/app/api/connect/sync-verification/route.ts": {
+      "maxDuration": 15
+    }
   }
 }

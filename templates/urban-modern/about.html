@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Us — Your Church</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables: Urban Modern ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6366F1;--dark:#18181B;--bg:#F4F4F5;--text:#27272A;--muted:#71717A;--accent-glow:rgba(99,102,241,.25)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
+
+/* NAV */
+.urb-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,.06)}
+.urb-nav-logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.5px}
+.urb-nav-logo span{color:var(--accent)}
+.urb-nav-links{display:flex;align-items:center;gap:32px}
+.urb-nav-links a{color:rgba(255,255,255,.7);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.urb-nav-links a:hover,.urb-nav-links a.active{color:var(--accent)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:8px;font-weight:600!important;font-size:13px!important;letter-spacing:.5px;transition:all .2s}
+.nav-cta:hover{background:#4f46e5!important;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
+
+/* PAGE HERO */
+.page-hero{padding:160px 48px 80px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(24,24,27,.7),rgba(24,24,27,.85))}
+.page-hero::before{content:'';position:absolute;inset:0;background-image:var(--hero-img,none);background-size:cover;background-position:center;z-index:-1}
+.page-hero-content{position:relative;max-width:700px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.eyebrow::before,.eyebrow::after{content:'';width:32px;height:1px;background:var(--accent)}
+.page-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,64px);color:#fff;line-height:1.1;margin-bottom:20px;font-weight:700;letter-spacing:-1px}
+.page-hero p{color:rgba(255,255,255,.75);font-size:17px;line-height:1.7;max-width:520px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,.5);font-size:13px;text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:rgba(255,255,255,.3);font-size:13px}
+
+/* SECTIONS */
+.section{padding:100px 48px}
+.section.dark{background:var(--dark)}
+.section.bg{background:var(--bg)}
+.section.white{background:#fff}
+.container{max-width:1280px;margin:0 auto}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.text-center{text-align:center}
+
+/* TYPOGRAPHY */
+.sec-eye{display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,4vw,48px);font-weight:700;color:var(--dark);line-height:1.15;margin-bottom:28px;letter-spacing:-1px}
+.sec-title.light{color:#fff}
+.sec-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:560px}
+.text-center .sec-sub{margin:0 auto}
+.indigo-divider{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:20px 0}
+.indigo-divider.center{margin:20px auto}
+
+/* BUTTONS */
+.btn-fill{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;text-decoration:none}
+.btn-fill:hover{background:#4f46e5;transform:translateY(-2px);box-shadow:0 6px 24px var(--accent-glow)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:2px solid var(--dark);color:var(--dark);border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;text-decoration:none}
+.btn-ghost:hover{background:var(--dark);color:#fff}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat-item{text-align:center;padding:40px 20px;border-right:1px solid rgba(255,255,255,.06);position:relative}
+.stat-item:last-child{border-right:none}
+.stat-item::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:3px;background:var(--accent);border-radius:0 0 4px 4px}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:48px;color:var(--accent);font-weight:700;line-height:1;margin-bottom:8px}
+.stat-label{color:rgba(255,255,255,.5);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),transparent)}
+.tl-item{padding:0 0 40px 24px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-36px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-glow)}
+.tl-year{color:var(--accent);font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.tl-item h4{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--dark);margin-bottom:6px;font-weight:600;letter-spacing:-.3px}
+.tl-item p{color:var(--muted);font-size:14px;line-height:1.6}
+
+/* BELIEFS */
+.beliefs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.belief-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 16px rgba(24,24,27,.06);border-top:3px solid var(--accent);transition:transform .2s,box-shadow .2s}
+.belief-card:hover{transform:translateY(-5px);box-shadow:0 8px 32px rgba(99,102,241,.12)}
+.belief-card .bicon{font-size:28px;margin-bottom:14px}
+.belief-card h3{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--dark);margin-bottom:8px;font-weight:600}
+.belief-card p{color:var(--muted);font-size:14px;line-height:1.6}
+
+/* TEAM */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.team-card{text-align:center}
+.team-card img{width:100%;height:280px;object-fit:cover;border-radius:16px;margin-bottom:16px}
+.team-card h3{font-family:'Space Grotesk',sans-serif;font-size:19px;color:#fff;margin-bottom:4px;font-weight:600}
+.team-card .role{color:var(--accent);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.team-card p{color:rgba(255,255,255,.5);font-size:13px;line-height:1.6}
+
+/* SCRIPTURE BANNER */
+.scripture-banner{min-height:400px;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(rgba(24,24,27,.8),rgba(24,24,27,.85)),url('https://images.pexels.com/photos/2566573/pexels-photo-2566573.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed;padding:80px 48px}
+.scripture-inner{max-width:720px}
+.scripture-inner .verse{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3.5vw,40px);font-weight:500;color:#fff;line-height:1.5;margin-bottom:24px;letter-spacing:-.5px}
+.scripture-inner .verse em{font-style:italic;color:var(--accent)}
+.scripture-inner .ref{font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(255,255,255,.5);padding:70px 48px 36px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1280px;margin:0 auto 50px}
+.footer-brand .logo-text{font-family:'Space Grotesk',sans-serif;font-size:20px;color:#fff;margin-bottom:14px;display:block;font-weight:700;letter-spacing:-.5px}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:260px}
+.footer-col h5{color:#fff;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,.5);text-decoration:none;font-size:14px;transition:color .2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-divider{border:none;border-top:1px solid rgba(255,255,255,.06);margin-bottom:28px;max-width:1280px;margin-left:auto;margin-right:auto}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;max-width:1280px;margin:0 auto}
+.social-links{display:flex;gap:12px}
+.social-links a{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:13px;text-decoration:none;transition:all .2s}
+.social-links a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .urb-nav{padding:0 24px}
+  .urb-nav-links{display:none}
+  .hamburger{display:flex}
+  .section{padding:60px 24px}
+  .page-hero{padding:120px 24px 60px}
+  .grid-2{grid-template-columns:1fr;gap:28px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stat-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
+  .beliefs-grid{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+  footer{padding:50px 24px 30px}
+  .footer-bottom{flex-direction:column;gap:14px;text-align:center}
+}
+@media(max-width:600px){.beliefs-grid,.team-grid,.stats-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="urb-nav">
+  <a href="index.html" class="urb-nav-logo">Your <span>Church</span></a>
+  <div class="urb-nav-links" id="navLinks">
+    <a href="about.html" class="active" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero" style="--hero-img:url('https://images.pexels.com/photos/2566573/pexels-photo-2566573.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.5)">About</span></div>
+    <span class="eyebrow">Who We Are</span>
+    <h1>Our Story, Our Faith,<br>Our Family</h1>
+    <p>For over 25 years, our church has been rooted in scripture and committed to serving our city with love, innovation, and purpose.</p>
+  </div>
+</div>
+
+<!-- MISSION SECTION -->
+<div class="section white">
+  <div class="container">
+    <div class="grid-2">
+      <div>
+        <span class="sec-eye">Our Mission</span>
+        <h2 class="sec-title">Connecting People to God &amp; Each Other</h2>
+        <div class="indigo-divider"></div>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:16px;">Our church was founded in 1999 by Pastor David Mercer and a small group of passionate believers who wanted to create a church that felt less like an institution and more like a family. What began as a gathering of twelve families in a school gymnasium has grown into a thriving community of over three thousand members who are passionate about making faith relevant in an urban context.</p>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:28px;">Our vision is simple: love God, love people, and serve the world. Everyone — regardless of background, past, or circumstance — deserves to experience the transforming love of Jesus Christ. We bring a modern, forward-thinking approach to ministry while staying grounded in timeless biblical truth.</p>
+        <div class="btns"><a href="visit.html" class="btn-fill">Plan Your Visit</a><a href="ministries.html" class="btn-ghost">Explore Ministries</a></div>
+      </div>
+      <div><img src="https://images.pexels.com/photos/8468459/pexels-photo-8468459.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church community" style="width:100%;height:460px;object-fit:cover;border-radius:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS ROW -->
+<div class="section dark" style="padding-top:0;padding-bottom:0;">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">25+</div><div class="stat-label">Years of Ministry</div></div>
+      <div class="stat-item"><div class="stat-num">3,200</div><div class="stat-label">Church Family</div></div>
+      <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Active Ministries</div></div>
+      <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Mission Partners</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section bg">
+  <div class="container">
+    <div class="grid-2" style="gap:80px;">
+      <div>
+        <span class="sec-eye">Our History</span>
+        <h2 class="sec-title">A Timeline of Faith</h2>
+        <div class="indigo-divider"></div>
+        <div class="timeline" style="margin-top:32px;">
+          <div class="tl-item"><div class="tl-year">1999</div><h4>The Beginning</h4><p>Pastor David Mercer and 12 founding families held the first service in a local school gymnasium, united by a shared vision of building a Christ-centered community.</p></div>
+          <div class="tl-item"><div class="tl-year">2003</div><h4>Our First Building</h4><p>After four years of faithful growth, the church moved into its first permanent home on Faith Avenue with 300 dedicated members.</p></div>
+          <div class="tl-item"><div class="tl-year">2009</div><h4>Launching Missions</h4><p>Sent our first mission team to Kenya, beginning a global outreach ministry that now spans four continents and continues to this day.</p></div>
+          <div class="tl-item"><div class="tl-year">2015</div><h4>Campus Expansion</h4><p>Broke ground on the Grace Center, a 40,000 sq ft community hub designed for worship, education, youth programs, and community service.</p></div>
+          <div class="tl-item"><div class="tl-year">2024</div><h4>25 Years &amp; Growing</h4><p>Celebrating a quarter century of ministry with 3,200+ members, 47 active ministries, and 12 global mission partnerships.</p></div>
+        </div>
+      </div>
+      <div><img src="https://images.pexels.com/photos/1701535/pexels-photo-1701535.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church history" style="width:100%;height:520px;object-fit:cover;border-radius:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CORE BELIEFS -->
+<div class="section white">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px;">
+      <span class="sec-eye">What We Believe</span>
+      <h2 class="sec-title">Our Core Beliefs</h2>
+      <div class="indigo-divider center"></div>
+      <p class="sec-sub" style="margin:0 auto;">Founded on the Word of God, guided by the Holy Spirit, and centered on Jesus Christ.</p>
+    </div>
+    <div class="beliefs-grid">
+      <div class="belief-card"><div class="bicon">📖</div><h3>Scripture</h3><p>We believe the Bible is the inspired, infallible Word of God and the final authority for all matters of faith and practice.</p></div>
+      <div class="belief-card"><div class="bicon">✝️</div><h3>Salvation</h3><p>We believe salvation is a free gift received through faith in Jesus Christ alone, not through works or merit.</p></div>
+      <div class="belief-card"><div class="bicon">🕊️</div><h3>Holy Spirit</h3><p>We believe in the active work of the Holy Spirit — guiding, empowering, and transforming every believer daily.</p></div>
+      <div class="belief-card"><div class="bicon">🌍</div><h3>The Church</h3><p>We believe the church is the body of Christ — called to worship, fellowship, discipleship, ministry, and evangelism.</p></div>
+      <div class="belief-card"><div class="bicon">🙏</div><h3>Prayer</h3><p>We believe prayer is the foundation of our relationship with God and the source of our power and direction in life.</p></div>
+      <div class="belief-card"><div class="bicon">👑</div><h3>Return of Christ</h3><p>We believe in the personal, bodily return of Jesus Christ to establish His kingdom and reign forever.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERSHIP TEAM -->
+<div class="section dark">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px;">
+      <span class="sec-eye">Leadership</span>
+      <h2 class="sec-title light">Meet Our Pastoral Team</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card"><img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Senior Pastor"><h3>David Mercer</h3><div class="role">Senior Pastor</div><p>Founding pastor with 25+ years of ministry, author, and community leader.</p></div>
+      <div class="team-card"><img src="https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Worship Pastor"><h3>Sarah Johnson</h3><div class="role">Worship Pastor</div><p>Leading our praise and worship ministry with passion and creativity since 2011.</p></div>
+      <div class="team-card"><img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Youth Pastor"><h3>Marcus Thompson</h3><div class="role">Youth Pastor</div><p>Passionate about equipping the next generation to know and love God wholeheartedly.</p></div>
+      <div class="team-card"><img src="https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Outreach Pastor"><h3>Linda Osei</h3><div class="role">Outreach Pastor</div><p>Directing our local and global outreach initiatives since 2008.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTURE BANNER -->
+<div class="scripture-banner">
+  <div class="scripture-inner">
+    <p class="verse">"You are the <em>light</em> of the world. A town built on a hill cannot be hidden."</p>
+    <p class="ref">— Matthew 5:14, NIV</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo-text">✝ Your Church</span>
+      <p>A modern community of faith in the heart of the city. Where innovation meets devotion. You are always welcome here.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Ministries</h5>
+      <ul>
+        <li><a href="ministries.html">Children's Ministry</a></li>
+        <li><a href="ministries.html">Youth Group</a></li>
+        <li><a href="ministries.html">Men's Ministry</a></li>
+        <li><a href="ministries.html">Women's Ministry</a></li>
+        <li><a href="ministries.html">Small Groups</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="visit.html">📍 100 Metro Plaza, Your City</a></li>
+        <li><a href="tel:5555550100">📞 (555) 555-0100</a></li>
+        <li><a href="mailto:hello@yourchurch.org">✉️ hello@yourchurch.org</a></li>
+        <li><a href="visit.html">Sun 9:30AM · 11:30AM</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="footer-divider">
+  <div class="footer-bottom">
+    <span>© 2025 Your Church. All rights reserved.</span>
+    <div class="social-links">
+      <a href="#" title="Facebook">f</a>
+      <a href="#" title="Instagram">ig</a>
+      <a href="#" title="YouTube">▶</a>
+      <a href="#" title="Podcast">♪</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

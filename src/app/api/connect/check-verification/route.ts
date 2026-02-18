@@ -86,7 +86,6 @@ export async function POST(req: Request) {
     const serviceSupabase = createServiceClient();
     await serviceSupabase
       .from("organizations")
-      // @ts-expect-error - Supabase update payload typing
       .update({
         onboarding_completed: onboardingCompleted,
         updated_at: new Date().toISOString(),
@@ -94,6 +93,7 @@ export async function POST(req: Request) {
       .eq("id", orgId);
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/settings");
+    revalidatePath("/dashboard/connect/verify");
 
     return NextResponse.json({
       verified,

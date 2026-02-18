@@ -30,6 +30,27 @@ export const DEFAULT_STOCK_VIDEO_URL =
 /** Link to Pexels video search for more stock videos */
 export const PEXELS_VIDEO_SEARCH_URL = "https://www.pexels.com/search/videos/";
 
+/**
+ * Check if a URL is a direct media file (image or video), not a web page.
+ * Pexels page URLs like "https://www.pexels.com/video/..." are rejected.
+ */
+export function isDirectMediaUrl(url: string | null | undefined): url is string {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    const path = u.pathname.toLowerCase();
+    const hasFileExt = /\.(jpe?g|png|gif|webp|svg|mp4|webm|mov|avif)(\?|$)/i.test(path);
+    const isPexelsFile = u.hostname.includes("images.pexels.com") || u.hostname.includes("videos.pexels.com");
+    const isUnsplash = u.hostname.includes("unsplash.com");
+    const isSupabaseStorage = u.hostname.includes("supabase");
+    if (hasFileExt || isPexelsFile || isUnsplash || isSupabaseStorage) return true;
+    if (u.hostname === "www.pexels.com" || u.hostname === "pexels.com") return false;
+    return hasFileExt;
+  } catch {
+    return false;
+  }
+}
+
 /** Stock image presets (Unsplash/Pexels direct image URLs) for quick picker */
 export const STOCK_IMAGE_OPTIONS: { value: string; label: string }[] = [
   { value: "", label: "None / custom URL" },
@@ -66,3 +87,31 @@ export const STOCK_VIDEO_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export const MAX_DESIGN_SETS = 3;
+
+/**
+ * Curated Pexels donation-themed video MP4 URLs for receipt hero.
+ * Used when Pexels API is unavailable. Add direct MP4 links from Pexels API responses.
+ */
+export const RECEIPT_VIDEO_URLS: string[] = [];
+
+/** Fallback video URLs for org card hover preview, keyed by cause. Uses short clips. */
+export const STOCK_VIDEO_BY_CAUSE: Record<string, string> = {
+  church:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  community:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  worship:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  hunger:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  housing:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  youth:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  education:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  outreach:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+  default:
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+};

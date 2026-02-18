@@ -49,7 +49,6 @@ export async function PATCH(
 
     const { data, error } = await supabase
       .from("endowment_funds")
-      // @ts-expect-error - Supabase client infers update payload as never in some setups
       .update(update)
       .eq("id", id)
       .select()

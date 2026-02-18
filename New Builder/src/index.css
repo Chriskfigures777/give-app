@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", "Georgia", serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Builder canvas grid overlay */
+.canvas-grid {
+  background-size: 20px 20px;
+  background-image: linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
+
+/* Selected element outline */
+.builder-selected {
+  outline: 2px solid var(--primary, #6366f1);
+  outline-offset: 2px;
+}
+
+/* Drag placeholder */
+.drag-ghost {
+  opacity: 0.6;
+  border: 2px dashed var(--primary, #6366f1);
+}
+
+/* Smooth, gas-like transitions for builder blocks */
+.builder-block {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .builder-block,
+  .block-renderer-wrapper {
+    transition: none;
+  }
+}

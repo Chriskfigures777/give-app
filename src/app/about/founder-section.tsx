@@ -3,55 +3,76 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Quote } from "lucide-react";
 
 const FOUNDER_IMAGE =
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&q=85";
 
 export function FounderSection() {
   return (
-    <section className="relative bg-white py-24 md:py-32">
+    <section className="relative bg-white py-28 md:py-36">
       <div className="mx-auto max-w-7xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-5xl"
         >
-          <div className="flex flex-col items-center gap-12 md:flex-row md:items-start md:gap-16">
-            <div className="relative shrink-0">
-              <div className="relative h-64 w-64 overflow-hidden rounded-2xl shadow-xl md:h-80 md:w-80">
+          <div className="flex flex-col items-center gap-14 md:flex-row md:items-start md:gap-20">
+            {/* Photo with decoration */}
+            <div className="group relative shrink-0">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="relative h-72 w-72 overflow-hidden rounded-3xl shadow-2xl md:h-[360px] md:w-[360px]"
+              >
                 <Image
                   src={FOUNDER_IMAGE}
                   alt="Christopher Figures"
                   fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 256px, 320px"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 288px, 360px"
                   priority
                 />
-              </div>
-              <div className="absolute -bottom-3 -right-3 h-24 w-24 rounded-2xl bg-emerald-500/20" aria-hidden />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </motion.div>
+              <div className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 blur-sm" />
             </div>
+
+            {/* Content */}
             <div className="flex-1 text-center md:text-left">
-              <span className="text-sm font-semibold uppercase tracking-wider text-emerald-600">
-                Founder
+              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-600">
+                Founder &amp; CEO
               </span>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
                 Christopher Figures
               </h2>
-              <p className="mt-4 text-lg font-medium text-slate-600">
-                Founder &amp; CEO
-              </p>
+
+              <div className="mt-8 relative">
+                <Quote className="absolute -left-2 -top-2 h-8 w-8 text-emerald-200 rotate-180" />
+                <p className="pl-8 text-lg leading-relaxed text-slate-600 italic">
+                  I started Give to make it easier for organizations to accept
+                  donations—and to ensure a portion of every transaction supports
+                  global endowment funds. My mission is to change the lives of
+                  families, nonprofits, and organizations.
+                </p>
+              </div>
+
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Christopher leads Give with a focus on transparency and impact. He started the company to make it easier for organizations to accept donations—and to ensure a portion of every transaction supports global endowment funds. His mission is to change the lives of families, nonprofits, and organizations by facilitating real change in communities and managing every investment so it goes toward a good cause.
+                Christopher leads Give with a focus on transparency and impact.
+                He manages every investment so it goes toward a good cause—when
+                there&apos;s a need in a community, he makes sure the funds get there.
               </p>
+
               <Link
                 href="/mission"
-                className="mt-8 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                className="glow-btn group mt-8 inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all"
               >
                 Our mission
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

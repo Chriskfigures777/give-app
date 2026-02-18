@@ -37,7 +37,6 @@ export async function POST(req: Request) {
 
     const { data: inserted, error: insertError } = await supabase
       .from("endowment_funds")
-      // @ts-expect-error - Supabase client infers insert payload as never in some setups
       .insert({
         name: name.trim(),
         description: description?.trim() || null,
@@ -55,7 +54,6 @@ export async function POST(req: Request) {
       });
       const { error: updateError } = await supabase
         .from("endowment_funds")
-        // @ts-expect-error - Supabase client infers update payload as never in some setups
         .update({
           stripe_connect_account_id: accountId,
           updated_at: new Date().toISOString(),

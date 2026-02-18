@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>About — Your Church</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--warm:#8B4513;--gold:#D4AF37;--cream:#FFF8DC;--tan:#DEB887;--text:#3E2723;--muted:#8D6E63}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;font-size:16px}
+
+header{background:var(--warm);color:var(--cream);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+.logo{font-family:'Merriweather',serif;font-size:28px;font-weight:700;color:var(--cream);text-decoration:none;letter-spacing:1px}
+nav ul{display:flex;gap:32px;list-style:none}
+nav a{color:var(--cream);text-decoration:none;font-size:14px;font-weight:400;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s;opacity:0.9}
+nav a:hover,.nav a.active{opacity:1;color:var(--gold)}
+.nav-cta{background:var(--gold)!important;color:var(--warm)!important;padding:10px 24px;border-radius:4px;font-weight:700!important;opacity:1!important}
+
+.page-hero{padding:120px 60px 80px;text-align:center;background:linear-gradient(135deg,var(--tan),var(--cream));border-bottom:3px solid var(--gold)}
+.page-hero h1{font-family:'Merriweather',serif;font-size:clamp(40px,5vw,64px);color:var(--warm);margin-bottom:20px;font-weight:700}
+.page-hero p{font-size:20px;color:var(--text);max-width:700px;margin:0 auto;opacity:0.9}
+
+.content{max-width:1200px;margin:0 auto;padding:100px 60px}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-bottom:100px}
+.content h2{font-family:'Merriweather',serif;font-size:clamp(28px,3vw,42px);color:var(--warm);margin-bottom:20px;font-weight:700}
+.content p{font-size:17px;color:var(--text);line-height:1.9;margin-bottom:20px}
+.divider{width:80px;height:3px;background:var(--gold);margin:24px 0}
+.content img{width:100%;height:400px;object-fit:cover;border-radius:8px;border:4px solid var(--tan)}
+
+.stats{background:var(--warm);padding:80px 60px;margin:80px 0 0;border-top:4px solid var(--gold)}
+.stats-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:48px}
+.stat-item{text-align:center;padding:32px 20px;border-right:1px solid rgba(255,248,220,0.2)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Merriweather',serif;font-size:52px;color:var(--gold);font-weight:700;line-height:1;margin-bottom:12px}
+.stat-label{color:rgba(255,248,220,0.8);font-size:14px;letter-spacing:1px;text-transform:uppercase}
+
+.team{max-width:1200px;margin:100px auto;padding:0 60px}
+.team-header{text-align:center;margin-bottom:60px}
+.team-header h2{font-family:'Merriweather',serif;font-size:clamp(32px,4vw,48px);color:var(--warm);margin-bottom:16px;font-weight:700}
+.team-header p{font-size:18px;color:var(--text);max-width:640px;margin:0 auto;opacity:0.9}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:36px}
+.team-card{text-align:center}
+.team-card img{width:100%;height:340px;object-fit:cover;border-radius:8px;margin-bottom:20px;border:4px solid var(--tan)}
+.team-card h3{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:var(--warm);margin-bottom:8px}
+.team-card .role{color:var(--gold);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.team-card p{color:var(--muted);font-size:14px;line-height:1.7}
+
+footer{background:var(--warm);color:var(--cream);padding:80px 60px 40px;border-top:4px solid var(--gold)}
+.footer-grid{max-width:1200px;margin:0 auto 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-brand{font-family:'Merriweather',serif;font-size:28px;font-weight:700;margin-bottom:16px}
+.footer-desc{opacity:0.85;font-size:14px;line-height:1.8;max-width:300px}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.7;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{color:var(--cream);text-decoration:none;font-size:14px;opacity:0.85;transition:opacity 0.2s}
+.footer-col a:hover{opacity:1;color:var(--gold)}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,248,220,0.2);text-align:center;font-size:13px;opacity:0.7}
+
+@media(max-width:900px){
+  header{padding:20px 24px}
+  nav ul{display:none}
+  .page-hero{padding:100px 24px 60px}
+  .content{padding:60px 24px}
+  .content-grid{grid-template-columns:1fr;gap:48px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .stat-item{border-right:none;border-bottom:1px solid rgba(255,248,220,0.2)}
+  .team{padding:0 24px}
+  .team-grid{grid-template-columns:1fr}
+  footer{padding:60px 24px 32px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Your Church</a>
+  <nav>
+    <ul>
+      <li><a href="about.html" ABOUT>About</a></li>
+      <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+      <li><a href="events.html" EVENTS>Events</a></li>
+      <li><a href="media.html" MEDIA>Media</a></li>
+      <li><a href="give.html" GIVE>Give</a></li>
+    </ul>
+  </nav>
+  <a href="visit.html" class="nav-cta">Visit Us</a>
+</header>
+
+<div class="page-hero">
+  <h1>Our Story & Heritage</h1>
+  <p>A faithful witness in our community for over 25 years, grounded in Scripture and committed to Christ's mission.</p>
+</div>
+
+<div class="content">
+  <div class="content-grid">
+    <div>
+      <h2>Our Mission</h2>
+      <div class="divider"></div>
+      <p>We exist to glorify God by making disciples of Jesus Christ through worship, fellowship, discipleship, ministry, and evangelism. For over two decades, we've been faithful to this calling.</p>
+      <p>Whether you're seeking answers, needing encouragement, or ready to serve, you'll find a spiritual home here where God's Word is honored and His people are loved.</p>
+    </div>
+    <img src="https://images.pexels.com/photos/3171837/pexels-photo-3171837.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship">
+  </div>
+
+  <div class="content-grid" style="direction:rtl">
+    <div style="direction:ltr">
+      <h2>What We Believe</h2>
+      <div class="divider"></div>
+      <p>We affirm the historic Christian faith as expressed in the Apostles' Creed. The Bible is our final authority, Jesus Christ is the only way to salvation, and the Holy Spirit empowers believers for godly living.</p>
+      <p>Our worship honors tradition while engaging contemporary hearts. We're committed to sound doctrine, fervent prayer, and authentic community.</p>
+    </div>
+    <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Community" style="direction:ltr">
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">25+</div>
+      <div class="stat-label">Years Faithful</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2,800</div>
+      <div class="stat-label">Church Members</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">40</div>
+      <div class="stat-label">Ministries</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Mission Partners</div>
+    </div>
+  </div>
+</div>
+
+<div class="team">
+  <div class="team-header">
+    <h2>Our Leadership Team</h2>
+    <p>Faithful shepherds committed to serving God's people with wisdom and love.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card">
+      <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Pastor">
+      <h3>David Mercer</h3>
+      <div class="role">Senior Pastor</div>
+      <p>Leading our congregation with biblical wisdom for over 20 years.</p>
+    </div>
+    <div class="team-card">
+      <img src="https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Worship">
+      <h3>Sarah Johnson</h3>
+      <div class="role">Worship Director</div>
+      <p>Guiding our church in heartfelt worship and musical excellence.</p>
+    </div>
+    <div class="team-card">
+      <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Youth">
+      <h3>Marcus Thompson</h3>
+      <div class="role">Youth Pastor</div>
+      <p>Investing in the next generation with passion and dedication.</p>
+    </div>
+    <div class="team-card">
+      <img src="https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Outreach">
+      <h3>Linda Osei</h3>
+      <div class="role">Outreach Director</div>
+      <p>Extending Christ's love through compassionate community service.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Your Church</div>
+      <p class="footer-desc">A community rooted in faith, hope, and love. You're always welcome in our church family.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="give.html">Give</a></li>
+        <li><a href="visit.html">Visit</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <ul>
+        <li><a href="visit.html">Contact</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 Your Church. All rights reserved. Built on faith.</div>
+</footer>
+</body>
+</html>

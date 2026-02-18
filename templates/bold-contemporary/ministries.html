@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Ministries — Your Church</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#E63946;--dark:#0D1821;--light:#F8F9FA;--text:#212529;--muted:#6C757D}
+body{font-family:'Open Sans',sans-serif;background:var(--light);color:var(--text);line-height:1.6;font-size:16px}
+img{max-width:100%;display:block}
+a{text-decoration:none}
+
+/* ── 1. Fixed Nav ── */
+nav.main-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(13,24,33,0.95);backdrop-filter:blur(12px);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;box-shadow:0 2px 16px rgba(0,0,0,0.2)}
+.logo{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:800;color:white;letter-spacing:-0.5px;text-transform:uppercase}
+.logo span{color:var(--primary)}
+nav.main-nav ul{display:flex;gap:36px;list-style:none}
+nav.main-nav a{color:rgba(255,255,255,0.8);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s}
+nav.main-nav a:hover,nav.main-nav a.active{color:var(--primary)}
+.nav-cta{background:var(--primary)!important;color:white!important;padding:11px 28px;border-radius:6px;font-weight:700!important;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(230,57,70,0.4)}
+
+/* ── 2. Hero (100vh) ── */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,24,33,0.9) 0%,rgba(13,24,33,0.7) 50%,rgba(13,24,33,0.5) 100%)}
+.hero-content{position:relative;z-index:2;max-width:1280px;margin:0 auto;width:100%;padding:0 60px;text-align:center}
+.hero-eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--primary);background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.3);padding:8px 20px;border-radius:6px;margin-bottom:28px}
+.hero h1{font-family:'Montserrat',sans-serif;font-size:clamp(48px,8vw,96px);font-weight:900;color:white;line-height:1.05;margin-bottom:28px;letter-spacing:-3px}
+.hero h1 em{font-style:normal;color:var(--primary)}
+.hero p{font-size:22px;color:rgba(255,255,255,0.85);max-width:680px;margin:0 auto 40px;line-height:1.6}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:var(--primary);color:white;padding:18px 40px;border-radius:6px;font-weight:700;font-size:16px;transition:all 0.2s;display:inline-block;text-transform:uppercase;letter-spacing:1px}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(230,57,70,0.4)}
+.btn-secondary{background:transparent;border:3px solid white;color:white;padding:15px 37px;border-radius:6px;font-weight:700;font-size:16px;transition:all 0.2s;display:inline-block;text-transform:uppercase;letter-spacing:1px}
+.btn-secondary:hover{background:white;color:var(--dark)}
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;color:white;opacity:0.6;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;animation:scrollBounce 2s ease infinite}
+.scroll-hint i{display:block;width:26px;height:42px;border:2px solid rgba(255,255,255,0.6);border-radius:14px;position:relative}
+.scroll-hint i::after{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:4px;height:8px;background:white;border-radius:2px;animation:scrollDot 2s ease infinite}
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+@keyframes scrollDot{0%,100%{opacity:1;transform:translateX(-50%) translateY(0)}50%{opacity:0.3;transform:translateX(-50%) translateY(12px)}}
+
+/* ── Section Utilities ── */
+.section-header{text-align:center;margin-bottom:56px}
+.section-header h2{font-family:'Montserrat',sans-serif;font-size:clamp(36px,5vw,56px);color:var(--dark);font-weight:800;margin-bottom:12px;letter-spacing:-1px}
+.section-header.light h2{color:white}
+.section-header p{font-size:17px;color:var(--muted);max-width:600px;margin:0 auto}
+.section-header.light p{color:rgba(255,255,255,0.7)}
+.red-divider{width:80px;height:5px;background:var(--primary);border-radius:2px}
+.red-divider.center{margin:16px auto 20px}
+.btn-dark{background:var(--dark);color:white;padding:14px 30px;border-radius:6px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s;display:inline-block}
+.btn-dark:hover{background:var(--primary)}
+.btn-outline{border:2px solid white;color:white;padding:14px 32px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s;display:inline-block;text-transform:uppercase;letter-spacing:1px}
+.btn-outline:hover{background:white;color:var(--dark)}
+
+/* ── 3. Ministry Grid ── */
+.ministries{padding:100px 60px;background:white}
+.ministries-inner{max-width:1280px;margin:0 auto}
+.ministry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.ministry-card{position:relative;border-radius:12px;overflow:hidden;height:420px;cursor:pointer}
+.ministry-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s}
+.ministry-card:hover img{transform:scale(1.08)}
+.ministry-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,24,33,0.92) 0%,rgba(13,24,33,0.15) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:36px;transition:background 0.3s}
+.ministry-card:hover .ministry-card-overlay{background:linear-gradient(0deg,rgba(230,57,70,0.9) 0%,rgba(230,57,70,0.2) 55%)}
+.ministry-card-overlay h3{font-family:'Montserrat',sans-serif;font-size:26px;color:white;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
+.ministry-card-overlay p{font-size:14px;color:rgba(255,255,255,0.88);line-height:1.7;margin-bottom:14px}
+.ministry-card-overlay a{color:var(--primary);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:color 0.2s}
+.ministry-card:hover .ministry-card-overlay a{color:white}
+
+/* ── 4. Small Groups Zigzag ── */
+.small-groups{padding:100px 60px;background:var(--light)}
+.small-groups-inner{max-width:1280px;margin:0 auto}
+.zigzag-row{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:80px}
+.zigzag-row:last-child{margin-bottom:0}
+.zigzag-row.reverse .zigzag-img{order:2}
+.zigzag-row.reverse .zigzag-text{order:1}
+.zigzag-img img{width:100%;height:400px;object-fit:cover;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.12)}
+.zigzag-text h3{font-family:'Montserrat',sans-serif;font-size:clamp(28px,3.5vw,40px);color:var(--dark);font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
+.zigzag-text p{font-size:17px;color:var(--muted);line-height:1.9;margin-bottom:16px}
+.zigzag-text ul{list-style:none;margin-bottom:24px}
+.zigzag-text ul li{position:relative;padding-left:28px;font-size:15px;color:var(--muted);line-height:1.8}
+.zigzag-text ul li::before{content:'';position:absolute;left:0;top:10px;width:12px;height:12px;border-radius:50%;background:var(--primary)}
+.zigzag-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);padding:6px 16px;border-radius:4px;margin-bottom:16px}
+
+/* ── 5. Get Involved CTA ── */
+.cta-section{background:var(--dark);padding:100px 60px;text-align:center}
+.cta-inner{max-width:800px;margin:0 auto}
+.cta-inner h2{font-family:'Montserrat',sans-serif;font-size:clamp(36px,5vw,56px);color:white;font-weight:900;margin-bottom:20px;letter-spacing:-1px;line-height:1.1}
+.cta-inner h2 em{font-style:normal;color:var(--primary)}
+.cta-inner p{font-size:19px;color:rgba(255,255,255,0.75);max-width:600px;margin:0 auto 36px;line-height:1.7}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+/* ── 6. Scripture Parallax Banner ── */
+.scripture-banner{position:relative;padding:130px 60px;text-align:center;overflow:hidden}
+.scripture-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/5206038/pexels-photo-5206038.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;background-attachment:fixed}
+.scripture-overlay{position:absolute;inset:0;background:rgba(13,24,33,0.88)}
+.scripture-content{position:relative;z-index:2;max-width:860px;margin:0 auto}
+.scripture-deco{width:80px;height:5px;background:var(--primary);margin:0 auto 36px;border-radius:2px}
+.scripture-content blockquote{font-family:'Montserrat',sans-serif;font-size:clamp(24px,4vw,44px);color:white;line-height:1.4;font-weight:800;letter-spacing:-1px;margin-bottom:24px}
+.scripture-content blockquote span{color:var(--primary)}
+.scripture-content cite{font-family:'Open Sans',sans-serif;font-size:16px;color:var(--primary);font-style:normal;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+
+/* ── 7. Footer ── */
+footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px}
+.footer-grid{max-width:1280px;margin:0 auto 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-brand{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;color:white;margin-bottom:16px;letter-spacing:-0.5px}
+.footer-desc{font-size:14px;line-height:1.7;max-width:320px;opacity:0.85}
+.footer-social{display:flex;gap:12px;margin-top:20px}
+.footer-social a{width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.8);font-size:16px;transition:all 0.2s}
+.footer-social a:hover{background:var(--primary);color:white}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{color:rgba(255,255,255,0.75);font-size:14px;transition:color 0.2s}
+.footer-col a:hover{color:var(--primary)}
+.footer-contact{display:flex;flex-direction:column;gap:10px;font-size:14px;color:rgba(255,255,255,0.75)}
+.footer-contact span{display:flex;align-items:center;gap:8px}
+.footer-bottom{max-width:1280px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;font-size:13px;opacity:0.7}
+
+/* ── Responsive ── */
+@media(max-width:1024px){
+  .ministry-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  nav.main-nav{padding:0 24px;height:64px}
+  nav.main-nav ul{display:none}
+  .hero-content{padding:0 24px}
+  .ministries{padding:60px 24px}
+  .ministry-grid{grid-template-columns:1fr}
+  .ministry-card{height:340px}
+  .small-groups{padding:60px 24px}
+  .zigzag-row{grid-template-columns:1fr;gap:32px}
+  .zigzag-row.reverse .zigzag-img{order:0}
+  .zigzag-row.reverse .zigzag-text{order:0}
+  .zigzag-img img{height:300px}
+  .cta-section{padding:60px 24px}
+  .scripture-banner{padding:80px 24px}
+  footer{padding:60px 24px 32px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ 1. FIXED NAV ═══════ -->
+<nav class="main-nav">
+  <a href="index.html" class="logo">YOUR <span>CHURCH</span></a>
+  <ul>
+    <li><a href="about.html">About</a></li>
+    <li><a href="ministries.html" class="active">Ministries</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="give.html">Give</a></li>
+  </ul>
+  <a href="visit.html" class="nav-cta">Visit</a>
+</nav>
+
+<!-- ═══════ 2. HERO (100vh) ═══════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Find Your Place</span>
+    <h1>OUR<br><em>MINISTRIES</em></h1>
+    <p>Every person has a purpose. Every gift matters. Discover where you fit in the life of our church and start making a difference today.</p>
+    <div class="hero-btns">
+      <a href="#ministry-grid" class="btn-primary">Explore Ministries</a>
+      <a href="visit.html" class="btn-secondary">Get Connected</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    Scroll
+    <i></i>
+  </div>
+</section>
+
+<!-- ═══════ 3. MINISTRY GRID (6 Cards) ═══════ -->
+<section class="ministries" id="ministry-grid">
+  <div class="ministries-inner">
+    <div class="section-header">
+      <h2>Ways to Serve &amp; Grow</h2>
+      <div class="red-divider center"></div>
+      <p>From worship to outreach, there is a place for everyone. Explore our ministries and find the one that stirs your heart.</p>
+    </div>
+    <div class="ministry-grid">
+
+      <!-- Card 1: Worship -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Worship Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Worship</h3>
+          <p>Our worship team leads the congregation into powerful encounters every week through music, vocals, and creative arts. Whether you play an instrument, sing, or run sound — there is a spot for you on this team.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Youth -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/8363035/pexels-photo-8363035.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Youth Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Youth</h3>
+          <p>Our middle and high school ministry creates a space where students can build authentic friendships, grow deeper in faith, and discover who God created them to be through dynamic teaching and real community.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Children -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Children's Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Children</h3>
+          <p>From nursery through fifth grade, our kids experience age-appropriate worship, Bible teaching, and hands-on activities that lay a foundation of faith they will carry for a lifetime.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 4: Small Groups -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Small Groups Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Small Groups</h3>
+          <p>Life is better together. Our small groups meet weekly in homes across the city for Bible study, prayer, and authentic fellowship. This is where real relationships are built and faith gets personal.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 5: Outreach -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Outreach Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Outreach</h3>
+          <p>We believe the church exists for those outside its walls. Through food drives, community events, global missions, and neighborhood partnerships, we bring the love of Christ to those who need it most.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 6: Men's & Women's -->
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/8468459/pexels-photo-8468459.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Men's and Women's Ministry">
+        <div class="ministry-card-overlay">
+          <h3>Men's &amp; Women's</h3>
+          <p>Our gender-specific ministries provide a safe space for men and women to pursue growth, accountability, and encouragement through retreats, Bible studies, mentoring, and fellowship events.</p>
+          <a href="#">Learn More &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 4. SMALL GROUPS ZIGZAG ═══════ -->
+<section class="small-groups">
+  <div class="small-groups-inner">
+    <div class="section-header" style="margin-bottom:72px">
+      <h2>Life-Changing Small Groups</h2>
+      <div class="red-divider center"></div>
+      <p>Don't just attend church — be the church. Our groups meet in living rooms, coffee shops, and parks all across the city.</p>
+    </div>
+
+    <!-- Row 1: Image Left -->
+    <div class="zigzag-row">
+      <div class="zigzag-img">
+        <img src="https://images.pexels.com/photos/7149165/pexels-photo-7149165.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Small group Bible study in a living room">
+      </div>
+      <div class="zigzag-text">
+        <span class="zigzag-badge">Community</span>
+        <h3>Real People, Real Faith</h3>
+        <div class="red-divider" style="margin:12px 0 20px"></div>
+        <p>Our small groups are the heartbeat of our church. Every week, hundreds of people gather in homes to study the Bible, share life's highs and lows, and pray for one another. It's where Sunday's message becomes Monday's reality.</p>
+        <ul>
+          <li>Over 50 active groups across the metro area</li>
+          <li>Groups for every season of life — singles, couples, parents, seniors</li>
+          <li>New group semesters launch every January and September</li>
+        </ul>
+        <a href="visit.html" class="btn-primary" style="padding:14px 30px;font-size:14px">Find a Group</a>
+      </div>
+    </div>
+
+    <!-- Row 2: Image Right (reverse) -->
+    <div class="zigzag-row reverse">
+      <div class="zigzag-img">
+        <img src="https://images.pexels.com/photos/6646852/pexels-photo-6646852.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Young adults fellowship and community">
+      </div>
+      <div class="zigzag-text">
+        <span class="zigzag-badge">Growth</span>
+        <h3>Go Deeper Together</h3>
+        <div class="red-divider" style="margin:12px 0 20px"></div>
+        <p>Small groups aren't just about socializing — they're about transformation. Each semester follows a curated curriculum designed to help you understand Scripture, wrestle with tough questions, and apply truth to everyday life.</p>
+        <ul>
+          <li>Verse-by-verse studies and topical deep dives</li>
+          <li>Trained group leaders who walk alongside you</li>
+          <li>Resources and devotionals provided each week</li>
+        </ul>
+        <a href="visit.html" class="btn-dark">Become a Leader</a>
+      </div>
+    </div>
+
+    <!-- Row 3: Image Left -->
+    <div class="zigzag-row">
+      <div class="zigzag-img">
+        <img src="https://images.pexels.com/photos/3810968/pexels-photo-3810968.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Service project team working together">
+      </div>
+      <div class="zigzag-text">
+        <span class="zigzag-badge">Impact</span>
+        <h3>Serve Your Neighborhood</h3>
+        <div class="red-divider" style="margin:12px 0 20px"></div>
+        <p>Every small group is encouraged to adopt a service project each semester. From packing meals at the food bank to mentoring students at a local school, our groups are the hands and feet of Jesus right where they live.</p>
+        <ul>
+          <li>Quarterly neighborhood serve days</li>
+          <li>Partnerships with local nonprofits and schools</li>
+          <li>Over 2,000 volunteer hours logged last year</li>
+        </ul>
+        <a href="events.html" class="btn-primary" style="padding:14px 30px;font-size:14px">See Serve Days</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 5. GET INVOLVED CTA ═══════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="red-divider center" style="margin-bottom:28px"></div>
+    <h2>READY TO <em>GET INVOLVED?</em></h2>
+    <p>You were made for more than just watching from the sidelines. Take the next step and discover how God wants to use your unique gifts to build His kingdom and bless your community.</p>
+    <div class="cta-btns">
+      <a href="visit.html" class="btn-primary">Sign Up to Serve</a>
+      <a href="events.html" class="btn-outline">Upcoming Events</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 6. SCRIPTURE PARALLAX BANNER ═══════ -->
+<section class="scripture-banner">
+  <div class="scripture-bg"></div>
+  <div class="scripture-overlay"></div>
+  <div class="scripture-content">
+    <div class="scripture-deco"></div>
+    <blockquote>&ldquo;For we are his workmanship, created in Christ Jesus for <span>good works</span>, which God prepared beforehand, that we should walk in them.&rdquo;</blockquote>
+    <cite>&mdash; Ephesians 2:10</cite>
+  </div>
+</section>
+
+<!-- ═══════ 7. FOOTER ═══════ -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">YOUR CHURCH</div>
+      <p class="footer-desc">A bold community of believers living out authentic faith. Everyone has a place here — come as you are and grow with us.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">&#102;</a>
+        <a href="#" aria-label="Instagram">&#9737;</a>
+        <a href="#" aria-label="YouTube">&#9654;</a>
+        <a href="#" aria-label="Twitter">&#120;</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="media.html">Sermons</a></li>
+        <li><a href="events.html">Calendar</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <div class="footer-contact">
+        <span>&#9993; hello@yourchurch.com</span>
+        <span>&#9742; (555) 987-6543</span>
+        <span>&#9962; 456 Main Street</span>
+        <span>Metro City, ST 67890</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 Your Church. All rights reserved.</span>
+    <span>Bold faith. Real community.</span>
+  </div>
+</footer>
+
+</body>
+</html>

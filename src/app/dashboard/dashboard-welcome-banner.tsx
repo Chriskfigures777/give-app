@@ -1,53 +1,50 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "motion/react";
-
-const BANNER_IMAGE =
-  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=1200&q=80";
-
 type Props = { userName: string | null };
 
 export function DashboardWelcomeBanner({ userName }: Props) {
   const displayName = userName?.split(" ")[0] ?? "there";
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-emerald-900/40 to-teal-900/50 shadow-xl"
-    >
-      <div className="absolute inset-0">
-        <Image
-          src={BANNER_IMAGE}
-          alt=""
-          fill
-          className="object-cover opacity-40"
-          sizes="(max-width: 768px) 100vw, 1200px"
-          priority={false}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent" />
-      </div>
+    <div className="dashboard-fade-in relative overflow-hidden rounded-2xl">
+      {/* Animated gradient background */}
+      <div className="gradient-mesh absolute inset-0 opacity-90" />
+      {/* Subtle noise overlay for depth */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
       <div className="relative z-10 flex flex-col justify-center px-8 py-10 sm:px-10 md:flex-row md:items-center md:justify-between md:py-12">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wider text-emerald-300/90">
-            Welcome back
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+            {greeting}
           </p>
-          <h2 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
+          <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl tracking-tight">
             Welcome back, {displayName}
           </h2>
-          <p className="mt-2 max-w-md text-white/80">
-            Here’s what’s happening with your donations and organizations today.
+          <p className="mt-2 max-w-md text-sm text-white/80 leading-relaxed">
+            Here&apos;s what&apos;s happening with your donations and
+            organizations today.
           </p>
         </div>
         <div className="mt-6 flex gap-3 md:mt-0">
-          <div className="rounded-xl bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <p className="text-xs font-medium text-white/70">Quick actions</p>
-            <p className="text-sm font-semibold text-white">View donations</p>
+          <div className="rounded-xl bg-white/10 px-5 py-3 backdrop-blur-sm border border-white/10 transition-all hover:bg-white/15 hover:border-white/20">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
+              Quick actions
+            </p>
+            <p className="text-sm font-semibold text-white mt-0.5">
+              View donations
+            </p>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

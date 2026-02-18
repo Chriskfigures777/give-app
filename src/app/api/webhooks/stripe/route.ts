@@ -1,8 +1,13 @@
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe/client";
 import { createServiceClient } from "@/lib/supabase/server";
 import { ENDOWMENT_SHARE_OF_PLATFORM_FEE } from "@/lib/stripe/constants";
+import { SPLITS_ENABLED } from "@/lib/feature-flags";
+
+type SplitEntry = { percentage: number; accountId?: string };
+import { sendDonationReceived, sendReceiptAttached, sendOrgDonationReceived, sendPayoutProcessed } from "@/lib/email/send-transactional";
 
 const webhookSecret =
   process.env.STRIPE_WEBHOOK_SECRET ||
@@ -32,10 +37,120 @@ export async function POST(req: NextRequest) {
 
   const supabase = createServiceClient();
 
+  console.log(JSON.stringify({
+    type: event.type,
+    id: event.id,
+    account: (event as { account?: string }).account ?? null,
+  }));
+
   switch (event.type) {
     case "payment_intent.succeeded": {
       const pi = event.data.object as Stripe.PaymentIntent;
       const metadata = pi.metadata ?? {};
+      const chargeId =
+        typeof pi.latest_charge === "string"
+          ? pi.latest_charge
+          : (pi.latest_charge as Stripe.Charge)?.id ?? null;
+
+      // --- Payment splitter: check for splits in metadata ---
+      let splits: SplitEntry[] = [];
+      const rawSplits = metadata.splits;
+      const splitMode = (metadata.split_mode as string) ?? "stripe_connect";
+
+      if (typeof rawSplits === "string" && rawSplits) {
+        try {
+          splits = JSON.parse(rawSplits) as SplitEntry[];
+        } catch {
+          // ignore parse errors
+        }
+      }
+
+      if (SPLITS_ENABLED && splits.length > 0 && chargeId && splitMode === "stripe_connect") {
+        // Charge landed on form owner's Connect account. application_fee = platform fee only.
+        // Transfer peer shares from form owner's Connect account to peer Connect accounts.
+        const { data: existingSplit } = await supabase
+          .from("split_transfers")
+          .select("id")
+          .eq("stripe_payment_intent_id", pi.id)
+          .maybeSingle();
+        if (existingSplit) break;
+
+        const organizationId = metadata.organization_id as string | undefined;
+        if (!organizationId) break;
+
+        const { data: orgRow } = await supabase
+          .from("organizations")
+          .select("stripe_connect_account_id")
+          .eq("id", organizationId)
+          .single();
+        const formOwnerConnectId = (orgRow as { stripe_connect_account_id: string | null } | null)
+          ?.stripe_connect_account_id;
+        if (!formOwnerConnectId) break;
+
+        const stripeSplits = splits.filter((s) => s.accountId);
+        const transferPromises: Promise<unknown>[] = [];
+
+        for (const entry of stripeSplits) {
+          const amount = Math.round((entry.percentage! / 100) * pi.amount);
+          if (amount >= 1) {
+            transferPromises.push(
+              stripe.transfers.create(
+                {
+                  amount,
+                  currency: (pi.currency as "usd") ?? "usd",
+                  destination: entry.accountId!,
+                  transfer_group: pi.id,
+                },
+                { stripeAccount: formOwnerConnectId }
+              )
+            );
+          }
+        }
+
+        if (transferPromises.length > 0) {
+          try {
+            await Promise.all(transferPromises);
+          } catch (transferErr) {
+            console.error("[webhook] Split transfer failed:", transferErr);
+            throw transferErr;
+          }
+          await supabase.from("split_transfers").insert({
+            stripe_payment_intent_id: pi.id,
+          });
+        }
+
+        // Create donation record for split payments (receipts, campaign tracking, etc.)
+        if (organizationId && pi.id) {
+          const { data: existingDonation } = await supabase
+            .from("donations")
+            .select("id")
+            .eq("stripe_payment_intent_id", pi.id)
+            .maybeSingle();
+          if (!existingDonation) {
+            const donationAmountCents =
+              parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+            const receiptToken = randomUUID();
+            await supabase.from("donations").insert({
+              amount_cents: donationAmountCents,
+              currency: pi.currency ?? "usd",
+              donor_email: metadata.donor_email || null,
+              donor_name: metadata.donor_name || null,
+              endowment_fund_id: metadata.endowment_fund_id || null,
+              stripe_payment_intent_id: pi.id,
+              stripe_charge_id: chargeId,
+              status: "succeeded",
+              organization_id: organizationId,
+              campaign_id: metadata.campaign_id || null,
+              user_id: metadata.user_id || null,
+              receipt_token: receiptToken,
+              metadata: { payment_intent: pi.id, split_mode: "stripe_connect" },
+            });
+          }
+        }
+        break;
+      }
+
+      // --- Standard donation flow (no splits or bank splits) ---
       const organizationId = metadata.organization_id;
       const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
 
@@ -44,36 +159,163 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      const chargeId =
-        typeof pi.latest_charge === "string"
-          ? pi.latest_charge
-          : (pi.latest_charge as Stripe.Charge)?.id ?? null;
-
       const donationAmountCents =
         parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
 
-      // @ts-ignore - Supabase client infers insert payload as never in some setups
-      const { error: insertError } = await supabase.from("donations").insert({
-        amount_cents: donationAmountCents,
-        currency: pi.currency ?? "usd",
-        donor_email: metadata.donor_email || null,
-        donor_name: metadata.donor_name || null,
-        endowment_fund_id: metadata.endowment_fund_id || null,
-        stripe_payment_intent_id: pi.id,
-        stripe_charge_id: chargeId,
-        status: "succeeded",
-        organization_id: organizationId,
-        campaign_id: metadata.campaign_id || null,
-        user_id: metadata.user_id || null,
-        metadata: { payment_intent: pi.id },
-      });
+      // Idempotency: donation may already exist (created optimistically on receipt page)
+      const { data: existing } = await supabase
+        .from("donations")
+        .select("id, created_at, receipt_token")
+        .eq("stripe_payment_intent_id", pi.id)
+        .maybeSingle();
 
-      if (insertError) {
-        console.error("Donation insert failed:", insertError);
-        return NextResponse.json(
-          { error: "Donation record failed" },
-          { status: 500 }
-        );
+      let insertedDonation: { id: string; created_at: string } | null = null;
+      let receiptToken: string;
+
+      if (existing) {
+        insertedDonation = existing as { id: string; created_at: string; receipt_token: string | null };
+        receiptToken = (existing as { receipt_token: string | null }).receipt_token ?? randomUUID();
+      } else {
+        receiptToken = randomUUID();
+        const { data: inserted, error: insertError } = await supabase
+          .from("donations")
+          .insert({
+            amount_cents: donationAmountCents,
+            currency: pi.currency ?? "usd",
+            donor_email: metadata.donor_email || null,
+            donor_name: metadata.donor_name || null,
+            endowment_fund_id: metadata.endowment_fund_id || null,
+            stripe_payment_intent_id: pi.id,
+            stripe_charge_id: chargeId,
+            status: "succeeded",
+            organization_id: organizationId,
+            campaign_id: metadata.campaign_id || null,
+            user_id: metadata.user_id || null,
+            receipt_token: receiptToken,
+            metadata: { payment_intent: pi.id },
+          })
+          .select("id, created_at")
+          .single();
+
+        if (insertError) {
+          console.error("Donation insert failed:", insertError);
+          return NextResponse.json(
+            { error: "Donation record failed" },
+            { status: 500 }
+          );
+        }
+        insertedDonation = inserted as { id: string; created_at: string };
+      }
+
+      // Internal splits: create payouts to org's connected bank accounts
+      const { data: orgForSplits } = await supabase
+        .from("organizations")
+        .select("stripe_connect_account_id")
+        .eq("id", organizationId)
+        .single();
+      const connectAccountId = (orgForSplits as { stripe_connect_account_id: string | null } | null)
+        ?.stripe_connect_account_id;
+
+      if (connectAccountId) {
+        const { data: formRow } = await supabase
+          .from("form_customizations")
+          .select("internal_splits")
+          .eq("organization_id", organizationId)
+          .single();
+        const internalSplits = (formRow as { internal_splits: { percentage: number; externalAccountId: string }[] | null } | null)
+          ?.internal_splits;
+
+        if (Array.isArray(internalSplits) && internalSplits.length > 0) {
+          const amountToSplit = Math.max(0, pi.amount - applicationFeeCents);
+          if (amountToSplit >= 1) {
+            // @ts-ignore - internal_split_payouts may not be in generated types
+            const { data: existingPayout } = await supabase
+              .from("internal_split_payouts")
+              .select("id")
+              .eq("stripe_payment_intent_id", pi.id)
+              .maybeSingle();
+            if (!existingPayout) {
+              try {
+                for (const s of internalSplits) {
+                  const amt = Math.round((s.percentage / 100) * amountToSplit);
+                  if (amt >= 1 && s.externalAccountId) {
+                    await stripe.payouts.create(
+                      {
+                        amount: amt,
+                        currency: (pi.currency as "usd") ?? "usd",
+                        destination: s.externalAccountId,
+                      },
+                      { stripeAccount: connectAccountId }
+                    );
+                  }
+                }
+                // @ts-ignore - internal_split_payouts may not be in generated types
+                await supabase.from("internal_split_payouts").insert({
+                  stripe_payment_intent_id: pi.id,
+                });
+              } catch (e) {
+                console.error("[webhook] Internal split payouts failed:", e);
+              }
+            }
+          }
+        }
+      }
+
+      // Transactional emails (after DB write succeeds; fail gracefully)
+      if (insertedDonation) {
+        const { data: orgRow } = await supabase
+          .from("organizations")
+          .select("name, owner_user_id")
+          .eq("id", organizationId)
+          .single();
+        const org = orgRow as { name: string; owner_user_id: string | null } | null;
+        const orgName = org?.name ?? "Organization";
+        const d = insertedDonation as { id: string; created_at: string };
+        if (metadata.donor_email) {
+          sendDonationReceived({
+            supabase,
+            donationId: d.id,
+            donorEmail: metadata.donor_email,
+            donorName: metadata.donor_name || null,
+            amountCents: donationAmountCents,
+            currency: pi.currency ?? "usd",
+            organizationName: orgName,
+            createdAt: d.created_at,
+          }).catch((e) => console.error("[email] donation_received failed:", e));
+          sendReceiptAttached({
+            supabase,
+            donationId: d.id,
+            donorEmail: metadata.donor_email,
+            donorName: metadata.donor_name || null,
+            amountCents: donationAmountCents,
+            currency: pi.currency ?? "usd",
+            organizationName: orgName,
+            createdAt: d.created_at,
+            receiptToken: receiptToken,
+          }).catch((e) => console.error("[email] receipt_attached failed:", e));
+        }
+        if (org?.owner_user_id) {
+          const { data: ownerProfile } = await supabase
+            .from("user_profiles")
+            .select("email")
+            .eq("id", org.owner_user_id)
+            .single();
+          const ownerEmail = (ownerProfile as { email: string | null } | null)?.email;
+          if (ownerEmail) {
+            sendOrgDonationReceived({
+              supabase,
+              donationId: d.id,
+              organizationId,
+              organizationName: orgName,
+              amountCents: donationAmountCents,
+              currency: pi.currency ?? "usd",
+              donorName: metadata.donor_name || null,
+              donorEmail: metadata.donor_email || null,
+              createdAt: d.created_at,
+              adminEmail: ownerEmail,
+            }).catch((e) => console.error("[email] org_donation_received failed:", e));
+          }
+        }
       }
 
       // Save org to donor's profile for quick re-giving
@@ -100,12 +342,35 @@ export async function POST(req: NextRequest) {
           const current = Number((campaign as { current_amount_cents: number | null }).current_amount_cents ?? 0);
           await supabase
             .from("donation_campaigns")
-            // @ts-expect-error - Supabase client infers update payload as never in some setups
             .update({
               current_amount_cents: current + donationAmountCents,
               updated_at: new Date().toISOString(),
             })
             .eq("id", campaignId);
+        }
+      }
+
+      // Update fund request progress (in-chat fundraising)
+      const fundRequestId = metadata.fund_request_id;
+      if (fundRequestId && donationAmountCents > 0) {
+        const { data: fr } = await supabase
+          .from("fund_requests")
+          .select("fulfilled_amount_cents, amount_cents, status")
+          .eq("id", fundRequestId)
+          .single();
+        if (fr) {
+          const current = Number((fr as { fulfilled_amount_cents: number | null }).fulfilled_amount_cents ?? 0);
+          const total = Number((fr as { amount_cents: number | null }).amount_cents ?? 0);
+          const newFulfilled = current + donationAmountCents;
+          const newStatus = newFulfilled >= total ? "fulfilled" : "open";
+          await supabase
+            .from("fund_requests")
+            .update({
+              fulfilled_amount_cents: newFulfilled,
+              status: newStatus,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", fundRequestId);
         }
       }
 
@@ -217,21 +482,100 @@ export async function POST(req: NextRequest) {
       const chargeRef = (invoice as { charge?: string | { id?: string } }).charge;
       const chargeId = typeof chargeRef === "string" ? chargeRef : chargeRef?.id ?? null;
 
-      // @ts-ignore - Supabase client infers types
-      await supabase.from("donations").insert({
-        amount_cents: donationAmountCents,
-        currency: invoice.currency ?? "usd",
-        donor_email: invoice.customer_email ?? metadata.donor_email ?? null,
-        donor_name: metadata.donor_name ?? null,
-        endowment_fund_id: metadata.endowment_fund_id || null,
-        stripe_payment_intent_id: (invoice as { payment_intent?: string }).payment_intent ?? null,
-        stripe_charge_id: chargeId,
-        status: "succeeded",
-        organization_id: organizationId,
-        campaign_id: campaignId || null,
-        user_id: metadata.user_id || null,
-        metadata: { invoice: invoice.id, subscription: subId },
-      });
+      // Idempotency: skip if already processed (Stripe retries webhooks)
+      if (chargeId) {
+        const { data: existingByCharge } = await supabase
+          .from("donations")
+          .select("id")
+          .eq("stripe_charge_id", chargeId)
+          .maybeSingle();
+        if (existingByCharge) break;
+      } else {
+        const { data: existingByInvoice } = await supabase
+          .from("donations")
+          .select("id")
+          .contains("metadata", { invoice: invoice.id })
+          .maybeSingle();
+        if (existingByInvoice) break;
+      }
+
+      const receiptToken = randomUUID();
+      const { data: insertedInvoiceDonation } = await supabase
+        .from("donations")
+        .insert({
+          amount_cents: donationAmountCents,
+          currency: invoice.currency ?? "usd",
+          donor_email: invoice.customer_email ?? metadata.donor_email ?? null,
+          donor_name: metadata.donor_name ?? null,
+          endowment_fund_id: metadata.endowment_fund_id || null,
+          stripe_payment_intent_id: (invoice as { payment_intent?: string }).payment_intent ?? null,
+          stripe_charge_id: chargeId,
+          status: "succeeded",
+          organization_id: organizationId,
+          campaign_id: campaignId || null,
+          user_id: metadata.user_id || null,
+          receipt_token: receiptToken,
+          metadata: { invoice: invoice.id, subscription: subId },
+        })
+        .select("id, created_at")
+        .single();
+
+        if (insertedInvoiceDonation) {
+          const donorEmail = invoice.customer_email ?? metadata.donor_email ?? null;
+          const { data: orgRow } = await supabase
+            .from("organizations")
+            .select("name, owner_user_id")
+            .eq("id", organizationId)
+            .single();
+          const org = orgRow as { name: string; owner_user_id: string | null } | null;
+          const orgName = org?.name ?? "Organization";
+          const d = insertedInvoiceDonation as { id: string; created_at: string };
+          if (donorEmail) {
+            sendDonationReceived({
+              supabase,
+              donationId: d.id,
+              donorEmail,
+              donorName: metadata.donor_name ?? null,
+              amountCents: donationAmountCents,
+              currency: invoice.currency ?? "usd",
+              organizationName: orgName,
+              createdAt: d.created_at,
+            }).catch((e) => console.error("[email] donation_received (invoice) failed:", e));
+            sendReceiptAttached({
+              supabase,
+              donationId: d.id,
+              donorEmail,
+              donorName: metadata.donor_name ?? null,
+              amountCents: donationAmountCents,
+              currency: invoice.currency ?? "usd",
+              organizationName: orgName,
+              createdAt: d.created_at,
+              receiptToken,
+            }).catch((e) => console.error("[email] receipt_attached (invoice) failed:", e));
+          }
+          if (org?.owner_user_id) {
+            const { data: ownerProfile } = await supabase
+              .from("user_profiles")
+              .select("email")
+              .eq("id", org.owner_user_id)
+              .single();
+            const ownerEmail = (ownerProfile as { email: string | null } | null)?.email;
+            if (ownerEmail) {
+              sendOrgDonationReceived({
+                supabase,
+                donationId: d.id,
+                organizationId,
+                organizationName: orgName,
+                amountCents: donationAmountCents,
+                currency: invoice.currency ?? "usd",
+                donorName: metadata.donor_name ?? null,
+                donorEmail: donorEmail,
+                createdAt: d.created_at,
+                adminEmail: ownerEmail,
+              }).catch((e) => console.error("[email] org_donation_received (invoice) failed:", e));
+            }
+          }
+        }
 
       if (campaignId && donationAmountCents > 0) {
         const { data: campaign } = await supabase
@@ -243,7 +587,6 @@ export async function POST(req: NextRequest) {
           const current = Number((campaign as { current_amount_cents: number | null }).current_amount_cents ?? 0);
           await supabase
             .from("donation_campaigns")
-            // @ts-expect-error
             .update({
               current_amount_cents: current + donationAmountCents,
               updated_at: new Date().toISOString(),
@@ -268,6 +611,57 @@ export async function POST(req: NextRequest) {
       break;
     }
 
+    case "payout.paid": {
+      const payout = event.data.object as Stripe.Payout;
+      const connectAccountId = (event as { account?: string }).account;
+      if (!connectAccountId || !payout.id) break;
+
+      const { data: orgRow } = await supabase
+        .from("organizations")
+        .select("id, name, owner_user_id")
+        .eq("stripe_connect_account_id", connectAccountId)
+        .single();
+      if (!orgRow) break;
+
+      const org = orgRow as { id: string; name: string; owner_user_id: string | null };
+      const ownerId = org.owner_user_id;
+      if (!ownerId) break;
+
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("email")
+        .eq("id", ownerId)
+        .single();
+      const adminEmail = (profile as { email: string | null } | null)?.email;
+      if (!adminEmail) break;
+
+      const amountCents = payout.amount;
+      const currency = payout.currency ?? "usd";
+      const arrivalDate = payout.arrival_date
+        ? new Date(payout.arrival_date * 1000).toISOString()
+        : new Date().toISOString();
+      const destination = payout.destination
+        ? typeof payout.destination === "string"
+          ? "Bank account"
+          : (payout.destination as { last4?: string })?.last4
+            ? `Bank account ****${(payout.destination as { last4: string }).last4}`
+            : "Bank account"
+        : "Stripe balance";
+
+      sendPayoutProcessed({
+        supabase,
+        payoutId: payout.id,
+        organizationId: org.id,
+        organizationName: org.name,
+        amountCents,
+        currency,
+        destination,
+        arrivalDate,
+        adminEmail,
+      }).catch((e) => console.error("[email] payout_processed failed:", e));
+      break;
+    }
+
     case "account.updated": {
       const account = event.data.object as Stripe.Account;
       if (!account.id) break;
@@ -283,7 +677,6 @@ export async function POST(req: NextRequest) {
         : chargesEnabled || payoutsEnabled || detailsSubmitted;
       await supabase
         .from("organizations")
-        // @ts-expect-error - Supabase client infers update payload as never in some setups
         .update({
           onboarding_completed: onboardingCompleted,
           updated_at: new Date().toISOString(),

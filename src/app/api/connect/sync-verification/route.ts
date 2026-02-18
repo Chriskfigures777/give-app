@@ -86,7 +86,6 @@ export async function POST(req: Request) {
 
     await supabase
       .from("organizations")
-      // @ts-expect-error - Supabase update payload typing
       .update({
         onboarding_completed: onboardingCompleted,
         updated_at: new Date().toISOString(),

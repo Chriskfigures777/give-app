@@ -24,7 +24,12 @@ export async function PATCH(req: Request) {
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
     const isPlatformAdmin = profile?.role === "platform_admin";
 
-    const body = await req.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
     const targetOrgId = body.organizationId as string | undefined;
     const organizationId = isPlatformAdmin ? targetOrgId : orgId;
 
@@ -56,6 +61,17 @@ export async function PATCH(req: Request) {
       font_family,
       design_sets,
       thank_you_message,
+      thank_you_video_url,
+      thank_you_cta_url,
+      thank_you_cta_text,
+      form_display_mode,
+      form_media_side,
+      embed_form_theme,
+      org_page_embed_card_id,
+      org_page_donate_link_slug,
+      donation_section_layout,
+      splits,
+      split_mode,
     } = body as {
       suggested_amounts?: number[];
       allow_custom_amount?: boolean;
@@ -72,9 +88,20 @@ export async function PATCH(req: Request) {
       font_family?: string;
       design_sets?: DesignSetPayload[] | null;
       thank_you_message?: string | null;
+      thank_you_video_url?: string | null;
+      thank_you_cta_url?: string | null;
+      thank_you_cta_text?: string | null;
+      form_display_mode?: "full" | "compressed" | "full_width";
+      form_media_side?: "left" | "right";
+      embed_form_theme?: "default" | "grace" | "dark-elegant" | "bold-contemporary";
+      org_page_embed_card_id?: string | null;
+      org_page_donate_link_slug?: string | null;
+      donation_section_layout?: "text_left" | "text_right";
+      splits?: { percentage: number; accountId?: string; splitBankAccountId?: string }[];
+      split_mode?: "stripe_connect" | "bank_accounts";
     };
 
-    const update: TablesUpdate<"form_customizations"> = {};
+    const update: Record<string, unknown> = {};
     if (suggested_amounts !== undefined) update.suggested_amounts = suggested_amounts;
     if (allow_custom_amount !== undefined) update.allow_custom_amount = allow_custom_amount;
     if (header_text !== undefined) update.header_text = header_text;
@@ -88,8 +115,49 @@ export async function PATCH(req: Request) {
     if (text_color !== undefined) update.text_color = text_color;
     if (show_endowment_selection !== undefined) update.show_endowment_selection = show_endowment_selection;
     if (font_family !== undefined) update.font_family = font_family;
-    if (design_sets !== undefined) update.design_sets = design_sets ?? null;
+    if (design_sets !== undefined) {
+      if (Array.isArray(design_sets)) {
+        update.design_sets = design_sets;
+      } else if (typeof design_sets === "string") {
+        try {
+          const parsed = JSON.parse(design_sets);
+          update.design_sets = Array.isArray(parsed) ? parsed : null;
+        } catch {
+          update.design_sets = null;
+        }
+      } else {
+        update.design_sets = null;
+      }
+    }
     if (thank_you_message !== undefined) update.thank_you_message = thank_you_message ?? null;
+    if (thank_you_video_url !== undefined) update.thank_you_video_url = thank_you_video_url ?? null;
+    if (thank_you_cta_url !== undefined) update.thank_you_cta_url = thank_you_cta_url ?? null;
+    if (thank_you_cta_text !== undefined) update.thank_you_cta_text = thank_you_cta_text ?? null;
+    if (form_display_mode !== undefined) update.form_display_mode = form_display_mode;
+    if (form_media_side !== undefined) update.form_media_side = form_media_side;
+    if (embed_form_theme !== undefined) update.embed_form_theme = embed_form_theme ?? "default";
+    if (org_page_embed_card_id !== undefined) update.org_page_embed_card_id = org_page_embed_card_id ?? null;
+    if (org_page_donate_link_slug !== undefined) update.org_page_donate_link_slug = org_page_donate_link_slug ?? null;
+    if (donation_section_layout !== undefined) update.donation_section_layout = donation_section_layout;
+    if (splits !== undefined) {
+      const { SPLITS_ENABLED } = await import("@/lib/feature-flags");
+      if (!SPLITS_ENABLED) {
+        update.splits = [];
+      } else {
+        const filtered = Array.isArray(splits)
+          ? splits.filter((s) => typeof s?.accountId === "string")
+          : [];
+        const valid =
+          Array.isArray(filtered) &&
+          filtered.every(
+            (s) => typeof s?.percentage === "number" && typeof s?.accountId === "string"
+          );
+        update.splits = valid ? filtered : [];
+      }
+    }
+    if (split_mode !== undefined) {
+      update.split_mode = "stripe_connect";
+    }
 
     const { data: existing } = await supabase
       .from("form_customizations")

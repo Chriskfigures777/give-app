@@ -3,22 +3,61 @@ import { createClient } from "@/lib/supabase/server";
 import { DonationForm } from "../donation-form";
 import { GiveSignInPrompt } from "../give-sign-in-prompt";
 import { FormCardMedia } from "@/components/form-card-media";
+import { CompressedDonationCard } from "@/components/compressed-donation-card";
+import { GoalDonationCard } from "@/components/goal-donation-card";
+import { GoalCompactDonationCard } from "@/components/goal-compact-donation-card";
+import { MinimalDonationCard } from "@/components/minimal-donation-card";
 import { DEFAULT_HEADER_IMAGE_URL } from "@/lib/form-defaults";
 import { getGoogleFontUrl, getFontFamily, getHeaderFontWeight } from "@/lib/form-fonts";
+import { env } from "@/env";
 import type { DesignSet } from "@/lib/stock-media";
+import { isDirectMediaUrl } from "@/lib/stock-media";
+import {
+  GRACE_THEME_CSS,
+  GRACE_THEME_FONT_URL,
+  DARK_ELEGANT_THEME_CSS,
+  DARK_ELEGANT_FONT_URL,
+  BOLD_CONTEMPORARY_THEME_CSS,
+  BOLD_CONTEMPORARY_FONT_URL,
+} from "@/lib/embed-form-themes";
+import { EmbedResizeObserver } from "./embed-resize-observer";
 
 const DEFAULT_SUGGESTED_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ frequency?: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string }>;
+};
+
+type EmbedCardRow = {
+  id: string;
+  organization_id: string;
+  name: string;
+  style: "full" | "compressed" | "goal" | "goal_compact" | "minimal";
+  campaign_id: string | null;
+  design_set: { media_type?: string; media_url?: string | null; title?: string | null; subtitle?: string | null } | null;
+  button_color: string | null;
+  button_text_color: string | null;
+  primary_color: string | null;
+  is_enabled: boolean;
+  goal_description?: string | null;
+};
 
 /**
  * Embeddable donation form: the whole card (image + form) with minimal chrome for iframe embedding.
- * No site navigation — just the form box.
+ * Supports ?card=[card_id] for customizable embed cards, ?compact=1 for backward compatibility.
  */
 export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { frequency: frequencyParam } = await searchParams;
+  const resolved = await searchParams;
+  const frequencyParam = resolved.frequency;
+  const compactParam = resolved.compact;
+  const fullscreenParam = resolved.fullscreen;
+  const cardParam = resolved.card;
   const initialFrequency = (typeof frequencyParam === "string" ? frequencyParam : frequencyParam?.[0]) as "monthly" | "yearly" | undefined;
+  const isCompact = compactParam === "1" || compactParam === "true";
+  const isFullscreen = fullscreenParam === "1" || fullscreenParam === "true";
+  const cardId = typeof cardParam === "string" ? cardParam : cardParam?.[0];
   const supabase = await createClient();
 
   const { data: orgRow } = await supabase
@@ -30,10 +69,33 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const org = orgRow as { id: string; name: string; slug: string; stripe_connect_account_id: string | null } | null;
   if (!org?.stripe_connect_account_id) notFound();
 
+  let embedCard: EmbedCardRow | null = null;
+  if (cardId) {
+    const { data: cardRow } = await supabase
+      .from("org_embed_cards")
+      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, primary_color, is_enabled, goal_description")
+      .eq("id", cardId)
+      .eq("organization_id", org.id)
+      .eq("is_enabled", true)
+      .single();
+    embedCard = cardRow as EmbedCardRow | null;
+  } else if (!isCompact) {
+    const { data: firstFullCard } = await supabase
+      .from("org_embed_cards")
+      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, primary_color, is_enabled, goal_description")
+      .eq("organization_id", org.id)
+      .eq("is_enabled", true)
+      .eq("style", "full")
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    embedCard = firstFullCard as EmbedCardRow | null;
+  }
+
   const [{ data: campaignsData }, { data: formCustomRow }] = await Promise.all([
     supabase
       .from("donation_campaigns")
-      .select("id, name, suggested_amounts, minimum_amount_cents, allow_recurring, allow_anonymous, goal_amount_cents, current_amount_cents")
+      .select("id, name, suggested_amounts, minimum_amount_cents, allow_recurring, allow_anonymous, goal_amount_cents, current_amount_cents, goal_deadline")
       .eq("organization_id", org.id)
       .eq("is_active", true),
     supabase
@@ -48,10 +110,10 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     .select("id, name")
     .limit(20);
 
-  type FormCustom = { suggested_amounts?: number[] | null; show_endowment_selection?: boolean | null; allow_custom_amount?: boolean | null; header_text?: string | null; subheader_text?: string | null; primary_color?: string | null; button_color?: string | null; button_text_color?: string | null; button_border_radius?: string | null; background_color?: string | null; text_color?: string | null; font_family?: string | null; header_image_url?: string | null; design_sets?: DesignSet[] | null };
+  type FormCustom = { suggested_amounts?: number[] | null; show_endowment_selection?: boolean | null; allow_custom_amount?: boolean | null; header_text?: string | null; subheader_text?: string | null; primary_color?: string | null; button_color?: string | null; button_text_color?: string | null; button_border_radius?: string | null; background_color?: string | null; text_color?: string | null; font_family?: string | null; header_image_url?: string | null; design_sets?: DesignSet[] | null; form_display_mode?: "full" | "compressed" | null; form_media_side?: "left" | "right" | null; embed_form_theme?: "default" | "grace" | "dark-elegant" | "bold-contemporary" | null };
   const formCustom = formCustomRow as FormCustom | null;
   const designSets = (formCustom?.design_sets as DesignSet[] | undefined)?.filter((s) => s && (s.media_url || s.title || s.subtitle)) ?? [];
-  type Campaign = { id: string; name: string; suggested_amounts: unknown; minimum_amount_cents: number | null; allow_recurring: boolean | null; allow_anonymous: boolean | null; goal_amount_cents?: number | null; current_amount_cents?: number | null };
+  type Campaign = { id: string; name: string; suggested_amounts: unknown; minimum_amount_cents: number | null; allow_recurring: boolean | null; allow_anonymous: boolean | null; goal_amount_cents?: number | null; current_amount_cents?: number | null; goal_deadline?: string | null };
   const campaigns = (campaignsData ?? []) as Campaign[];
 
   const suggestedAmounts =
@@ -60,6 +122,354 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const fontFamily = getFontFamily(formCustom?.font_family);
   const headerFontWeight = getHeaderFontWeight(formCustom?.font_family);
   const googleFontUrl = getGoogleFontUrl(formCustom?.font_family);
+  const baseUrl = env.app.domain().replace(/\/$/, "");
+  const borderRadius = formCustom?.button_border_radius ?? "8px";
+
+  const designSetFromCard = embedCard?.design_set
+    ? {
+        media_type: (embedCard.design_set.media_type ?? "image") as "image" | "video",
+        media_url: embedCard.design_set.media_url ?? null,
+        title: embedCard.design_set.title ?? null,
+        subtitle: embedCard.design_set.subtitle ?? null,
+      }
+    : null;
+
+  const cardDesignSets = designSetFromCard ? [designSetFromCard] : designSets;
+
+  /** Fallback to form design_sets when embed card has no valid media_url (e.g. first card has media_url: null). */
+  const effectiveMediaSet = ((): DesignSet & { media_url: string } => {
+    const cardSet = cardDesignSets[0];
+    const formSet = designSets[0];
+    if (cardSet?.media_url && isDirectMediaUrl(cardSet.media_url))
+      return { ...cardSet, media_url: cardSet.media_url };
+    if (formSet?.media_url && isDirectMediaUrl(formSet.media_url))
+      return { ...formSet, media_url: formSet.media_url };
+    const headerUrl = isDirectMediaUrl(formCustom?.header_image_url)
+      ? formCustom!.header_image_url!
+      : DEFAULT_HEADER_IMAGE_URL;
+    return {
+      media_type: "image",
+      media_url: headerUrl,
+      title: (cardSet?.title ?? formSet?.title) ?? null,
+      subtitle: (cardSet?.subtitle ?? formSet?.subtitle) ?? null,
+    };
+  })();
+
+  const safeFallbackImageUrl = isDirectMediaUrl(formCustom?.header_image_url)
+    ? formCustom!.header_image_url!
+    : DEFAULT_HEADER_IMAGE_URL;
+
+  const embedFormTheme = (formCustom?.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary") ?? "default";
+  const useThemedLayout = embedFormTheme !== "default";
+
+  const effectiveStyle = embedCard?.style ?? (isCompact ? "compressed" : "full");
+
+  if (effectiveStyle === "goal" || effectiveStyle === "goal_compact") {
+    const campaignId = embedCard?.campaign_id ?? null;
+    const campaign = campaignId ? campaigns.find((c) => c.id === campaignId) : null;
+    if (!campaign || campaign.goal_amount_cents == null || campaign.goal_amount_cents <= 0) {
+      return (
+        <main className="min-h-full p-5 flex flex-col items-center justify-center">
+          <EmbedResizeObserver />
+          <p className="text-slate-600">This campaign card is not configured.</p>
+        </main>
+      );
+    }
+    const goalAmountCents = Number(campaign.goal_amount_cents);
+    const currentAmountCents = Number(campaign.current_amount_cents ?? 0);
+
+    if (effectiveStyle === "goal") {
+      return (
+        <main
+          className="min-h-full p-5 flex flex-col items-center justify-center"
+          style={{
+            backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+            fontFamily,
+          }}
+        >
+          <EmbedResizeObserver />
+          <GoalDonationCard
+            organizationName={org.name}
+            slug={slug}
+            designSet={designSetFromCard ?? undefined}
+            headerImageUrl={safeFallbackImageUrl}
+            title={designSetFromCard?.title ?? formCustom?.header_text}
+            subtitle={designSetFromCard?.subtitle ?? formCustom?.subheader_text}
+            goalDescription={embedCard?.goal_description}
+            buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+            buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+            primaryColor={embedCard?.primary_color ?? formCustom?.primary_color}
+            borderRadius={borderRadius}
+            goalAmountCents={goalAmountCents}
+            currentAmountCents={currentAmountCents}
+            goalDeadline={campaign.goal_deadline}
+            campaignId={campaignId}
+            basePath={baseUrl}
+          />
+        </main>
+      );
+    }
+
+    return (
+      <main
+        className="min-h-full p-5 flex flex-col items-center justify-center"
+        style={{
+          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          fontFamily,
+        }}
+      >
+        <EmbedResizeObserver />
+        <GoalCompactDonationCard
+          organizationName={org.name}
+          slug={slug}
+          title={designSetFromCard?.title ?? formCustom?.header_text ?? campaign.name}
+          goalDescription={embedCard?.goal_description}
+          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+          primaryColor={embedCard?.primary_color ?? formCustom?.primary_color}
+          borderRadius={borderRadius}
+          goalAmountCents={goalAmountCents}
+          currentAmountCents={currentAmountCents}
+          campaignId={campaignId}
+          basePath={baseUrl}
+        />
+      </main>
+    );
+  }
+
+  if (effectiveStyle === "minimal") {
+    return (
+      <main
+        className="min-h-full p-5 flex flex-col items-center justify-center"
+        style={{
+          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          fontFamily,
+        }}
+      >
+        <EmbedResizeObserver />
+        <MinimalDonationCard
+          organizationName={org.name}
+          slug={slug}
+          designSet={designSetFromCard ?? undefined}
+          headerImageUrl={safeFallbackImageUrl}
+          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+          borderRadius={borderRadius}
+          basePath={baseUrl}
+        />
+      </main>
+    );
+  }
+
+  if (effectiveStyle === "compressed") {
+    return (
+      <main
+        className="min-h-full p-5 flex flex-col items-center justify-center"
+        style={{
+          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          fontFamily,
+        }}
+      >
+        <EmbedResizeObserver />
+        <CompressedDonationCard
+          organizationName={org.name}
+          slug={slug}
+          headerImageUrl={safeFallbackImageUrl}
+          headerText={designSetFromCard?.title ?? formCustom?.header_text}
+          subheaderText={designSetFromCard?.subtitle ?? formCustom?.subheader_text}
+          designSets={cardDesignSets}
+          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+          borderRadius={borderRadius}
+          basePath={baseUrl}
+        />
+      </main>
+    );
+  }
+
+  // Themed embed: give-split layout (image left, form right) for all non-default themes
+  const renderThemedEmbed = () => {
+    const headerText = designSetFromCard?.title ?? formCustom?.header_text ?? "Make a Donation";
+    const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
+    const mediaUrl = effectiveMediaSet.media_url;
+    const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
+
+    const themeMap: Record<string, { wrapperClass: string; bgColor: string; fontUrl: string; css: string; formPanelClass: string; eyebrowText: string; secureText: string }> = {
+      grace: {
+        wrapperClass: "embed-theme-grace",
+        bgColor: "#FAF7F2",
+        fontUrl: GRACE_THEME_FONT_URL,
+        css: GRACE_THEME_CSS,
+        formPanelClass: "gs-form",
+        eyebrowText: "Give Online",
+        secureText: "All transactions are secure and encrypted",
+      },
+      "dark-elegant": {
+        wrapperClass: "embed-theme-dark-elegant",
+        bgColor: "#171717",
+        fontUrl: DARK_ELEGANT_FONT_URL,
+        css: DARK_ELEGANT_THEME_CSS,
+        formPanelClass: "gs-form",
+        eyebrowText: "Generosity",
+        secureText: "Secure & encrypted",
+      },
+      "bold-contemporary": {
+        wrapperClass: "embed-theme-bold",
+        bgColor: "#F8F9FA",
+        fontUrl: BOLD_CONTEMPORARY_FONT_URL,
+        css: BOLD_CONTEMPORARY_THEME_CSS,
+        formPanelClass: "gs-form-light",
+        eyebrowText: "Make a Difference",
+        secureText: "Secure, encrypted giving powered by Stripe",
+      },
+    };
+
+    const tc = themeMap[embedFormTheme] ?? themeMap.grace;
+
+    return (
+      <main
+        className={`${tc.wrapperClass} min-h-full p-5 flex flex-col items-center justify-center`}
+        style={{ backgroundColor: tc.bgColor, fontFamily: "'Inter', sans-serif", containerType: "inline-size" } as React.CSSProperties}
+      >
+        <EmbedResizeObserver />
+        <link rel="stylesheet" href={tc.fontUrl} />
+        <style dangerouslySetInnerHTML={{ __html: tc.css }} />
+        <div className="give-split w-full max-w-[900px]">
+          <div className="gs-img">
+            {hasVideo ? (
+              <video
+                src={effectiveMediaSet.media_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover block min-h-[320px]"
+                aria-hidden
+              />
+            ) : (
+              <img
+                src={mediaUrl}
+                alt="Community impact"
+                className="w-full h-full object-cover block min-h-[320px]"
+              />
+            )}
+          </div>
+          <div className={tc.formPanelClass}>
+            <span className="sec-eye">
+              {tc.eyebrowText}
+            </span>
+            <h3>{headerText}</h3>
+            <p className="gs-form-desc">{subheaderText}</p>
+            <DonationForm
+              organizationId={org.id}
+              organizationName={org.name}
+              campaigns={campaigns ?? []}
+              endowmentFunds={endowmentFunds ?? []}
+              suggestedAmounts={suggestedAmounts}
+              minimumAmountCents={minCents}
+              showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+              allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+              allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+              borderRadius={borderRadius}
+              slug={slug}
+              noCard
+              initialFrequency={initialFrequency}
+              fullWidth
+              embedCardId={embedCard?.id}
+            />
+            <p className="gs-form-secure">{tc.secureText}</p>
+          </div>
+        </div>
+        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+      </main>
+    );
+  };
+
+  // Fullscreen: side-by-side layout (image left, form right) on md+, stacked on mobile
+  // When Grace theme: use give-split (image left, form right) instead
+  if (isFullscreen) {
+    if (useThemedLayout) {
+      return renderThemedEmbed();
+    }
+    const headerText = formCustom?.header_text ?? "Make a Donation";
+    const subheaderText = formCustom?.subheader_text ?? `Support ${org.name}`;
+
+    return (
+      <main
+        data-fullscreen
+        className="w-full min-h-screen flex flex-col md:flex-row"
+        style={{
+          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          color: formCustom?.text_color ?? "var(--stripe-dark)",
+          fontFamily,
+        }}
+      >
+        <EmbedResizeObserver />
+        {googleFontUrl && (
+          <link rel="stylesheet" href={googleFontUrl} />
+        )}
+
+        {/* Left side — sticky image/media panel (hidden on mobile, shown as top banner instead) */}
+        {/* Mobile: top banner */}
+        <div className="relative w-full min-h-[220px] aspect-[16/9] flex-shrink-0 md:hidden">
+          <FormCardMedia
+            set={effectiveMediaSet}
+            fallbackImageUrl={safeFallbackImageUrl}
+            className="absolute inset-0 h-full w-full"
+            fontFamily={fontFamily}
+            titleFontWeight={headerFontWeight ?? 700}
+          />
+        </div>
+
+        {/* Desktop: left panel — sticky image with text overlay */}
+        <div className="hidden md:flex md:w-1/2 lg:w-[55%] relative md:sticky md:top-0 md:self-start md:min-h-screen">
+          <FormCardMedia
+            set={effectiveMediaSet}
+            fallbackImageUrl={safeFallbackImageUrl}
+            className="absolute inset-0 h-full w-full"
+            fontFamily={fontFamily}
+            titleFontWeight={headerFontWeight ?? 700}
+          />
+        </div>
+
+        {/* Right side — form */}
+        <div
+          className="flex flex-col w-full md:w-1/2 lg:w-[45%] min-w-0 flex-1 overflow-visible"
+          style={{ fontFamily, backgroundColor: "#f8f9fa" }}
+        >
+          <div className="w-full min-w-0 flex flex-col justify-center py-6 px-4 sm:px-6 md:py-10 md:px-8 lg:px-10">
+            <DonationForm
+              organizationId={org.id}
+              organizationName={org.name}
+              campaigns={campaigns ?? []}
+              endowmentFunds={endowmentFunds ?? []}
+              suggestedAmounts={suggestedAmounts}
+              minimumAmountCents={minCents}
+              showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+              allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+              allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+              borderRadius={borderRadius}
+              slug={slug}
+              noCard
+              initialFrequency={initialFrequency}
+              fullWidth
+              embedCardId={embedCard?.id}
+            />
+            <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Default full embed: when using a themed layout, use give-split
+  if (useThemedLayout) {
+    return renderThemedEmbed();
+  }
 
   return (
     <main
@@ -70,6 +480,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         fontFamily,
       }}
     >
+      <EmbedResizeObserver />
       {googleFontUrl && (
         <link rel="stylesheet" href={googleFontUrl} />
       )}
@@ -77,17 +488,17 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         className="w-full max-w-[480px] overflow-hidden"
         style={{
           border: "1px solid #e5e7eb",
-          borderRadius: formCustom?.button_border_radius ?? "8px",
+          borderRadius,
           boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
           background: "#fff",
         }}
       >
-        {designSets.length > 0 ? (
-          designSets.map((set, i) => (
+        {cardDesignSets.length > 0 ? (
+          cardDesignSets.map((set, i) => (
             <FormCardMedia
               key={i}
-              set={set}
-              fallbackImageUrl={formCustom?.header_image_url ?? DEFAULT_HEADER_IMAGE_URL}
+              set={i === 0 ? effectiveMediaSet : set}
+              fallbackImageUrl={safeFallbackImageUrl}
               className="h-56"
               fontFamily={fontFamily}
               titleFontWeight={headerFontWeight ?? 700}
@@ -96,13 +507,9 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         ) : (
           <div className="relative w-full h-56 overflow-hidden">
             <img
-              src={formCustom?.header_image_url ?? DEFAULT_HEADER_IMAGE_URL}
+              src={safeFallbackImageUrl}
               alt=""
               className="absolute inset-0 w-full h-full object-cover block"
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-              aria-hidden
             />
             <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
               <h2
@@ -110,14 +517,14 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
                 style={{
                   fontFamily,
                   fontWeight: headerFontWeight ?? 700,
-                  textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)",
                 }}
               >
                 {formCustom?.header_text ?? "Make a Donation"}
               </h2>
               <p
-                className="text-sm opacity-95"
-                style={{ fontFamily, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
+                className="text-sm"
+                style={{ fontFamily, textShadow: "0 1px 4px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.3)" }}
               >
                 {formCustom?.subheader_text ?? `Support ${org.name}`}
               </p>
@@ -135,12 +542,13 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
             allowCustomAmount={formCustom?.allow_custom_amount ?? true}
             allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-            buttonColor={formCustom?.button_color}
-            buttonTextColor={formCustom?.button_text_color}
-            borderRadius={formCustom?.button_border_radius ?? undefined}
+            buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+            buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+            borderRadius={borderRadius}
             slug={slug}
             noCard
             initialFrequency={initialFrequency}
+            embedCardId={embedCard?.id}
           />
           <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
         </div>

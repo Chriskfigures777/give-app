@@ -1,41 +1,40 @@
 "use client";
 
 import { motion } from "motion/react";
-import Image from "next/image";
-
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=85";
 
 export function AboutHero() {
   return (
-    <section className="relative min-h-[50vh] overflow-hidden bg-slate-900">
-      <div className="absolute inset-0">
-        <Image
-          src={HERO_IMAGE}
-          alt="Team"
-          fill
-          className="object-cover opacity-60"
-          sizes="100vw"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 to-slate-900/90" />
-      </div>
-      <div className="relative z-10 flex min-h-[50vh] flex-col items-center justify-center px-6 py-20 text-center">
+    <section className="hero-mesh grain-overlay relative min-h-[60vh] overflow-hidden">
+      <div className="orb orb-emerald absolute -right-32 top-0 h-[500px] w-[500px]" />
+      <div className="orb orb-cyan absolute -left-24 bottom-0 h-[400px] w-[400px]" />
+
+      <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 py-24 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm backdrop-blur-sm"
+        >
+          <span className="text-white/60">Our story</span>
+        </motion.div>
+
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+          initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.7 }}
+          className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl"
         >
-          About Us
+          About <span className="shimmer-text">Give</span>
         </motion.h1>
+
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="mt-4 max-w-xl text-lg text-white/90"
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70 md:text-xl"
         >
-          Meet Christopher Figures and the team behind Give. We’re here to help you give back and change communities.
+          Meet the team building the modern donation platform for churches and nonprofits.
+          We believe giving should be fast, transparent, and impactful.
         </motion.p>
       </div>
     </section>
