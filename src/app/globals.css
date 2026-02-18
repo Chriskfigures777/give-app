@@ -1267,22 +1267,40 @@
   border-color: rgba(255, 255, 255, 0.08);
 }
 .survey-chart-card {
+  position: relative;
   border-radius: 1rem;
   border: 1px solid hsl(var(--dashboard-border));
   background: hsl(var(--dashboard-card));
   padding: 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.4s cubic-bezier(.22,1,.36,1), border-color 0.4s cubic-bezier(.22,1,.36,1);
+  overflow: hidden;
+}
+.survey-chart-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.survey-chart-card-animated:hover::after {
+  opacity: 1;
 }
 .survey-chart-card-animated:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.25);
 }
 .dark .survey-chart-card {
   border-color: hsl(217 30% 24%);
   background: hsl(217 33% 17%);
 }
+.dark .survey-chart-card::after {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, transparent 60%);
+}
 .dark .survey-chart-card-animated:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
 }
