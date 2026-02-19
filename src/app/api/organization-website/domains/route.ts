@@ -102,16 +102,21 @@ export async function POST(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const cnameTarget = process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+    const cfDomain = process.env.AWS_CLOUDFRONT_DOMAIN || "";
+    const cnameTarget = cfDomain || process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
     const vercelIp = "76.76.21.21";
     const isWww = domain.startsWith("www.");
     const apexDomain = isWww ? domain.replace(/^www\./, "") : domain;
     const recordName = isWww ? "www" : "@";
     const isRoot = recordName === "@";
 
-    const dnsInstructions = isRoot
-      ? { type: "A", name: "@", value: vercelIp, message: `Add an A record: @ (root) → ${vercelIp}` }
-      : { type: "CNAME", name: recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName} → ${cnameTarget}` };
+    // When AWS hosting is configured, always use CNAME to CloudFront
+    // When not configured (Vercel only), use A record for root, CNAME for www
+    const dnsInstructions = cfDomain
+      ? { type: "CNAME", name: recordName === "@" ? "www" : recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName === "@" ? "www" : recordName} → ${cnameTarget}` }
+      : isRoot
+        ? { type: "A", name: "@", value: vercelIp, message: `Add an A record: @ (root) → ${vercelIp}` }
+        : { type: "CNAME", name: recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName} → ${cnameTarget}` };
 
     const { data: existing } = await supabase
       .from("organization_domains")

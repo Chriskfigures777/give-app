@@ -26,27 +26,31 @@ async function canAccessOrg(
 
 const cnameTarget = () =>
   process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+const cfDomain = () => process.env.AWS_CLOUDFRONT_DOMAIN || "";
 const VERCEL_IP = "76.76.21.21";
 
 async function verifyDns(domain: string): Promise<boolean> {
   const isRoot = !domain.startsWith("www.");
+  const cloudFront = cfDomain().toLowerCase();
+
+  // Check CNAME (works for CloudFront and Vercel targets)
+  try {
+    const records = await dns.resolveCname(domain);
+    const target = cnameTarget().toLowerCase();
+    if (records.some((r) => r.toLowerCase().endsWith(target) || r.toLowerCase() === target)) return true;
+    // Also check CloudFront domain
+    if (cloudFront && records.some((r) => r.toLowerCase().endsWith(cloudFront) || r.toLowerCase() === cloudFront)) return true;
+  } catch { /* fall through */ }
 
   // For root/apex domains, check A record pointing to Vercel IP
   if (isRoot) {
     try {
       const aRecords = await dns.resolve4(domain);
       if (aRecords.some((ip) => ip === VERCEL_IP)) return true;
-    } catch { /* fall through to CNAME check */ }
+    } catch { /* not found */ }
   }
 
-  // Check CNAME (works for www and as fallback for root if registrar supports it)
-  try {
-    const records = await dns.resolveCname(domain);
-    const target = cnameTarget().toLowerCase();
-    return records.some((r) => r.toLowerCase().endsWith(target) || r.toLowerCase() === target);
-  } catch {
-    return false;
-  }
+  return false;
 }
 
 /** POST: Verify domain DNS and optionally auto-add CNAME via Route 53 */

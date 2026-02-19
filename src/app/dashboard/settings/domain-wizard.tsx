@@ -58,8 +58,10 @@ const REGISTRAR_GUIDES: Record<string, { name: string; url: string }> = {
   hostgator: { name: "HostGator", url: "https://www.hostgator.com/help/article/changing-dns-records" },
 };
 
-const CNAME_TARGET = process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "give-app78.vercel.app";
+const CF_DOMAIN = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN || "";
+const CNAME_TARGET = CF_DOMAIN || process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "give-app78.vercel.app";
 const VERCEL_IP = "76.76.21.21";
+const USE_CLOUDFRONT = !!CF_DOMAIN;
 
 function formatPrice(price: number, currency: string) {
   const amt = price / 1000000;
@@ -229,7 +231,7 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                   <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400">{d.status === "failed" ? "Failed" : "Pending"}</span>
                 </div>
                 <div className="flex gap-1.5">
-                  <button type="button" onClick={() => { const isRoot = !d.domain.startsWith("www."); setPath("existing"); setInstructions({ domainId: d.id, name: isRoot ? "@" : "www", value: isRoot ? VERCEL_IP : CNAME_TARGET, type: isRoot ? "A" : "CNAME" }); setExistingStep("instructions"); }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
+                  <button type="button" onClick={() => { const isRoot = !d.domain.startsWith("www."); const useCname = USE_CLOUDFRONT || !isRoot; setPath("existing"); setInstructions({ domainId: d.id, name: USE_CLOUDFRONT ? (isRoot ? "www" : "www") : (isRoot ? "@" : "www"), value: useCname ? CNAME_TARGET : VERCEL_IP, type: useCname ? "CNAME" : "A" }); setExistingStep("instructions"); }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
                   <button type="button" onClick={() => handleRemoveDomain(d.id)} disabled={removing === d.id} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20">
                     {removing === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   </button>

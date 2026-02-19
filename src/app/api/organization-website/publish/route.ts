@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
+import { generateStaticSite } from "@/lib/site-generator";
+import {
+  uploadSiteToS3,
+  deleteSiteFromS3,
+  invalidateCloudFrontCache,
+  updateDomainMap,
+  isHostingConfigured,
+} from "@/lib/aws-hosting";
 
 async function canAccessOrg(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -44,6 +52,14 @@ export async function POST(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Fetch org slug for S3 paths
+    const { data: orgRow } = await supabase
+      .from("organizations")
+      .select("slug")
+      .eq("id", organizationId)
+      .single();
+    const orgSlug = (orgRow as { slug?: string } | null)?.slug;
+
     if (unpublish) {
       const { error } = await supabase
         .from("organizations")
@@ -54,6 +70,13 @@ export async function POST(req: NextRequest) {
         console.error("organization-website unpublish error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
+
+      // Remove from S3 (non-blocking)
+      if (isHostingConfigured() && orgSlug) {
+        deleteSiteFromS3(orgSlug).catch((e) => console.error("S3 delete error:", e));
+        invalidateCloudFrontCache(orgSlug).catch((e) => console.error("CF invalidation error:", e));
+      }
+
       return NextResponse.json({ ok: true, published: false });
     }
 
@@ -63,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     const { data: project } = await supabase
       .from("website_builder_projects")
-      .select("id, organization_id")
+      .select("id, organization_id, project")
       .eq("id", projectId)
       .eq("organization_id", organizationId)
       .maybeSingle();
@@ -80,6 +103,57 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error("organization-website publish error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Deploy static HTML to S3 (non-blocking — doesn't delay the API response)
+    if (isHostingConfigured() && orgSlug) {
+      (async () => {
+        try {
+          const projectJson = (project as { project: unknown }).project as {
+            pages?: Array<{ id?: string; name: string; component?: string }>;
+            default?: { pages?: Array<{ id?: string; name: string; component?: string }> };
+            previewHtml?: string;
+          };
+
+          const pages = await generateStaticSite(projectJson, organizationId);
+          const s3Pages = pages.map((p) => ({ slug: p.slug, html: p.html }));
+          await uploadSiteToS3(orgSlug, s3Pages);
+          await invalidateCloudFrontCache(orgSlug);
+
+          // Rebuild domain map (include this org's custom domains)
+          const { data: domains } = await supabase
+            .from("organization_domains")
+            .select("domain")
+            .eq("organization_id", organizationId)
+            .eq("status", "verified");
+
+          if (domains && domains.length > 0) {
+            const { data: allMappings } = await supabase
+              .from("organization_domains")
+              .select("domain, organization_id")
+              .eq("status", "verified");
+
+            if (allMappings) {
+              const { data: allOrgs } = await supabase
+                .from("organizations")
+                .select("id, slug, published_website_project_id")
+                .not("published_website_project_id", "is", null);
+
+              const orgMap = new Map((allOrgs ?? []).map((o: { id: string; slug?: string }) => [o.id, o.slug]));
+              const domainMap: Record<string, string> = {};
+              for (const m of allMappings) {
+                const slug = orgMap.get((m as { organization_id: string }).organization_id);
+                if (slug) domainMap[(m as { domain: string }).domain] = slug as string;
+              }
+              await updateDomainMap(domainMap);
+            }
+          }
+
+          console.log(`Published ${pages.length} pages to S3 for ${orgSlug}`);
+        } catch (e) {
+          console.error("S3 publish error:", e);
+        }
+      })();
     }
 
     return NextResponse.json({ ok: true, published: true, projectId });

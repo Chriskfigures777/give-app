@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireOrgAdmin } from "@/lib/auth";
+import { triggerRepublish } from "@/lib/republish-site";
 
 export async function PATCH(
   req: NextRequest,
@@ -40,6 +41,7 @@ export async function PATCH(
       console.error("website-cms sermon-archive PATCH:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    if (organizationId) triggerRepublish(organizationId);
     return NextResponse.json(data);
   } catch (e) {
     console.error("website-cms sermon-archive PATCH:", e);
@@ -69,6 +71,7 @@ export async function DELETE(
       console.error("website-cms sermon-archive DELETE:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    if (organizationId) triggerRepublish(organizationId);
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("website-cms sermon-archive DELETE:", e);

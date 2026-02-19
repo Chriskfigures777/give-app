@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireOrgAdmin } from "@/lib/auth";
+import { triggerRepublish } from "@/lib/republish-site";
 
 export async function GET(req: NextRequest) {
   try {
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
       console.error("website-cms podcast-episodes POST:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+    triggerRepublish(orgId);
     return NextResponse.json(data);
   } catch (e) {
     console.error("website-cms podcast-episodes POST:", e);
