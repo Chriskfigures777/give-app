@@ -331,7 +331,7 @@ export default async function SettingsPage() {
             </div>
 
             <div className="px-6 py-5">
-              <DomainWizard organizationId={org.id} />
+              <DomainWizard organizationId={org.id} isPlatformAdmin={profile?.role === "platform_admin"} />
             </div>
           </div>
         </section>

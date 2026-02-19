@@ -66,7 +66,7 @@ function formatPrice(price: number, currency: string) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2 }).format(amt);
 }
 
-export function DomainWizard({ organizationId }: { organizationId: string }) {
+export function DomainWizard({ organizationId, isPlatformAdmin }: { organizationId: string; isPlatformAdmin?: boolean }) {
   const [path, setPath] = useState<WizardPath>(null);
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
@@ -284,19 +284,21 @@ export function DomainWizard({ organizationId }: { organizationId: string }) {
           </button>
         </div>
 
-        {/* DNS Records toggle (advanced) */}
-        <div>
-          <button type="button" onClick={handleToggleDns} className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
-            <Server className="h-3.5 w-3.5" />
-            {showDns ? "Hide" : "Show"} DNS Records (Route 53)
-            {showDns ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-          </button>
-          {showDns && (
-            <div className="mt-3">
-              <DnsRecordsPanel />
-            </div>
-          )}
-        </div>
+        {/* DNS Records toggle (platform admin only) */}
+        {isPlatformAdmin && (
+          <div>
+            <button type="button" onClick={handleToggleDns} className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
+              <Server className="h-3.5 w-3.5" />
+              {showDns ? "Hide" : "Show"} DNS Records (Route 53)
+              {showDns ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            </button>
+            {showDns && (
+              <div className="mt-3">
+                <DnsRecordsPanel />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

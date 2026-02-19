@@ -992,7 +992,7 @@ export function DnsRecordsPanel() {
       {nsInfo && nsInfo.length > 0 && (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800/40 dark:bg-emerald-900/10">
           <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
-            Hosted zone created! Update your registrar with these nameservers:
+            Hosted zone created! To fully delegate DNS to Route 53, update the domain&apos;s nameservers at the registrar (advanced — only needed for app-purchased domains):
           </p>
           <div className="mt-2 space-y-1">
             {nsInfo.map((ns) => (
