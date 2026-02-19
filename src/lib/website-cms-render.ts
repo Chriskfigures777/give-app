@@ -3,7 +3,7 @@
  * Used by the site route to replace {{cms:xxx}} placeholders.
  */
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "https://nextgive.vercel.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "https://give-app78.vercel.app";
 
 function esc(s: string): string {
   return (s ?? "")

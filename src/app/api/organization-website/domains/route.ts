@@ -103,9 +103,15 @@ export async function POST(req: NextRequest) {
     }
 
     const cnameTarget = process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+    const vercelIp = "76.76.21.21";
     const isWww = domain.startsWith("www.");
     const apexDomain = isWww ? domain.replace(/^www\./, "") : domain;
     const recordName = isWww ? "www" : "@";
+    const isRoot = recordName === "@";
+
+    const dnsInstructions = isRoot
+      ? { type: "A", name: "@", value: vercelIp, message: `Add an A record: @ (root) → ${vercelIp}` }
+      : { type: "CNAME", name: recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName} → ${cnameTarget}` };
 
     const { data: existing } = await supabase
       .from("organization_domains")
@@ -122,15 +128,7 @@ export async function POST(req: NextRequest) {
         .select("id, domain, status")
         .eq("id", (existing as { id: string }).id)
         .single();
-      return NextResponse.json({
-        domain: d,
-        instructions: {
-          type: "CNAME",
-          name: recordName,
-          value: cnameTarget,
-          message: `Add a CNAME record: ${recordName === "@" ? "apex/root" : recordName} → ${cnameTarget}`,
-        },
-      });
+      return NextResponse.json({ domain: d, instructions: dnsInstructions });
     }
 
     const { data: inserted, error } = await supabase
@@ -149,15 +147,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({
-      domain: inserted,
-      instructions: {
-        type: "CNAME",
-        name: recordName,
-        value: cnameTarget,
-        message: `Add a CNAME record: ${recordName === "@" ? "apex/root" : recordName} → ${cnameTarget}`,
-      },
-    });
+    return NextResponse.json({ domain: inserted, instructions: dnsInstructions });
   } catch (e) {
     console.error("organization-website domains POST error:", e);
     return NextResponse.json(

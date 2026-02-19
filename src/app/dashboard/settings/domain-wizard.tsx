@@ -59,6 +59,7 @@ const REGISTRAR_GUIDES: Record<string, { name: string; url: string }> = {
 };
 
 const CNAME_TARGET = process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "give-app78.vercel.app";
+const VERCEL_IP = "76.76.21.21";
 
 function formatPrice(price: number, currency: string) {
   const amt = price / 1000000;
@@ -73,7 +74,7 @@ export function DomainWizard({ organizationId }: { organizationId: string }) {
   const [existingStep, setExistingStep] = useState<ExistingStep>("enter");
   const [domainInput, setDomainInput] = useState("");
   const [adding, setAdding] = useState(false);
-  const [instructions, setInstructions] = useState<{ domainId: string; name: string; value: string } | null>(null);
+  const [instructions, setInstructions] = useState<{ domainId: string; name: string; value: string; type?: string } | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<{ verified: boolean; message: string } | null>(null);
 
@@ -130,7 +131,7 @@ export function DomainWizard({ organizationId }: { organizationId: string }) {
       setDomainInput("");
       await fetchDomains();
       if (data.domain && data.instructions) {
-        setInstructions({ domainId: data.domain.id, name: data.instructions.name, value: data.instructions.value });
+        setInstructions({ domainId: data.domain.id, name: data.instructions.name, value: data.instructions.value, type: data.instructions.type });
         setExistingStep("instructions");
       }
     } catch (e) { setError(e instanceof Error ? e.message : "Failed"); }
@@ -228,7 +229,7 @@ export function DomainWizard({ organizationId }: { organizationId: string }) {
                   <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400">{d.status === "failed" ? "Failed" : "Pending"}</span>
                 </div>
                 <div className="flex gap-1.5">
-                  <button type="button" onClick={() => { setPath("existing"); setInstructions({ domainId: d.id, name: d.domain.startsWith("www.") ? "www" : "@", value: CNAME_TARGET }); setExistingStep("instructions"); }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
+                  <button type="button" onClick={() => { const isRoot = !d.domain.startsWith("www."); setPath("existing"); setInstructions({ domainId: d.id, name: isRoot ? "@" : "www", value: isRoot ? VERCEL_IP : CNAME_TARGET, type: isRoot ? "A" : "CNAME" }); setExistingStep("instructions"); }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
                   <button type="button" onClick={() => handleRemoveDomain(d.id)} disabled={removing === d.id} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20">
                     {removing === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   </button>
@@ -380,7 +381,7 @@ export function DomainWizard({ organizationId }: { organizationId: string }) {
                 </div>
                 <div className="divide-y divide-slate-100 dark:divide-slate-700/40">
                   {[
-                    { label: "Type", value: "CNAME" },
+                    { label: "Type", value: instructions.type || (instructions.name === "@" ? "A" : "CNAME") },
                     { label: "Name / Host", value: instructions.name === "@" ? "@ (root)" : instructions.name },
                     { label: "Value / Points to", value: instructions.value },
                     { label: "TTL", value: "300 (or Auto)" },

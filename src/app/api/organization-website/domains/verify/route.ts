@@ -26,8 +26,20 @@ async function canAccessOrg(
 
 const cnameTarget = () =>
   process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+const VERCEL_IP = "76.76.21.21";
 
 async function verifyDns(domain: string): Promise<boolean> {
+  const isRoot = !domain.startsWith("www.");
+
+  // For root/apex domains, check A record pointing to Vercel IP
+  if (isRoot) {
+    try {
+      const aRecords = await dns.resolve4(domain);
+      if (aRecords.some((ip) => ip === VERCEL_IP)) return true;
+    } catch { /* fall through to CNAME check */ }
+  }
+
+  // Check CNAME (works for www and as fallback for root if registrar supports it)
   try {
     const records = await dns.resolveCname(domain);
     const target = cnameTarget().toLowerCase();
@@ -114,7 +126,7 @@ export async function POST(req: NextRequest) {
       verified,
       message: verified
         ? "Domain verified successfully"
-        : "CNAME not found yet. DNS can take up to 48 hours to propagate.",
+        : "DNS record not found yet. Changes can take a few minutes to propagate (up to 48 hours in rare cases).",
     });
   } catch (e) {
     console.error("organization-website domains verify error:", e);
