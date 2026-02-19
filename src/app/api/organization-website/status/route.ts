@@ -53,21 +53,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    // Prefer DOMAIN when it contains localhost (local dev); otherwise use production URL
-    const domain = process.env.DOMAIN ?? "";
-    const baseUrl =
-      domain.includes("localhost")
-        ? domain || "http://localhost:3000"
+    // Use request origin so preview/publish URLs match where the user is viewing the app
+    const origin = req.nextUrl.origin || "";
+    const base =
+      origin.startsWith("http")
+        ? origin
         : process.env.NEXT_PUBLIC_APP_URL ||
           process.env.DOMAIN ||
           (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-    const base = baseUrl.replace(/\/$/, "");
+    const baseTrimmed = base.replace(/\/$/, "");
 
     return NextResponse.json({
       slug: (org as { slug: string }).slug,
       publishedProjectId: (org as { published_website_project_id?: string | null })
         .published_website_project_id,
-      siteUrl: org.slug ? `${base}/site/${org.slug}` : null,
+      siteUrl: org.slug ? `${baseTrimmed}/site/${org.slug}` : null,
     });
   } catch (e) {
     console.error("organization-website status error:", e);
