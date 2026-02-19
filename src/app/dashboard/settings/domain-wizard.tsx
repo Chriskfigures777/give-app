@@ -156,8 +156,23 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
         body: JSON.stringify({ organizationId, domainId: instructions.domainId, tryRoute53: true }),
       });
       const data = await res.json();
-      setVerifyResult({ verified: data.verified, message: data.message ?? data.error ?? "" });
-      if (data.verified) { await fetchDomains(); setExistingStep("verify"); }
+      const verified = !!data.verified;
+      const sslReady = !!data.sslReady;
+      let message = data.message ?? data.error ?? "";
+
+      // Update ACM records with fresh status from verify response
+      if (data.acmValidationRecords?.length) {
+        setAcmRecords(data.acmValidationRecords);
+      }
+
+      setVerifyResult({ verified, message });
+      if (verified && sslReady) {
+        await fetchDomains();
+        setExistingStep("verify");
+      } else if (verified && !sslReady) {
+        // DNS verified but SSL not ready yet — stay on instructions page to show ACM info
+        await fetchDomains();
+      }
     } catch { setVerifyResult({ verified: false, message: "Verification failed" }); }
     setVerifying(false);
   };
@@ -517,12 +532,21 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
             </div>
 
             {/* Verify result (inline) */}
+            {verifyResult && verifyResult.verified && existingStep === "instructions" && (
+              <div className="flex items-start gap-2.5 rounded-xl border border-sky-200 bg-sky-50/60 p-4 dark:border-sky-800/40 dark:bg-sky-900/10">
+                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
+                <div>
+                  <p className="text-sm font-medium text-sky-800 dark:text-sky-300">DNS Verified!</p>
+                  <p className="mt-0.5 text-xs text-sky-700 dark:text-sky-400">{verifyResult.message}</p>
+                </div>
+              </div>
+            )}
             {verifyResult && !verifyResult.verified && (
               <div className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-800/40 dark:bg-amber-900/10">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                 <div>
                   <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Not verified yet</p>
-                  <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">{verifyResult.message} DNS changes can take up to 48 hours to propagate. You can come back and verify later.</p>
+                  <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">{verifyResult.message}</p>
                 </div>
               </div>
             )}

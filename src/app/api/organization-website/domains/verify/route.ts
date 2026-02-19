@@ -5,6 +5,7 @@ import { addRoute53Cname } from "@/lib/route53";
 import {
   addCloudFrontDomain,
   getCertificateStatus,
+  requestCertificate,
   isHostingConfigured,
   updateDomainMap,
 } from "@/lib/aws-hosting";
@@ -35,28 +36,44 @@ const cnameTarget = () =>
 const cfDomain = () => process.env.AWS_CLOUDFRONT_DOMAIN || "";
 const VERCEL_IP = "76.76.21.21";
 
-async function verifyDns(domain: string): Promise<boolean> {
-  const isRoot = !domain.startsWith("www.");
+/**
+ * Check if either the domain itself or www.domain has a CNAME pointing
+ * to CloudFront or Vercel. For root domains we also check www variant
+ * because registrars can't set CNAME on root.
+ */
+async function verifyDns(domain: string): Promise<{ verified: boolean; verifiedDomain?: string }> {
   const cloudFront = cfDomain().toLowerCase();
+  const target = cnameTarget().toLowerCase();
+  const isRoot = !domain.startsWith("www.");
 
-  // Check CNAME (works for CloudFront and Vercel targets)
-  try {
-    const records = await dns.resolveCname(domain);
-    const target = cnameTarget().toLowerCase();
-    if (records.some((r) => r.toLowerCase().endsWith(target) || r.toLowerCase() === target)) return true;
-    // Also check CloudFront domain
-    if (cloudFront && records.some((r) => r.toLowerCase().endsWith(cloudFront) || r.toLowerCase() === cloudFront)) return true;
-  } catch { /* fall through */ }
+  // Helper: check if a domain's CNAME resolves to our targets
+  async function checkCname(d: string): Promise<boolean> {
+    try {
+      const records = await dns.resolveCname(d);
+      for (const r of records) {
+        const rl = r.toLowerCase();
+        if (rl === target || rl.endsWith("." + target)) return true;
+        if (cloudFront && (rl === cloudFront || rl.endsWith("." + cloudFront))) return true;
+      }
+    } catch { /* not found */ }
+    return false;
+  }
 
-  // For root/apex domains, check A record pointing to Vercel IP
+  // Check the exact domain first
+  if (await checkCname(domain)) return { verified: true, verifiedDomain: domain };
+
+  // For root domains, also check www variant (most common setup)
   if (isRoot) {
+    if (await checkCname("www." + domain)) return { verified: true, verifiedDomain: "www." + domain };
+
+    // Fallback: check A record pointing to Vercel IP (legacy/non-CloudFront)
     try {
       const aRecords = await dns.resolve4(domain);
-      if (aRecords.some((ip) => ip === VERCEL_IP)) return true;
+      if (aRecords.some((ip) => ip === VERCEL_IP)) return { verified: true, verifiedDomain: domain };
     } catch { /* not found */ }
   }
 
-  return false;
+  return { verified: false };
 }
 
 /** POST: Verify domain DNS and optionally auto-add CNAME via Route 53 */
@@ -106,13 +123,72 @@ export async function POST(req: NextRequest) {
       const result = await addRoute53Cname(apexDomain, "www", cnameTarget());
       if (!result.ok) {
         console.warn("Route 53 auto-CNAME failed:", result.error);
-        // Don't fail the whole request – fall through to DNS check
       }
     }
 
-    const verified = await verifyDns(domain);
+    const dnsResult = await verifyDns(domain);
+    const dnsVerified = dnsResult.verified;
+    const verifiedDomain = dnsResult.verifiedDomain;
 
-    if (verified) {
+    // Collect ACM cert status for the response
+    let acmStatus = "UNKNOWN";
+    let acmValidationRecords: Array<{ type: string; name: string; value: string; domain?: string; status?: string }> = [];
+    let certArn: string | undefined;
+
+    if (isHostingConfigured()) {
+      const { data: domRow } = await supabase
+        .from("organization_domains")
+        .select("acm_cert_arn")
+        .eq("id", domainId)
+        .single();
+
+      certArn = (domRow as { acm_cert_arn?: string } | null)?.acm_cert_arn ?? undefined;
+
+      // If no cert yet, request one
+      if (!certArn) {
+        const apexForCert = domain.startsWith("www.") ? domain.replace(/^www\./, "") : domain;
+        const certResult = await requestCertificate(apexForCert);
+        if (certResult.ok && certResult.certArn) {
+          certArn = certResult.certArn;
+          await supabase
+            .from("organization_domains")
+            .update({ acm_cert_arn: certArn, updated_at: new Date().toISOString() })
+            .eq("id", domainId);
+        }
+        if (certResult.validationRecords) {
+          acmValidationRecords = certResult.validationRecords.map((r) => ({
+            type: "CNAME",
+            name: r.name.replace(/\.$/, ""),
+            value: r.value.replace(/\.$/, ""),
+            domain: r.domain,
+            status: r.status,
+          }));
+        }
+      }
+
+      // Check cert status
+      if (certArn) {
+        const certStatus = await getCertificateStatus(certArn);
+        acmStatus = certStatus.status;
+
+        // Also fetch fresh validation records if we didn't request a new cert above
+        if (acmValidationRecords.length === 0) {
+          const apexForCert = domain.startsWith("www.") ? domain.replace(/^www\./, "") : domain;
+          const certResult = await requestCertificate(apexForCert);
+          if (certResult.validationRecords) {
+            acmValidationRecords = certResult.validationRecords.map((r) => ({
+              type: "CNAME",
+              name: r.name.replace(/\.$/, ""),
+              value: r.value.replace(/\.$/, ""),
+              domain: r.domain,
+              status: r.status,
+            }));
+          }
+        }
+      }
+    }
+
+    if (dnsVerified) {
       await supabase
         .from("organization_domains")
         .update({
@@ -123,24 +199,19 @@ export async function POST(req: NextRequest) {
         })
         .eq("id", domainId);
 
-      // If AWS hosting is configured, add domain to CloudFront + update domain map
-      if (isHostingConfigured()) {
-        const { data: domRow } = await supabase
-          .from("organization_domains")
-          .select("acm_cert_arn")
-          .eq("id", domainId)
-          .single();
+      // If AWS hosting is configured, add domain(s) to CloudFront + update domain map
+      if (isHostingConfigured() && certArn && acmStatus === "ISSUED") {
+        // Add the domain stored in DB
+        const cfResult = await addCloudFrontDomain(domain, certArn);
+        if (!cfResult.ok) console.warn("CloudFront add domain error:", cfResult.error);
 
-        const certArn = (domRow as { acm_cert_arn?: string } | null)?.acm_cert_arn;
-        if (certArn) {
-          const certStatus = await getCertificateStatus(certArn);
-          if (certStatus.status === "ISSUED") {
-            const cfResult = await addCloudFrontDomain(domain, certArn);
-            if (!cfResult.ok) console.warn("CloudFront add domain error:", cfResult.error);
-          }
-        }
+        // For root domains also add www, and vice versa
+        const isRoot = !domain.startsWith("www.");
+        const altDomain = isRoot ? "www." + domain : domain.replace(/^www\./, "");
+        const cfResult2 = await addCloudFrontDomain(altDomain, certArn);
+        if (!cfResult2.ok) console.warn("CloudFront add alt domain:", cfResult2.error);
 
-        // Rebuild domain map with all verified domains
+        // Rebuild domain map
         const { data: allMappings } = await supabase
           .from("organization_domains")
           .select("domain, organization_id")
@@ -156,7 +227,13 @@ export async function POST(req: NextRequest) {
           const domainMap: Record<string, string> = {};
           for (const m of allMappings) {
             const slug = orgMap.get((m as { organization_id: string }).organization_id);
-            if (slug) domainMap[(m as { domain: string }).domain] = slug as string;
+            if (slug) {
+              const d = (m as { domain: string }).domain;
+              domainMap[d] = slug as string;
+              // Also add the www/root variant
+              const isR = !d.startsWith("www.");
+              domainMap[isR ? "www." + d : d.replace(/^www\./, "")] = slug as string;
+            }
           }
           await updateDomainMap(domainMap);
         }
@@ -171,11 +248,25 @@ export async function POST(req: NextRequest) {
         .eq("id", domainId);
     }
 
+    // Build a helpful message
+    let message: string;
+    if (dnsVerified && acmStatus === "ISSUED") {
+      message = "Domain verified and SSL certificate active! Your site is live.";
+    } else if (dnsVerified && acmStatus === "PENDING_VALIDATION") {
+      message = "DNS verified! However, your SSL certificate is still pending. Please add the SSL validation CNAME records shown above to enable HTTPS.";
+    } else if (dnsVerified) {
+      message = "Domain DNS verified successfully.";
+    } else {
+      message = "DNS record not found yet. Make sure you've added the CNAME record at your domain registrar. Changes can take a few minutes to propagate (up to 48 hours in rare cases).";
+    }
+
     return NextResponse.json({
-      verified,
-      message: verified
-        ? "Domain verified successfully"
-        : "DNS record not found yet. Changes can take a few minutes to propagate (up to 48 hours in rare cases).",
+      verified: dnsVerified,
+      verifiedDomain,
+      acmStatus,
+      acmValidationRecords,
+      sslReady: acmStatus === "ISSUED",
+      message,
     });
   } catch (e) {
     console.error("organization-website domains verify error:", e);
