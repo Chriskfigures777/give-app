@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    // Use request origin so preview/publish URLs match where the user is viewing the app
+    // Use request origin so preview URLs work on the current host
     const origin = req.nextUrl.origin || "";
     const base =
       origin.startsWith("http")
@@ -62,12 +62,40 @@ export async function GET(req: NextRequest) {
           process.env.DOMAIN ||
           (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
     const baseTrimmed = base.replace(/\/$/, "");
+    const slug = (org as { slug: string }).slug;
+
+    // Preview URL always goes through Vercel /site/ route (works before CloudFront is set up)
+    const previewUrl = slug ? `${baseTrimmed}/site/${slug}` : null;
+
+    // Published site URL: prefer custom domain, then CloudFront, then Vercel /site/
+    let publishedUrl = previewUrl;
+    if (slug) {
+      // Check for a verified custom domain
+      const { data: customDomain } = await supabase
+        .from("organization_domains")
+        .select("domain")
+        .eq("organization_id", organizationId)
+        .eq("status", "verified")
+        .limit(1)
+        .maybeSingle();
+
+      if (customDomain) {
+        const d = (customDomain as { domain: string }).domain;
+        publishedUrl = `https://${d}`;
+      } else {
+        const cfDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+        if (cfDomain) {
+          publishedUrl = `https://${cfDomain}`;
+        }
+      }
+    }
 
     return NextResponse.json({
-      slug: (org as { slug: string }).slug,
+      slug,
       publishedProjectId: (org as { published_website_project_id?: string | null })
         .published_website_project_id,
-      siteUrl: org.slug ? `${baseTrimmed}/site/${org.slug}` : null,
+      siteUrl: previewUrl,
+      publishedUrl,
     });
   } catch (e) {
     console.error("organization-website status error:", e);
