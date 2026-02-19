@@ -7,7 +7,7 @@ import { requireAuth } from "@/lib/auth";
  */
 export async function GET(req: NextRequest) {
   try {
-    const { profile } = await requireAuth();
+    const { profile, supabase } = await requireAuth();
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
 
     if (!orgId) {
@@ -16,6 +16,14 @@ export async function GET(req: NextRequest) {
 
     const organizationId = orgId;
     const licenseKey = process.env.NEXT_PUBLIC_GRAPEJS_LICENSE_KEY ?? "";
+
+    // Fetch org name to display in the project list
+    const { data: orgRow } = await supabase
+      .from("organizations")
+      .select("name")
+      .eq("id", organizationId)
+      .single();
+    const orgName = (orgRow as { name?: string } | null)?.name ?? "";
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -49,8 +57,8 @@ export async function GET(req: NextRequest) {
   <div id="studio" style="height:100%;width:100%;display:none;"></div>
   <div id="project-selector" style="display:none;position:absolute;inset:0;background:hsl(220,14%,96%);padding:48px;overflow-y:auto;overflow-x:hidden;font-family:'Inter',sans-serif;">
     <div style="max-width:900px;margin:0 auto;">
-      <h1 style="color:hsl(222,47%,11%);font-size:24px;font-weight:700;margin-bottom:8px;">Your website projects</h1>
-      <p style="color:hsl(215,16%,47%);font-size:14px;margin-bottom:32px;">Open a project to continue editing, or create a new one from a template.</p>
+      <h1 id="project-heading" style="color:hsl(222,47%,11%);font-size:24px;font-weight:700;margin-bottom:8px;">Your website projects</h1>
+      <p id="project-subheading" style="color:hsl(215,16%,47%);font-size:14px;margin-bottom:32px;">Open a project to continue editing, or create a new one from a template.</p>
       <div id="project-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;"></div>
     </div>
   </div>
@@ -71,7 +79,8 @@ export async function GET(req: NextRequest) {
     (function() {
       var organizationId = ${JSON.stringify(organizationId)};
       var licenseKey = ${JSON.stringify(licenseKey)};
-      var orgStatus = { siteUrl: null, publishedUrl: null, publishedProjectId: null };
+      var orgName = ${JSON.stringify(orgName)};
+      var orgStatus = { siteUrl: null, publishedUrl: null, publishedProjectId: null, hasCustomDomain: false, customDomain: null };
       var listPagesComponent = window.GrapesJsStudioSdkPlugins?.listPagesComponent || window.StudioSdkPlugins?.listPagesComponent;
       var swiperComponent = window.GrapesJsStudioSdkPlugins?.swiperComponent || window.StudioSdkPlugins?.swiperComponent;
       var createStudioEditor = (window.GrapesJsStudioSDK && (window.GrapesJsStudioSDK.default || window.GrapesJsStudioSDK.createStudioEditor)) || window.createStudioEditor;
@@ -236,7 +245,9 @@ export async function GET(req: NextRequest) {
             projectId: projectId,
             siteUrl: orgStatus.siteUrl || null,
             publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null,
-            isPublished: orgStatus.publishedProjectId === projectId
+            isPublished: orgStatus.publishedProjectId === projectId,
+            hasCustomDomain: orgStatus.hasCustomDomain || false,
+            customDomain: orgStatus.customDomain || null
           }, '*');
         }
       }
@@ -665,7 +676,9 @@ export async function GET(req: NextRequest) {
           var previewHtml = getPreviewHtml(p);
           var isPublished = orgStatus.publishedProjectId === p.id;
           var previewHref = orgStatus.siteUrl ? orgStatus.siteUrl + (orgStatus.siteUrl.indexOf('?') >= 0 ? '&' : '?') + 'preview=' + encodeURIComponent(p.id) : '#';
-          var cardActions = '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"><a href="' + esc(previewHref) + '" target="_blank" rel="noopener noreferrer" class="project-preview-btn" style="padding:6px 12px;font-size:12px;font-weight:600;color:hsl(222,47%,11%);background:#f1f5f9;border-radius:6px;text-decoration:none;">Preview</a><button type="button" class="project-publish-btn" data-id="' + esc(p.id) + '" style="padding:6px 12px;font-size:12px;font-weight:600;border:none;border-radius:6px;cursor:pointer;background:' + (isPublished ? '#94a3b8' : 'hsl(160,84%,39%)') + ';color:white;">' + (isPublished ? 'Unpublish' : 'Publish') + '</button></div>';
+          var publishLabel = isPublished ? 'Unpublish' : (orgStatus.hasCustomDomain ? 'Publish to domain' : 'Publish preview');
+          var publishBg = isPublished ? '#94a3b8' : (orgStatus.hasCustomDomain ? 'hsl(160,84%,39%)' : '#3b82f6');
+          var cardActions = '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"><a href="' + esc(previewHref) + '" target="_blank" rel="noopener noreferrer" class="project-preview-btn" style="padding:6px 12px;font-size:12px;font-weight:600;color:hsl(222,47%,11%);background:#f1f5f9;border-radius:6px;text-decoration:none;">Preview</a><button type="button" class="project-publish-btn" data-id="' + esc(p.id) + '" style="padding:6px 12px;font-size:12px;font-weight:600;border:none;border-radius:6px;cursor:pointer;background:' + publishBg + ';color:white;">' + publishLabel + '</button></div>';
           card.innerHTML = '<div style="height:140px;background:#f1f5f9;overflow:hidden;position:relative;"><iframe srcdoc="' + esc(previewHtml) + '" style="width:200%;height:400%;min-height:560px;border:none;transform:scale(0.5);transform-origin:0 0;pointer-events:none;position:absolute;top:0;left:0;" title="Preview"></iframe></div><div style="padding:16px;"><div style="font-size:15px;font-weight:600;color:hsl(222,47%,11%);margin-bottom:4px;">' + esc(p.name) + '</div><div style="font-size:12px;color:hsl(215,16%,47%);">Updated ' + (p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '') + '</div>' + cardActions + '<button type="button" class="project-delete-btn" data-id="' + esc(p.id) + '" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:6px;border:none;background:rgba(0,0,0,0.5);color:white;cursor:pointer;font-size:14px;line-height:1;opacity:0.7;" title="Delete project">×</button></div>';
           card.onclick = function(ev) {
             if (ev.target.classList.contains('project-delete-btn') || ev.target.classList.contains('project-publish-btn') || ev.target.classList.contains('project-preview-btn')) return;
@@ -711,20 +724,22 @@ export async function GET(req: NextRequest) {
               }).then(function(r) { return r.json(); }).then(function(data) {
                 if (data.ok) {
                   orgStatus.publishedProjectId = unpublish ? null : p.id;
-                  // Re-fetch status to get updated publishedUrl (may now include custom domain)
                   fetch('/api/organization-website/status?organizationId=' + encodeURIComponent(organizationId), { credentials: 'include' })
                     .then(function(r2) { return r2.json(); })
                     .then(function(s) {
                       if (s.publishedUrl) orgStatus.publishedUrl = s.publishedUrl;
                       if (s.siteUrl) orgStatus.siteUrl = s.siteUrl;
-                      // Notify parent of updated published URL
+                      orgStatus.hasCustomDomain = s.hasCustomDomain || false;
+                      orgStatus.customDomain = s.customDomain || null;
+                      var mode = orgStatus.hasCustomDomain ? 'domain' : 'preview';
                       if (window.parent !== window) {
-                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null }, '*');
+                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null, publishMode: mode }, '*');
                       }
                       renderProjectCards(projects);
                     }).catch(function() {
+                      var mode = orgStatus.hasCustomDomain ? 'domain' : 'preview';
                       if (window.parent !== window) {
-                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null }, '*');
+                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null, publishMode: mode }, '*');
                       }
                       renderProjectCards(projects);
                     });
@@ -817,7 +832,18 @@ export async function GET(req: NextRequest) {
           if (statusData.siteUrl) orgStatus.siteUrl = statusData.siteUrl;
           if (statusData.publishedUrl) orgStatus.publishedUrl = statusData.publishedUrl;
           if (statusData.publishedProjectId) orgStatus.publishedProjectId = statusData.publishedProjectId;
+          orgStatus.hasCustomDomain = statusData.hasCustomDomain || false;
+          orgStatus.customDomain = statusData.customDomain || null;
         } catch (_) {}
+
+        // Show org name in project list heading so users know which account they're editing
+        if (orgName) {
+          var heading = document.getElementById('project-heading');
+          var subheading = document.getElementById('project-subheading');
+          if (heading) heading.textContent = orgName + ' — Website Projects';
+          if (subheading) subheading.textContent = 'These projects belong to your account. Open one to edit, or create a new one from a template.';
+        }
+
         var timeout = setTimeout(function() {
           if (document.getElementById('loading-overlay').style.display !== 'none') {
             hideLoading();

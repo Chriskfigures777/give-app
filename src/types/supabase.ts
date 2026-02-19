@@ -2479,6 +2479,7 @@ export type Database = {
       website_builder_projects: {
         Row: {
           created_at: string
+          created_by: string | null
           id: string
           name: string | null
           organization_id: string
@@ -2487,6 +2488,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           id?: string
           name?: string | null
           organization_id: string
@@ -2495,6 +2497,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           id?: string
           name?: string | null
           organization_id?: string

@@ -124,8 +124,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Deploy static HTML to S3 (non-blocking — doesn't delay the API response)
-    if (isHostingConfigured() && orgSlug) {
+    // Check if this org has a verified custom domain
+    const { data: verifiedDomains } = await supabase
+      .from("organization_domains")
+      .select("domain")
+      .eq("organization_id", organizationId)
+      .eq("status", "verified");
+
+    const hasCustomDomain = !!(verifiedDomains && verifiedDomains.length > 0);
+
+    // Only deploy to S3/CloudFront if the org has a verified custom domain.
+    // Without a domain, the site is accessible via the preview URL (/site/{slug}).
+    if (hasCustomDomain && isHostingConfigured() && orgSlug) {
       (async () => {
         try {
           const projectJson = (project as { project: unknown }).project as {
@@ -139,39 +149,31 @@ export async function POST(req: NextRequest) {
           await uploadSiteToS3(orgSlug, s3Pages);
           await invalidateCloudFrontCache(orgSlug);
 
-          // Rebuild domain map (include this org's custom domains)
-          const { data: domains } = await supabase
+          // Rebuild domain map for all verified domains across all published orgs
+          const { data: allMappings } = await supabase
             .from("organization_domains")
-            .select("domain")
-            .eq("organization_id", organizationId)
+            .select("domain, organization_id")
             .eq("status", "verified");
 
-          if (domains && domains.length > 0) {
-            const { data: allMappings } = await supabase
-              .from("organization_domains")
-              .select("domain, organization_id")
-              .eq("status", "verified");
+          if (allMappings) {
+            const { data: allOrgs } = await supabase
+              .from("organizations")
+              .select("id, slug, published_website_project_id")
+              .not("published_website_project_id", "is", null);
 
-            if (allMappings) {
-              const { data: allOrgs } = await supabase
-                .from("organizations")
-                .select("id, slug, published_website_project_id")
-                .not("published_website_project_id", "is", null);
-
-              const orgMap = new Map((allOrgs ?? []).map((o: { id: string; slug?: string }) => [o.id, o.slug]));
-              const domainMap: Record<string, string> = {};
-              for (const m of allMappings) {
-                const slug = orgMap.get((m as { organization_id: string }).organization_id);
-                if (slug) {
-                  const domain = (m as { domain: string }).domain;
-                  domainMap[domain] = slug as string;
-                  if (!domain.startsWith("www.")) {
-                    domainMap[`www.${domain}`] = slug as string;
-                  }
+            const orgMap = new Map((allOrgs ?? []).map((o: { id: string; slug?: string }) => [o.id, o.slug]));
+            const domainMap: Record<string, string> = {};
+            for (const m of allMappings) {
+              const slug = orgMap.get((m as { organization_id: string }).organization_id);
+              if (slug) {
+                const domain = (m as { domain: string }).domain;
+                domainMap[domain] = slug as string;
+                if (!domain.startsWith("www.")) {
+                  domainMap[`www.${domain}`] = slug as string;
                 }
               }
-              await updateDomainMap(domainMap);
             }
+            await updateDomainMap(domainMap);
           }
 
           console.log(`Published ${pages.length} pages to S3 for ${orgSlug}`);
@@ -181,7 +183,12 @@ export async function POST(req: NextRequest) {
       })();
     }
 
-    return NextResponse.json({ ok: true, published: true, projectId });
+    return NextResponse.json({
+      ok: true,
+      published: true,
+      projectId,
+      publishMode: hasCustomDomain ? "domain" : "preview",
+    });
   } catch (e) {
     console.error("organization-website publish error:", e);
     return NextResponse.json(

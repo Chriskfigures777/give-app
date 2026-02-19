@@ -67,15 +67,10 @@ export async function GET(req: NextRequest) {
     // Preview URL always goes through Vercel /site/ route (works before CloudFront is set up)
     const previewUrl = slug ? `${baseTrimmed}/site/${slug}` : null;
 
-    // Published site URL: prefer custom domain, then Vercel /site/ preview
-    // NOTE: We do NOT use the bare CloudFront domain as publishedUrl.
-    // Lambda@Edge routes by Host header matched against the domain map (custom domains only).
-    // The bare CloudFront domain (e.g. d6u7sflc0yaio.cloudfront.net) is never in the
-    // domain map, so requests to it return 404. Only use it once a custom domain is verified.
-    let publishedUrl = previewUrl;
+    // Check for a verified custom domain for this specific organization
+    let verifiedDomain: string | null = null;
     if (slug) {
-      // Check for a verified custom domain
-      const { data: customDomain } = await supabase
+      const { data: customDomainRow } = await supabase
         .from("organization_domains")
         .select("domain")
         .eq("organization_id", organizationId)
@@ -83,12 +78,17 @@ export async function GET(req: NextRequest) {
         .limit(1)
         .maybeSingle();
 
-      if (customDomain) {
-        const d = (customDomain as { domain: string }).domain;
-        publishedUrl = `https://${d}`;
+      if (customDomainRow) {
+        verifiedDomain = (customDomainRow as { domain: string }).domain;
       }
-      // If no verified custom domain, keep previewUrl (always works via /site/slug)
     }
+
+    // Published site URL: prefer custom domain, then Vercel /site/ preview.
+    // The bare CloudFront domain (e.g. d6u7sflc0yaio.cloudfront.net) is never in the
+    // domain map, so requests to it return 404. Only use a real custom domain.
+    const publishedUrl = verifiedDomain
+      ? `https://${verifiedDomain}`
+      : previewUrl;
 
     return NextResponse.json({
       slug,
@@ -96,6 +96,8 @@ export async function GET(req: NextRequest) {
         .published_website_project_id,
       siteUrl: previewUrl,
       publishedUrl,
+      hasCustomDomain: !!verifiedDomain,
+      customDomain: verifiedDomain,
     });
   } catch (e) {
     console.error("organization-website status error:", e);

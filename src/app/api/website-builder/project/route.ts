@@ -149,6 +149,7 @@ export async function POST(req: NextRequest) {
         organization_id: organizationId,
         project: projectJson,
         name: projectName,
+        created_by: user.id,
       })
       .select("id, name, created_at, updated_at")
       .single();
