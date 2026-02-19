@@ -294,7 +294,6 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
           src={iframeSrc}
           className="h-full w-full border-0"
           title="Website builder"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         />
       </div>
     </div>

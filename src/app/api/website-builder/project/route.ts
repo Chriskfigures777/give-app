@@ -143,16 +143,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, id: data.id, name: data.name });
     }
 
-    const { data, error } = await supabase
+    // Try with created_by first; fall back without it if the column hasn't been migrated yet
+    let data: { id: string; name: string | null; created_at: string; updated_at: string } | null = null;
+    let error: { message: string } | null = null;
+
+    const insertPayload: Record<string, unknown> = {
+      organization_id: organizationId,
+      project: projectJson,
+      name: projectName,
+      created_by: user.id,
+    };
+
+    const result = await supabase
       .from("website_builder_projects")
-      .insert({
-        organization_id: organizationId,
-        project: projectJson,
-        name: projectName,
-        created_by: user.id,
-      })
+      .insert(insertPayload)
       .select("id, name, created_at, updated_at")
       .single();
+    data = result.data;
+    error = result.error;
+
+    if (error?.message?.includes("created_by")) {
+      delete insertPayload.created_by;
+      const retry = await supabase
+        .from("website_builder_projects")
+        .insert(insertPayload)
+        .select("id, name, created_at, updated_at")
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error) {
       console.error("website-builder project POST (create) error:", error);

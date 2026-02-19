@@ -43,18 +43,27 @@ export async function GET(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { data, error } = await supabase
+    // Try with created_by; fall back without it if the column hasn't been migrated yet
+    let result = await supabase
       .from("website_builder_projects")
       .select("id, name, project, created_at, updated_at, created_by")
       .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false });
 
-    if (error) {
-      console.error("website-builder projects list error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (result.error?.message?.includes("created_by")) {
+      result = await supabase
+        .from("website_builder_projects")
+        .select("id, name, project, created_at, updated_at")
+        .eq("organization_id", organizationId)
+        .order("updated_at", { ascending: false });
     }
 
-    const projects = (data ?? []).map((p) => ({
+    if (result.error) {
+      console.error("website-builder projects list error:", result.error);
+      return NextResponse.json({ error: result.error.message }, { status: 500 });
+    }
+
+    const projects = (result.data ?? []).map((p) => ({
       id: p.id,
       name: p.name ?? "Untitled",
       project: p.project,
