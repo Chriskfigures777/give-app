@@ -67,7 +67,11 @@ export async function GET(req: NextRequest) {
     // Preview URL always goes through Vercel /site/ route (works before CloudFront is set up)
     const previewUrl = slug ? `${baseTrimmed}/site/${slug}` : null;
 
-    // Published site URL: prefer custom domain, then CloudFront, then Vercel /site/
+    // Published site URL: prefer custom domain, then Vercel /site/ preview
+    // NOTE: We do NOT use the bare CloudFront domain as publishedUrl.
+    // Lambda@Edge routes by Host header matched against the domain map (custom domains only).
+    // The bare CloudFront domain (e.g. d6u7sflc0yaio.cloudfront.net) is never in the
+    // domain map, so requests to it return 404. Only use it once a custom domain is verified.
     let publishedUrl = previewUrl;
     if (slug) {
       // Check for a verified custom domain
@@ -82,12 +86,8 @@ export async function GET(req: NextRequest) {
       if (customDomain) {
         const d = (customDomain as { domain: string }).domain;
         publishedUrl = `https://${d}`;
-      } else {
-        const cfDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
-        if (cfDomain) {
-          publishedUrl = `https://${cfDomain}`;
-        }
       }
+      // If no verified custom domain, keep previewUrl (always works via /site/slug)
     }
 
     return NextResponse.json({

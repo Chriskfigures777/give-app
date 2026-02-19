@@ -11,6 +11,7 @@ type Props = {
 type EditorProjectState = {
   projectId: string;
   siteUrl: string | null;
+  publishedUrl: string | null;
   isPublished: boolean;
 };
 
@@ -23,6 +24,7 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
   const [isResetting, setIsResetting] = useState(false);
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [justPublishedUrl, setJustPublishedUrl] = useState<string | null>(null);
   const iframeSrc = `/dashboard/pages/editor-frame`;
 
   useEffect(() => {
@@ -31,10 +33,21 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
         setProjectState({
           projectId: e.data.projectId,
           siteUrl: e.data.siteUrl ?? null,
+          publishedUrl: e.data.publishedUrl ?? null,
           isPublished: e.data.isPublished ?? false,
         });
+        setJustPublishedUrl(null);
       } else if (e.data?.type === "editor-project-unloaded") {
         setProjectState(null);
+        setJustPublishedUrl(null);
+      } else if (e.data?.type === "site-published") {
+        if (e.data.published && e.data.publishedUrl) {
+          setJustPublishedUrl(e.data.publishedUrl);
+          setProjectState((p) => p ? { ...p, isPublished: true, publishedUrl: e.data.publishedUrl } : null);
+        } else {
+          setJustPublishedUrl(null);
+          setProjectState((p) => p ? { ...p, isPublished: false } : null);
+        }
       }
     }
     window.addEventListener("message", handleMessage);
@@ -76,7 +89,25 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
       });
       const data = await res.json();
       if (data.ok) {
-        setProjectState((p) => (p ? { ...p, isPublished: !p.isPublished } : null));
+        const nowPublished = !projectState.isPublished;
+        setProjectState((p) => (p ? { ...p, isPublished: nowPublished } : null));
+        if (nowPublished) {
+          // Fetch updated status to get live publishedUrl
+          try {
+            const statusRes = await fetch(
+              `/api/organization-website/status?organizationId=${encodeURIComponent(organizationId)}`,
+              { credentials: "include" }
+            );
+            const statusData = await statusRes.json();
+            const liveUrl = statusData.publishedUrl || statusData.siteUrl || null;
+            if (liveUrl) {
+              setJustPublishedUrl(liveUrl);
+              setProjectState((p) => p ? { ...p, publishedUrl: liveUrl } : null);
+            }
+          } catch { /* ignore */ }
+        } else {
+          setJustPublishedUrl(null);
+        }
       }
     } finally {
       setIsPublishing(false);
@@ -118,6 +149,17 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
                 Preview
               </button>
             )}
+            {projectState.isPublished && (projectState.publishedUrl || justPublishedUrl) && (
+              <a
+                href={justPublishedUrl || projectState.publishedUrl || ""}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100 transition-colors"
+              >
+                <ExternalLink className="h-4 w-4" />
+                View live site
+              </a>
+            )}
             <button
               type="button"
               onClick={handlePublish}
@@ -125,11 +167,26 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
               className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-60"
             >
               <Upload className="h-4 w-4" />
-              {projectState.isPublished ? "Unpublish" : "Publish"}
+              {isPublishing ? "Publishing..." : projectState.isPublished ? "Unpublish" : "Publish"}
             </button>
           </div>
         )}
       </header>
+      {/* Published URL banner */}
+      {justPublishedUrl && (
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-sm">
+          <span className="font-medium text-emerald-800">Site published!</span>
+          <a
+            href={justPublishedUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            View live site: {justPublishedUrl}
+          </a>
+        </div>
+      )}
       <div className="relative min-h-0 flex-1">
         <iframe
           ref={iframeRef}

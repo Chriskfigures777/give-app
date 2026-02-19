@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     (function() {
       var organizationId = ${JSON.stringify(organizationId)};
       var licenseKey = ${JSON.stringify(licenseKey)};
-      var orgStatus = { siteUrl: null, publishedProjectId: null };
+      var orgStatus = { siteUrl: null, publishedUrl: null, publishedProjectId: null };
       var listPagesComponent = window.GrapesJsStudioSdkPlugins?.listPagesComponent || window.StudioSdkPlugins?.listPagesComponent;
       var swiperComponent = window.GrapesJsStudioSdkPlugins?.swiperComponent || window.StudioSdkPlugins?.swiperComponent;
       var createStudioEditor = (window.GrapesJsStudioSDK && (window.GrapesJsStudioSDK.default || window.GrapesJsStudioSDK.createStudioEditor)) || window.createStudioEditor;
@@ -235,6 +235,7 @@ export async function GET(req: NextRequest) {
             type: 'editor-project-loaded',
             projectId: projectId,
             siteUrl: orgStatus.siteUrl || null,
+            publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null,
             isPublished: orgStatus.publishedProjectId === projectId
           }, '*');
         }
@@ -710,7 +711,23 @@ export async function GET(req: NextRequest) {
               }).then(function(r) { return r.json(); }).then(function(data) {
                 if (data.ok) {
                   orgStatus.publishedProjectId = unpublish ? null : p.id;
-                  renderProjectCards(projects);
+                  // Re-fetch status to get updated publishedUrl (may now include custom domain)
+                  fetch('/api/organization-website/status?organizationId=' + encodeURIComponent(organizationId), { credentials: 'include' })
+                    .then(function(r2) { return r2.json(); })
+                    .then(function(s) {
+                      if (s.publishedUrl) orgStatus.publishedUrl = s.publishedUrl;
+                      if (s.siteUrl) orgStatus.siteUrl = s.siteUrl;
+                      // Notify parent of updated published URL
+                      if (window.parent !== window) {
+                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null }, '*');
+                      }
+                      renderProjectCards(projects);
+                    }).catch(function() {
+                      if (window.parent !== window) {
+                        window.parent.postMessage({ type: 'site-published', published: !unpublish, publishedUrl: orgStatus.publishedUrl || orgStatus.siteUrl || null }, '*');
+                      }
+                      renderProjectCards(projects);
+                    });
                 }
                 btn.disabled = false;
               }).catch(function() { btn.disabled = false; });
@@ -798,6 +815,7 @@ export async function GET(req: NextRequest) {
           var statusRes = await fetch('/api/organization-website/status?organizationId=' + encodeURIComponent(organizationId), { credentials: 'include' });
           var statusData = await statusRes.json();
           if (statusData.siteUrl) orgStatus.siteUrl = statusData.siteUrl;
+          if (statusData.publishedUrl) orgStatus.publishedUrl = statusData.publishedUrl;
           if (statusData.publishedProjectId) orgStatus.publishedProjectId = statusData.publishedProjectId;
         } catch (_) {}
         var timeout = setTimeout(function() {

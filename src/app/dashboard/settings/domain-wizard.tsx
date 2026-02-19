@@ -65,6 +65,20 @@ const CNAME_TARGET = CF_DOMAIN || process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "
 const VERCEL_IP = "76.76.21.21";
 const USE_CLOUDFRONT = !!CF_DOMAIN;
 
+/**
+ * Strips the apex domain from a full ACM CNAME name to produce a registrar-friendly host.
+ * Example: "_abc123.www.example.com" with domain "www.example.com" → "_abc123.www"
+ */
+function getRegistrarHostName(fullName: string, domain?: string): string {
+  if (!domain) return fullName;
+  const apex = domain.replace(/^www\./, "");
+  const suffix = "." + apex;
+  if (fullName.endsWith(suffix)) {
+    return fullName.slice(0, -suffix.length);
+  }
+  return fullName;
+}
+
 function formatPrice(price: number, currency: string) {
   const amt = price / 1000000;
   return new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2 }).format(amt);
@@ -457,6 +471,8 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
 
                 {acmRecords.map((rec, idx) => {
                   const isValidated = rec.status === "SUCCESS";
+                  // Show registrar-friendly host name (strip apex domain suffix)
+                  const registrarHost = getRegistrarHostName(rec.name, rec.domain);
                   return (
                     <div key={idx} className={`mt-4 overflow-hidden rounded-xl border shadow-sm ${isValidated ? "border-emerald-300/50 dark:border-emerald-700/40" : "border-violet-300/50 dark:border-violet-700/40"} bg-white dark:bg-slate-800/80`}>
                       <div className={`flex items-center justify-between border-b px-4 py-2.5 ${isValidated ? "border-emerald-100 bg-emerald-50/50 dark:border-emerald-800/40 dark:bg-emerald-900/20" : "border-violet-100 bg-violet-50/50 dark:border-violet-800/40 dark:bg-violet-900/20"}`}>
@@ -469,17 +485,17 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                       {!isValidated && (
                         <div className="divide-y divide-slate-100 dark:divide-slate-700/40">
                           {[
-                            { label: "Type", value: rec.type },
-                            { label: "Name / Host", value: rec.name },
-                            { label: "Value / Points to", value: rec.value },
-                            { label: "TTL", value: "300 (or Auto)" },
+                            { label: "Type", copyVal: rec.type, display: rec.type },
+                            { label: "Name / Host", copyVal: registrarHost, display: registrarHost },
+                            { label: "Value / Points to", copyVal: rec.value, display: rec.value },
+                            { label: "TTL", copyVal: "300", display: "300 (or Auto)" },
                           ].map(row => (
                             <div key={row.label} className="flex items-center justify-between px-4 py-3">
                               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{row.label}</span>
                               <div className="flex items-center gap-2">
-                                <code className="max-w-[260px] truncate rounded-md bg-slate-50 px-2.5 py-1 text-xs font-mono font-semibold text-slate-900 dark:bg-slate-700/60 dark:text-slate-100">{row.value}</code>
-                                <button type="button" onClick={() => handleCopy(row.value)} className="rounded-md p-1 text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-600 dark:hover:bg-violet-900/30 dark:hover:text-violet-400">
-                                  {copiedText === row.value ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                <code className="max-w-[260px] truncate rounded-md bg-slate-50 px-2.5 py-1 text-xs font-mono font-semibold text-slate-900 dark:bg-slate-700/60 dark:text-slate-100">{row.display}</code>
+                                <button type="button" onClick={() => handleCopy(row.copyVal)} className="rounded-md p-1 text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-600 dark:hover:bg-violet-900/30 dark:hover:text-violet-400">
+                                  {copiedText === row.copyVal ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                                 </button>
                               </div>
                             </div>
@@ -552,6 +568,20 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                     <ExternalLink className="h-2.5 w-2.5 opacity-40 group-hover:opacity-80" />
                   </a>
                 ))}
+              </div>
+            </div>
+
+            {/* No nameserver change needed — confirmation note */}
+            <div className="rounded-xl border border-emerald-200/60 bg-emerald-50/40 p-4 dark:border-emerald-800/40 dark:bg-emerald-900/10">
+              <div className="flex items-start gap-2.5">
+                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">No nameserver changes required</p>
+                  <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400">
+                    Add the DNS records above directly at your registrar (GoDaddy, Namecheap, etc.) — your existing nameservers stay the same.
+                    SSL validation typically completes within 10–30 minutes after the CNAME records are saved.
+                  </p>
+                </div>
               </div>
             </div>
 
