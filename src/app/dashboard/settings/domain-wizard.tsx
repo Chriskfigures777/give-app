@@ -58,7 +58,7 @@ const REGISTRAR_GUIDES: Record<string, { name: string; url: string }> = {
   hostgator: { name: "HostGator", url: "https://www.hostgator.com/help/article/changing-dns-records" },
 };
 
-const CNAME_TARGET = process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "nextgive.vercel.app";
+const CNAME_TARGET = process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "give-app78.vercel.app";
 
 function formatPrice(price: number, currency: string) {
   const amt = price / 1000000;
