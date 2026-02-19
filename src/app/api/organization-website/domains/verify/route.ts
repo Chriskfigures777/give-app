@@ -25,7 +25,7 @@ async function canAccessOrg(
 }
 
 const cnameTarget = () =>
-  process.env.SITE_CNAME_TARGET || "cname.vercel-dns.com";
+  process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
 
 async function verifyDns(domain: string): Promise<boolean> {
   try {

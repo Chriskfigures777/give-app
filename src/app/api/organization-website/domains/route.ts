@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const cnameTarget = process.env.SITE_CNAME_TARGET || "cname.vercel-dns.com";
+    const cnameTarget = process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
     const isWww = domain.startsWith("www.");
     const apexDomain = isWww ? domain.replace(/^www\./, "") : domain;
     const recordName = isWww ? "www" : "@";
