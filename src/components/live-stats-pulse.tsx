@@ -170,7 +170,7 @@ function ActivitySparkline({ isDark }: { isDark: boolean }) {
         const t = i / 23;
         const wave =
           0.3 * Math.sin(t * Math.PI * 3) + 0.35 * Math.sin(t * Math.PI * 2.3) + 0.35;
-        return Math.max(0.2, Math.min(0.8, wave));
+        return Math.round(Math.max(0.2, Math.min(0.8, wave)) * 1000) / 1000;
       }),
     []
   );
