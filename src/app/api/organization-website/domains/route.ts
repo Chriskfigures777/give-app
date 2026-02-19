@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
+import { requestCertificate, cloudfrontDomain, isHostingConfigured } from "@/lib/aws-hosting";
 
 async function canAccessOrg(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -102,21 +103,38 @@ export async function POST(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const cfDomain = process.env.AWS_CLOUDFRONT_DOMAIN || "";
+    const cfDomain = cloudfrontDomain();
     const cnameTarget = cfDomain || process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
     const vercelIp = "76.76.21.21";
     const isWww = domain.startsWith("www.");
-    const apexDomain = isWww ? domain.replace(/^www\./, "") : domain;
     const recordName = isWww ? "www" : "@";
     const isRoot = recordName === "@";
+    const useCloudFront = isHostingConfigured() && !!cfDomain;
 
-    // When AWS hosting is configured, always use CNAME to CloudFront
-    // When not configured (Vercel only), use A record for root, CNAME for www
-    const dnsInstructions = cfDomain
-      ? { type: "CNAME", name: recordName === "@" ? "www" : recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName === "@" ? "www" : recordName} → ${cnameTarget}` }
+    // Build main DNS instruction (the record that points to the site)
+    const mainDnsRecord = useCloudFront
+      ? { type: "CNAME", name: "www", value: cfDomain, message: `Add a CNAME record: www → ${cfDomain}` }
       : isRoot
         ? { type: "A", name: "@", value: vercelIp, message: `Add an A record: @ (root) → ${vercelIp}` }
         : { type: "CNAME", name: recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName} → ${cnameTarget}` };
+
+    // Request ACM certificate for SSL if CloudFront hosting is configured
+    let acmValidationRecords: Array<{ type: string; name: string; value: string }> = [];
+    let certArn: string | undefined;
+
+    if (useCloudFront) {
+      const certResult = await requestCertificate(domain.startsWith("www.") ? domain.replace(/^www\./, "") : domain);
+      if (certResult.ok) {
+        certArn = certResult.certArn;
+        if (certResult.validationRecord) {
+          acmValidationRecords.push({
+            type: "CNAME",
+            name: certResult.validationRecord.name.replace(/\.$/, ""),
+            value: certResult.validationRecord.value.replace(/\.$/, ""),
+          });
+        }
+      }
+    }
 
     const { data: existing } = await supabase
       .from("organization_domains")
@@ -128,12 +146,23 @@ export async function POST(req: NextRequest) {
       if ((existing as { organization_id: string }).organization_id !== organizationId) {
         return NextResponse.json({ error: "Domain already connected to another organization" }, { status: 409 });
       }
+      // Store cert ARN if we have one
+      if (certArn) {
+        await supabase.from("organization_domains").update({ acm_cert_arn: certArn }).eq("id", (existing as { id: string }).id);
+      }
       const { data: d } = await supabase
         .from("organization_domains")
         .select("id, domain, status")
         .eq("id", (existing as { id: string }).id)
         .single();
-      return NextResponse.json({ domain: d, instructions: dnsInstructions });
+      return NextResponse.json({
+        domain: d,
+        instructions: mainDnsRecord,
+        acmValidationRecords,
+        certArn,
+        useCloudFront,
+        cloudfrontDomain: cfDomain,
+      });
     }
 
     const { data: inserted, error } = await supabase
@@ -143,6 +172,7 @@ export async function POST(req: NextRequest) {
         domain,
         status: "pending",
         dns_provider: null,
+        acm_cert_arn: certArn ?? null,
       })
       .select("id, domain, status, created_at")
       .single();
@@ -152,7 +182,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ domain: inserted, instructions: dnsInstructions });
+    return NextResponse.json({
+      domain: inserted,
+      instructions: mainDnsRecord,
+      acmValidationRecords,
+      certArn,
+      useCloudFront,
+      cloudfrontDomain: cfDomain,
+    });
   } catch (e) {
     console.error("organization-website domains POST error:", e);
     return NextResponse.json(

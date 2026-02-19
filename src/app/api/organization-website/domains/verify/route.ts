@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
 import { addRoute53Cname } from "@/lib/route53";
+import {
+  addCloudFrontDomain,
+  getCertificateStatus,
+  isHostingConfigured,
+  updateDomainMap,
+} from "@/lib/aws-hosting";
 import dns from "dns/promises";
 
 async function canAccessOrg(
@@ -116,6 +122,45 @@ export async function POST(req: NextRequest) {
           updated_at: new Date().toISOString(),
         })
         .eq("id", domainId);
+
+      // If AWS hosting is configured, add domain to CloudFront + update domain map
+      if (isHostingConfigured()) {
+        const { data: domRow } = await supabase
+          .from("organization_domains")
+          .select("acm_cert_arn")
+          .eq("id", domainId)
+          .single();
+
+        const certArn = (domRow as { acm_cert_arn?: string } | null)?.acm_cert_arn;
+        if (certArn) {
+          const certStatus = await getCertificateStatus(certArn);
+          if (certStatus.status === "ISSUED") {
+            const cfResult = await addCloudFrontDomain(domain, certArn);
+            if (!cfResult.ok) console.warn("CloudFront add domain error:", cfResult.error);
+          }
+        }
+
+        // Rebuild domain map with all verified domains
+        const { data: allMappings } = await supabase
+          .from("organization_domains")
+          .select("domain, organization_id")
+          .eq("status", "verified");
+
+        if (allMappings) {
+          const { data: allOrgs } = await supabase
+            .from("organizations")
+            .select("id, slug, published_website_project_id")
+            .not("published_website_project_id", "is", null);
+
+          const orgMap = new Map((allOrgs ?? []).map((o: { id: string; slug?: string }) => [o.id, o.slug]));
+          const domainMap: Record<string, string> = {};
+          for (const m of allMappings) {
+            const slug = orgMap.get((m as { organization_id: string }).organization_id);
+            if (slug) domainMap[(m as { domain: string }).domain] = slug as string;
+          }
+          await updateDomainMap(domainMap);
+        }
+      }
     } else {
       await supabase
         .from("organization_domains")

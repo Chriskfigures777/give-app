@@ -1888,6 +1888,7 @@ export type Database = {
       }
       organization_domains: {
         Row: {
+          acm_cert_arn: string | null
           created_at: string | null
           dns_provider: string | null
           domain: string
@@ -1898,6 +1899,7 @@ export type Database = {
           verified_at: string | null
         }
         Insert: {
+          acm_cert_arn?: string | null
           created_at?: string | null
           dns_provider?: string | null
           domain: string
@@ -1908,6 +1910,7 @@ export type Database = {
           verified_at?: string | null
         }
         Update: {
+          acm_cert_arn?: string | null
           created_at?: string | null
           dns_provider?: string | null
           domain?: string

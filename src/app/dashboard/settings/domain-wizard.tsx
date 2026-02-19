@@ -24,6 +24,7 @@ import {
   Zap,
   BookOpen,
   Church,
+  Shield,
 } from "lucide-react";
 import { DnsRecordsPanel } from "./dns-records-panel";
 
@@ -77,6 +78,8 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
   const [domainInput, setDomainInput] = useState("");
   const [adding, setAdding] = useState(false);
   const [instructions, setInstructions] = useState<{ domainId: string; name: string; value: string; type?: string } | null>(null);
+  const [acmRecords, setAcmRecords] = useState<Array<{ type: string; name: string; value: string }>>([]);
+  const [cfDomainTarget, setCfDomainTarget] = useState<string>("");
   const [verifying, setVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<{ verified: boolean; message: string } | null>(null);
 
@@ -134,6 +137,8 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
       await fetchDomains();
       if (data.domain && data.instructions) {
         setInstructions({ domainId: data.domain.id, name: data.instructions.name, value: data.instructions.value, type: data.instructions.type });
+        setAcmRecords(data.acmValidationRecords ?? []);
+        setCfDomainTarget(data.cloudfrontDomain ?? "");
         setExistingStep("instructions");
       }
     } catch (e) { setError(e instanceof Error ? e.message : "Failed"); }
@@ -369,12 +374,56 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
         {/* Step 2: DNS Instructions */}
         {existingStep === "instructions" && instructions && (
           <div className="space-y-5">
+            {/* ACM SSL validation records (CloudFront only) */}
+            {acmRecords.length > 0 && (
+              <div className="rounded-2xl border border-violet-200/60 bg-gradient-to-br from-violet-50/80 to-purple-50/60 p-6 dark:border-violet-800/40 dark:from-violet-900/20 dark:to-purple-900/10">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15"><Shield className="h-5 w-5 text-violet-600 dark:text-violet-400" /></div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Step 1: SSL Certificate Validation</h3>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Add this CNAME record at your domain registrar to verify your SSL certificate. This enables HTTPS for your site.</p>
+                  </div>
+                </div>
+
+                {acmRecords.map((rec, idx) => (
+                  <div key={idx} className="mt-4 overflow-hidden rounded-xl border border-violet-300/50 bg-white shadow-sm dark:border-violet-700/40 dark:bg-slate-800/80">
+                    <div className="border-b border-violet-100 bg-violet-50/50 px-4 py-2.5 dark:border-violet-800/40 dark:bg-violet-900/20">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">SSL Validation Record</span>
+                    </div>
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700/40">
+                      {[
+                        { label: "Type", value: rec.type },
+                        { label: "Name / Host", value: rec.name },
+                        { label: "Value / Points to", value: rec.value },
+                        { label: "TTL", value: "300 (or Auto)" },
+                      ].map(row => (
+                        <div key={row.label} className="flex items-center justify-between px-4 py-3">
+                          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{row.label}</span>
+                          <div className="flex items-center gap-2">
+                            <code className="max-w-[260px] truncate rounded-md bg-slate-50 px-2.5 py-1 text-xs font-mono font-semibold text-slate-900 dark:bg-slate-700/60 dark:text-slate-100">{row.value}</code>
+                            <button type="button" onClick={() => handleCopy(row.value)} className="rounded-md p-1 text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-600 dark:hover:bg-violet-900/30 dark:hover:text-violet-400">
+                              {copiedText === row.value ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Main DNS Record */}
             <div className="rounded-2xl border border-sky-200/60 bg-gradient-to-br from-sky-50/80 to-cyan-50/60 p-6 dark:border-sky-800/40 dark:from-sky-900/20 dark:to-cyan-900/10">
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/15"><BookOpen className="h-5 w-5 text-sky-600 dark:text-sky-400" /></div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Add this DNS record</h3>
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Log in to your domain registrar (where you bought the domain) and add the following record:</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{acmRecords.length > 0 ? "Step 2: Point your domain" : "Add this DNS record"}</h3>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                    {acmRecords.length > 0
+                      ? "Add this record to point your domain to your hosted site:"
+                      : "Log in to your domain registrar (where you bought the domain) and add the following record:"}
+                  </p>
                 </div>
               </div>
 
@@ -402,6 +451,16 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                   ))}
                 </div>
               </div>
+
+              {/* Root domain note for CloudFront */}
+              {acmRecords.length > 0 && (
+                <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-50/60 p-3 dark:bg-amber-900/10">
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
+                  <p className="text-xs text-amber-700 dark:text-amber-400">
+                    <strong>Root domain tip:</strong> Most registrars (GoDaddy, Namecheap) don&apos;t allow CNAME on the root domain (@). Use <code className="font-mono text-amber-800 dark:text-amber-300">www</code> for your CNAME, then set up a redirect from your root domain to <code className="font-mono text-amber-800 dark:text-amber-300">www</code> in your registrar&apos;s settings.
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Registrar guides */}
@@ -424,7 +483,7 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
               </button>
               <button type="button" onClick={handleVerifyDomain} disabled={verifying} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-sky-700 disabled:opacity-50">
                 {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                {verifying ? "Checking DNS..." : "I've added the record — verify now"}
+                {verifying ? "Checking DNS..." : "I've added the records — verify now"}
               </button>
             </div>
 
