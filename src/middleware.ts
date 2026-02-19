@@ -16,6 +16,8 @@ function isAppDomain(host: string): boolean {
 
 function getSiteRewrite(req: NextRequest): NextResponse | null {
   const host = (req.headers.get("host") ?? "").split(":")[0];
+  // Never rewrite *.vercel.app — "give-app78" is the project name, not an org subdomain
+  if (host.toLowerCase().endsWith(".vercel.app")) return null;
   const parts = host.split(".");
   if (parts.length < 3) return null;
   const subdomain = parts[0];
