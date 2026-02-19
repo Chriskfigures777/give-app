@@ -1,31 +1,32 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { getOrgPlan, hasAccessToPlan } from "@/lib/plan";
+import { getOrgVerification } from "@/lib/verification";
 import Link from "next/link";
 import { ArrowLeft, Globe, Layers } from "lucide-react";
 import { CmsClient } from "./cms-client";
-import { PaywallGate } from "@/components/paywall-gate";
+import { VerificationGate } from "@/components/verification-gate";
 
 export default async function CmsPage() {
   const { profile, supabase } = await requireAuth();
+  const isPlatformAdmin = profile?.role === "platform_admin";
   const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
 
   if (!orgId) {
     redirect("/dashboard");
   }
 
-  const { plan, planStatus } = await getOrgPlan(orgId, supabase);
-  const hasAccess = hasAccessToPlan(plan, planStatus, "pro");
+  if (!isPlatformAdmin) {
+    const { verificationStatus } = await getOrgVerification(orgId, supabase);
 
-  if (!hasAccess) {
-    return (
-      <PaywallGate
-        requiredPlan="pro"
-        featureName="Website CMS"
-        featureDescription="Edit your website content — pages, blocks, sermons, podcasts, and more — directly from the dashboard."
-        currentPlan={plan}
-      />
-    );
+    if (verificationStatus !== "verified") {
+      return (
+        <VerificationGate
+          verificationStatus={verificationStatus}
+          featureName="Website CMS"
+          featureDescription="Edit your website content — pages, blocks, sermons, podcasts, and more. You need a verified Stripe Connect account first."
+        />
+      );
+    }
   }
 
   return (

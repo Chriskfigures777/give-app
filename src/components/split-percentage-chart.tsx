@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { Plus, Minus, Trash2, Users } from "lucide-react";
+import Link from "next/link";
+import { Plus, Minus, Trash2, Users, ArrowRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import type { OrgPlan } from "@/lib/plan";
 
 /* ── Color palette ───────────────────────────────────────────── */
 const COLORS = [
@@ -35,6 +37,8 @@ interface Props {
   connectedPeers: Peer[];
   organizationName: string;
   compact?: boolean;
+  maxRecipients?: number;
+  currentPlan?: OrgPlan;
 }
 
 /* ── SVG constants ───────────────────────────────────────────── */
@@ -69,7 +73,10 @@ export function SplitPercentageChart({
   connectedPeers,
   organizationName,
   compact,
+  maxRecipients = Infinity,
+  currentPlan = "free",
 }: Props) {
+  const atRecipientLimit = maxRecipients !== Infinity && splits.length >= maxRecipients;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [dragging, setDragging] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -513,15 +520,30 @@ export function SplitPercentageChart({
         })}
 
         {/* Add split button – opens modal to select connection */}
-        <button
-          type="button"
-          onClick={openAddRecipientModal}
-          disabled={connectedPeers.length === 0}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 text-xs font-semibold hover:border-emerald-300 hover:text-emerald-600 dark:hover:border-emerald-700 dark:hover:text-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add recipient
-        </button>
+        {atRecipientLimit ? (
+          <div className="w-full rounded-2xl border-2 border-dashed border-amber-200 dark:border-amber-700/40 bg-amber-50/50 dark:bg-amber-900/10 py-3 px-4 text-center space-y-2">
+            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+              Your {currentPlan === "free" ? "Free" : currentPlan === "website" ? "Website" : "Pro"} plan allows {maxRecipients} split recipient{maxRecipients === 1 ? "" : "s"}.
+            </p>
+            <Link
+              href="/dashboard/billing"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700"
+            >
+              Upgrade for more recipients
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={openAddRecipientModal}
+            disabled={connectedPeers.length === 0}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 text-xs font-semibold hover:border-emerald-300 hover:text-emerald-600 dark:hover:border-emerald-700 dark:hover:text-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add recipient
+          </button>
+        )}
 
         {/* Hint when no peers connected */}
         {connectedPeers.length === 0 && splits.length === 0 && (

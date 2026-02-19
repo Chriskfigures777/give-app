@@ -152,6 +152,23 @@ export async function PATCH(req: Request) {
           filtered.every(
             (s) => typeof s?.percentage === "number" && typeof s?.accountId === "string"
           );
+
+        if (valid && filtered.length > 0) {
+          const { getOrgPlan, getEffectiveSplitRecipientLimit } = await import("@/lib/plan");
+          const { plan: orgPlan, planStatus: orgPlanStatus } = await getOrgPlan(organizationId, supabase);
+          const recipientLimit = getEffectiveSplitRecipientLimit(orgPlan, orgPlanStatus);
+          const uniqueRecipients = new Set(filtered.map((s) => s.accountId));
+          if (uniqueRecipients.size > recipientLimit) {
+            return NextResponse.json(
+              {
+                error: `Your ${orgPlan === "free" ? "Free" : orgPlan === "website" ? "Website" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
+                code: "SPLIT_RECIPIENT_LIMIT",
+              },
+              { status: 403 }
+            );
+          }
+        }
+
         update.splits = valid ? filtered : [];
       }
     }

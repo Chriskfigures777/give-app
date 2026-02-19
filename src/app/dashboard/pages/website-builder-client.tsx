@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RotateCcw, ExternalLink, Upload } from "lucide-react";
+import { ArrowLeft, RotateCcw, ExternalLink, Upload, AlertCircle, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 type Props = {
@@ -25,6 +25,7 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [justPublishedUrl, setJustPublishedUrl] = useState<string | null>(null);
+  const [publishError, setPublishError] = useState<string | null>(null);
   const iframeSrc = `/dashboard/pages/editor-frame`;
 
   useEffect(() => {
@@ -76,6 +77,7 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
   async function handlePublish() {
     if (!projectState || isPublishing) return;
     setIsPublishing(true);
+    setPublishError(null);
     try {
       const res = await fetch("/api/organization-website/publish", {
         method: "POST",
@@ -88,11 +90,14 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
         credentials: "include",
       });
       const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.error || "Failed to publish. Please try again.");
+        return;
+      }
       if (data.ok) {
         const nowPublished = !projectState.isPublished;
         setProjectState((p) => (p ? { ...p, isPublished: nowPublished } : null));
         if (nowPublished) {
-          // Fetch updated status to get live publishedUrl
           try {
             const statusRes = await fetch(
               `/api/organization-website/status?organizationId=${encodeURIComponent(organizationId)}`,
@@ -172,6 +177,30 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
           </div>
         )}
       </header>
+      {/* Publish error banner */}
+      {publishError && (
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-red-200 bg-red-50 px-4 py-3 text-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
+            <span className="font-medium text-red-800">{publishError}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard/settings"
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors"
+            >
+              Go to Settings
+            </Link>
+            <button
+              type="button"
+              onClick={() => setPublishError(null)}
+              className="rounded-lg p-1 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
       {/* Published URL banner */}
       {justPublishedUrl && (
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-sm">

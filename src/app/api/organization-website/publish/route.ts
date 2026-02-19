@@ -9,6 +9,7 @@ import {
   updateDomainMap,
   isHostingConfigured,
 } from "@/lib/aws-hosting";
+import { getVerificationStatus } from "@/lib/verification";
 
 async function canAccessOrg(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -52,13 +53,31 @@ export async function POST(req: NextRequest) {
       if (!canAccess) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Fetch org slug for S3 paths
+    // Fetch org slug + Stripe Connect account for S3 paths and verification
     const { data: orgRow } = await supabase
       .from("organizations")
-      .select("slug")
+      .select("slug, stripe_connect_account_id, onboarding_completed")
       .eq("id", organizationId)
       .single();
-    const orgSlug = (orgRow as { slug?: string } | null)?.slug;
+    const org = orgRow as { slug?: string; stripe_connect_account_id?: string | null; onboarding_completed?: boolean | null } | null;
+    const orgSlug = org?.slug;
+
+    // Verify Stripe Connect is set up before allowing publish (not needed for unpublish)
+    if (!unpublish && profile?.role !== "platform_admin") {
+      const isOnboarded = org?.onboarding_completed === true;
+      if (!isOnboarded) {
+        const status = await getVerificationStatus(org?.stripe_connect_account_id ?? null);
+        if (status !== "verified") {
+          return NextResponse.json(
+            {
+              error: "Your Stripe Connect account must be verified before you can publish a public page. Please complete account setup in Settings.",
+              code: "VERIFICATION_REQUIRED",
+            },
+            { status: 403 }
+          );
+        }
+      }
+    }
 
     if (unpublish) {
       const { error } = await supabase

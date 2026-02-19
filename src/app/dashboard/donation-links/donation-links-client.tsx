@@ -17,9 +17,10 @@ type Props = {
   baseUrl: string;
   formLimit: number;
   currentPlan: OrgPlan;
+  splitRecipientLimit: number;
 };
 
-export function DonationLinksClient({ donationLinks, organizations, organizationSlug, baseUrl, formLimit, currentPlan }: Props) {
+export function DonationLinksClient({ donationLinks, organizations, organizationSlug, baseUrl, formLimit, currentPlan, splitRecipientLimit }: Props) {
   const [links, setLinks] = useState(donationLinks);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +29,10 @@ export function DonationLinksClient({ donationLinks, organizations, organization
   const [slug, setSlug] = useState("");
   const [splits, setSplits] = useState<SplitEntry[]>([]);
 
+  const atSplitLimit = splitRecipientLimit !== Infinity && splits.length >= splitRecipientLimit;
+
   const addSplit = () => {
+    if (atSplitLimit) return;
     setSplits((s) => [...s, { percentage: 0, accountId: "" }]);
   };
 
@@ -181,16 +185,32 @@ export function DonationLinksClient({ donationLinks, organizations, organization
               </div>
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-dashboard-text">Splits (must total 100%)</label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addSplit}
-                    disabled={organizations.length === 0}
-                  >
-                    <Plus className="h-3 w-3 mr-1" /> Add
-                  </Button>
+                  <label className="text-sm font-medium text-dashboard-text">
+                    Splits (must total 100%)
+                    {splitRecipientLimit !== Infinity && (
+                      <span className="ml-1 text-xs font-normal text-dashboard-text-muted">
+                        — {splits.length}/{splitRecipientLimit} recipient{splitRecipientLimit === 1 ? "" : "s"}
+                      </span>
+                    )}
+                  </label>
+                  {atSplitLimit ? (
+                    <Link
+                      href="/dashboard/billing"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-500 hover:text-emerald-600"
+                    >
+                      Upgrade for more <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addSplit}
+                      disabled={organizations.length === 0}
+                    >
+                      <Plus className="h-3 w-3 mr-1" /> Add
+                    </Button>
+                  )}
                 </div>
                 {organizations.length === 0 && (
                   <p className="text-sm text-amber-500 mb-2">

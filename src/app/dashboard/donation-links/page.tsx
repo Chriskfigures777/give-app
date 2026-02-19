@@ -4,18 +4,35 @@ import { SPLITS_ENABLED } from "@/lib/feature-flags";
 import { DonationLinksComingSoon } from "./donation-links-coming-soon";
 import { DonationLinksClient } from "./donation-links-client";
 import { env } from "@/env";
-import { getOrgPlan, getEffectiveFormLimit, type OrgPlan } from "@/lib/plan";
+import { getOrgPlan, getEffectiveFormLimit, getEffectiveSplitRecipientLimit, type OrgPlan } from "@/lib/plan";
+import { getOrgVerification } from "@/lib/verification";
+import { VerificationGate } from "@/components/verification-gate";
 
 export default async function DonationLinksPage() {
-  const { supabase, organizationId } = await requireOrgAdmin();
+  const { supabase, organizationId, profile } = await requireOrgAdmin();
   if (!organizationId) redirect("/dashboard");
 
   if (!SPLITS_ENABLED) {
     return <DonationLinksComingSoon />;
   }
 
+  const isPlatformAdmin = profile?.role === "platform_admin";
+  if (!isPlatformAdmin) {
+    const { verificationStatus } = await getOrgVerification(organizationId, supabase);
+    if (verificationStatus !== "verified") {
+      return (
+        <VerificationGate
+          verificationStatus={verificationStatus}
+          featureName="Donation Forms"
+          featureDescription="Create donation forms with splits. You need a verified Stripe Connect account so donations can be processed."
+        />
+      );
+    }
+  }
+
   const { plan, planStatus } = await getOrgPlan(organizationId, supabase);
   const formLimit = getEffectiveFormLimit(plan, planStatus);
+  const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
 
   const { data: links } = await supabase
     .from("donation_links")
@@ -67,6 +84,7 @@ export default async function DonationLinksPage() {
       baseUrl={baseUrl}
       formLimit={formLimit}
       currentPlan={plan}
+      splitRecipientLimit={splitRecipientLimit}
     />
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Save, Loader2, Check, PieChart } from "lucide-react";
 import { SplitPercentageChart } from "@/components/split-percentage-chart";
+import type { OrgPlan } from "@/lib/plan";
 
 type Split = { percentage: number; accountId: string };
 type Peer = {
@@ -19,6 +20,8 @@ interface Props {
   organizationName: string;
   initialSplits: Split[];
   connectedPeers: Peer[];
+  splitRecipientLimit?: number;
+  currentPlan?: OrgPlan;
 }
 
 export function SplitSettingsPanel({
@@ -26,6 +29,8 @@ export function SplitSettingsPanel({
   organizationName,
   initialSplits,
   connectedPeers,
+  splitRecipientLimit = Infinity,
+  currentPlan = "free",
 }: Props) {
   const router = useRouter();
   const [splits, setSplits] = useState<Split[]>(initialSplits);
@@ -71,6 +76,11 @@ export function SplitSettingsPanel({
             </h2>
             <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
               Control how donations are distributed
+              {splitRecipientLimit !== Infinity && (
+                <span className="ml-1 text-xs">
+                  ({splits.length}/{splitRecipientLimit} recipient{splitRecipientLimit === 1 ? "" : "s"})
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -97,6 +107,8 @@ export function SplitSettingsPanel({
           onSplitsChange={setSplits}
           connectedPeers={connectedPeers}
           organizationName={organizationName}
+          maxRecipients={splitRecipientLimit}
+          currentPlan={currentPlan}
         />
       </div>
     </section>

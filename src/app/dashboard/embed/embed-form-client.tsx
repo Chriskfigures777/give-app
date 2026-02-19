@@ -107,6 +107,8 @@ type Props = {
   initialSplits?: { percentage: number; accountId: string }[];
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
   initialEmbedFormTheme?: EmbedFormThemeId | null;
+  splitRecipientLimit?: number;
+  currentPlan?: "free" | "website" | "pro";
 };
 
 /* -- Section header for collapsible panels -- */
@@ -203,6 +205,8 @@ export function EmbedFormClient({
   initialSplits = [],
   connectedPeers = [],
   initialEmbedFormTheme = "default",
+  splitRecipientLimit = Infinity,
+  currentPlan = "free",
 }: Props) {
   const router = useRouter();
   const initialSets = useMemo(() => {
@@ -1104,6 +1108,8 @@ export function EmbedFormClient({
                         connectedPeers={connectedPeers}
                         organizationName={organizationName}
                         compact
+                        maxRecipients={splitRecipientLimit}
+                        currentPlan={currentPlan}
                       />
                     </div>
                   )}

@@ -27,6 +27,7 @@ const PLAN_CARDS = {
     features: [
       "Website builder (limited templates)",
       "Up to 10 donation forms",
+      "Up to 5 split recipients",
       "Split transactions with peers",
       "Split transactions with missionaries",
       "Custom domains (yourdomain.org)",
@@ -45,6 +46,7 @@ const PLAN_CARDS = {
     features: [
       "Full website builder (all templates)",
       "Unlimited donation forms",
+      "Unlimited split recipients",
       "Website CMS (edit pages, blocks)",
       "Unlimited website pages",
       "Advanced analytics",

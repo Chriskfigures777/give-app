@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/client";
 import { requireOrgAdmin } from "@/lib/auth";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
-import { getOrgPlan, getEffectiveFormLimit } from "@/lib/plan";
+import { getOrgPlan, getEffectiveFormLimit, getEffectiveSplitRecipientLimit } from "@/lib/plan";
+import { getVerificationStatus } from "@/lib/verification";
 
 export type SplitEntry = {
   percentage: number;
@@ -42,9 +43,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Donation links with splits are not available yet" }, { status: 403 });
   }
   try {
-    const { supabase, organizationId } = await requireOrgAdmin();
+    const { supabase, organizationId, profile } = await requireOrgAdmin();
     if (!organizationId) {
       return NextResponse.json({ error: "No organization" }, { status: 400 });
+    }
+
+    // Verify Stripe Connect is set up before allowing donation form creation
+    if (profile?.role !== "platform_admin") {
+      const { data: orgCheck } = await supabase
+        .from("organizations")
+        .select("stripe_connect_account_id, onboarding_completed")
+        .eq("id", organizationId)
+        .single();
+      const orgInfo = orgCheck as { stripe_connect_account_id: string | null; onboarding_completed: boolean | null } | null;
+      if (orgInfo?.onboarding_completed !== true) {
+        const vStatus = await getVerificationStatus(orgInfo?.stripe_connect_account_id ?? null);
+        if (vStatus !== "verified") {
+          return NextResponse.json(
+            {
+              error: "Your Stripe Connect account must be verified before you can create donation forms. Please complete account setup in Settings.",
+              code: "VERIFICATION_REQUIRED",
+            },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     const body = await req.json();
@@ -104,6 +127,18 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    const recipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
+    const uniqueRecipients = new Set(splitsArray.map((e) => e.accountId));
+    if (uniqueRecipients.size > recipientLimit) {
+      return NextResponse.json(
+        {
+          error: `Your ${plan === "free" ? "Free" : plan === "website" ? "Website" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
+          code: "SPLIT_RECIPIENT_LIMIT",
+        },
+        { status: 403 }
+      );
     }
 
     const slugClean = slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");

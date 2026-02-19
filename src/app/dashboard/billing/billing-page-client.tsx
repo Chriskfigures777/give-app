@@ -53,6 +53,7 @@ const PLAN_DATA = [
       "Recurring & one-time gifts",
       "QR codes, tax receipts",
       "Stripe Connect payouts",
+      "1 revenue split recipient",
       "Feed & Explore",
     ],
     trial: null,
@@ -70,6 +71,7 @@ const PLAN_DATA = [
     features: [
       { icon: LayoutDashboard, label: "Website builder (limited templates)" },
       { icon: Split, label: "Up to 10 donation forms" },
+      { icon: Split, label: "Up to 5 split recipients" },
       { icon: Split, label: "Split transactions with peers" },
       { icon: Split, label: "Split transactions with missionaries" },
       { icon: Globe2, label: "Custom domains (yourdomain.org)" },
@@ -91,6 +93,7 @@ const PLAN_DATA = [
     features: [
       { icon: LayoutDashboard, label: "Full website builder (all templates)" },
       { icon: Infinity, label: "Unlimited donation forms" },
+      { icon: Split, label: "Unlimited split recipients" },
       { icon: Blocks, label: "Website CMS (edit pages, blocks)" },
       { icon: Infinity, label: "Unlimited website pages" },
       { icon: TrendingUp, label: "Advanced analytics" },
