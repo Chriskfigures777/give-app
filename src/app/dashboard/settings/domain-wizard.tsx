@@ -25,6 +25,7 @@ import {
   BookOpen,
   Church,
   Shield,
+  Settings,
 } from "lucide-react";
 import { DnsRecordsPanel } from "./dns-records-panel";
 
@@ -186,6 +187,35 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
     setRemoving(null);
   };
 
+  const [managingDomain, setManagingDomain] = useState<string | null>(null);
+
+  const handleManageDomain = async (d: Domain) => {
+    setManagingDomain(d.id);
+    setPath("existing");
+    setExistingStep("instructions");
+    setError(null);
+    setVerifyResult(null);
+    try {
+      const res = await fetch("/api/organization-website/domains", {
+        method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+        body: JSON.stringify({ organizationId, domain: d.domain }),
+      });
+      const data = await res.json();
+      if (data.instructions) {
+        setInstructions({ domainId: d.id, name: data.instructions.name, value: data.instructions.value, type: data.instructions.type });
+        setAcmRecords(data.acmValidationRecords ?? []);
+        setCfDomainTarget(data.cloudfrontDomain ?? "");
+      } else {
+        const isRoot = !d.domain.startsWith("www.");
+        setInstructions({ domainId: d.id, name: USE_CLOUDFRONT ? "www" : (isRoot ? "@" : "www"), value: USE_CLOUDFRONT ? CNAME_TARGET : (isRoot ? VERCEL_IP : CNAME_TARGET), type: USE_CLOUDFRONT ? "CNAME" : (isRoot ? "A" : "CNAME") });
+      }
+    } catch {
+      const isRoot = !d.domain.startsWith("www.");
+      setInstructions({ domainId: d.id, name: USE_CLOUDFRONT ? "www" : (isRoot ? "@" : "www"), value: USE_CLOUDFRONT ? CNAME_TARGET : (isRoot ? VERCEL_IP : CNAME_TARGET), type: USE_CLOUDFRONT ? "CNAME" : (isRoot ? "A" : "CNAME") });
+    }
+    setManagingDomain(null);
+  };
+
   // ─── Domain search ───
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) return;
@@ -232,9 +262,14 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                     <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Connected & verified</p>
                   </div>
                 </div>
-                <button type="button" onClick={() => handleRemoveDomain(d.id)} disabled={removing === d.id} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20">
-                  {removing === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                </button>
+                <div className="flex gap-1.5">
+                  <button type="button" onClick={() => handleManageDomain(d)} disabled={managingDomain === d.id} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    {managingDomain === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Settings className="mr-1 inline h-3 w-3" />Manage DNS</>}
+                  </button>
+                  <button type="button" onClick={() => handleRemoveDomain(d.id)} disabled={removing === d.id} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20">
+                    {removing === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
