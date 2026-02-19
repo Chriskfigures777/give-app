@@ -344,7 +344,7 @@ export async function requestCertificate(
 ): Promise<{
   ok: boolean;
   certArn?: string;
-  validationRecord?: { name: string; value: string };
+  validationRecords?: Array<{ name: string; value: string; domain: string; status: string }>;
   error?: string;
 }> {
   const acm = getACM();
@@ -369,20 +369,23 @@ export async function requestCertificate(
         })
       );
 
-      const dvo = desc.Certificate?.DomainValidationOptions?.[0];
-      return {
-        ok: true,
-        certArn: match.CertificateArn,
-        validationRecord: dvo?.ResourceRecord
-          ? { name: dvo.ResourceRecord.Name ?? "", value: dvo.ResourceRecord.Value ?? "" }
-          : undefined,
-      };
+      const records = (desc.Certificate?.DomainValidationOptions ?? [])
+        .filter((dvo) => dvo.ResourceRecord)
+        .map((dvo) => ({
+          name: dvo.ResourceRecord!.Name ?? "",
+          value: dvo.ResourceRecord!.Value ?? "",
+          domain: dvo.DomainName ?? "",
+          status: dvo.ValidationStatus ?? "UNKNOWN",
+        }));
+
+      return { ok: true, certArn: match.CertificateArn, validationRecords: records };
     }
 
-    // Request new certificate
+    // Request new certificate with both root + www
     const result = await acm.send(
       new RequestCertificateCommand({
         DomainName: domain,
+        SubjectAlternativeNames: [domain, `www.${domain}`],
         ValidationMethod: "DNS",
         Tags: [{ Key: "ManagedBy", Value: "give-app" }],
       })
@@ -401,14 +404,16 @@ export async function requestCertificate(
       })
     );
 
-    const dvo = desc.Certificate?.DomainValidationOptions?.[0];
-    return {
-      ok: true,
-      certArn: result.CertificateArn,
-      validationRecord: dvo?.ResourceRecord
-        ? { name: dvo.ResourceRecord.Name ?? "", value: dvo.ResourceRecord.Value ?? "" }
-        : undefined,
-    };
+    const records = (desc.Certificate?.DomainValidationOptions ?? [])
+      .filter((dvo) => dvo.ResourceRecord)
+      .map((dvo) => ({
+        name: dvo.ResourceRecord!.Name ?? "",
+        value: dvo.ResourceRecord!.Value ?? "",
+        domain: dvo.DomainName ?? "",
+        status: dvo.ValidationStatus ?? "UNKNOWN",
+      }));
+
+    return { ok: true, certArn: result.CertificateArn, validationRecords: records };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("ACM request error:", msg);

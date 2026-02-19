@@ -119,19 +119,25 @@ export async function POST(req: NextRequest) {
         : { type: "CNAME", name: recordName, value: cnameTarget, message: `Add a CNAME record: ${recordName} → ${cnameTarget}` };
 
     // Request ACM certificate for SSL if CloudFront hosting is configured
-    let acmValidationRecords: Array<{ type: string; name: string; value: string }> = [];
+    let acmValidationRecords: Array<{ type: string; name: string; value: string; domain?: string; status?: string }> = [];
     let certArn: string | undefined;
 
     if (useCloudFront) {
-      const certResult = await requestCertificate(domain.startsWith("www.") ? domain.replace(/^www\./, "") : domain);
+      // Always request cert for the apex domain (covers both root + www)
+      const apexForCert = domain.startsWith("www.") ? domain.replace(/^www\./, "") : domain;
+      const certResult = await requestCertificate(apexForCert);
       if (certResult.ok) {
         certArn = certResult.certArn;
-        if (certResult.validationRecord) {
-          acmValidationRecords.push({
-            type: "CNAME",
-            name: certResult.validationRecord.name.replace(/\.$/, ""),
-            value: certResult.validationRecord.value.replace(/\.$/, ""),
-          });
+        if (certResult.validationRecords) {
+          for (const rec of certResult.validationRecords) {
+            acmValidationRecords.push({
+              type: "CNAME",
+              name: rec.name.replace(/\.$/, ""),
+              value: rec.value.replace(/\.$/, ""),
+              domain: rec.domain,
+              status: rec.status,
+            });
+          }
         }
       }
     }

@@ -78,7 +78,7 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
   const [domainInput, setDomainInput] = useState("");
   const [adding, setAdding] = useState(false);
   const [instructions, setInstructions] = useState<{ domainId: string; name: string; value: string; type?: string } | null>(null);
-  const [acmRecords, setAcmRecords] = useState<Array<{ type: string; name: string; value: string }>>([]);
+  const [acmRecords, setAcmRecords] = useState<Array<{ type: string; name: string; value: string; domain?: string; status?: string }>>([]);
   const [cfDomainTarget, setCfDomainTarget] = useState<string>("");
   const [verifying, setVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<{ verified: boolean; message: string } | null>(null);
@@ -236,7 +236,27 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                   <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400">{d.status === "failed" ? "Failed" : "Pending"}</span>
                 </div>
                 <div className="flex gap-1.5">
-                  <button type="button" onClick={() => { const isRoot = !d.domain.startsWith("www."); const useCname = USE_CLOUDFRONT || !isRoot; setPath("existing"); setInstructions({ domainId: d.id, name: USE_CLOUDFRONT ? (isRoot ? "www" : "www") : (isRoot ? "@" : "www"), value: useCname ? CNAME_TARGET : VERCEL_IP, type: useCname ? "CNAME" : "A" }); setExistingStep("instructions"); }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
+                  <button type="button" onClick={async () => {
+                    setPath("existing");
+                    setExistingStep("instructions");
+                    setError(null);
+                    // Fetch fresh instructions + ACM records from the API
+                    try {
+                      const res = await fetch("/api/organization-website/domains", {
+                        method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+                        body: JSON.stringify({ organizationId, domain: d.domain }),
+                      });
+                      const data = await res.json();
+                      if (data.instructions) {
+                        setInstructions({ domainId: d.id, name: data.instructions.name, value: data.instructions.value, type: data.instructions.type });
+                        setAcmRecords(data.acmValidationRecords ?? []);
+                        setCfDomainTarget(data.cloudfrontDomain ?? "");
+                      }
+                    } catch {
+                      const isRoot = !d.domain.startsWith("www.");
+                      setInstructions({ domainId: d.id, name: USE_CLOUDFRONT ? "www" : (isRoot ? "@" : "www"), value: USE_CLOUDFRONT ? CNAME_TARGET : (isRoot ? VERCEL_IP : CNAME_TARGET), type: USE_CLOUDFRONT ? "CNAME" : (isRoot ? "A" : "CNAME") });
+                    }
+                  }} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">Setup DNS</button>
                   <button type="button" onClick={() => handleRemoveDomain(d.id)} disabled={removing === d.id} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20">
                     {removing === d.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   </button>
@@ -385,31 +405,40 @@ export function DomainWizard({ organizationId, isPlatformAdmin }: { organization
                   </div>
                 </div>
 
-                {acmRecords.map((rec, idx) => (
-                  <div key={idx} className="mt-4 overflow-hidden rounded-xl border border-violet-300/50 bg-white shadow-sm dark:border-violet-700/40 dark:bg-slate-800/80">
-                    <div className="border-b border-violet-100 bg-violet-50/50 px-4 py-2.5 dark:border-violet-800/40 dark:bg-violet-900/20">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">SSL Validation Record</span>
-                    </div>
-                    <div className="divide-y divide-slate-100 dark:divide-slate-700/40">
-                      {[
-                        { label: "Type", value: rec.type },
-                        { label: "Name / Host", value: rec.name },
-                        { label: "Value / Points to", value: rec.value },
-                        { label: "TTL", value: "300 (or Auto)" },
-                      ].map(row => (
-                        <div key={row.label} className="flex items-center justify-between px-4 py-3">
-                          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{row.label}</span>
-                          <div className="flex items-center gap-2">
-                            <code className="max-w-[260px] truncate rounded-md bg-slate-50 px-2.5 py-1 text-xs font-mono font-semibold text-slate-900 dark:bg-slate-700/60 dark:text-slate-100">{row.value}</code>
-                            <button type="button" onClick={() => handleCopy(row.value)} className="rounded-md p-1 text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-600 dark:hover:bg-violet-900/30 dark:hover:text-violet-400">
-                              {copiedText === row.value ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-                            </button>
-                          </div>
+                {acmRecords.map((rec, idx) => {
+                  const isValidated = rec.status === "SUCCESS";
+                  return (
+                    <div key={idx} className={`mt-4 overflow-hidden rounded-xl border shadow-sm ${isValidated ? "border-emerald-300/50 dark:border-emerald-700/40" : "border-violet-300/50 dark:border-violet-700/40"} bg-white dark:bg-slate-800/80`}>
+                      <div className={`flex items-center justify-between border-b px-4 py-2.5 ${isValidated ? "border-emerald-100 bg-emerald-50/50 dark:border-emerald-800/40 dark:bg-emerald-900/20" : "border-violet-100 bg-violet-50/50 dark:border-violet-800/40 dark:bg-violet-900/20"}`}>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${isValidated ? "text-emerald-600 dark:text-emerald-400" : "text-violet-600 dark:text-violet-400"}`}>
+                          {rec.domain ? `SSL Record for ${rec.domain}` : "SSL Validation Record"}
+                        </span>
+                        {isValidated && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"><CheckCircle className="h-3 w-3" /> Validated</span>}
+                        {!isValidated && rec.status && <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">Pending</span>}
+                      </div>
+                      {!isValidated && (
+                        <div className="divide-y divide-slate-100 dark:divide-slate-700/40">
+                          {[
+                            { label: "Type", value: rec.type },
+                            { label: "Name / Host", value: rec.name },
+                            { label: "Value / Points to", value: rec.value },
+                            { label: "TTL", value: "300 (or Auto)" },
+                          ].map(row => (
+                            <div key={row.label} className="flex items-center justify-between px-4 py-3">
+                              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{row.label}</span>
+                              <div className="flex items-center gap-2">
+                                <code className="max-w-[260px] truncate rounded-md bg-slate-50 px-2.5 py-1 text-xs font-mono font-semibold text-slate-900 dark:bg-slate-700/60 dark:text-slate-100">{row.value}</code>
+                                <button type="button" onClick={() => handleCopy(row.value)} className="rounded-md p-1 text-slate-400 transition-colors hover:bg-violet-50 hover:text-violet-600 dark:hover:bg-violet-900/30 dark:hover:text-violet-400">
+                                  {copiedText === row.value ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
