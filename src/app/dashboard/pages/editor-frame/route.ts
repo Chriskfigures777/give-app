@@ -246,8 +246,9 @@ export async function GET(req: NextRequest) {
         var injectedProject = await injectCmsIntoProject(project);
         var opts = buildOpts(injectedProject, projectId);
         if (licenseKey) opts.licenseKey = licenseKey;
-        if (listPagesComponent && listPagesComponent.init) opts.plugins.push(listPagesComponent.init({}));
-        if (swiperComponent && swiperComponent.init) opts.plugins.push(swiperComponent.init({}));
+        // Only add listPages/swiper when licensed — unlicensed plugins get cleaned up and cause lastComponent crash
+        if (licenseKey && listPagesComponent && listPagesComponent.init) opts.plugins.push(listPagesComponent.init({}));
+        if (licenseKey && swiperComponent && swiperComponent.init) opts.plugins.push(swiperComponent.init({}));
         opts.plugins.push(function(editor) {
           var ed = (editor && editor.getEditor) ? editor.getEditor() : editor;
           editorInstance = editor;
