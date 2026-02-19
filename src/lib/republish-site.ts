@@ -50,7 +50,7 @@ export function triggerRepublish(organizationId: string): void {
         previewHtml?: string;
       };
 
-      const pages = await generateStaticSite(projectJson, organizationId);
+      const pages = await generateStaticSite(projectJson, organizationId, slug);
       const s3Pages = pages.map((p) => ({ slug: p.slug, html: p.html }));
 
       await uploadSiteToS3(slug, s3Pages);

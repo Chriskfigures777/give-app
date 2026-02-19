@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/client";
 import { requireOrgAdmin } from "@/lib/auth";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
+import { getOrgPlan, getEffectiveFormLimit } from "@/lib/plan";
 
 export type SplitEntry = {
   percentage: number;
@@ -57,6 +58,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Name and slug are required" },
         { status: 400 }
+      );
+    }
+
+    const { plan, planStatus } = await getOrgPlan(organizationId, supabase);
+    const formLimit = getEffectiveFormLimit(plan, planStatus);
+
+    const { count: existingCount } = await supabase
+      .from("donation_links")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", organizationId);
+
+    if ((existingCount ?? 0) >= formLimit) {
+      const upgradePlan = plan === "free" ? "Website" : plan === "website" ? "Pro" : null;
+      return NextResponse.json(
+        {
+          error: `You've reached the form limit for your ${plan === "free" ? "Free" : plan === "website" ? "Website" : "Pro"} plan (${formLimit} forms). ${
+            upgradePlan ? `Upgrade to the ${upgradePlan} plan to create more.` : ""
+          }`,
+          code: "FORM_LIMIT_REACHED",
+        },
+        { status: 403 }
       );
     }
 

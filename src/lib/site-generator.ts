@@ -168,7 +168,7 @@ export async function injectCmsContent(
 
   const featuredSermonHtml = renderFeaturedSermon(featuredSermonEnriched);
   if (out.includes("{{cms:featured_sermon}}")) {
-    out = out.replace("{{cms:featured_sermon}}", featuredSermonHtml);
+    out = out.replace("{{cms:featured_sermon}}", `<div data-cms-block="featured_sermon">${featuredSermonHtml}</div>`);
   }
   if (out.includes("<!-- cms:featured_sermon -->")) {
     out = out.replace(
@@ -177,21 +177,21 @@ export async function injectCmsContent(
     );
   }
   if (out.includes("{{cms:podcast}}")) {
-    out = out.replace("{{cms:podcast}}", renderPodcast({ config: podcastConfig, episodes: podcastEpisodes ?? [] }));
+    out = out.replace("{{cms:podcast}}", `<div data-cms-block="podcast">${renderPodcast({ config: podcastConfig, episodes: podcastEpisodes ?? [] })}</div>`);
   }
   if (out.includes("{{cms:worship_recordings}}")) {
-    out = out.replace("{{cms:worship_recordings}}", renderWorshipRecordings(worshipRecordings ?? []));
+    out = out.replace("{{cms:worship_recordings}}", `<div data-cms-block="worship_recordings">${renderWorshipRecordings(worshipRecordings ?? [])}</div>`);
   }
   if (out.includes("{{cms:events_grid}}")) {
-    out = out.replace("{{cms:events_grid}}", renderEventsGrid(events ?? [], APP_URL));
+    out = out.replace("{{cms:events_grid}}", `<div data-cms-block="events_grid">${renderEventsGrid(events ?? [], APP_URL)}</div>`);
   }
   if (out.includes("{{cms:events_list}}")) {
-    out = out.replace("{{cms:events_list}}", renderEventsList(events ?? [], APP_URL));
+    out = out.replace("{{cms:events_list}}", `<div data-cms-block="events_list">${renderEventsList(events ?? [], APP_URL)}</div>`);
   }
   if (out.includes("{{cms:sermon_archive}}")) {
     out = out.replace(
       "{{cms:sermon_archive}}",
-      renderSermonArchive(sermonArchiveEnriched as Parameters<typeof renderSermonArchive>[0])
+      `<div data-cms-block="sermon_archive">${renderSermonArchive(sermonArchiveEnriched as Parameters<typeof renderSermonArchive>[0])}</div>`
     );
   }
 
@@ -275,19 +275,99 @@ function injectCmsBindings(
 }
 
 // ---------------------------------------------------------------------------
+// Supabase real-time script for live CMS updates on static S3 pages
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds a self-contained <script> tag that:
+ *   1. Fetches fresh CMS blocks from the public API on page load.
+ *   2. Subscribes to Supabase real-time to re-fetch whenever CMS data changes.
+ *
+ * The visitor's browser streams changes directly from Supabase — no polling.
+ */
+function buildRealtimeScript(orgId: string, orgSlug: string): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
+  if (!supabaseUrl || !supabaseKey || !appUrl) return "";
+
+  const safe = (s: string) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+  return `<script data-cms-live="1">(function(){
+var OID="${safe(orgId)}",OSL="${safe(orgSlug)}";
+var SU="${safe(supabaseUrl)}",SK="${safe(supabaseKey)}",AU="${safe(appUrl)}";
+var pending=false,timer=null,retries=0;
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function applyBindings(bindings){
+  if(!bindings)return;
+  document.querySelectorAll("[data-cms-binding]").forEach(function(el){
+    if(el.closest("[data-cms-block]"))return;
+    var key=el.getAttribute("data-cms-binding");
+    if(!key||!bindings[key])return;
+    var v=bindings[key];
+    var tag=el.tagName.toLowerCase();
+    if(tag==="img"){el.setAttribute("src",v);}
+    else if(tag==="a"){
+      var isUrl=/\\.(image_url|video_url|audio_url|url|spotify_url|apple_podcasts_url)$/.test(key);
+      el.setAttribute("href",v);
+      if(!isUrl)el.textContent=v;
+    }else{el.textContent=v;}
+  });
+}
+function refresh(){
+  if(pending)return;pending=true;
+  fetch(AU+"/api/public/cms/"+OSL,{cache:"no-cache"})
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+    .then(function(d){
+      if(!d||!d.blocks)return;retries=0;
+      var b=d.blocks;
+      Object.keys(b).forEach(function(k){
+        var el=document.querySelector('[data-cms-block="'+k+'"]');
+        if(el)el.innerHTML=b[k];
+      });
+      applyBindings(d.bindings);
+    })
+    .catch(function(){retries++;})
+    .finally(function(){pending=false;});
+}
+refresh();
+var s=document.createElement("script");
+s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js";
+s.onload=function(){
+  try{
+    var c=window.supabase.createClient(SU,SK);
+    var tables=["website_cms_featured_sermon","website_cms_podcast_config","website_cms_podcast_episodes",
+     "website_cms_worship_recordings","website_cms_sermon_archive","events"];
+    tables.forEach(function(t){
+      c.channel("cms_"+t+"_"+OID)
+        .on("postgres_changes",{event:"*",schema:"public",table:t,filter:"organization_id=eq."+OID},
+          function(){clearTimeout(timer);timer=setTimeout(refresh,200);})
+        .subscribe();
+    });
+  }catch(e){console.warn("[CMS Live] Realtime init error:",e);}
+};
+s.onerror=function(){console.warn("[CMS Live] Failed to load Supabase JS client");};
+document.head.appendChild(s);
+})();</script>`;
+}
+
+// ---------------------------------------------------------------------------
 // Main: Generate all static pages for a project
 // ---------------------------------------------------------------------------
 
 /**
  * Generate static HTML pages from a GrapesJS project.
  * Used by the publish API to create files for S3 upload.
+ * The orgSlug is embedded in each page for the real-time CMS script.
  */
 export async function generateStaticSite(
   projectJson: { pages?: PageDef[]; default?: { pages?: PageDef[] }; previewHtml?: string } | null,
-  orgId: string
+  orgId: string,
+  orgSlug: string
 ): Promise<GeneratedPage[]> {
   const supabase = createServiceClient();
   const pages = projectJson?.pages ?? projectJson?.default?.pages ?? [];
+  const realtimeScript = buildRealtimeScript(orgId, orgSlug);
 
   if (pages.length === 0) {
     const fallback =
@@ -307,8 +387,17 @@ export async function generateStaticSite(
     // Rewrite links for static hosting (relative paths)
     html = rewriteLinks(html, "/", true);
 
-    // Inject CMS content
+    // Inject CMS content (with data-cms-block wrappers for real-time targeting)
     html = await injectCmsContent(html, orgId, supabase);
+
+    // Inject real-time script before </body> so CMS stays live after publish
+    if (realtimeScript) {
+      if (html.includes("</body>")) {
+        html = html.replace("</body>", realtimeScript + "\n</body>");
+      } else {
+        html += realtimeScript;
+      }
+    }
 
     result.push({ slug, name: page.name, html });
   }

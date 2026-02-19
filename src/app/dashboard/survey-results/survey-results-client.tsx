@@ -12,6 +12,7 @@ import {
   Sparkles,
   MessageSquare,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import {
   SurveyAreaChart,
@@ -396,6 +397,82 @@ function OpenEndedCard({
   );
 }
 
+/* ─── CSV export (reuses same logic as admin responses tab) ─── */
+function escapeCSV(val: string): string {
+  if (val.includes(",") || val.includes('"') || val.includes("\n")) {
+    return `"${val.replace(/"/g, '""')}"`;
+  }
+  return val;
+}
+
+const CSV_FIELDS: (keyof SurveyResponse)[] = [
+  "created_at", "church_name", "respondent_name", "contact_email", "phone_number", "allow_follow_up",
+  "org_type", "weekly_attendance", "annual_budget", "finance_staff_count",
+  "biggest_challenges", "missionaries_supported", "distribution_method", "admin_hours_per_month",
+  "better_ways_to_give", "easier_giving_ideas", "monthly_price_range", "percent_fee_preference",
+  "spend_to_solve_problem", "switch_triggers",
+  "software_type", "top_features", "has_website", "wish_tech_improved", "website_tool_needs",
+  "paperwork_method", "member_communication",
+  "currently_live_stream", "live_stream_platform", "live_stream_giving_interest",
+  "live_stream_ai_features", "live_stream_challenges", "want_charts_dashboard",
+  "auto_giving_interest", "auto_giving_features", "auto_transfer_fee_comfort",
+  "automation_needs", "campaign_tools_interest", "event_posting_needs",
+  "ai_form_interest", "ai_sermon_content", "teaching_packets_interest",
+  "ai_member_curation", "pastor_approval_workflow", "member_development_tools",
+  "team_growth_tracking", "congregation_engagement",
+];
+
+const CSV_LABELS: Record<string, string> = {
+  created_at: "Date Submitted", church_name: "Church / Org", respondent_name: "Name",
+  contact_email: "Email", phone_number: "Phone", allow_follow_up: "Follow-up Opted In",
+  org_type: "Org Type", weekly_attendance: "Attendance", annual_budget: "Budget",
+  finance_staff_count: "Finance Staff", biggest_challenges: "Biggest Challenges",
+  missionaries_supported: "Missionaries Supported", distribution_method: "Distribution Method",
+  admin_hours_per_month: "Admin Hrs/Month", better_ways_to_give: "Better Giving Methods",
+  easier_giving_ideas: "Giving Ideas", monthly_price_range: "Monthly Price",
+  percent_fee_preference: "Fee Preference", spend_to_solve_problem: "Willing to Spend",
+  switch_triggers: "Switch Triggers", software_type: "Software Type", top_features: "Top Features",
+  has_website: "Has Website", wish_tech_improved: "Wish Tech Improved",
+  website_tool_needs: "Website Needs", paperwork_method: "Paperwork Method",
+  member_communication: "Communication Channels", currently_live_stream: "Live Streaming",
+  live_stream_platform: "Stream Platform", live_stream_giving_interest: "Stream Giving Interest",
+  live_stream_ai_features: "Stream AI Features", live_stream_challenges: "Stream Challenges",
+  want_charts_dashboard: "Wants Dashboard", auto_giving_interest: "Auto Giving Interest",
+  auto_giving_features: "Auto Giving Features", auto_transfer_fee_comfort: "Transfer Fee Comfort",
+  automation_needs: "Automation Needs", campaign_tools_interest: "Campaign Tools",
+  event_posting_needs: "Event Posting", ai_form_interest: "AI Form Interest",
+  ai_sermon_content: "AI Sermon Content", teaching_packets_interest: "Teaching Packets",
+  ai_member_curation: "AI Member Curation", pastor_approval_workflow: "Pastor Approval",
+  member_development_tools: "Member Dev Tools", team_growth_tracking: "Team Growth Tracking",
+  congregation_engagement: "Congregation Engagement",
+};
+
+function downloadSurveyCSV(responses: SurveyResponse[]) {
+  const headers = CSV_FIELDS.map((f) => CSV_LABELS[f as string] ?? String(f));
+  const rows = responses.map((r) =>
+    CSV_FIELDS.map((f) => {
+      const val = r[f];
+      if (val == null) return "";
+      if (typeof val === "boolean") return val ? "Yes" : "No";
+      if (f === "created_at") return new Date(val as string).toLocaleDateString();
+      if (Array.isArray(val)) {
+        return (val as string[]).map((v) => getLabel(f as string, v) || v).join("; ");
+      }
+      return getLabel(f as string, val as string) || String(val);
+    })
+  );
+  const csv = [headers, ...rows].map((row) => row.map(escapeCSV).join(",")).join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `survey-results-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function SurveyResultsClient({ responses }: { responses: SurveyResponse[] }) {
   const totalResponses = responses.length;
 
@@ -450,6 +527,30 @@ export function SurveyResultsClient({ responses }: { responses: SurveyResponse[]
       <div className="pointer-events-none absolute -left-40 top-20 h-[350px] w-[350px] rounded-full bg-emerald-500/[0.04] blur-[120px]" />
       <div className="pointer-events-none absolute -right-32 top-[600px] h-[300px] w-[300px] rounded-full bg-blue-500/[0.04] blur-[100px]" />
       <div className="pointer-events-none absolute left-1/2 top-[1200px] h-[250px] w-[250px] -translate-x-1/2 rounded-full bg-violet-500/[0.03] blur-[80px]" />
+
+      {/* ─── Action bar ─── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease }}
+        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashboard-border bg-dashboard-card px-5 py-3.5"
+      >
+        <p className="text-sm text-dashboard-text-muted">
+          <span className="font-semibold text-dashboard-text">{totalResponses}</span>{" "}
+          response{totalResponses !== 1 ? "s" : ""} collected
+          {totalResponses > 0 && (
+            <span className="ml-2 opacity-60">· {dateRange}</span>
+          )}
+        </p>
+        <button
+          onClick={() => downloadSurveyCSV(responses)}
+          disabled={totalResponses === 0}
+          className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+        >
+          <Download className="h-3.5 w-3.5" />
+          Export All CSV
+        </button>
+      </motion.div>
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

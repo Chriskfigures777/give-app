@@ -971,6 +971,28 @@ const SECTIONS: SectionDef[] = [
   },
 ];
 
+/* ─── Deduplication guard — prevents any question name from appearing twice ─── */
+function dedupeQuestions(sections: SectionDef[]): SectionDef[] {
+  const seen = new Set<string>();
+  return sections.map((section) => ({
+    ...section,
+    questions: section.questions.filter((q) => {
+      if (seen.has(q.name)) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            `[Survey] Duplicate question name "${q.name}" found in section "${section.id}" — skipping to prevent repetition.`,
+          );
+        }
+        return false;
+      }
+      seen.add(q.name);
+      return true;
+    }),
+  }));
+}
+
+const EFFECTIVE_SECTIONS = dedupeQuestions(SECTIONS);
+
 /* ─── Field renderers ─── */
 
 function TextField({ q, value, onChange }: { q: QuestionDef; value: string; onChange: (v: string) => void }) {
@@ -1147,7 +1169,7 @@ function SectionHeaderCard({ section, step, firstName }: { section: SectionDef; 
               <span className={`text-xs font-semibold uppercase tracking-wider ${
                 section.half === "money" ? "text-emerald-300" : "text-blue-300"
               }`}>
-                Section {step + 1} of {SECTIONS.length}
+                Section {step + 1} of {EFFECTIVE_SECTIONS.length}
               </span>
             </motion.div>
             <motion.h2
@@ -1258,7 +1280,7 @@ export function SurveyClient() {
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const section = SECTIONS[step];
+  const section = EFFECTIVE_SECTIONS[step];
   const firstName = data.respondent_name?.split(" ")[0] ?? "";
 
   const setField = useCallback(
@@ -1279,7 +1301,7 @@ export function SurveyClient() {
       formRef.current?.reportValidity();
       return;
     }
-    if (step < SECTIONS.length - 1) {
+    if (step < EFFECTIVE_SECTIONS.length - 1) {
       setStep(step + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
@@ -1318,7 +1340,7 @@ export function SurveyClient() {
 
   /* Detect part transitions for divider */
   const showMoneyDivider = step === 1;
-  const showTechDivider = SECTIONS[step]?.half === "tech" && SECTIONS[step - 1]?.half !== "tech";
+  const showTechDivider = EFFECTIVE_SECTIONS[step]?.half === "tech" && EFFECTIVE_SECTIONS[step - 1]?.half !== "tech";
 
   if (submitted) {
     return (
@@ -1374,7 +1396,7 @@ export function SurveyClient() {
 
   const SectionIcon = section.icon;
   const isFirst = step === 0;
-  const isLast = step === SECTIONS.length - 1;
+  const isLast = step === EFFECTIVE_SECTIONS.length - 1;
 
   return (
     <div className="min-h-screen bg-white">
@@ -1451,7 +1473,7 @@ export function SurveyClient() {
         </div>
       )}
 
-      <ProgressBar current={step} total={SECTIONS.length} half={section.half} />
+      <ProgressBar current={step} total={EFFECTIVE_SECTIONS.length} half={section.half} />
 
       {/* Part dividers */}
       {showMoneyDivider && (

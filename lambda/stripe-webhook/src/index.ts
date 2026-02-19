@@ -485,6 +485,42 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
 
       case "checkout.session.completed": {
         const session = stripeEvent.data.object as Stripe.Checkout.Session;
+
+        // ── Platform plan subscription (billing/paywall) ──
+        if (session.metadata?.type === "platform_plan") {
+          const orgId = session.metadata?.org_id;
+          const plan = session.metadata?.plan as "website" | "pro" | undefined;
+          if (!orgId || !plan) break;
+
+          const planSubId =
+            typeof session.subscription === "string"
+              ? session.subscription
+              : (session.subscription as Stripe.Subscription)?.id ?? null;
+          if (!planSubId) break;
+
+          const planSub = await stripe.subscriptions.retrieve(planSubId);
+          await supabase
+            .from("organizations")
+            .update({
+              plan,
+              plan_status: planSub.status,
+              stripe_plan_subscription_id: planSub.id,
+              stripe_billing_customer_id:
+                typeof planSub.customer === "string"
+                  ? planSub.customer
+                  : planSub.customer.id,
+              plan_trial_ends_at: planSub.trial_end
+                ? new Date(planSub.trial_end * 1000).toISOString()
+                : null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", orgId);
+
+          console.log(`[billing] Org ${orgId} upgraded to ${plan} (sub: ${planSub.id})`);
+          break;
+        }
+
+        // ── Donation subscription ──
         if (session.mode !== "subscription" || !session.subscription) break;
 
         const subId = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
@@ -652,6 +688,36 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         const subscription = stripeEvent.data.object as Stripe.Subscription;
+        const subMeta = subscription.metadata ?? {};
+
+        // ── Platform plan subscription ──
+        if (subMeta.type === "platform_plan" && subMeta.org_id) {
+          const newPlan =
+            stripeEvent.type === "customer.subscription.deleted"
+              ? "free"
+              : (subMeta.plan as "website" | "pro" | undefined) ?? "free";
+          const newStatus =
+            stripeEvent.type === "customer.subscription.deleted"
+              ? "canceled"
+              : subscription.status;
+
+          await supabase
+            .from("organizations")
+            .update({
+              plan: newPlan,
+              plan_status: newStatus === "canceled" ? null : newStatus,
+              plan_trial_ends_at: subscription.trial_end
+                ? new Date(subscription.trial_end * 1000).toISOString()
+                : null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", subMeta.org_id);
+
+          console.log(`[billing] Org ${subMeta.org_id} plan → ${newPlan} (${newStatus})`);
+          break;
+        }
+
+        // ── Donor donation subscription ──
         await supabase
           .from("donor_subscriptions")
           .update({ status: subscription.status, updated_at: new Date().toISOString() })

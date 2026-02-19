@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
             previewHtml?: string;
           };
 
-          const pages = await generateStaticSite(projectJson, organizationId);
+          const pages = await generateStaticSite(projectJson, organizationId, orgSlug);
           const s3Pages = pages.map((p) => ({ slug: p.slug, html: p.html }));
           await uploadSiteToS3(orgSlug, s3Pages);
           await invalidateCloudFrontCache(orgSlug);
@@ -143,7 +143,13 @@ export async function POST(req: NextRequest) {
               const domainMap: Record<string, string> = {};
               for (const m of allMappings) {
                 const slug = orgMap.get((m as { organization_id: string }).organization_id);
-                if (slug) domainMap[(m as { domain: string }).domain] = slug as string;
+                if (slug) {
+                  const domain = (m as { domain: string }).domain;
+                  domainMap[domain] = slug as string;
+                  if (!domain.startsWith("www.")) {
+                    domainMap[`www.${domain}`] = slug as string;
+                  }
+                }
               }
               await updateDomainMap(domainMap);
             }

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Link2, Plus, Trash2 } from "lucide-react";
+import { Link2, Plus, Trash2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { OrgPlan } from "@/lib/plan";
 
 type SplitEntry = { percentage: number; accountId?: string; splitBankAccountId?: string };
 type DonationLink = { id: string; name: string; slug: string; splits: SplitEntry[]; split_mode?: string; created_at: string };
@@ -14,9 +15,11 @@ type Props = {
   organizations: Org[];
   organizationSlug: string;
   baseUrl: string;
+  formLimit: number;
+  currentPlan: OrgPlan;
 };
 
-export function DonationLinksClient({ donationLinks, organizations, organizationSlug, baseUrl }: Props) {
+export function DonationLinksClient({ donationLinks, organizations, organizationSlug, baseUrl, formLimit, currentPlan }: Props) {
   const [links, setLinks] = useState(donationLinks);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,15 +128,33 @@ export function DonationLinksClient({ donationLinks, organizations, organization
 
         <section className="rounded-2xl border border-dashboard-border bg-dashboard-card p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-dashboard-text">Your donation links</h2>
-            <Button
-              onClick={() => setShowForm(!showForm)}
-              disabled={loading}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create link
-            </Button>
+            <div>
+              <h2 className="text-lg font-semibold text-dashboard-text">Your donation links</h2>
+              <p className="text-xs text-dashboard-text-muted mt-0.5">
+                {links.length} / {formLimit === Infinity ? "∞" : formLimit} forms used
+                {formLimit !== Infinity && links.length >= formLimit && (
+                  <span className="text-amber-500 ml-1">— limit reached</span>
+                )}
+              </p>
+            </div>
+            {formLimit !== Infinity && links.length >= formLimit ? (
+              <Link
+                href="/dashboard/billing"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors"
+              >
+                Upgrade for more
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <Button
+                onClick={() => setShowForm(!showForm)}
+                disabled={loading}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create link
+              </Button>
+            )}
           </div>
 
           {showForm && (

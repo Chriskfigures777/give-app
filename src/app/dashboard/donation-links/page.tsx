@@ -4,6 +4,7 @@ import { SPLITS_ENABLED } from "@/lib/feature-flags";
 import { DonationLinksComingSoon } from "./donation-links-coming-soon";
 import { DonationLinksClient } from "./donation-links-client";
 import { env } from "@/env";
+import { getOrgPlan, getEffectiveFormLimit, type OrgPlan } from "@/lib/plan";
 
 export default async function DonationLinksPage() {
   const { supabase, organizationId } = await requireOrgAdmin();
@@ -12,6 +13,9 @@ export default async function DonationLinksPage() {
   if (!SPLITS_ENABLED) {
     return <DonationLinksComingSoon />;
   }
+
+  const { plan, planStatus } = await getOrgPlan(organizationId, supabase);
+  const formLimit = getEffectiveFormLimit(plan, planStatus);
 
   const { data: links } = await supabase
     .from("donation_links")
@@ -61,6 +65,8 @@ export default async function DonationLinksPage() {
       organizations={(orgs ?? []) as { id: string; name: string; slug: string; stripe_connect_account_id: string }[]}
       organizationSlug={(orgRow as { slug: string } | null)?.slug ?? ""}
       baseUrl={baseUrl}
+      formLimit={formLimit}
+      currentPlan={plan}
     />
   );
 }

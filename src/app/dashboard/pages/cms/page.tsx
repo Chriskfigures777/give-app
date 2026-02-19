@@ -1,15 +1,31 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
+import { getOrgPlan, hasAccessToPlan } from "@/lib/plan";
 import Link from "next/link";
 import { ArrowLeft, Globe, Layers } from "lucide-react";
 import { CmsClient } from "./cms-client";
+import { PaywallGate } from "@/components/paywall-gate";
 
 export default async function CmsPage() {
-  const { profile } = await requireAuth();
+  const { profile, supabase } = await requireAuth();
   const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
 
   if (!orgId) {
     redirect("/dashboard");
+  }
+
+  const { plan, planStatus } = await getOrgPlan(orgId, supabase);
+  const hasAccess = hasAccessToPlan(plan, planStatus, "pro");
+
+  if (!hasAccess) {
+    return (
+      <PaywallGate
+        requiredPlan="pro"
+        featureName="Website CMS"
+        featureDescription="Edit your website content — pages, blocks, sermons, podcasts, and more — directly from the dashboard."
+        currentPlan={plan}
+      />
+    );
   }
 
   return (

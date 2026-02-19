@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAuth } from "@/lib/auth";
 import { stripe } from "@/lib/stripe/client";
+import { getOrgPlan, hasAccessToPlan } from "@/lib/plan";
 import {
   CreditCard,
   Building2,
@@ -91,6 +92,12 @@ export default async function SettingsPage() {
   const verificationStatus = org?.stripe_connect_account_id
     ? await getStripeVerificationStatus(org.stripe_connect_account_id)
     : "none";
+
+  // Plan gating
+  const { plan, planStatus } = orgId
+    ? await getOrgPlan(orgId, supabase)
+    : { plan: "free" as const, planStatus: null };
+  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "website");
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-2 py-4 sm:px-4 sm:py-6">
@@ -222,22 +229,46 @@ export default async function SettingsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-slate-700/60 dark:bg-slate-800/50">
             <div className="relative border-b border-slate-100 bg-gradient-to-r from-amber-50/60 via-white to-orange-50/40 px-6 py-5 dark:border-slate-700/50 dark:from-amber-900/10 dark:via-slate-800/50 dark:to-orange-900/10">
               <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500" />
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20">
-                  <PiggyBank className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20">
+                    <PiggyBank className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                      Split to bank accounts
+                    </h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Send a percentage of each donation to different bank accounts automatically
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Split to bank accounts
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Send a percentage of each donation to different bank accounts automatically
-                  </p>
-                </div>
+                {!hasWebsitePlan && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+                    <Lock className="h-3 w-3" />
+                    Website plan
+                  </span>
+                )}
               </div>
             </div>
             <div className="px-6 py-5">
-              <InternalSplitsForm organizationId={org.id} />
+              {hasWebsitePlan ? (
+                <InternalSplitsForm organizationId={org.id} />
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    Split transactions are available on the Website ($35/mo) and Pro ($49/mo) plans.
+                    Start a 14-day free trial to unlock splits.
+                  </p>
+                  <Link
+                    href="/dashboard/billing"
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-emerald-700"
+                  >
+                    View plans
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -315,23 +346,47 @@ export default async function SettingsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-slate-700/60 dark:bg-slate-800/50">
             <div className="relative border-b border-slate-100 bg-gradient-to-r from-sky-50/60 via-white to-cyan-50/40 px-6 py-5 dark:border-slate-700/50 dark:from-sky-900/10 dark:via-slate-800/50 dark:to-cyan-900/10">
               <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500" />
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 dark:bg-sky-500/20">
-                  <Globe className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 dark:bg-sky-500/20">
+                    <Globe className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                      Domain & hosting
+                    </h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Connect or purchase a custom domain for your site
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Domain & hosting
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Connect or purchase a custom domain for your site
-                  </p>
-                </div>
+                {!hasWebsitePlan && profile?.role !== "platform_admin" && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+                    <Lock className="h-3 w-3" />
+                    Website plan
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="px-6 py-5">
-              <DomainWizard organizationId={org.id} isPlatformAdmin={profile?.role === "platform_admin"} />
+              {hasWebsitePlan || profile?.role === "platform_admin" ? (
+                <DomainWizard organizationId={org.id} isPlatformAdmin={profile?.role === "platform_admin"} />
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    Custom domains are available on the Website ($35/mo) and Pro ($49/mo) plans.
+                    Connect your own domain like <span className="font-medium">yourdomain.org</span>.
+                  </p>
+                  <Link
+                    href="/dashboard/billing"
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-emerald-700"
+                  >
+                    Start 14-day free trial
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>

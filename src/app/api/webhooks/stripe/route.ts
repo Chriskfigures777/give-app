@@ -44,6 +44,131 @@ export async function POST(req: NextRequest) {
   }));
 
   switch (event.type) {
+    // ── Platform plan subscription events ──────────────────────────────────
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      // Handle platform plan subscriptions separately from donation subscriptions
+      if (session.metadata?.type === "platform_plan") {
+        const orgId = session.metadata?.org_id;
+        const plan = session.metadata?.plan as "website" | "pro" | undefined;
+        if (!orgId || !plan) break;
+
+        const subId =
+          typeof session.subscription === "string"
+            ? session.subscription
+            : (session.subscription as Stripe.Subscription)?.id ?? null;
+
+        if (!subId) break;
+
+        const subscription = await stripe.subscriptions.retrieve(subId);
+        await supabase
+          .from("organizations")
+          // @ts-ignore
+          .update({
+            plan,
+            plan_status: subscription.status,
+            stripe_plan_subscription_id: subscription.id,
+            stripe_billing_customer_id:
+              typeof subscription.customer === "string"
+                ? subscription.customer
+                : subscription.customer.id,
+            plan_trial_ends_at: subscription.trial_end
+              ? new Date(subscription.trial_end * 1000).toISOString()
+              : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", orgId);
+
+        console.log(`[billing] Org ${orgId} upgraded to ${plan} (sub: ${subscription.id})`);
+        break;
+      }
+
+      // Donation subscription (existing logic)
+      if (session.mode !== "subscription" || !session.subscription) break;
+
+      const subId =
+        typeof session.subscription === "string"
+          ? session.subscription
+          : (session.subscription as Stripe.Subscription).id;
+      const subscription = await stripe.subscriptions.retrieve(subId, { expand: ["items.data.price"] });
+      const metadata = subscription.metadata ?? session.metadata ?? {};
+
+      const organizationId = metadata.organization_id;
+      const userId = metadata.user_id;
+      if (!organizationId || !userId) break;
+
+      const item = subscription.items.data[0];
+      const amountCents = item?.price?.unit_amount ?? 0;
+      const interval = (item?.price?.recurring?.interval as "month" | "year") ?? "month";
+
+      // @ts-ignore - Supabase client infers types
+      await supabase.from("donor_subscriptions").upsert(
+        {
+          user_id: userId,
+          organization_id: organizationId,
+          stripe_subscription_id: subscription.id,
+          stripe_customer_id: subscription.customer as string,
+          amount_cents: amountCents,
+          currency: subscription.currency ?? "usd",
+          interval,
+          status: subscription.status,
+          campaign_id: metadata.campaign_id || null,
+        },
+        { onConflict: "stripe_subscription_id" }
+      );
+
+      // Save org to donor profile
+      await supabase
+        .from("donor_saved_organizations")
+        // @ts-ignore
+        .upsert(
+          { user_id: userId, organization_id: organizationId },
+          { onConflict: "user_id,organization_id" }
+        );
+      break;
+    }
+
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted": {
+      const subscription = event.data.object as Stripe.Subscription;
+      const meta = subscription.metadata ?? {};
+
+      // Platform plan subscription
+      if (meta.type === "platform_plan" && meta.org_id) {
+        const newPlan =
+          event.type === "customer.subscription.deleted" ? "free" : (meta.plan as "website" | "pro" | undefined) ?? "free";
+        const newStatus = event.type === "customer.subscription.deleted" ? "canceled" : subscription.status;
+
+        await supabase
+          .from("organizations")
+          // @ts-ignore
+          .update({
+            plan: newPlan,
+            plan_status: newStatus === "canceled" ? null : newStatus,
+            plan_trial_ends_at: subscription.trial_end
+              ? new Date(subscription.trial_end * 1000).toISOString()
+              : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", meta.org_id);
+
+        console.log(`[billing] Org ${meta.org_id} plan → ${newPlan} (${newStatus})`);
+        break;
+      }
+
+      // Donor donation subscription (existing logic)
+      await supabase
+        .from("donor_subscriptions")
+        // @ts-ignore
+        .update({
+          status: subscription.status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("stripe_subscription_id", subscription.id);
+      break;
+    }
+
     case "payment_intent.succeeded": {
       const pi = event.data.object as Stripe.PaymentIntent;
       const metadata = pi.metadata ?? {};
@@ -421,49 +546,6 @@ export async function POST(req: NextRequest) {
       break;
     }
 
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      if (session.mode !== "subscription" || !session.subscription) break;
-
-      const subId = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
-      const subscription = await stripe.subscriptions.retrieve(subId, { expand: ["items.data.price"] });
-      const metadata = subscription.metadata ?? session.metadata ?? {};
-
-      const organizationId = metadata.organization_id;
-      const userId = metadata.user_id;
-      if (!organizationId || !userId) break;
-
-      const item = subscription.items.data[0];
-      const amountCents = item?.price?.unit_amount ?? 0;
-      const interval = (item?.price?.recurring?.interval as "month" | "year") ?? "month";
-
-      // @ts-ignore - Supabase client infers types
-      await supabase.from("donor_subscriptions").upsert(
-        {
-          user_id: userId,
-          organization_id: organizationId,
-          stripe_subscription_id: subscription.id,
-          stripe_customer_id: subscription.customer as string,
-          amount_cents: amountCents,
-          currency: subscription.currency ?? "usd",
-          interval,
-          status: subscription.status,
-          campaign_id: metadata.campaign_id || null,
-        },
-        { onConflict: "stripe_subscription_id" }
-      );
-
-      // Save org to donor profile
-      await supabase
-        .from("donor_saved_organizations")
-        // @ts-ignore
-        .upsert(
-          { user_id: userId, organization_id: organizationId },
-          { onConflict: "user_id,organization_id" }
-        );
-      break;
-    }
-
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice;
       const subRef = (invoice as { subscription?: string | { id: string } }).subscription;
@@ -594,20 +676,6 @@ export async function POST(req: NextRequest) {
             .eq("id", campaignId);
         }
       }
-      break;
-    }
-
-    case "customer.subscription.updated":
-    case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      await supabase
-        .from("donor_subscriptions")
-        // @ts-ignore
-        .update({
-          status: subscription.status,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("stripe_subscription_id", subscription.id);
       break;
     }
 

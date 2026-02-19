@@ -7,9 +7,11 @@ import { EmbedCardsPanel } from "../embed/embed-cards-panel";
 import { CampaignsEditor } from "./campaigns-editor";
 import { DonateButtonFormSelector } from "./donate-button-form-selector";
 import { CustomizationLayout } from "./customization-layout";
-import { Code2, Target, DollarSign } from "lucide-react";
+import { Code2, Target, DollarSign, Lock, ArrowRight } from "lucide-react";
 import { SplitSettingsPanel } from "./split-settings-panel";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
+import { getOrgPlan, hasAccessToPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
+import Link from "next/link";
 
 const DEFAULT_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
@@ -112,6 +114,10 @@ export default async function CustomizationPage() {
   if (!orgRow) redirect("/dashboard");
   const org = orgRow as { id: string; name: string; slug: string };
   const formCustom = formCustomRow as FormCustom | null;
+
+  const { plan, planStatus } = await getOrgPlan(orgId!, supabase);
+  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "website");
+  const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
   const campaigns = (campaignsData ?? []) as Campaign[];
   const minCents = campaigns[0]?.minimum_amount_cents ?? 100;
 
@@ -230,12 +236,41 @@ export default async function CustomizationPage() {
 
           {/* Payment splits */}
           {SPLITS_ENABLED && (
-            <SplitSettingsPanel
-              organizationId={org.id}
-              organizationName={org.name}
-              initialSplits={(effectiveForm.splits as { percentage: number; accountId: string }[] | undefined) ?? []}
-              connectedPeers={(peerOrgs ?? []) as { id: string; name: string; slug: string; stripe_connect_account_id: string }[]}
-            />
+            hasWebsitePlan ? (
+              <SplitSettingsPanel
+                organizationId={org.id}
+                organizationName={org.name}
+                initialSplits={(effectiveForm.splits as { percentage: number; accountId: string }[] | undefined) ?? []}
+                connectedPeers={(peerOrgs ?? []) as { id: string; name: string; slug: string; stripe_connect_account_id: string }[]}
+              />
+            ) : (
+              <section className="rounded-3xl border border-slate-200/80 dark:border-slate-700/50 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+                <div className="flex items-center gap-4 px-7 py-5 border-b border-slate-100 dark:border-slate-700/30">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+                    <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base font-bold text-slate-800 dark:text-white">Payment Splits</h2>
+                      <span className="rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">Website plan</span>
+                    </div>
+                    <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Split donations between your org and partner organizations</p>
+                  </div>
+                </div>
+                <div className="p-7">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    Automatically route a percentage of each donation to connected partner organizations. Upgrade to the Website plan to enable payment splits.
+                  </p>
+                  <Link
+                    href="/dashboard/billing"
+                    className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition-colors"
+                  >
+                    Start 14-day free trial
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </section>
+            )
           )}
 
           {/* Embed instructions */}

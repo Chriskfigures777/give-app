@@ -21,6 +21,7 @@ import {
   Layout,
   FileStack,
   Share2,
+  Receipt,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -134,6 +135,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
 
       <NavSection title="Account">
         {link("/dashboard/settings", "Settings", <Settings className={iconClass} />)}
+        {!isPlatformAdmin && orgId && link("/dashboard/billing", "Plan & Billing", <Receipt className={iconClass} />)}
         {!isPlatformAdmin && orgId && (
           <>
             <li className="shrink-0">
