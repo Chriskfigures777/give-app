@@ -37,10 +37,12 @@ let _acm: ACMClient | null = null;
 function getCredentials() {
   const accessKeyId =
     process.env.AWS_HOSTING_ACCESS_KEY_ID ??
-    process.env.AWS_ROUTE53_ACCESS_KEY_ID;
+    process.env.AWS_ROUTE53_ACCESS_KEY_ID ??
+    process.env.AWS_ACCESS_KEY_ID;
   const secretAccessKey =
     process.env.AWS_HOSTING_SECRET_ACCESS_KEY ??
-    process.env.AWS_ROUTE53_SECRET_ACCESS_KEY;
+    process.env.AWS_ROUTE53_SECRET_ACCESS_KEY ??
+    process.env.AWS_SECRET_ACCESS_KEY;
   if (!accessKeyId || !secretAccessKey) return null;
   return { accessKeyId, secretAccessKey };
 }
