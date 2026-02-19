@@ -143,40 +143,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, id: data.id, name: data.name });
     }
 
-    // Try with created_by first; fall back without it if the column hasn't been migrated yet
-    let data: { id: string; name: string | null; created_at: string; updated_at: string } | null = null;
-    let error: { message: string } | null = null;
-
-    const insertPayload: Record<string, unknown> = {
+    // Try with created_by; fall back without it if the column hasn't been migrated yet
+    const basePayload = {
       organization_id: organizationId,
       project: projectJson,
       name: projectName,
-      created_by: user.id,
     };
 
-    const result = await supabase
+    let result = await supabase
       .from("website_builder_projects")
-      .insert(insertPayload)
+      .insert({ ...basePayload, created_by: user.id })
       .select("id, name, created_at, updated_at")
       .single();
-    data = result.data;
-    error = result.error;
 
-    if (error?.message?.includes("created_by")) {
-      delete insertPayload.created_by;
-      const retry = await supabase
+    if (result.error?.message?.includes("created_by")) {
+      result = await supabase
         .from("website_builder_projects")
-        .insert(insertPayload)
+        .insert(basePayload)
         .select("id, name, created_at, updated_at")
         .single();
-      data = retry.data;
-      error = retry.error;
     }
 
-    if (error) {
-      console.error("website-builder project POST (create) error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (result.error) {
+      console.error("website-builder project POST (create) error:", result.error);
+      return NextResponse.json({ error: result.error.message }, { status: 500 });
     }
+
+    const data = result.data;
 
     return NextResponse.json({ ok: true, id: data.id, name: data.name });
   } catch (e) {
