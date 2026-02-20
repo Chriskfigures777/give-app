@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { WebsiteUrlForm } from "./website-url-form";
 import { DomainWizard } from "./domain-wizard";
+import { DeleteAccountSection } from "./delete-account-section";
 
 type VerificationStatus = "none" | "actions_required" | "pending" | "verified";
 
@@ -403,6 +404,11 @@ export default async function SettingsPage() {
             )}
           </div>
         </div>
+      </section>
+
+      {/* ── Delete account ── */}
+      <section className="dashboard-fade-in dashboard-fade-in-delay-5">
+        <DeleteAccountSection />
       </section>
     </div>
   );

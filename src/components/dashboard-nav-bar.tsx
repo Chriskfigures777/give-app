@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Handshake, Search } from "lucide-react";
+import { Bell, Handshake } from "lucide-react";
 import { useUser } from "@/lib/use-user";
 import { NavNotificationsDropdown } from "./nav-notifications-dropdown";
 import { NavConnectionRequestsDropdown } from "./nav-connection-requests-dropdown";
+import { DashboardSearch } from "./dashboard-search";
 
 export function DashboardNavBar() {
   const { user } = useUser();
@@ -38,15 +39,9 @@ export function DashboardNavBar() {
 
   return (
     <div className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-dashboard-border/60 px-5" style={{ background: "var(--dashboard-glass)", backdropFilter: "blur(16px) saturate(1.8)", WebkitBackdropFilter: "blur(16px) saturate(1.8)" }}>
-      {/* Left: breadcrumb placeholder */}
+      {/* Left: search */}
       <div className="flex items-center gap-2 min-w-0">
-        <div className="flex items-center gap-2 rounded-xl bg-dashboard-card-hover/50 px-3 py-1.5 text-sm text-dashboard-text-muted">
-          <Search className="h-3.5 w-3.5" />
-          <span className="text-xs">Search...</span>
-          <kbd className="ml-4 hidden rounded bg-dashboard-card px-1.5 py-0.5 text-[10px] font-medium text-dashboard-text-muted border border-dashboard-border sm:inline-block">
-            /
-          </kbd>
-        </div>
+        <DashboardSearch />
       </div>
 
       {/* Right: action buttons */}
