@@ -25,35 +25,38 @@ import type { FeedItemResponse } from "@/app/api/feed/route";
 
 type PostType = "text" | "photo" | "video" | "link";
 
-/* ── Modern shimmer skeleton ── */
+/* ── Premium shimmer skeleton ── */
 function FeedSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
-          className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 backdrop-blur-xl"
-          style={{ animationDelay: `${i * 80}ms` }}
+          className="overflow-hidden rounded-2xl border border-slate-200/40 bg-white/90 shadow-sm backdrop-blur-xl"
+          style={{ animationDelay: `${i * 100}ms` }}
         >
           <div className="p-5">
             <div className="flex items-center gap-3.5">
-              <div className="feed-shimmer h-11 w-11 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <div className="feed-shimmer h-4 w-2/5 rounded-lg" />
-                <div className="feed-shimmer h-3 w-1/4 rounded-lg" />
+              <div className="feed-shimmer h-12 w-12 rounded-full" />
+              <div className="flex-1 space-y-2.5">
+                <div className="feed-shimmer h-4 w-2/5 rounded-full" />
+                <div className="feed-shimmer h-3 w-1/4 rounded-full" />
               </div>
             </div>
-            <div className="mt-4 space-y-2">
-              <div className="feed-shimmer h-3.5 w-full rounded-lg" />
-              <div className="feed-shimmer h-3.5 w-4/5 rounded-lg" />
-              <div className="feed-shimmer h-3.5 w-2/3 rounded-lg" />
+            <div className="mt-5 space-y-2.5">
+              <div className="feed-shimmer h-3.5 w-full rounded-full" />
+              <div className="feed-shimmer h-3.5 w-4/5 rounded-full" />
+              <div className="feed-shimmer h-3.5 w-3/5 rounded-full" />
             </div>
+            {i % 2 === 0 && (
+              <div className="mt-4 feed-shimmer h-48 w-full rounded-xl" />
+            )}
           </div>
-          <div className="border-t border-slate-100/60 px-5 py-2.5">
-            <div className="flex gap-6">
-              <div className="feed-shimmer h-4 w-16 rounded-lg" />
-              <div className="feed-shimmer h-4 w-20 rounded-lg" />
-              <div className="feed-shimmer h-4 w-14 rounded-lg" />
+          <div className="border-t border-slate-100/60 px-5 py-3">
+            <div className="flex gap-8">
+              <div className="feed-shimmer h-4 w-16 rounded-full" />
+              <div className="feed-shimmer h-4 w-20 rounded-full" />
+              <div className="feed-shimmer h-4 w-14 rounded-full" />
             </div>
           </div>
         </div>
@@ -308,15 +311,13 @@ export function FeedClient() {
       {/* Center feed */}
       <div className="min-w-[min(100%,360px)] flex-1 lg:min-w-[500px] lg:max-w-[680px]">
         {/* Feed header */}
-        <div className="mb-6 flex items-end justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Feed
-            </h1>
-            <p className="mt-0.5 text-sm text-slate-500">
-              Stay connected with your community
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Community Feed
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Stay connected with organizations and supporters in your network
+          </p>
         </div>
 
         {/* New items banner */}
@@ -324,35 +325,37 @@ export function FeedClient() {
           {newItemsBanner > 0 && (
             <motion.div
               initial={{ opacity: 0, y: -20, height: 0, marginBottom: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto", marginBottom: 16 }}
+              animate={{ opacity: 1, y: 0, height: "auto", marginBottom: 20 }}
               exit={{ opacity: 0, y: -20, height: 0, marginBottom: 0 }}
             >
               <button
                 type="button"
                 onClick={loadNewItems}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200/60 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 px-4 py-3 text-sm font-semibold text-emerald-700 shadow-sm transition-all duration-200 hover:shadow-md hover:from-emerald-100 hover:via-teal-100 hover:to-cyan-100"
+                className="group flex w-full items-center justify-center gap-2.5 rounded-2xl border border-emerald-200/40 bg-gradient-to-r from-emerald-50/90 via-teal-50/90 to-cyan-50/90 px-5 py-3.5 text-sm font-semibold text-emerald-700 shadow-sm backdrop-blur-xl transition-all duration-200 hover:shadow-md hover:border-emerald-300/60"
               >
-                <Sparkles className="h-4 w-4" />
-                {newItemsBanner} new {newItemsBanner === 1 ? "post" : "posts"}
-                <ArrowRight className="h-4 w-4" />
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                  <Sparkles className="h-3.5 w-3.5" />
+                </span>
+                {newItemsBanner} new {newItemsBanner === 1 ? "post" : "posts"} available
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Post composer */}
-        <div className="mb-6 overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 feed-composer-ring">
+        <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200/40 bg-white/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300">
           <AnimatePresence mode="wait">
             {composerOpen ? (
               <motion.div
                 key="expanded"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
                 className="p-5 space-y-4"
               >
                 {/* Type selector pills */}
-                <div className="flex gap-1.5 rounded-xl bg-slate-50/80 p-1">
+                <div className="flex gap-1 rounded-xl bg-slate-50/80 p-1 border border-slate-100/60">
                   {POST_TYPES.map(({ id, label, icon: Icon }) => (
                     <button
                       key={id}
@@ -368,8 +371,8 @@ export function FeedClient() {
                       }}
                       className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium transition-all duration-200 ${
                         postType === id
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-500 hover:text-slate-700"
+                          ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/60"
+                          : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -382,9 +385,9 @@ export function FeedClient() {
                 <textarea
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
-                  placeholder="Share something with your community..."
-                  className="w-full rounded-xl border border-slate-200/60 bg-slate-50/30 px-4 py-3 text-[15px] placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10 resize-none"
-                  rows={3}
+                  placeholder="What would you like to share with your community?"
+                  className="w-full rounded-xl border border-slate-200/60 bg-slate-50/40 px-4 py-3.5 text-[15px] leading-relaxed placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10 resize-none"
+                  rows={4}
                   maxLength={5000}
                   autoFocus
                 />
@@ -438,7 +441,7 @@ export function FeedClient() {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={mediaUploading}
-                        className="w-full rounded-xl border-2 border-dashed border-slate-200/80 bg-slate-50/30 py-10 text-center text-slate-400 transition-all hover:border-emerald-300 hover:bg-emerald-50/30 hover:text-emerald-500 disabled:opacity-50"
+                        className="w-full rounded-xl border-2 border-dashed border-slate-200/80 bg-slate-50/40 py-10 text-center text-slate-400 transition-all hover:border-emerald-300 hover:bg-emerald-50/30 hover:text-emerald-500 disabled:opacity-50"
                       >
                         {mediaUploading ? (
                           <span className="flex items-center justify-center gap-2">
@@ -448,17 +451,22 @@ export function FeedClient() {
                             </span>
                           </span>
                         ) : (
-                          <span className="flex flex-col items-center gap-1.5">
-                            {postType === "photo" ? (
-                              <ImageIcon className="h-8 w-8" />
-                            ) : (
-                              <Video className="h-8 w-8" />
-                            )}
+                          <span className="flex flex-col items-center gap-2">
+                            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+                              {postType === "photo" ? (
+                                <ImageIcon className="h-6 w-6" />
+                              ) : (
+                                <Video className="h-6 w-6" />
+                              )}
+                            </span>
                             <span className="text-sm font-medium">
                               Click to add{" "}
                               {postType === "photo"
                                 ? "a photo"
                                 : "a video"}
+                            </span>
+                            <span className="text-xs text-slate-400">
+                              {postType === "photo" ? "JPEG, PNG, WebP, GIF" : "MP4, WebM"}
                             </span>
                           </span>
                         )}
@@ -469,20 +477,20 @@ export function FeedClient() {
 
                 {/* Link inputs */}
                 {postType === "link" && (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <input
                       type="url"
                       value={linkUrl}
                       onChange={(e) => setLinkUrl(e.target.value)}
                       placeholder="https://example.com/article"
-                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/30 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/40 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
                     />
                     <input
                       type="text"
                       value={linkTitle}
                       onChange={(e) => setLinkTitle(e.target.value)}
                       placeholder="Link title (optional)"
-                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/30 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/40 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
                     />
                     <textarea
                       value={linkDescription}
@@ -491,36 +499,38 @@ export function FeedClient() {
                       }
                       placeholder="Description (optional)"
                       rows={2}
-                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/30 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10 resize-none"
+                      className="w-full rounded-xl border border-slate-200/60 bg-slate-50/40 px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10 resize-none"
                     />
                   </div>
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    onClick={handleCreatePost}
-                    disabled={!canPost}
-                    className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 text-white shadow-sm transition-all hover:from-emerald-600 hover:to-teal-600 hover:shadow-md disabled:opacity-50"
-                  >
-                    {postSubmitting ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Posting...
-                      </span>
-                    ) : (
-                      "Post"
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={resetComposer}
-                    className="rounded-xl text-slate-500 hover:text-slate-700"
-                  >
-                    Cancel
-                  </Button>
-                  <span className="ml-auto text-xs text-slate-400">
-                    {postContent.length}/5000
+                <div className="flex items-center gap-2 pt-1 border-t border-slate-100/80">
+                  <div className="flex items-center gap-2 pt-3">
+                    <Button
+                      onClick={handleCreatePost}
+                      disabled={!canPost}
+                      className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 text-white shadow-sm transition-all hover:from-emerald-600 hover:to-teal-600 hover:shadow-md disabled:opacity-40"
+                    >
+                      {postSubmitting ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Posting...
+                        </span>
+                      ) : (
+                        "Publish"
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={resetComposer}
+                      className="rounded-xl text-slate-500 hover:text-slate-700"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                  <span className="ml-auto pt-3 text-xs tabular-nums text-slate-400">
+                    {postContent.length.toLocaleString()}/5,000
                   </span>
                 </div>
               </motion.div>
@@ -532,19 +542,24 @@ export function FeedClient() {
                 exit={{ opacity: 0 }}
                 type="button"
                 onClick={() => setComposerOpen(true)}
-                className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-slate-50/50"
+                className="group flex w-full items-center gap-4 px-5 py-4 text-left transition-all duration-200 hover:bg-slate-50/50"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-teal-100">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 ring-2 ring-emerald-500/10 transition-all duration-200 group-hover:ring-emerald-500/20 group-hover:shadow-sm">
                   <Sparkles className="h-5 w-5 text-emerald-600" />
                 </div>
-                <span className="flex-1 text-[15px] text-slate-400">
+                <span className="flex-1 text-[15px] text-slate-400 group-hover:text-slate-500 transition-colors">
                   Share something with your community...
                 </span>
-                <div className="flex gap-1.5 text-slate-300">
-                  <Type className="h-4 w-4" />
-                  <ImageIcon className="h-4 w-4" />
-                  <Video className="h-4 w-4" />
-                  <Link2 className="h-4 w-4" />
+                <div className="flex gap-2 text-slate-300 group-hover:text-slate-400 transition-colors">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 transition-colors group-hover:bg-slate-100">
+                    <ImageIcon className="h-4 w-4" />
+                  </span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 transition-colors group-hover:bg-slate-100">
+                    <Video className="h-4 w-4" />
+                  </span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 transition-colors group-hover:bg-slate-100">
+                    <Link2 className="h-4 w-4" />
+                  </span>
                 </div>
               </motion.button>
             )}
@@ -555,35 +570,34 @@ export function FeedClient() {
         {loading ? (
           <FeedSkeleton />
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-white/60 bg-white/70 p-16 text-center backdrop-blur-xl">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100">
-              <Sparkles className="h-8 w-8 text-emerald-600" />
+          <div className="rounded-2xl border border-slate-200/40 bg-white/90 p-16 text-center shadow-sm backdrop-blur-xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/20">
+              <Sparkles className="h-8 w-8 text-white" />
             </div>
-            <p className="mt-6 text-lg font-semibold text-slate-800">
-              Your feed is empty
+            <p className="mt-6 text-lg font-bold text-slate-800">
+              Your feed is waiting
             </p>
-            <p className="mt-2 text-sm text-slate-500">
-              Connect with organizations to see their activity and updates
-              here.
+            <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-slate-500">
+              Connect with organizations and supporters to see activity, updates, and stories here.
             </p>
             <Link
               href="/explore"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-emerald-600 hover:to-teal-600 hover:shadow-md"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-teal-600 hover:shadow-xl hover:shadow-emerald-500/25"
             >
               Discover organizations
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {items.map((item, index) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  duration: 0.3,
-                  delay: Math.min(index * 0.03, 0.2),
+                  duration: 0.35,
+                  delay: Math.min(index * 0.04, 0.25),
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
               >
@@ -607,11 +621,11 @@ export function FeedClient() {
             ))}
             <div ref={sentinelRef} className="h-4" aria-hidden />
             {loadingMore && (
-              <div className="flex justify-center py-8">
-                <div className="flex items-center gap-3 rounded-full bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-xl">
+              <div className="flex justify-center py-10">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200/40 bg-white/90 px-6 py-3 shadow-sm backdrop-blur-xl">
                   <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
                   <span className="text-sm font-medium text-slate-500">
-                    Loading more...
+                    Loading more posts...
                   </span>
                 </div>
               </div>

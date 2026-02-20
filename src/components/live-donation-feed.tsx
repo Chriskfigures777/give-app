@@ -255,7 +255,7 @@ function BottomTicker({
             <Heart className="h-3 w-3 text-emerald-500/60" fill="currentColor" />
             <span className="font-semibold">{formatCents(d.amount_cents)}</span>
             <span>to</span>
-            <span className="font-semibold">{d.org_name ?? "Give"}</span>
+            <span className="font-semibold">{d.org_name ?? "an organization"}</span>
             <span className="text-xs opacity-60">&middot; {timeAgo(d.created_at)}</span>
           </div>
         ))}

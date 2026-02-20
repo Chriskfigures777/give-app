@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "../login-form";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 export default async function OrganizationLoginPage() {
   const supabase = await createClient();
@@ -16,10 +17,7 @@ export default async function OrganizationLoginPage() {
       <div className="auth-gradient hidden w-1/2 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-base font-bold text-white backdrop-blur-sm">
-              G
-            </span>
-            <span className="text-xl font-bold text-white">Give</span>
+            <BrandMark className="h-10 w-10 drop-shadow-[0_8px_12px_rgba(16,185,129,0.3)]" id="org-login-desktop" />
           </Link>
         </div>
 
@@ -50,10 +48,7 @@ export default async function OrganizationLoginPage() {
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 bg-white lg:px-16">
         <div className="mb-8 lg:hidden">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-base font-bold text-white shadow-lg shadow-emerald-500/25">
-              G
-            </span>
-            <span className="text-xl font-bold text-slate-900">Give</span>
+            <BrandMark className="h-10 w-10 drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]" id="org-login-mobile" />
           </Link>
         </div>
 

@@ -265,20 +265,20 @@ export function FeedItemCard({
   /* ── Engagement action bar ── */
   const actionBar = (
     <div
-      className="flex items-center gap-1 border-t border-slate-100/80 px-5 py-2"
+      className="flex items-center border-t border-slate-100/60 px-4 py-1.5"
       onClick={(e) => e.stopPropagation()}
     >
       <button
         type="button"
         onClick={handleSupportClick}
-        className={`group/btn inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200 ${
+        className={`group/btn inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
           userSupported
-            ? "bg-rose-50 text-rose-600"
-            : "text-slate-500 hover:bg-slate-50 hover:text-rose-500"
+            ? "bg-rose-50/80 text-rose-600"
+            : "text-slate-500 hover:bg-slate-50/80 hover:text-rose-500"
         } ${supportAnimating ? "feed-glow-pulse" : ""}`}
       >
         <Heart
-          className={`h-[18px] w-[18px] transition-all duration-200 ${
+          className={`h-[17px] w-[17px] transition-all duration-200 ${
             userSupported
               ? "fill-rose-500 text-rose-500 scale-110"
               : "group-hover/btn:scale-110"
@@ -289,21 +289,21 @@ export function FeedItemCard({
       <button
         type="button"
         onClick={handleCommentClick}
-        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200 ${
+        className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
           commentsOpen
-            ? "bg-blue-50 text-blue-600"
-            : "text-slate-500 hover:bg-slate-50 hover:text-blue-500"
+            ? "bg-blue-50/80 text-blue-600"
+            : "text-slate-500 hover:bg-slate-50/80 hover:text-blue-500"
         }`}
       >
-        <MessageCircle className="h-[18px] w-[18px]" />
+        <MessageCircle className="h-[17px] w-[17px]" />
         <span>{commentCount > 0 ? commentCount : "Comment"}</span>
       </button>
       <button
         type="button"
         onClick={handleShareClick}
-        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-500 transition-all duration-200 hover:bg-slate-50 hover:text-emerald-500"
+        className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium text-slate-500 transition-all duration-200 hover:bg-slate-50/80 hover:text-emerald-600"
       >
-        <Share2 className="h-[18px] w-[18px]" />
+        <Share2 className="h-[17px] w-[17px]" />
         <span>Share</span>
       </button>
     </div>
@@ -311,20 +311,20 @@ export function FeedItemCard({
 
   /* ── Comments section ── */
   const commentSection = commentsOpen && (
-    <div className="border-t border-slate-100/80 bg-slate-50/40 px-5 py-4">
+    <div className="border-t border-slate-100/60 bg-slate-50/30 px-5 py-4">
       <form onSubmit={handleCommentSubmit} className="mb-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2.5">
           <input
             value={commentInput}
             onChange={(e) => setCommentInput(e.target.value)}
             placeholder="Write a comment..."
-            className="flex-1 rounded-full border border-slate-200/80 bg-white px-4 py-2 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+            className="flex-1 rounded-xl border border-slate-200/60 bg-white px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
             maxLength={2000}
           />
           <button
             type="submit"
             disabled={!commentInput.trim() || commentSubmitting}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white transition-all duration-200 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-sm transition-all duration-200 hover:shadow-md disabled:opacity-40"
           >
             <Send className="h-4 w-4" />
           </button>
@@ -333,11 +333,11 @@ export function FeedItemCard({
       {commentsLoading ? (
         <div className="space-y-3">
           {[1, 2].map((i) => (
-            <div key={i} className="flex gap-2">
-              <div className="feed-shimmer h-7 w-7 rounded-full" />
-              <div className="flex-1 space-y-1">
-                <div className="feed-shimmer h-3 w-20 rounded" />
-                <div className="feed-shimmer h-3 w-3/4 rounded" />
+            <div key={i} className="flex gap-2.5">
+              <div className="feed-shimmer h-8 w-8 rounded-full" />
+              <div className="flex-1 space-y-1.5">
+                <div className="feed-shimmer h-3 w-24 rounded-full" />
+                <div className="feed-shimmer h-3 w-3/4 rounded-full" />
               </div>
             </div>
           ))}
@@ -346,11 +346,11 @@ export function FeedItemCard({
         <ul className="space-y-3">
           {comments.map((c) => (
             <li key={c.id} className="flex gap-2.5">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 text-[11px] font-bold text-emerald-700">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 text-[11px] font-bold text-emerald-700">
                 {c.author_name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="inline-block rounded-2xl rounded-tl-sm bg-white px-3 py-2 shadow-sm">
+                <div className="inline-block rounded-2xl rounded-tl-md bg-white px-3.5 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                   <span className="text-[13px] font-semibold text-slate-800">
                     {c.author_name}
                   </span>
@@ -358,7 +358,7 @@ export function FeedItemCard({
                     {c.content}
                   </p>
                 </div>
-                <p className="mt-0.5 px-1 text-[11px] text-slate-400">
+                <p className="mt-1 px-1 text-[11px] text-slate-400">
                   {formatRelativeTime(c.created_at)}
                 </p>
               </div>
@@ -366,21 +366,20 @@ export function FeedItemCard({
           ))}
         </ul>
       ) : (
-        <p className="text-center text-sm text-slate-400">
-          No comments yet. Be the first!
+        <p className="py-4 text-center text-sm text-slate-400">
+          No comments yet. Be the first to share your thoughts!
         </p>
       )}
     </div>
   );
 
   /* ── Shared content header (avatar + name + timestamp) ── */
-  /* Uses spans instead of Links to avoid nested <a> (whole card is clickable) */
   const contentHeader = (
     nameOverride?: string,
     subtitle?: React.ReactNode
   ) => (
     <div className="flex items-start gap-3.5 px-5 pt-5">
-      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-emerald-200 to-teal-200 p-[2px] transition-transform duration-200 hover:scale-105 block">
+      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-emerald-200 to-teal-200 p-[2px] transition-transform duration-200 hover:scale-105 block shadow-sm">
         <div className="h-full w-full overflow-hidden rounded-full bg-white">
           <Image
             src={imageUrl}
@@ -396,7 +395,7 @@ export function FeedItemCard({
           <span className="truncate text-[15px] font-semibold text-slate-900 hover:text-emerald-700 transition-colors">
             {nameOverride ?? item.organization_name}
           </span>
-          <span className="shrink-0 text-[13px] text-slate-400">
+          <span className="shrink-0 text-[12px] text-slate-400 tabular-nums">
             {formatRelativeTime(item.created_at)}
           </span>
         </div>
@@ -486,7 +485,7 @@ export function FeedItemCard({
       const location = [city, state].filter(Boolean).join(", ");
       cardContent = (
         <>
-          {contentHeader(undefined, location || "New on Give")}
+          {contentHeader(undefined, location || "Just joined the community")}
           <div className="px-5 py-3">
             <div className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-50/80 via-purple-50/50 to-fuchsia-50/30 px-4 py-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-500 shadow-sm">
@@ -494,7 +493,7 @@ export function FeedItemCard({
               </div>
               <div>
                 <p className="text-[15px] font-semibold text-slate-900">
-                  {item.organization_name} just joined Give
+                  {item.organization_name} just joined the platform
                 </p>
                 <span className="mt-0.5 inline-flex items-center gap-1 text-sm font-medium text-violet-600 hover:text-violet-700">
                   Visit their page
@@ -662,13 +661,16 @@ export function FeedItemCard({
 
   return (
     <>
-      <div className="group/card relative overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 hover:border-slate-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06),0_8px_32px_rgba(0,0,0,0.03)]">
+      <div className="group/card relative overflow-hidden rounded-2xl border border-slate-200/40 bg-white/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300 hover:border-slate-200/70 hover:shadow-[0_4px_20px_rgba(0,0,0,0.06),0_8px_40px_rgba(0,0,0,0.03)]">
         {/* Subtle top accent line */}
         {item.item_type === "donation" && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-60" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-50" />
         )}
         {item.item_type === "new_org" && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 opacity-60" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 opacity-50" />
+        )}
+        {item.item_type === "post" && (
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 opacity-0 transition-opacity duration-300 group-hover/card:opacity-30" />
         )}
 
         {/* More options menu */}
@@ -738,15 +740,17 @@ export function FeedItemCard({
 
         {/* Engagement counts badge row */}
         {(supportCount > 0 || commentCount > 0) && (
-          <div className="flex items-center gap-3 px-5 py-1.5 text-[12px] text-slate-400">
+          <div className="flex items-center gap-4 px-5 py-2 text-[12px] text-slate-400">
             {supportCount > 0 && (
-              <span className="flex items-center gap-1">
-                <Heart className="h-3 w-3 fill-rose-400 text-rose-400" />
-                {supportCount} {supportCount === 1 ? "support" : "supports"}
+              <span className="flex items-center gap-1.5">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-rose-400 to-pink-500">
+                  <Heart className="h-2.5 w-2.5 fill-white text-white" />
+                </span>
+                {supportCount}
               </span>
             )}
             {commentCount > 0 && (
-              <span>
+              <span className="text-slate-400">
                 {commentCount} {commentCount === 1 ? "comment" : "comments"}
               </span>
             )}

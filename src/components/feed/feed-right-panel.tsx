@@ -35,7 +35,7 @@ export function FeedRightPanel() {
     <aside className="hidden w-[320px] shrink-0 lg:block">
       <div className="sticky top-24 space-y-3">
         {/* Panel tab bar */}
-        <div className="rounded-2xl border border-white/60 bg-white/80 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+        <div className="rounded-2xl border border-slate-200/40 bg-white/90 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)] backdrop-blur-xl">
           <div className="flex gap-0.5">
             {PANEL_TABS.map((tab) => {
               const Icon = tab.icon;
@@ -45,10 +45,10 @@ export function FeedRightPanel() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActivePage(tab.id)}
-                  className={`group relative flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center transition-all duration-200 ${
+                  className={`group relative flex flex-1 flex-col items-center gap-1.5 rounded-xl px-1 py-2.5 text-center transition-all duration-200 ${
                     isActive
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
+                      ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/60"
+                      : "text-slate-400 hover:text-slate-600 hover:bg-white/60"
                   }`}
                 >
                   <span
@@ -70,7 +70,7 @@ export function FeedRightPanel() {
                   {isActive && (
                     <motion.div
                       layoutId="panel-tab-indicator"
-                      className="absolute -bottom-0.5 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
+                      className="absolute -bottom-0.5 left-1/2 h-[3px] w-5 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -81,7 +81,7 @@ export function FeedRightPanel() {
         </div>
 
         {/* Panel content area */}
-        <div className="min-h-[400px] max-h-[calc(100vh-220px)] overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+        <div className="min-h-[400px] max-h-[calc(100vh-220px)] overflow-hidden rounded-2xl border border-slate-200/40 bg-white/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)] backdrop-blur-xl">
           {/* Panel header for sub-pages */}
           <AnimatePresence mode="wait">
             {activePage !== "home" && (
@@ -89,13 +89,13 @@ export function FeedRightPanel() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="border-b border-slate-100/80"
+                className="border-b border-slate-100/60"
               >
-                <div className="flex items-center gap-2 px-4 py-3">
+                <div className="flex items-center gap-2.5 px-4 py-3">
                   <button
                     type="button"
                     onClick={() => setActivePage("home")}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -113,10 +113,10 @@ export function FeedRightPanel() {
               {activePage === "home" && (
                 <motion.div
                   key="home"
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.15 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                 >
                   <FeedSidebar />
                 </motion.div>
@@ -124,10 +124,10 @@ export function FeedRightPanel() {
               {activePage === "peers" && (
                 <motion.div
                   key="peers"
-                  initial={{ opacity: 0, x: 10 }}
+                  initial={{ opacity: 0, x: 8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.15 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                 >
                   <PanelPeers />
                 </motion.div>
@@ -135,10 +135,10 @@ export function FeedRightPanel() {
               {activePage === "messages" && (
                 <motion.div
                   key="messages"
-                  initial={{ opacity: 0, x: 10 }}
+                  initial={{ opacity: 0, x: 8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.15 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                 >
                   <PanelMessages />
                 </motion.div>
@@ -146,10 +146,10 @@ export function FeedRightPanel() {
               {activePage === "notifications" && (
                 <motion.div
                   key="notifications"
-                  initial={{ opacity: 0, x: 10 }}
+                  initial={{ opacity: 0, x: 8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.15 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                 >
                   <PanelNotifications />
                 </motion.div>
