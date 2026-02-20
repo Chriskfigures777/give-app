@@ -93,7 +93,7 @@ export function OrgDonationCta({ organizationName, embedUrl, slug }: Props) {
 
       {/* Donation embed — styled container with depth */}
       <div className="relative bg-gradient-to-b from-slate-100 to-white">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 pt-8 pb-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -109,7 +109,7 @@ export function OrgDonationCta({ organizationName, embedUrl, slug }: Props) {
               style={{
                 width: "100%",
                 height: `${iframeHeight}px`,
-                minHeight: "700px",
+                minHeight: "480px",
                 overflow: "hidden",
                 margin: 0,
                 padding: 0,

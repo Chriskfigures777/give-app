@@ -288,41 +288,41 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   }
 
   // Themed embed: give-split layout (image left, form right) for all non-default themes
+  const themeMap: Record<string, { wrapperClass: string; bgColor: string; fontUrl: string; css: string; formPanelClass: string; eyebrowText: string; secureText: string }> = {
+    grace: {
+      wrapperClass: "embed-theme-grace",
+      bgColor: "#FAF7F2",
+      fontUrl: GRACE_THEME_FONT_URL,
+      css: GRACE_THEME_CSS,
+      formPanelClass: "gs-form",
+      eyebrowText: "Give Online",
+      secureText: "All transactions are secure and encrypted",
+    },
+    "dark-elegant": {
+      wrapperClass: "embed-theme-dark-elegant",
+      bgColor: "#171717",
+      fontUrl: DARK_ELEGANT_FONT_URL,
+      css: DARK_ELEGANT_THEME_CSS,
+      formPanelClass: "gs-form",
+      eyebrowText: "Generosity",
+      secureText: "Secure & encrypted",
+    },
+    "bold-contemporary": {
+      wrapperClass: "embed-theme-bold",
+      bgColor: "#F8F9FA",
+      fontUrl: BOLD_CONTEMPORARY_FONT_URL,
+      css: BOLD_CONTEMPORARY_THEME_CSS,
+      formPanelClass: "gs-form-light",
+      eyebrowText: "Make a Difference",
+      secureText: "Secure, encrypted giving powered by Stripe",
+    },
+  };
+
   const renderThemedEmbed = () => {
     const headerText = designSetFromCard?.title ?? formCustom?.header_text ?? "Make a Donation";
     const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
     const mediaUrl = effectiveMediaSet.media_url;
     const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
-
-    const themeMap: Record<string, { wrapperClass: string; bgColor: string; fontUrl: string; css: string; formPanelClass: string; eyebrowText: string; secureText: string }> = {
-      grace: {
-        wrapperClass: "embed-theme-grace",
-        bgColor: "#FAF7F2",
-        fontUrl: GRACE_THEME_FONT_URL,
-        css: GRACE_THEME_CSS,
-        formPanelClass: "gs-form",
-        eyebrowText: "Give Online",
-        secureText: "All transactions are secure and encrypted",
-      },
-      "dark-elegant": {
-        wrapperClass: "embed-theme-dark-elegant",
-        bgColor: "#171717",
-        fontUrl: DARK_ELEGANT_FONT_URL,
-        css: DARK_ELEGANT_THEME_CSS,
-        formPanelClass: "gs-form",
-        eyebrowText: "Generosity",
-        secureText: "Secure & encrypted",
-      },
-      "bold-contemporary": {
-        wrapperClass: "embed-theme-bold",
-        bgColor: "#F8F9FA",
-        fontUrl: BOLD_CONTEMPORARY_FONT_URL,
-        css: BOLD_CONTEMPORARY_THEME_CSS,
-        formPanelClass: "gs-form-light",
-        eyebrowText: "Make a Difference",
-        secureText: "Secure, encrypted giving powered by Stripe",
-      },
-    };
 
     const tc = themeMap[embedFormTheme] ?? themeMap.grace;
 
@@ -387,11 +387,110 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     );
   };
 
+  /** Fullscreen variant of themed embed: edge-to-edge, image left / form right */
+  const renderThemedFullscreen = () => {
+    const headerText = designSetFromCard?.title ?? formCustom?.header_text ?? "Make a Donation";
+    const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
+    const mediaUrl = effectiveMediaSet.media_url;
+    const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
+
+    const tc = themeMap[embedFormTheme] ?? themeMap.grace;
+
+    const mediaContent = hasVideo ? (
+      <video
+        src={effectiveMediaSet.media_url}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover block"
+        aria-hidden
+      />
+    ) : (
+      <img
+        src={mediaUrl}
+        alt="Community impact"
+        className="absolute inset-0 w-full h-full object-cover block"
+      />
+    );
+
+    return (
+      <main
+        data-fullscreen
+        className={`${tc.wrapperClass} w-full flex flex-col md:flex-row`}
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        <EmbedResizeObserver />
+        <link rel="stylesheet" href={tc.fontUrl} />
+        <style dangerouslySetInnerHTML={{ __html: tc.css }} />
+
+        {/* Mobile: top image banner */}
+        <div className="relative w-full min-h-[200px] aspect-[16/9] flex-shrink-0 md:hidden gs-img">
+          {mediaContent}
+        </div>
+
+        {/* Desktop: left panel — image fills the half */}
+        <div className="hidden md:flex md:w-1/2 lg:w-[55%] relative gs-img">
+          {hasVideo ? (
+            <video
+              src={effectiveMediaSet.media_url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover block"
+              aria-hidden
+            />
+          ) : (
+            <img
+              src={mediaUrl}
+              alt="Community impact"
+              className="absolute inset-0 w-full h-full object-cover block"
+            />
+          )}
+        </div>
+
+        {/* Right panel — form with theme styling */}
+        <div
+          className={`${tc.formPanelClass} flex flex-col w-full md:w-1/2 lg:w-[45%] min-w-0 flex-1 overflow-visible`}
+        >
+          <div className="w-full min-w-0 flex flex-col justify-center py-5 px-4 sm:px-6 md:py-8 md:px-8 lg:px-10">
+            <span className="sec-eye">
+              {tc.eyebrowText}
+            </span>
+            <h3>{headerText}</h3>
+            <p className="gs-form-desc">{subheaderText}</p>
+            <DonationForm
+              organizationId={org.id}
+              organizationName={org.name}
+              campaigns={campaigns ?? []}
+              endowmentFunds={endowmentFunds ?? []}
+              suggestedAmounts={suggestedAmounts}
+              minimumAmountCents={minCents}
+              showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+              allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+              allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
+              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+              borderRadius={borderRadius}
+              slug={slug}
+              noCard
+              initialFrequency={initialFrequency}
+              fullWidth
+              embedCardId={embedCard?.id}
+            />
+            <p className="gs-form-secure">{tc.secureText}</p>
+          </div>
+          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+        </div>
+      </main>
+    );
+  };
+
   // Fullscreen: side-by-side layout (image left, form right) on md+, stacked on mobile
-  // When Grace theme: use give-split (image left, form right) instead
   if (isFullscreen) {
     if (useThemedLayout) {
-      return renderThemedEmbed();
+      return renderThemedFullscreen();
     }
     const headerText = formCustom?.header_text ?? "Make a Donation";
     const subheaderText = formCustom?.subheader_text ?? `Support ${org.name}`;
@@ -399,7 +498,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     return (
       <main
         data-fullscreen
-        className="w-full min-h-screen flex flex-col md:flex-row"
+        className="w-full flex flex-col md:flex-row"
         style={{
           backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
           color: formCustom?.text_color ?? "var(--stripe-dark)",
@@ -411,9 +510,9 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           <link rel="stylesheet" href={googleFontUrl} />
         )}
 
-        {/* Left side — sticky image/media panel (hidden on mobile, shown as top banner instead) */}
+        {/* Left side — image/media panel (hidden on mobile, shown as top banner instead) */}
         {/* Mobile: top banner */}
-        <div className="relative w-full min-h-[220px] aspect-[16/9] flex-shrink-0 md:hidden">
+        <div className="relative w-full min-h-[200px] aspect-[16/9] flex-shrink-0 md:hidden">
           <FormCardMedia
             set={effectiveMediaSet}
             fallbackImageUrl={safeFallbackImageUrl}
@@ -423,8 +522,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           />
         </div>
 
-        {/* Desktop: left panel — sticky image with text overlay */}
-        <div className="hidden md:flex md:w-1/2 lg:w-[55%] relative md:sticky md:top-0 md:self-start md:min-h-screen">
+        {/* Desktop: left panel — image stretches to match form height */}
+        <div className="hidden md:flex md:w-1/2 lg:w-[55%] relative">
           <FormCardMedia
             set={effectiveMediaSet}
             fallbackImageUrl={safeFallbackImageUrl}
@@ -439,7 +538,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           className="flex flex-col w-full md:w-1/2 lg:w-[45%] min-w-0 flex-1 overflow-visible"
           style={{ fontFamily, backgroundColor: "#f8f9fa" }}
         >
-          <div className="w-full min-w-0 flex flex-col justify-center py-6 px-4 sm:px-6 md:py-10 md:px-8 lg:px-10">
+          <div className="w-full min-w-0 flex flex-col justify-center py-5 px-4 sm:px-6 md:py-8 md:px-8 lg:px-10">
             <DonationForm
               organizationId={org.id}
               organizationName={org.name}

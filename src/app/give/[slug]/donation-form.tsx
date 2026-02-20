@@ -382,6 +382,7 @@ export function DonationForm({
                           <button
                             key={dollars}
                             type="button"
+                            aria-pressed={selected}
                             onClick={() => {
                               setAmountCents(dollars * 100);
                               setCustomAmount("");
@@ -505,6 +506,7 @@ export function DonationForm({
                           <button
                             key={opt.value}
                             type="button"
+                            aria-pressed={selected}
                             onClick={() => {
                               if (opt.value !== "one_time" && !user && slug) {
                                 const params = new URLSearchParams({ org: slug!, frequency: opt.value });
@@ -639,6 +641,7 @@ export function DonationForm({
                         <button
                           key={opt}
                           type="button"
+                          aria-pressed={selected}
                           onClick={() => setFeeCoverage(opt)}
                           style={{
                             width: "100%",

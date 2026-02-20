@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 
 /**
- * Observes the document body height and posts a "resize" message to the
+ * Resets the root layout's min-h-screen so the embed page's height is
+ * determined by actual content, not forced to 100vh.
+ * Also observes the body height and posts a "resize" message to the
  * parent window so that the embedding iframe can adjust its height.
- * Only sends messages when running inside an iframe.
  */
 export function EmbedResizeObserver() {
   useEffect(() => {
@@ -14,7 +15,10 @@ export function EmbedResizeObserver() {
     let lastHeight = 0;
 
     const sendHeight = () => {
-      const height = document.documentElement.scrollHeight;
+      const main = document.querySelector("main");
+      const height = main
+        ? main.offsetHeight
+        : document.body.scrollHeight;
       if (height !== lastHeight && height > 0) {
         lastHeight = height;
         window.parent.postMessage({ type: "resize", height }, "*");
@@ -38,5 +42,16 @@ export function EmbedResizeObserver() {
     };
   }, []);
 
-  return null;
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          html, body, #root-app {
+            min-height: auto !important;
+            height: auto !important;
+          }
+        `,
+      }}
+    />
+  );
 }
