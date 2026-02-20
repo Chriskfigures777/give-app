@@ -95,7 +95,7 @@ export default async function SettingsPage() {
   const { plan, planStatus } = orgId
     ? await getOrgPlan(orgId, supabase)
     : { plan: "free" as const, planStatus: null };
-  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "website");
+  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "growth");
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-2 py-4 sm:px-4 sm:py-6">

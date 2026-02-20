@@ -93,10 +93,10 @@ export async function POST(req: NextRequest) {
       .eq("organization_id", organizationId);
 
     if ((existingCount ?? 0) >= formLimit) {
-      const upgradePlan = plan === "free" ? "Website" : plan === "website" ? "Pro" : null;
+      const upgradePlan = plan === "free" ? "Growth" : plan === "growth" ? "Pro" : null;
       return NextResponse.json(
         {
-          error: `You've reached the form limit for your ${plan === "free" ? "Free" : plan === "website" ? "Website" : "Pro"} plan (${formLimit} forms). ${
+          error: `You've reached the form limit for your ${plan === "free" ? "Free" : plan === "growth" ? "Growth" : "Pro"} plan (${formLimit} forms). ${
             upgradePlan ? `Upgrade to the ${upgradePlan} plan to create more.` : ""
           }`,
           code: "FORM_LIMIT_REACHED",
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
     if (uniqueRecipients.size > recipientLimit) {
       return NextResponse.json(
         {
-          error: `Your ${plan === "free" ? "Free" : plan === "website" ? "Website" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
+          error: `Your ${plan === "free" ? "Free" : plan === "growth" ? "Growth" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
           code: "SPLIT_RECIPIENT_LIMIT",
         },
         { status: 403 }

@@ -21,7 +21,6 @@ import {
   FileText,
   Wallet,
   UserCheck,
-  Clock,
   LayoutDashboard,
   Globe2,
   Split,
@@ -30,47 +29,50 @@ import {
   PenTool,
   Infinity,
   TrendingUp,
+  Rss,
+  UsersRound,
 } from "lucide-react";
 
 const FREE_FEATURES = [
   { icon: Heart, label: "Unlimited donations — no cap" },
-  { icon: BarChart3, label: "Dashboard with real-time stats" },
-  { icon: Code2, label: "Embedded forms & embed cards" },
+  { icon: Code2, label: "Unlimited donation forms" },
+  { icon: Code2, label: "Embeddable forms & embed cards" },
+  { icon: QrCode, label: "QR codes for your give page" },
   { icon: Link2, label: "Shareable donation links" },
-  { icon: Globe, label: "Public organization page" },
-  { icon: Users, label: "Peers — connect with other orgs" },
-  { icon: MessageSquare, label: "Messaging with connected orgs" },
-  { icon: CalendarDays, label: "Events — create & manage" },
+  { icon: Repeat, label: "Recurring & one-time gifts" },
+  { icon: BarChart3, label: "Basic dashboard with real-time stats" },
+  { icon: FileText, label: "Year-end tax receipts" },
+  { icon: Globe, label: "give.app subdomain" },
+  { icon: Split, label: "Up to 2 split recipients" },
+  { icon: Users, label: "Connections & chat with other orgs" },
+  { icon: CalendarDays, label: "Eventbrite integration" },
+  { icon: Rss, label: "Feed & Explore" },
   { icon: Target, label: "Goals & donation campaigns" },
   { icon: UserCheck, label: "Givers list & management" },
   { icon: PenTool, label: "Form customization — colors, images, amounts" },
-  { icon: Repeat, label: "Recurring & one-time gifts" },
-  { icon: QrCode, label: "QR codes for your give page" },
-  { icon: Wallet, label: "Stripe Connect payouts & bank account" },
-  { icon: FileText, label: "Year-end tax receipts" },
-  { icon: Zap, label: "Feed, Explore & realtime donation feed" },
+  { icon: Wallet, label: "Stripe Connect payouts" },
 ];
 
-const FREE_TRIAL_FEATURES = [
-  { icon: Clock, label: "14-day trial: Website builder" },
-  { icon: Clock, label: "14-day trial: Split transactions" },
-];
-
-const WEBSITE_FEATURES = [
-  { icon: LayoutDashboard, label: "Website builder (limited templates)" },
-  { icon: Split, label: "Split transactions with peers" },
-  { icon: Split, label: "Split transactions with missionaries" },
-  { icon: Globe2, label: "Custom domains (yourdomain.org)" },
-  { icon: UserPlus, label: "Add givers as missionaries" },
-  { icon: Split, label: "Payment splits to connected orgs" },
+const GROWTH_FEATURES = [
+  { icon: Globe2, label: "Custom domain (yourdomain.org)" },
+  { icon: LayoutDashboard, label: "Website builder + publishing" },
+  { icon: Split, label: "Up to 7 split recipients" },
+  { icon: UserPlus, label: "Add & pay up to 3 missionaries" },
+  { icon: Split, label: "Split transactions with peers & missionaries" },
 ];
 
 const PRO_FEATURES = [
-  { icon: LayoutDashboard, label: "Full website builder (all templates)" },
-  { icon: Blocks, label: "Website CMS (edit pages, blocks)" },
-  { icon: Infinity, label: "Unlimited website pages" },
+  { icon: Infinity, label: "Unlimited splits, forms & recipients" },
+  { icon: Blocks, label: "CMS — sermons, podcast, worship" },
   { icon: TrendingUp, label: "Advanced analytics" },
+  { icon: Infinity, label: "Unlimited website pages" },
+  { icon: UserPlus, label: "Unlimited missionaries" },
 ];
+
+const ADDON_FEATURE = {
+  icon: UsersRound,
+  label: "+$10/mo per team member added to workspace",
+};
 
 export function LandingPricingTiers() {
   return (
@@ -99,10 +101,9 @@ export function LandingPricingTiers() {
           </h2>
 
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            Free plan: unlimited donations, embeds, events, goals, givers,
-            peers, messaging, form customization, and more — no credit card.
-            Website ($35) and Pro ($49) include a 14-day free trial — no
-            charge for two weeks.
+            Free Forever plan: unlimited donations, forms, embeds, QR codes, and
+            more — no credit card. Growth ($29) and Pro ($49) include a 14-day
+            free trial. Revenue on 1% + Stripe.
           </p>
         </motion.div>
 
@@ -117,15 +118,15 @@ export function LandingPricingTiers() {
             className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 shadow-[0_2px_16px_rgba(0,0,0,0.04)] md:p-8"
           >
             <div className="mb-1 text-sm font-semibold uppercase tracking-wider text-emerald-600">
-              Free
+              Free Forever
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-5xl font-extrabold text-slate-900">$0</span>
               <span className="text-lg text-slate-400">/month</span>
             </div>
             <p className="mt-3 text-[14px] leading-relaxed text-slate-600">
-              Full-featured donation platform. Unlimited donations, embeds,
-              events, goals, givers, peers, messaging, form customization.
+              Full-featured donation platform. Unlimited donations, forms,
+              embeds, QR codes, recurring giving, basic dashboard, tax receipts.
               No credit card required.
             </p>
 
@@ -144,20 +145,15 @@ export function LandingPricingTiers() {
               ))}
             </ul>
 
-            <div className="mt-4 space-y-2.5">
-              {FREE_TRIAL_FEATURES.map((f) => (
-                <li
-                  key={f.label}
-                  className="flex items-center gap-2.5 list-none"
-                >
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-100">
-                    <f.icon className="h-3 w-3 text-amber-600" />
-                  </div>
-                  <span className="text-[13px] font-medium text-slate-500 italic">
-                    {f.label}
-                  </span>
-                </li>
-              ))}
+            <div className="mt-4">
+              <li className="flex items-center gap-2.5 list-none">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100">
+                  <ADDON_FEATURE.icon className="h-3 w-3 text-slate-500" />
+                </div>
+                <span className="text-[13px] font-medium text-slate-500">
+                  {ADDON_FEATURE.label}
+                </span>
+              </li>
             </div>
 
             <Link
@@ -174,7 +170,7 @@ export function LandingPricingTiers() {
             <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-emerald-100/40 blur-2xl" />
           </motion.div>
 
-          {/* WEBSITE TIER */}
+          {/* GROWTH TIER */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -195,30 +191,26 @@ export function LandingPricingTiers() {
             </div>
 
             <div className="mb-1 text-sm font-semibold uppercase tracking-wider text-emerald-600">
-              Website
+              Growth
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-extrabold text-slate-900">$35</span>
+              <span className="text-5xl font-extrabold text-slate-900">$29</span>
               <span className="text-lg text-slate-400">/month</span>
             </div>
             <p className="mt-3 text-[14px] leading-relaxed text-slate-600">
-              Everything in Free plus website builder and split transactions.
-              14-day free trial — no charge for 14 days, then $35/mo.
+              Everything in Free plus custom domain, website builder, up to 7
+              split recipients, and up to 3 missionaries you can add and pay out.
+              14-day free trial.
             </p>
 
             <div className="my-6 h-px bg-gradient-to-r from-transparent via-emerald-200 to-transparent" />
-
-            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-              <Clock className="h-3 w-3" />
-              14-day free trial — $0 for 14 days, then $35/mo
-            </div>
 
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Everything in Free, plus:
             </p>
 
             <ul className="space-y-2.5">
-              {WEBSITE_FEATURES.map((f, i) => (
+              {GROWTH_FEATURES.map((f, i) => (
                 <li key={`${f.label}-${i}`} className="flex items-center gap-2.5">
                   <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-violet-100">
                     <f.icon className="h-3 w-3 text-violet-600" />
@@ -229,6 +221,17 @@ export function LandingPricingTiers() {
                 </li>
               ))}
             </ul>
+
+            <div className="mt-4">
+              <li className="flex items-center gap-2.5 list-none">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100">
+                  <ADDON_FEATURE.icon className="h-3 w-3 text-slate-500" />
+                </div>
+                <span className="text-[13px] font-medium text-slate-500">
+                  {ADDON_FEATURE.label}
+                </span>
+              </li>
+            </div>
 
             <Link
               href="/signup"
@@ -264,20 +267,15 @@ export function LandingPricingTiers() {
               <span className="text-lg text-slate-400">/month</span>
             </div>
             <p className="mt-3 text-[14px] leading-relaxed text-slate-600">
-              Everything in Website plus full website builder, CMS, unlimited
-              pages, advanced analytics. 14-day free trial — no charge for 14
-              days, then $49/mo.
+              Everything unlimited — splits, forms, recipients, missionaries,
+              CMS (sermons, podcast, worship), advanced analytics, and
+              unlimited pages. 14-day free trial.
             </p>
 
             <div className="my-6 h-px bg-slate-100" />
 
-            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-              <Clock className="h-3 w-3" />
-              14-day free trial — $0 for 14 days, then $49/mo
-            </div>
-
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Everything in Website, plus:
+              Everything in Growth, plus:
             </p>
 
             <ul className="space-y-2.5">
@@ -292,6 +290,17 @@ export function LandingPricingTiers() {
                 </li>
               ))}
             </ul>
+
+            <div className="mt-4">
+              <li className="flex items-center gap-2.5 list-none">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100">
+                  <ADDON_FEATURE.icon className="h-3 w-3 text-slate-500" />
+                </div>
+                <span className="text-[13px] font-medium text-slate-500">
+                  {ADDON_FEATURE.label}
+                </span>
+              </li>
+            </div>
 
             <Link
               href="/signup"
@@ -321,8 +330,9 @@ export function LandingPricingTiers() {
               </span>{" "}
               Sign up, create your organization, accept unlimited donations,
               connect with peers, manage events and campaigns — all without
-              paying a cent. Upgrade only when you need a website builder,
-              custom domain, split transactions, or CMS.
+              paying a cent. Upgrade only when you need a custom domain, website
+              builder, more split recipients, or CMS. Add team members for
+              $10/mo each.
             </p>
           </div>
         </motion.div>

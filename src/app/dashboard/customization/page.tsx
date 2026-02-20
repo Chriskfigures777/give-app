@@ -116,7 +116,7 @@ export default async function CustomizationPage() {
   const formCustom = formCustomRow as FormCustom | null;
 
   const { plan, planStatus } = await getOrgPlan(orgId!, supabase);
-  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "website");
+  const hasWebsitePlan = hasAccessToPlan(plan, planStatus, "growth");
   const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
   const campaigns = (campaignsData ?? []) as Campaign[];
   const minCents = campaigns[0]?.minimum_amount_cents ?? 100;

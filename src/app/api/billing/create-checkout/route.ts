@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe/client";
-import { getStripePriceId, isPlanStatusActive, type OrgPlan } from "@/lib/plan";
+import { getStripePriceId, isPlanStatusActive, normalizePlan, type OrgPlan } from "@/lib/plan";
 
 /**
  * POST /api/billing/create-checkout
  * Creates a Stripe Checkout session for new subscriptions, or updates the
- * existing subscription when upgrading between paid plans (website → pro).
+ * existing subscription when upgrading between paid plans (growth → pro).
  * Requires: authenticated org admin.
- * Body: { plan: 'website' | 'pro' }
+ * Body: { plan: 'growth' | 'pro' }
  */
 export async function POST(req: Request) {
   try {
@@ -22,9 +22,10 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { plan } = body as { plan: OrgPlan };
+    const rawPlan = body.plan as string;
+    const plan = normalizePlan(rawPlan) as OrgPlan;
 
-    if (plan !== "website" && plan !== "pro") {
+    if (plan !== "growth" && plan !== "pro") {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
@@ -74,9 +75,7 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_APP_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-    // ── Upgrade existing subscription (e.g. website → pro) ──
-    // If the org already has an active/trialing subscription, swap the price
-    // instead of creating a second subscription.
+    // ── Upgrade existing subscription (e.g. growth → pro) ──
     if (
       org.stripe_plan_subscription_id &&
       isPlanStatusActive(org.plan_status as import("@/lib/plan").PlanStatus)

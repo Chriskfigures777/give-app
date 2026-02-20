@@ -14,7 +14,7 @@ import { getPlatformStats } from "@/lib/platform-stats";
 export const metadata: Metadata = {
   title: "Pricing — Give",
   description:
-    "Free to use. Pay only when you receive donations. 1% platform fee, Stripe processing. No monthly plans or upfront costs. Built for churches and nonprofits.",
+    "Free Forever: unlimited donations, forms, embeds, QR codes. Growth $29/mo, Pro $49/mo with 14-day free trial. 1% platform fee + Stripe. Built for churches and nonprofits.",
 };
 
 export default async function PricingPage() {

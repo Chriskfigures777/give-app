@@ -161,7 +161,7 @@ export async function PATCH(req: Request) {
           if (uniqueRecipients.size > recipientLimit) {
             return NextResponse.json(
               {
-                error: `Your ${orgPlan === "free" ? "Free" : orgPlan === "website" ? "Website" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
+                error: `Your ${orgPlan === "free" ? "Free" : orgPlan === "growth" ? "Growth" : "Pro"} plan allows ${recipientLimit} split recipient${recipientLimit === 1 ? "" : "s"}. Upgrade for more.`,
                 code: "SPLIT_RECIPIENT_LIMIT",
               },
               { status: 403 }

@@ -108,7 +108,7 @@ type Props = {
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
   initialEmbedFormTheme?: EmbedFormThemeId | null;
   splitRecipientLimit?: number;
-  currentPlan?: "free" | "website" | "pro";
+  currentPlan?: "free" | "growth" | "pro";
 };
 
 /* -- Section header for collapsible panels -- */

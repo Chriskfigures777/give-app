@@ -19,75 +19,68 @@ const endowmentPercent = (
 
 const FREE_FEATURES = [
   "Unlimited donations — no cap",
-  "Donation dashboard with real-time stats",
+  "Unlimited donation forms",
+  "Embeddable forms & embed cards",
+  "QR codes for your give page",
+  "Shareable donation links",
+  "Recurring & one-time gifts",
+  "Basic dashboard with real-time stats",
   "Donation analytics & history",
-  "Embedded donation forms — paste on any site",
-  "Embed cards with multiple themes",
-  "Donation links (shareable URLs)",
-  "Public org page",
-  "Peers — connect with other orgs",
-  "Connection requests & approvals",
-  "Messaging with connected orgs",
-  "Events — create & manage",
+  "Year-end tax receipts",
+  "give.app subdomain",
+  "Up to 2 split recipients",
+  "Connections & chat with other orgs",
+  "Eventbrite integration",
+  "Feed & Explore",
   "Goals & donation campaigns",
   "Givers list & management",
   "Form customization — colors, amounts, images",
-  "Suggested amounts & custom amounts",
-  "Recurring gifts (monthly, etc.)",
-  "One-time gifts",
-  "Anonymous giving option",
-  "Endowment fund selection",
-  "QR codes for your give page",
-  "Stripe Connect payouts",
-  "Payout history & bank account",
-  "Year-end tax receipts",
-  "My gifts (giver history)",
+  "Stripe Connect payouts & bank account",
   "Missionary embed (if you're a missionary)",
-  "Feed & Explore",
   "Realtime donation feed",
-  "14-day trial: Website builder",
-  "14-day trial: Split transactions",
 ];
 
-const WEBSITE_FEATURES = [
-  "14-day free trial — $0 for 14 days, then $35/mo",
+const GROWTH_FEATURES = [
+  "14-day free trial — $0 for 14 days, then $29/mo",
   "Everything in Free, plus:",
-  "Website builder (limited templates)",
-  "Split transactions with peers",
-  "Split transactions with missionaries",
-  "Custom domains (yourdomain.org)",
-  "Add givers as missionaries",
-  "Payment splits to connected orgs",
+  "Custom domain (yourdomain.org)",
+  "Website builder + publishing",
+  "Up to 7 split recipients",
+  "Add & pay up to 3 missionaries",
+  "Split transactions with peers & missionaries",
+  "+$10/mo per team member added to workspace",
 ];
 
 const PRO_FEATURES = [
   "14-day free trial — $0 for 14 days, then $49/mo",
-  "Everything in Website, plus:",
-  "Full website builder (all templates)",
-  "Website CMS (edit pages, blocks)",
-  "Unlimited website pages",
+  "Everything in Growth, plus:",
+  "Everything unlimited — splits, forms, recipients",
+  "CMS — sermons, podcast, worship",
   "Advanced analytics",
+  "Unlimited website pages",
+  "Unlimited missionaries",
+  "+$10/mo per team member added to workspace",
 ];
 
 const PLANS = [
   {
     id: "free",
-    name: "Free",
+    name: "Free Forever",
     price: "$0",
     period: "/month",
-    description: "Full-featured donation platform. Unlimited donations, embeds, events, goals, givers, peers, messaging, form customization. 14-day trials for website builder and splits. No credit card required.",
+    description: "Full-featured donation platform. Unlimited donations, forms, embeds, QR codes, recurring giving, basic dashboard, tax receipts, give.app subdomain, up to 2 split recipients, connections & chat, Eventbrite integration, feed. No credit card required.",
     features: FREE_FEATURES,
     cta: "Get started free",
     href: "/signup",
     highlighted: false,
   },
   {
-    id: "website",
-    name: "Website",
-    price: "$35",
+    id: "growth",
+    name: "Growth",
+    price: "$29",
     period: "/month",
-    description: "Everything in Free plus website builder and split transactions. 14-day free trial — no charge for 14 days, then $35/mo.",
-    features: WEBSITE_FEATURES,
+    description: "Everything in Free plus custom domain, website builder, up to 7 split recipients, and up to 3 missionaries you can add and pay out. 14-day free trial.",
+    features: GROWTH_FEATURES,
     cta: "Start 14-day trial",
     href: "/signup",
     highlighted: true,
@@ -97,7 +90,7 @@ const PLANS = [
     name: "Pro",
     price: "$49",
     period: "/month",
-    description: "Everything in Website plus full website builder, CMS, unlimited pages, advanced analytics. 14-day free trial — no charge for 14 days, then $49/mo.",
+    description: "Everything unlimited — splits, forms, recipients, missionaries, CMS (sermons, podcast, worship), advanced analytics, and unlimited pages. 14-day free trial.",
     features: PRO_FEATURES,
     cta: "Start 14-day trial",
     href: "/signup",
@@ -119,7 +112,9 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
             Simple, transparent pricing
           </DialogTitle>
           <p className="mt-1 text-sm text-slate-600">
-            Free plan: unlimited donations, embeds, events, goals, givers, peers, messaging, form customization, and more — no credit card. Website ($35) and Pro ($49) include a 14-day free trial — no charge for two weeks.
+            Free Forever plan: unlimited donations, forms, embeds, QR codes, and
+            more — no credit card. Growth ($29) and Pro ($49) include a 14-day
+            free trial. Add team members for $10/mo each.
           </p>
         </DialogHeader>
 
@@ -182,7 +177,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
             <span>Endowment: {endowmentPercent}%</span>
           </div>
           <p className="mt-3 text-xs text-slate-500">
-            Website ($35) and Pro ($49) plans: 14-day free trial. No charge for 14 days. Cancel anytime before trial ends.
+            Growth ($29) and Pro ($49) plans: 14-day free trial. No charge for 14 days. Cancel anytime. Team members: +$10/mo each.
           </p>
         </div>
 

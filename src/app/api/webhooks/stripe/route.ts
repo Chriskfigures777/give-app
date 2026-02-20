@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       // Handle platform plan subscriptions separately from donation subscriptions
       if (session.metadata?.type === "platform_plan") {
         const orgId = session.metadata?.org_id;
-        const plan = session.metadata?.plan as "website" | "pro" | undefined;
+        const plan = session.metadata?.plan as "growth" | "pro" | undefined;
         if (!orgId || !plan) break;
 
         const subId =
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       // Platform plan subscription
       if (meta.type === "platform_plan" && meta.org_id) {
         const newPlan =
-          event.type === "customer.subscription.deleted" ? "free" : (meta.plan as "website" | "pro" | undefined) ?? "free";
+          event.type === "customer.subscription.deleted" ? "free" : (meta.plan as "growth" | "pro" | undefined) ?? "free";
         const newStatus = event.type === "customer.subscription.deleted" ? "canceled" : subscription.status;
 
         await supabase

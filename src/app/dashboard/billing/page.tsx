@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth";
-import { getOrgPlan, isPlanStatusActive, PLAN_META, type OrgPlan } from "@/lib/plan";
+import { getOrgPlan, isPlanStatusActive, normalizePlan, type OrgPlan } from "@/lib/plan";
 import { BillingPageClient } from "./billing-page-client";
 
 export default async function BillingPage({
@@ -26,7 +26,7 @@ export default async function BillingPage({
   }
 
   const isActive = isPlanStatusActive(planStatus);
-  const successPlan = params.success === "1" ? (params.plan as OrgPlan | undefined) : undefined;
+  const successPlan = params.success === "1" && params.plan ? normalizePlan(params.plan) : undefined;
   const canceled = params.canceled === "1";
 
   return (

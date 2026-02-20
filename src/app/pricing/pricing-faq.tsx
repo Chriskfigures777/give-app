@@ -6,34 +6,34 @@ import { ChevronDown } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "What does the Free plan include?",
+    question: "What does the Free Forever plan include?",
     answer:
-      "The Free plan includes: unlimited donations (no cap), donation dashboard with real-time stats, donation analytics and history, embedded donation forms (paste on any site), embed cards with multiple themes, donation links (shareable URLs), public org page, Peers (connect with other orgs), connection requests and approvals, messaging with connected orgs, events (create and manage), goals and donation campaigns, givers list and management, form customization (colors, amounts, images), suggested amounts and custom amounts, recurring gifts (monthly, etc.) and one-time gifts, anonymous giving option, endowment fund selection, QR codes for your give page, Stripe Connect payouts, payout history and bank account, year-end tax receipts, My gifts (giver history), missionary embed (if you're a missionary), Feed and Explore, and realtime donation feed. You also get a 14-day trial of the Website builder and a 14-day trial of Split transactions. No credit card required.",
+      "The Free Forever plan includes: unlimited donations (no cap), unlimited donation forms, embeddable forms and embed cards, QR codes, shareable donation links, recurring and one-time gifts, basic dashboard with real-time stats, donation analytics and history, year-end tax receipts, give.app subdomain, up to 2 split recipients, connections and chat with other orgs, Eventbrite integration, Feed and Explore, goals and donation campaigns, givers list and management, form customization (colors, amounts, images), anonymous giving option, endowment fund selection, Stripe Connect payouts, and a realtime donation feed. The goal: get as many churches in the door as possible. Revenue comes from a 1% platform fee + Stripe processing. No credit card required.",
   },
   {
     question: "What is the 14-day trial for paid plans?",
     answer:
-      "When you sign up for the Website ($35/mo) or Pro ($49/mo) plan, you get a 14-day free trial. No charge for 14 days — $0 for two weeks. Try the website builder, split transactions, custom domains, and everything in that plan. After 14 days, you'll be charged $35/mo (Website) or $49/mo (Pro) unless you cancel. Cancel anytime before the trial ends if it's not for you.",
+      "When you sign up for the Growth ($29/mo) or Pro ($49/mo) plan, you get a 14-day free trial. No charge for 14 days — $0 for two weeks. Try the website builder, custom domain, split transactions, and everything in that plan. After 14 days, you'll be charged $29/mo (Growth) or $49/mo (Pro) unless you cancel. Cancel anytime before the trial ends if it's not for you.",
   },
   {
-    question: "What's the difference between Website ($35) and Pro ($49)?",
+    question: "What's the difference between Growth ($29) and Pro ($49)?",
     answer:
-      "Website ($35/mo) includes everything in Free plus: website builder (limited templates), split transactions with peers and missionaries, custom domains, add givers as missionaries, and payment splits to connected orgs. Pro ($49/mo) includes everything in Website plus: full website builder (all templates), website CMS (edit pages and blocks), unlimited website pages, and advanced analytics. Both include a 14-day free trial.",
+      "Growth ($29/mo) includes everything in Free plus: custom domain (yourdomain.org), website builder + publishing, up to 7 split recipients, and the ability to add and pay up to 3 missionaries. Pro ($49/mo) includes everything in Growth plus: everything unlimited — splits, forms, recipients, missionaries, CMS (sermons, podcast, worship), advanced analytics, and unlimited website pages. Both include a 14-day free trial.",
+  },
+  {
+    question: "What is the team member add-on?",
+    answer:
+      "You can add team members to your workspace to manage your organization's account for $10/month per person. When you invite someone, they receive an email, verify their account, and gain access to manage your workspace. This is available on any plan.",
   },
   {
     question: "What are the fees?",
     answer:
-      "Give charges a 1% platform fee on each donation. Stripe charges 2.9% + $0.30 per transaction for card processing. These fees are only deducted when a donation is processed—there are no monthly or upfront costs.",
+      "Give charges a 1% platform fee on each donation. Stripe charges 2.9% + $0.30 per transaction for card processing. These fees are only deducted when a donation is processed — there are no hidden fees or upfront costs.",
   },
   {
     question: "What is the endowment option?",
     answer:
       "Give donates 30% of the platform fee (0.3% of each transaction) to endowment funds. Givers can optionally choose which endowment fund receives this allocation. It's completely transparent and optional.",
-  },
-  {
-    question: "Do I need to pay monthly or upfront?",
-    answer:
-      "No. Give is free to use. There are no setup fees, no monthly plans, and no commitments. You only pay when you receive donations—the platform fee and Stripe fees are applied at the time of each transaction.",
   },
   {
     question: "Can givers cover the fees?",
@@ -43,7 +43,12 @@ const FAQ_ITEMS = [
   {
     question: "How does the platform fee work?",
     answer:
-      "When a donation is processed, 1% goes to Give to support the platform. Of that 1%, 30% can be allocated to endowment funds by the giver. Your organization receives the donation minus the platform fee and Stripe processing fees—unless the giver chooses to cover them.",
+      "When a donation is processed, 1% goes to Give to support the platform. Of that 1%, 30% can be allocated to endowment funds by the giver. Your organization receives the donation minus the platform fee and Stripe processing fees — unless the giver chooses to cover them.",
+  },
+  {
+    question: "How do missionaries work on Give?",
+    answer:
+      "On the Growth plan, you can add up to 3 missionaries to your church's account — give them embeddable donation forms and split payouts directly to them. On the Pro plan, you get unlimited missionaries. The Free plan includes embeddable forms but doesn't include the ability to add and pay out missionaries.",
   },
 ];
 

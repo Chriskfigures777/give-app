@@ -18,6 +18,7 @@ import {
   Blocks,
   Infinity,
   TrendingUp,
+  UsersRound,
   X,
 } from "lucide-react";
 import type { OrgPlan, PlanStatus } from "@/lib/plan";
@@ -35,26 +36,28 @@ type Props = {
 const PLAN_DATA = [
   {
     id: "free" as OrgPlan,
-    name: "Free",
+    name: "Free Forever",
     price: "$0",
     period: "/month",
     description:
-      "Full-featured donation platform. Unlimited donations, embeds, events, goals, givers, peers, messaging, form customization. No credit card required.",
+      "Full-featured donation platform. Unlimited donations, forms, embeds, QR codes, recurring giving, basic dashboard, tax receipts, give.app subdomain, up to 2 split recipients, connections & chat, Eventbrite integration, feed. No credit card required.",
     features: [
       "Unlimited donations — no cap",
-      "Dashboard with real-time stats",
-      "Embedded donation forms",
-      "Donation links (shareable URLs)",
-      "Up to 3 donation forms",
-      "Public organization page",
-      "Peers & messaging",
-      "Events, goals, givers management",
-      "Form customization",
+      "Unlimited donation forms",
+      "Embeddable forms & embed cards",
+      "QR codes & donation links",
       "Recurring & one-time gifts",
-      "QR codes, tax receipts",
-      "Stripe Connect payouts",
-      "1 revenue split recipient",
+      "Basic dashboard with real-time stats",
+      "Year-end tax receipts",
+      "give.app subdomain",
+      "Up to 2 split recipients",
+      "Connections & chat",
+      "Eventbrite integration",
       "Feed & Explore",
+      "Goals & campaigns",
+      "Givers management",
+      "Form customization",
+      "Stripe Connect payouts",
     ],
     trial: null,
     cta: "Current plan",
@@ -62,26 +65,24 @@ const PLAN_DATA = [
     upgradeKey: null,
   },
   {
-    id: "website" as OrgPlan,
-    name: "Website",
-    price: "$35",
+    id: "growth" as OrgPlan,
+    name: "Growth",
+    price: "$29",
     period: "/month",
     description:
-      "Everything in Free plus website builder and split transactions. 14-day free trial — no charge for 14 days, then $35/mo.",
+      "Everything in Free plus custom domain, website builder, up to 7 split recipients, and up to 3 missionaries you can add and pay out. 14-day free trial.",
     features: [
-      { icon: LayoutDashboard, label: "Website builder (limited templates)" },
-      { icon: Split, label: "Up to 10 donation forms" },
-      { icon: Split, label: "Up to 5 split recipients" },
-      { icon: Split, label: "Split transactions with peers" },
-      { icon: Split, label: "Split transactions with missionaries" },
-      { icon: Globe2, label: "Custom domains (yourdomain.org)" },
-      { icon: UserPlus, label: "Add givers as missionaries" },
-      { icon: Split, label: "Payment splits to connected orgs" },
+      { icon: Globe2, label: "Custom domain (yourdomain.org)" },
+      { icon: LayoutDashboard, label: "Website builder + publishing" },
+      { icon: Split, label: "Up to 7 split recipients" },
+      { icon: UserPlus, label: "Add & pay up to 3 missionaries" },
+      { icon: Split, label: "Split transactions with peers & missionaries" },
+      { icon: UsersRound, label: "+$10/mo per team member" },
     ],
     trial: "14-day free trial",
     cta: "Start 14-day trial",
     highlighted: true,
-    upgradeKey: "website",
+    upgradeKey: "growth",
   },
   {
     id: "pro" as OrgPlan,
@@ -89,14 +90,14 @@ const PLAN_DATA = [
     price: "$49",
     period: "/month",
     description:
-      "Everything in Website plus full website builder, CMS, unlimited pages, advanced analytics. 14-day free trial.",
+      "Everything unlimited — splits, forms, recipients, missionaries, CMS (sermons, podcast, worship), advanced analytics, and unlimited pages. 14-day free trial.",
     features: [
-      { icon: LayoutDashboard, label: "Full website builder (all templates)" },
-      { icon: Infinity, label: "Unlimited donation forms" },
-      { icon: Split, label: "Unlimited split recipients" },
-      { icon: Blocks, label: "Website CMS (edit pages, blocks)" },
-      { icon: Infinity, label: "Unlimited website pages" },
+      { icon: Infinity, label: "Everything unlimited — splits, forms, recipients" },
+      { icon: Blocks, label: "CMS — sermons, podcast, worship" },
       { icon: TrendingUp, label: "Advanced analytics" },
+      { icon: Infinity, label: "Unlimited website pages" },
+      { icon: UserPlus, label: "Unlimited missionaries" },
+      { icon: UsersRound, label: "+$10/mo per team member" },
     ],
     trial: "14-day free trial",
     cta: "Start 14-day trial",
@@ -163,7 +164,7 @@ export function BillingPageClient({
   const [error, setError] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
-  async function handleUpgrade(plan: "website" | "pro") {
+  async function handleUpgrade(plan: "growth" | "pro") {
     setLoading(plan);
     setError(null);
     try {
@@ -197,9 +198,9 @@ export function BillingPageClient({
 
   const planLabel =
     currentPlan === "free"
-      ? "Free"
-      : currentPlan === "website"
-      ? "Website ($35/mo)"
+      ? "Free Forever"
+      : currentPlan === "growth"
+      ? "Growth ($29/mo)"
       : "Pro ($49/mo)";
 
   return (
@@ -210,7 +211,7 @@ export function BillingPageClient({
           Plan & Billing
         </h1>
         <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-          Manage your platform subscription. Website ($35) and Pro ($49) include a 14-day free trial.
+          Manage your platform subscription. Growth ($29) and Pro ($49) include a 14-day free trial. Team members: +$10/mo each.
         </p>
       </div>
 
@@ -228,12 +229,12 @@ export function BillingPageClient({
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
             <div>
               <p className="font-semibold text-emerald-800">
-                You&apos;re on the {successPlan === "website" ? "Website" : "Pro"} plan!
+                You&apos;re on the {successPlan === "growth" ? "Growth" : "Pro"} plan!
               </p>
               <p className="mt-0.5 text-sm text-emerald-600">
                 Your 14-day free trial has started. You won&apos;t be charged until the trial ends.
                 Access all{" "}
-                {successPlan === "website" ? "Website" : "Pro"} features now.
+                {successPlan === "growth" ? "Growth" : "Pro"} features now.
               </p>
             </div>
           </div>
@@ -296,8 +297,8 @@ export function BillingPageClient({
               {currentPlan === "free" ? (
                 <div className="space-y-3">
                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                    You&apos;re on the free plan. Upgrade to Website or Pro to unlock the website
-                    builder, split transactions, custom domains, and more.
+                    You&apos;re on the Free Forever plan. Upgrade to Growth or Pro to unlock a custom
+                    domain, website builder, more split recipients, missionaries, and more.
                   </p>
                   <div className="flex items-center gap-1.5 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-700 w-fit">
                     <Sparkles className="h-3.5 w-3.5" />
@@ -356,7 +357,7 @@ export function BillingPageClient({
                 plan.id === currentPlan && (plan.id === "free" || isActive);
               const isUpgrade =
                 plan.id !== "free" &&
-                (currentPlan === "free" || (currentPlan === "website" && plan.id === "pro"));
+                (currentPlan === "free" || (currentPlan === "growth" && plan.id === "pro"));
 
               return (
                 <div
@@ -428,7 +429,7 @@ export function BillingPageClient({
                     ) : isUpgrade ? (
                       <button
                         type="button"
-                        onClick={() => handleUpgrade(plan.id as "website" | "pro")}
+                        onClick={() => handleUpgrade(plan.id as "growth" | "pro")}
                         disabled={loading !== null}
                         className={`w-full rounded-xl py-2.5 text-sm font-semibold transition-all disabled:opacity-50 ${
                           plan.highlighted
@@ -469,8 +470,8 @@ export function BillingPageClient({
               <span>Endowment: 0.3%</span>
             </div>
             <p className="mt-3 text-xs text-slate-400">
-              Website ($35) and Pro ($49) plans: 14-day free trial. No charge for 14 days. Cancel
-              anytime before trial ends.
+              Growth ($29) and Pro ($49) plans: 14-day free trial. No charge for 14 days. Cancel
+              anytime. Team members: +$10/mo each.
             </p>
           </div>
         </section>

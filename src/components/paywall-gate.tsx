@@ -8,7 +8,7 @@ import type { OrgPlan } from "@/lib/plan";
 
 type PaywallGateProps = {
   /** The minimum plan required to access this feature. */
-  requiredPlan: "website" | "pro";
+  requiredPlan: "growth" | "pro";
   /** Display name of the locked feature. */
   featureName: string;
   /** Brief description shown on the gate. */
@@ -18,21 +18,19 @@ type PaywallGateProps = {
 };
 
 const PLAN_CARDS = {
-  website: {
-    name: "Website",
-    price: "$35",
+  growth: {
+    name: "Growth",
+    price: "$29",
     period: "/month",
     trial: "14-day free trial",
-    description: "Everything in Free plus website builder, split transactions, and custom domains.",
+    description: "Everything in Free plus custom domain, website builder, up to 7 split recipients, and up to 3 missionaries.",
     features: [
-      "Website builder (limited templates)",
-      "Up to 10 donation forms",
-      "Up to 5 split recipients",
-      "Split transactions with peers",
-      "Split transactions with missionaries",
-      "Custom domains (yourdomain.org)",
-      "Add givers as missionaries",
-      "Payment splits to connected orgs",
+      "Custom domain (yourdomain.org)",
+      "Website builder + publishing",
+      "Up to 7 split recipients",
+      "Add & pay up to 3 missionaries",
+      "Split transactions with peers & missionaries",
+      "+$10/mo per team member",
     ],
     cta: "Start 14-day trial",
     highlighted: true,
@@ -42,21 +40,21 @@ const PLAN_CARDS = {
     price: "$49",
     period: "/month",
     trial: "14-day free trial",
-    description: "Everything in Website plus full builder, CMS, unlimited pages, advanced analytics.",
+    description: "Everything unlimited — splits, forms, recipients, missionaries, CMS, advanced analytics, and unlimited pages.",
     features: [
-      "Full website builder (all templates)",
-      "Unlimited donation forms",
-      "Unlimited split recipients",
-      "Website CMS (edit pages, blocks)",
-      "Unlimited website pages",
+      "Everything unlimited — splits, forms, recipients",
+      "CMS — sermons, podcast, worship",
       "Advanced analytics",
+      "Unlimited website pages",
+      "Unlimited missionaries",
+      "+$10/mo per team member",
     ],
     cta: "Start 14-day trial",
     highlighted: false,
   },
 };
 
-function PlanCard({ plan, onUpgrade }: { plan: "website" | "pro"; onUpgrade: (plan: "website" | "pro") => void }) {
+function PlanCard({ plan, onUpgrade }: { plan: "growth" | "pro"; onUpgrade: (plan: "growth" | "pro") => void }) {
   const meta = PLAN_CARDS[plan];
   return (
     <div
@@ -113,13 +111,12 @@ export function PaywallGate({
   currentPlan = "free",
 }: PaywallGateProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"website" | "pro" | null>(null);
+  const [loading, setLoading] = useState<"growth" | "pro" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const plansToShow: ("website" | "pro")[] =
-    requiredPlan === "pro" ? ["website", "pro"] : ["website", "pro"];
+  const plansToShow: ("growth" | "pro")[] = ["growth", "pro"];
 
-  async function handleUpgrade(plan: "website" | "pro") {
+  async function handleUpgrade(plan: "growth" | "pro") {
     setLoading(plan);
     setError(null);
     try {
@@ -187,7 +184,7 @@ export function PaywallGate({
 
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-slate-500">
-          Your free plan includes unlimited donations, embeds, events, goals, givers, peers, and more.{" "}
+          Your free plan includes unlimited donations, forms, embeds, QR codes, and more.{" "}
           <Link href="/pricing" className="font-medium text-emerald-600 hover:text-emerald-700">
             View full pricing
             <ArrowRight className="ml-0.5 inline h-3.5 w-3.5" />

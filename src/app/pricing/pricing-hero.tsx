@@ -46,7 +46,9 @@ export function PricingHero({ stats }: { stats: PlatformStats }) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70 md:text-xl"
         >
-          Free plan: unlimited donations, embeds, events, goals, givers, messaging, form customization, and more. Website ($35) and Pro ($49) plans include a 14-day free trial—no charge for two weeks.
+          Free Forever plan: unlimited donations, forms, embeds, QR codes, and
+          more. Growth ($29) and Pro ($49) plans include a 14-day free
+          trial — no charge for two weeks. Add team members for $10/mo each.
         </motion.p>
 
         <motion.div
