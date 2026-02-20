@@ -143,33 +143,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, id: data.id, name: data.name });
     }
 
-    // Try with created_by; fall back without it if the column hasn't been migrated yet
-    const basePayload = {
-      organization_id: organizationId,
-      project: projectJson,
-      name: projectName,
-    };
-
-    let result = await supabase
+    const { data, error } = await supabase
       .from("website_builder_projects")
-      .insert({ ...basePayload, created_by: user.id })
+      .insert({
+        organization_id: organizationId,
+        project: projectJson,
+        name: projectName,
+      })
       .select("id, name, created_at, updated_at")
       .single();
 
-    if (result.error?.message?.includes("created_by")) {
-      result = await supabase
-        .from("website_builder_projects")
-        .insert(basePayload)
-        .select("id, name, created_at, updated_at")
-        .single();
+    if (error) {
+      console.error("website-builder project POST (create) error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    if (result.error) {
-      console.error("website-builder project POST (create) error:", result.error);
-      return NextResponse.json({ error: result.error.message }, { status: 500 });
-    }
-
-    const data = result.data;
 
     return NextResponse.json({ ok: true, id: data.id, name: data.name });
   } catch (e) {

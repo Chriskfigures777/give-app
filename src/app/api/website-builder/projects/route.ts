@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("website_builder_projects")
-      .select("id, name, project, created_at, updated_at, created_by")
+      .select("id, name, project, created_at, updated_at")
       .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false });
 
@@ -60,7 +60,6 @@ export async function GET(req: NextRequest) {
       project: p.project,
       created_at: p.created_at,
       updated_at: p.updated_at,
-      created_by: p.created_by ?? null,
     }));
 
     return NextResponse.json({ projects });
