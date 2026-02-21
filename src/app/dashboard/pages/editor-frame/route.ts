@@ -47,9 +47,9 @@ export async function GET(req: NextRequest) {
     [data-has-cms-binding][class*="Layer"]::before { content: 'CMS'; font-size: 9px; background: #9333ea; color: white; padding: 1px 4px; border-radius: 3px; margin-right: 6px; display: inline-block; vertical-align: middle; }
     .gjs-cms-btn::before { content: '\\1F4C2'; font-size: 14px; }
     /* Hide GrapesJS Studio branding watermark */
-    [class*="watermark" i], [class*="Watermark"], [class*="studio-badge" i],
-    [class*="StudioBadge"], [data-gjs-watermark], .gjs-badge-watermark,
-    a[href*="grapesjs.com"][style*="position"], div[class*="branding" i] {
+    .gs-banner, div.gs-banner,
+    [class*="gs-banner"], [class*="gs-logo"],
+    a.gs-link[href*="grapesjs.com"] {
       display: none !important;
       visibility: hidden !important;
       opacity: 0 !important;
@@ -57,6 +57,8 @@ export async function GET(req: NextRequest) {
       width: 0 !important;
       height: 0 !important;
       overflow: hidden !important;
+      position: absolute !important;
+      clip: rect(0,0,0,0) !important;
     }
   </style>
 </head>
@@ -622,20 +624,7 @@ export async function GET(req: NextRequest) {
           if (ed && typeof ed.getHtml === 'function' && !editorInstance) editorInstance = ed;
           clearTimeout(editorTimeout);
           function removeBranding() {
-            var studio = document.getElementById('studio');
-            if (!studio) return;
-            var selectors = [
-              '[class*="watermark" i]', '[class*="Watermark"]', '[class*="studio-badge" i]',
-              '[class*="StudioBadge"]', 'a[href*="grapesjs.com"]', '[class*="branding" i]'
-            ];
-            selectors.forEach(function(sel) {
-              studio.querySelectorAll(sel).forEach(function(el) { el.remove(); });
-            });
-            var allEls = studio.querySelectorAll('a, div, span');
-            allEls.forEach(function(el) {
-              if (el.textContent && el.textContent.trim() === 'GrapesJS Studio' && el.children.length <= 2) el.remove();
-              if (el.textContent && /^GrapesJS\\s/.test(el.textContent.trim()) && el.offsetHeight < 50) el.style.display = 'none';
-            });
+            document.querySelectorAll('.gs-banner, [class*="gs-banner"], a.gs-link[href*="grapesjs.com"]').forEach(function(el) { el.remove(); });
           }
           setTimeout(removeBranding, 500);
           setTimeout(removeBranding, 1500);
