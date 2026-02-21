@@ -47,19 +47,7 @@ export async function GET(req: NextRequest) {
     [data-has-cms-binding][class*="Layer"]::before { content: 'CMS'; font-size: 9px; background: #9333ea; color: white; padding: 1px 4px; border-radius: 3px; margin-right: 6px; display: inline-block; vertical-align: middle; }
     .gjs-cms-btn::before { content: '\\1F4C2'; font-size: 14px; }
     /* Hide GrapesJS Studio branding watermark */
-    .gs-banner, div.gs-banner,
-    [class*="gs-banner"], [class*="gs-logo"],
-    a.gs-link[href*="grapesjs.com"] {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      overflow: hidden !important;
-      position: absolute !important;
-      clip: rect(0,0,0,0) !important;
-    }
+    .gs-banner { display: none !important; }
   </style>
 </head>
 <body style="margin:0;height:100vh;overflow:hidden;font-family:'Inter',sans-serif;position:relative;">
@@ -624,12 +612,33 @@ export async function GET(req: NextRequest) {
           if (ed && typeof ed.getHtml === 'function' && !editorInstance) editorInstance = ed;
           clearTimeout(editorTimeout);
           function removeBranding() {
-            document.querySelectorAll('.gs-banner, [class*="gs-banner"], a.gs-link[href*="grapesjs.com"]').forEach(function(el) { el.remove(); });
+            var css = '.gs-banner, .gs-utl-card.gs-banner, [class*="gs-banner"], a.gs-link[href*="grapesjs.com"] { display:none!important;width:0!important;height:0!important;overflow:hidden!important;position:absolute!important;pointer-events:none!important; }';
+            function injectAndRemove(root) {
+              if (!root) return;
+              var els = root.querySelectorAll('.gs-banner, [class*="gs-banner"], a.gs-link');
+              els.forEach(function(el) { el.remove(); });
+              if (root !== document && !root.querySelector('style[data-hide-badge]')) {
+                var s = document.createElement('style');
+                s.setAttribute('data-hide-badge', '1');
+                s.textContent = css;
+                root.appendChild(s);
+              }
+            }
+            function walkShadows(node) {
+              if (!node) return;
+              if (node.shadowRoot) { injectAndRemove(node.shadowRoot); walkShadows(node.shadowRoot); }
+              var children = node.children || node.childNodes || [];
+              for (var i = 0; i < children.length; i++) { if (children[i].nodeType === 1) walkShadows(children[i]); }
+            }
+            injectAndRemove(document);
+            walkShadows(document.getElementById('studio') || document.body);
+            var observer = new MutationObserver(function() { injectAndRemove(document); walkShadows(document.getElementById('studio') || document.body); });
+            observer.observe(document.getElementById('studio') || document.body, { childList: true, subtree: true });
           }
-          setTimeout(removeBranding, 500);
-          setTimeout(removeBranding, 1500);
-          setTimeout(removeBranding, 3000);
-          setTimeout(removeBranding, 6000);
+          setTimeout(removeBranding, 300);
+          setTimeout(removeBranding, 1000);
+          setTimeout(removeBranding, 2500);
+          setTimeout(removeBranding, 5000);
         }).catch(function(err) {
           clearTimeout(editorTimeout);
           console.error('GrapeJS init error:', err);
