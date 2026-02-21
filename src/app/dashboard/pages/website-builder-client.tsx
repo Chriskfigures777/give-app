@@ -170,7 +170,7 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
                 Preview
               </button>
             )}
-            {/* View live site link -- only when published with a custom domain */}
+            {/* View live site link -- when published with a custom domain */}
             {projectState.isPublished && projectState.hasCustomDomain && (projectState.publishedUrl || justPublishedUrl) && (
               <a
                 href={justPublishedUrl || projectState.publishedUrl || ""}
@@ -182,8 +182,8 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
                 View live site
               </a>
             )}
-            {/* View preview link -- published without a domain */}
-            {projectState.isPublished && !projectState.hasCustomDomain && projectState.siteUrl && (
+            {/* Preview link -- always available when published so users can view even if domain is broken */}
+            {projectState.isPublished && projectState.siteUrl && (
               <a
                 href={projectState.siteUrl}
                 target="_blank"
@@ -191,7 +191,7 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
                 className="flex items-center gap-2 rounded-lg border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 shadow-sm hover:bg-blue-100 transition-colors"
               >
                 <Eye className="h-4 w-4" />
-                View published preview
+                View preview
               </a>
             )}
             {/* Publish / Unpublish button */}
