@@ -74,6 +74,32 @@ export async function GET(req: NextRequest) {
   </div>
   <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script>
+    (function(){
+      var _origFetch = window.fetch;
+      window.fetch = function() {
+        var url = arguments[0];
+        if (typeof url === 'string' && url.indexOf('/sdk/') > -1) {
+          return _origFetch.apply(this, arguments).then(function(resp) {
+            return resp.clone().text().then(function(body) {
+              try {
+                var json = JSON.parse(body);
+                if (json && json.result && json.result.plan) {
+                  json.result.plan.poweredBy = false;
+                }
+                return new Response(JSON.stringify(json), {
+                  status: resp.status,
+                  statusText: resp.statusText,
+                  headers: resp.headers
+                });
+              } catch(e) { return resp; }
+            });
+          });
+        }
+        return _origFetch.apply(this, arguments);
+      };
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/grapesjs@0.22.14/dist/js/grapes.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@grapesjs/studio-sdk@1.0.58/dist/index.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@grapesjs/studio-sdk-plugins@1.0.33/dist/index.umd.js"></script>
@@ -611,34 +637,35 @@ export async function GET(req: NextRequest) {
           var ed = result && (result.editor || result);
           if (ed && typeof ed.getHtml === 'function' && !editorInstance) editorInstance = ed;
           clearTimeout(editorTimeout);
-          function removeBranding() {
-            var css = '.gs-banner, .gs-utl-card.gs-banner, [class*="gs-banner"], a.gs-link[href*="grapesjs.com"] { display:none!important;width:0!important;height:0!important;overflow:hidden!important;position:absolute!important;pointer-events:none!important; }';
-            function injectAndRemove(root) {
-              if (!root) return;
-              var els = root.querySelectorAll('.gs-banner, [class*="gs-banner"], a.gs-link');
-              els.forEach(function(el) { el.remove(); });
-              if (root !== document && !root.querySelector('style[data-hide-badge]')) {
-                var s = document.createElement('style');
-                s.setAttribute('data-hide-badge', '1');
-                s.textContent = css;
-                root.appendChild(s);
+          (function removeBranding() {
+            var hideCSS = '.gs-banner,.gs-utl-card.gs-banner,[class*="gs-banner"],a.gs-link[href*="grapesjs.com"]{display:none!important;width:0!important;height:0!important;overflow:hidden!important;position:absolute!important;clip:rect(0,0,0,0)!important;}';
+            if (!document.querySelector('style[data-hide-badge]')) {
+              var s = document.createElement('style');
+              s.setAttribute('data-hide-badge','1');
+              s.textContent = hideCSS;
+              document.head.appendChild(s);
+            }
+            function nukeNodes() {
+              document.querySelectorAll('.gs-banner,[class*="gs-banner"]').forEach(function(el){el.remove();});
+            }
+            nukeNodes();
+            var mo = new MutationObserver(function(mutations) {
+              for (var i = 0; i < mutations.length; i++) {
+                var added = mutations[i].addedNodes;
+                for (var j = 0; j < added.length; j++) {
+                  var n = added[j];
+                  if (n.nodeType !== 1) continue;
+                  if (n.classList && (n.classList.contains('gs-banner') || n.className.indexOf('gs-banner') >= 0)) { n.remove(); continue; }
+                  var inner = n.querySelectorAll ? n.querySelectorAll('.gs-banner,[class*="gs-banner"]') : [];
+                  inner.forEach(function(el){el.remove();});
+                }
               }
-            }
-            function walkShadows(node) {
-              if (!node) return;
-              if (node.shadowRoot) { injectAndRemove(node.shadowRoot); walkShadows(node.shadowRoot); }
-              var children = node.children || node.childNodes || [];
-              for (var i = 0; i < children.length; i++) { if (children[i].nodeType === 1) walkShadows(children[i]); }
-            }
-            injectAndRemove(document);
-            walkShadows(document.getElementById('studio') || document.body);
-            var observer = new MutationObserver(function() { injectAndRemove(document); walkShadows(document.getElementById('studio') || document.body); });
-            observer.observe(document.getElementById('studio') || document.body, { childList: true, subtree: true });
-          }
-          setTimeout(removeBranding, 300);
-          setTimeout(removeBranding, 1000);
-          setTimeout(removeBranding, 2500);
-          setTimeout(removeBranding, 5000);
+            });
+            mo.observe(document.documentElement, { childList: true, subtree: true });
+            setTimeout(nukeNodes, 500);
+            setTimeout(nukeNodes, 2000);
+            setTimeout(nukeNodes, 5000);
+          })();
         }).catch(function(err) {
           clearTimeout(editorTimeout);
           console.error('GrapeJS init error:', err);
