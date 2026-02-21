@@ -127,7 +127,6 @@ export async function uploadSiteToS3(
           Body: page.html,
           ContentType: "text/html; charset=utf-8",
           CacheControl: "public, max-age=300, s-maxage=3600",
-          ACL: "public-read",
         })
       );
     }

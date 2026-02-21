@@ -133,20 +133,24 @@ export async function POST(req: NextRequest) {
 
     const hasCustomDomain = !!(verifiedDomains && verifiedDomains.length > 0);
 
-    // Only deploy to S3/CloudFront if the org has a verified custom domain.
+    // Deploy to S3/CloudFront if the org has a verified custom domain.
     // Without a domain, the site is accessible via the preview URL (/site/{slug}).
+    let s3Error: string | null = null;
     if (hasCustomDomain && isHostingConfigured() && orgSlug) {
-      (async () => {
-        try {
-          const projectJson = (project as { project: unknown }).project as {
-            pages?: Array<{ id?: string; name: string; component?: string }>;
-            default?: { pages?: Array<{ id?: string; name: string; component?: string }> };
-            previewHtml?: string;
-          };
+      try {
+        const projectJson = (project as { project: unknown }).project as {
+          pages?: Array<{ id?: string; name: string; component?: string }>;
+          default?: { pages?: Array<{ id?: string; name: string; component?: string }> };
+          previewHtml?: string;
+        };
 
-          const pages = await generateStaticSite(projectJson, organizationId, orgSlug);
-          const s3Pages = pages.map((p) => ({ slug: p.slug, html: p.html }));
-          await uploadSiteToS3(orgSlug, s3Pages);
+        const pages = await generateStaticSite(projectJson, organizationId, orgSlug);
+        const s3Pages = pages.map((p) => ({ slug: p.slug, html: p.html }));
+        const uploadResult = await uploadSiteToS3(orgSlug, s3Pages);
+        if (!uploadResult.ok) {
+          s3Error = uploadResult.error ?? "S3 upload failed";
+          console.error("S3 upload error:", s3Error);
+        } else {
           await invalidateCloudFrontCache(orgSlug);
 
           // Rebuild domain map for all verified domains across all published orgs
@@ -177,10 +181,11 @@ export async function POST(req: NextRequest) {
           }
 
           console.log(`Published ${pages.length} pages to S3 for ${orgSlug}`);
-        } catch (e) {
-          console.error("S3 publish error:", e);
         }
-      })();
+      } catch (e) {
+        s3Error = e instanceof Error ? e.message : String(e);
+        console.error("S3 publish error:", e);
+      }
     }
 
     return NextResponse.json({
@@ -188,6 +193,7 @@ export async function POST(req: NextRequest) {
       published: true,
       projectId,
       publishMode: hasCustomDomain ? "domain" : "preview",
+      ...(s3Error ? { s3Warning: s3Error } : {}),
     });
   } catch (e) {
     console.error("organization-website publish error:", e);

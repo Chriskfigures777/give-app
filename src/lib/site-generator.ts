@@ -402,5 +402,9 @@ export async function generateStaticSite(
     result.push({ slug, name: page.name, html });
   }
 
+  if (result.length === 0 && projectJson?.previewHtml) {
+    return [{ slug: "", name: "Home", html: projectJson.previewHtml }];
+  }
+
   return result;
 }
