@@ -2011,6 +2011,8 @@ export type Database = {
           state: string | null
           stripe_connect_account_id: string | null
           updated_at: string | null
+          website_forms_forward_to_email: string | null
+          website_forms_reply_name: string | null
           website_url: string | null
           years_in_operation: number | null
         }
@@ -2050,6 +2052,8 @@ export type Database = {
           state?: string | null
           stripe_connect_account_id?: string | null
           updated_at?: string | null
+          website_forms_forward_to_email?: string | null
+          website_forms_reply_name?: string | null
           website_url?: string | null
           years_in_operation?: number | null
         }
@@ -2089,6 +2093,8 @@ export type Database = {
           state?: string | null
           stripe_connect_account_id?: string | null
           updated_at?: string | null
+          website_forms_forward_to_email?: string | null
+          website_forms_reply_name?: string | null
           website_url?: string | null
           years_in_operation?: number | null
         }
@@ -2510,6 +2516,118 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_form_inquiries: {
+        Row: {
+          created_at: string
+          fields: Json
+          form_kind: string | null
+          id: string
+          last_message_at: string
+          org_slug: string
+          organization_id: string
+          page_slug: string | null
+          status: string
+          subject: string
+          thread_token: string
+          updated_at: string
+          visitor_email: string
+          visitor_name: string | null
+          visitor_phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          fields?: Json
+          form_kind?: string | null
+          id?: string
+          last_message_at?: string
+          org_slug: string
+          organization_id: string
+          page_slug?: string | null
+          status?: string
+          subject: string
+          thread_token: string
+          updated_at?: string
+          visitor_email: string
+          visitor_name?: string | null
+          visitor_phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          fields?: Json
+          form_kind?: string | null
+          id?: string
+          last_message_at?: string
+          org_slug?: string
+          organization_id?: string
+          page_slug?: string | null
+          status?: string
+          subject?: string
+          thread_token?: string
+          updated_at?: string
+          visitor_email?: string
+          visitor_name?: string | null
+          visitor_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_form_inquiries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_form_messages: {
+        Row: {
+          created_at: string
+          direction: string
+          from_email: string
+          html: string | null
+          id: string
+          inquiry_id: string
+          resend_email_id: string | null
+          resend_received_email_id: string | null
+          subject: string
+          text: string | null
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          from_email: string
+          html?: string | null
+          id?: string
+          inquiry_id: string
+          resend_email_id?: string | null
+          resend_received_email_id?: string | null
+          subject: string
+          text?: string | null
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          from_email?: string
+          html?: string | null
+          id?: string
+          inquiry_id?: string
+          resend_email_id?: string | null
+          resend_received_email_id?: string | null
+          subject?: string
+          text?: string | null
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_form_messages_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "website_form_inquiries"
             referencedColumns: ["id"]
           },
         ]

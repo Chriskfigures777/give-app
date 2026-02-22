@@ -1,59 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="classic-reformed">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Visit — Your Church</title>
+<title>Visit — Reformed Presbyterian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--accent:#B45309;--accent-light:#D97706;--dark:#431407;--cream:#FFF7ED;--text:#7C2D12;--muted:#9A3412;--radius:10px}
+:root{
+  --accent:#B45309;--accent-dark:#92400E;--accent-light:#D97706;
+  --dark:#7C2D12;--bg:#FFF7ED;--card:#FFFFFF;
+  --text:#431407;--muted:#9A3412;--border:#FED7AA;--radius:10px;
+}
 html{scroll-behavior:smooth;scroll-padding-top:72px}
-body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--text);line-height:1.7;font-size:17px}
-img{display:block;max-width:100%}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:17px;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,h4,h5,h6{font-family:'Libre Baskerville',serif;line-height:1.25;font-weight:700}
 .container{max-width:1200px;margin:0 auto;padding:0 32px}
-
-/* NAV */
-.reformed-bar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;background:var(--dark);box-shadow:0 2px 20px rgba(67,20,7,.4)}
-.reformed-bar-logo{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:#fff;text-decoration:none}
-.reformed-bar-links{display:flex;align-items:center;gap:28px}
-.reformed-bar-links a{color:rgba(255,255,255,.75);font-size:14px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:color .25s;position:relative;text-decoration:none}
-.reformed-bar-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .25s}
-.reformed-bar-links a:hover{color:#fff}
-.reformed-bar-links a:hover::after,.reformed-bar-links a.active::after{width:100%}
-.nav-cta{background:var(--accent);color:#fff!important;padding:10px 22px;border-radius:var(--radius);font-size:13px!important;letter-spacing:.8px;transition:background .25s,transform .25s}
-.nav-cta:hover{background:var(--accent-light);transform:translateY(-1px)}
-.nav-cta::after{display:none!important}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
-.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px}
-.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:var(--dark);padding:20px 40px;flex-direction:column;gap:16px;z-index:999;border-bottom:3px solid var(--accent)}
-.mobile-menu.open{display:flex}
-.mobile-menu a{color:rgba(255,255,255,.85);font-size:16px;font-weight:500;padding:8px 0}
-
-/* PAGE HERO */
-.page-hero{position:relative;min-height:50vh;display:flex;align-items:center;padding:140px 40px 80px;overflow:hidden}
-.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
-.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(67,20,7,.72) 0%,rgba(67,20,7,.58) 50%,rgba(67,20,7,.82) 100%)}
-.page-hero-content{position:relative;z-index:2;max-width:700px}
-.eyebrow{font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.page-hero h1{font-size:clamp(36px,5.5vw,64px);color:#fff;margin-bottom:20px;line-height:1.1}
-.page-hero p{font-size:18px;color:rgba(255,255,255,.85);max-width:540px;line-height:1.7;font-weight:300}
-
-/* SECTION */
-.sec-pad{padding:100px 0}
+.eyebrow{font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
 .gold-divider{width:60px;height:3px;background:var(--accent);border:none;margin:16px 0 24px;border-radius:2px}
 .gold-divider.center{margin-left:auto;margin-right:auto}
-.sec-title{text-align:center;margin-bottom:56px}
-.sec-title h2{font-size:clamp(28px,4vw,42px);margin-bottom:8px}
-.sec-title.light h2{color:#fff}
-.sec-sub{font-size:17px;opacity:.8;max-width:560px}
-.sec-sub.center{margin:0 auto}
-
-/* BUTTONS */
 .btn{display:inline-block;padding:14px 32px;border-radius:var(--radius);font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:15px;text-decoration:none;transition:all .3s;cursor:pointer;border:none}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-primary:hover{background:var(--accent-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(180,83,9,.35)}
@@ -61,12 +30,46 @@ h1,h2,h3,h4,h5,h6{font-family:'Libre Baskerville',serif;line-height:1.25;font-we
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
 
+/* NAV */
+.reformed-bar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;background:var(--dark);box-shadow:0 2px 20px rgba(124,45,18,.4)}
+.reformed-bar-logo{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:#fff;text-decoration:none;white-space:nowrap}
+.reformed-bar-links{display:flex;align-items:center;gap:28px}
+.reformed-bar-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:color .25s;position:relative;font-family:'Source Serif 4',Georgia,serif}
+.reformed-bar-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .25s}
+.reformed-bar-links a:hover{color:#fff}
+.reformed-bar-links a:hover::after,.reformed-bar-links a.active::after{width:100%}
+.nav-cta{background:var(--accent);color:#fff!important;padding:10px 22px;border-radius:var(--radius);font-size:13px!important;letter-spacing:.8px;transition:background .25s,transform .25s}
+.nav-cta:hover{background:var(--accent-light);transform:translateY(-1px)}
+.nav-cta::after{display:none!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:all .3s}
+
+/* PAGE HERO */
+.page-hero{position:relative;min-height:50vh;display:flex;align-items:center;padding:140px 40px 80px;overflow:hidden}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(67,20,7,.72) 0%,rgba(67,20,7,.58) 50%,rgba(67,20,7,.82) 100%)}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:rgba(255,255,255,.3);font-size:13px}
+.page-hero h1{font-size:clamp(36px,5.5vw,64px);color:#fff;margin-bottom:20px;line-height:1.1}
+.page-hero p{font-size:18px;color:rgba(255,255,255,.85);max-width:540px;line-height:1.7;font-weight:400}
+
+/* SECTIONS */
+.sec-pad{padding:100px 0}
+.sec-title{font-size:clamp(28px,4vw,42px);margin-bottom:8px}
+.sec-title.light{color:#fff}
+.sec-sub{font-size:17px;opacity:.8;max-width:560px;line-height:1.7}
+.sec-sub.center{margin:0 auto}
+.text-center{text-align:center}
+
 /* INFO CARDS */
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.info-card{background:#fff;border-radius:var(--radius);padding:40px 32px;text-align:center;box-shadow:0 2px 16px rgba(67,20,7,.06);border-top:4px solid var(--accent);transition:transform .2s}
+.info-card{background:var(--card);border-radius:var(--radius);padding:40px 32px;text-align:center;box-shadow:0 2px 16px rgba(124,45,18,.06);border-top:4px solid var(--accent);transition:transform .25s}
 .info-card:hover{transform:translateY(-4px)}
 .info-icon{font-size:40px;margin-bottom:16px}
-.info-card h3{font-size:20px;color:var(--dark);margin-bottom:10px}
+.info-card h3{font-size:20px;color:var(--text);margin-bottom:10px}
 .info-card p{font-size:14px;color:var(--muted);line-height:1.7}
 
 /* SERVICE TIMES */
@@ -81,109 +84,126 @@ h1,h2,h3,h4,h5,h6{font-family:'Libre Baskerville',serif;line-height:1.25;font-we
 /* FORM */
 .form-split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 .form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dark);margin-bottom:8px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid rgba(180,83,9,.15);border-radius:var(--radius);font-family:'Source Serif 4',Georgia,serif;font-size:15px;color:var(--text);background:#fff;transition:border-color .2s;outline:none}
+.form-group label{display:block;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:8px;font-family:'Source Serif 4',Georgia,serif}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid rgba(180,83,9,.15);border-radius:var(--radius);font-family:'Source Serif 4',Georgia,serif;font-size:15px;color:var(--text);background:var(--card);transition:border-color .2s;outline:none}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
 .form-group textarea{resize:vertical;min-height:100px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.form-image{border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 40px rgba(67,20,7,.15)}
-.form-image img{width:100%;height:100%;min-height:500px;object-fit:cover}
+.form-image{border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 40px rgba(124,45,18,.15)}
+.form-image img{width:100%;height:100%;min-height:560px;object-fit:cover}
 
 /* MAP */
-.map-placeholder{width:100%;height:400px;border-radius:var(--radius);background:rgba(180,83,9,.06);display:flex;align-items:center;justify-content:center;margin-bottom:40px;position:relative;overflow:hidden}
-.map-placeholder::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/1036657/pexels-photo-1036657.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover;opacity:0.2}
-.map-placeholder span{position:relative;z-index:2;font-family:'Libre Baskerville',serif;font-size:20px;color:var(--dark);font-weight:700;background:#fff;padding:16px 32px;border-radius:var(--radius);box-shadow:0 4px 16px rgba(67,20,7,.1)}
-.directions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.direction-card{background:#fff;border-radius:var(--radius);padding:28px;box-shadow:0 2px 16px rgba(67,20,7,.06)}
-.direction-card h4{font-size:16px;color:var(--dark);margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.direction-card p{font-size:14px;color:var(--muted);line-height:1.7}
+.map-wrap{width:100%;height:400px;border-radius:var(--radius);overflow:hidden;margin-bottom:32px;position:relative;background:rgba(180,83,9,.04);border:1px solid rgba(180,83,9,.1)}
+.map-wrap::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/1036657/pexels-photo-1036657.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover;opacity:.15}
+.map-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);padding:16px 32px;border-radius:var(--radius);box-shadow:0 4px 20px rgba(124,45,18,.12);font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:var(--text);z-index:2;display:flex;align-items:center;gap:10px}
 
 /* FAQ */
 .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
 .faq-item{padding:24px 0;border-bottom:1px solid rgba(180,83,9,.12)}
-.faq-item h4{font-size:17px;color:var(--dark);margin-bottom:10px}
+.faq-item:last-child{border-bottom:none}
+.faq-item h4{font-size:17px;color:var(--text);margin-bottom:10px}
 .faq-item p{font-size:14px;color:var(--muted);line-height:1.7}
-.contact-box{background:#fff;border-radius:var(--radius);padding:40px;box-shadow:0 4px 24px rgba(67,20,7,.08);border-top:4px solid var(--accent)}
-.contact-box h3{font-size:24px;color:var(--dark);margin-bottom:16px}
+
+/* CONTACT BOX */
+.contact-box{background:var(--card);border-radius:var(--radius);padding:40px;box-shadow:0 4px 24px rgba(124,45,18,.08);border-top:4px solid var(--accent)}
+.contact-box h3{font-size:24px;color:var(--text);margin-bottom:16px}
 .contact-box p{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:8px}
 
-/* CTA SECTION */
+/* CTA */
 .cta-section{background:var(--dark);padding:100px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;border-radius:50%;background:rgba(180,83,9,.08);pointer-events:none}
 
 /* FOOTER */
-footer{background:var(--dark);padding:80px 0 40px}
-.footer-inner{max-width:1200px;margin:0 auto;padding:0 32px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
-.footer-brand .logo{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:16px;display:block}
-.footer-brand p{font-size:14px;color:rgba(255,255,255,.55);line-height:1.7;max-width:280px}
-.footer-col h5{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:rgba(255,255,255,.55);font-size:14px;transition:color .3s}
+.footer{background:var(--dark);padding:80px 0 0;color:rgba(255,255,255,.7)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:60px}
+.footer-brand h3{color:#fff;font-family:'Libre Baskerville',serif;font-size:22px;margin-bottom:16px}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h4{color:#fff;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:10px}
+.footer-col a{color:rgba(255,255,255,.6);font-size:14px;transition:color .25s}
 .footer-col a:hover{color:var(--accent)}
-.footer-divider{border:none;border-top:1px solid rgba(255,255,255,.08);margin-bottom:28px}
-.footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,.45)}
+.footer-social{display:flex;gap:12px;margin-top:20px}
+.footer-social a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);transition:all .25s}
+.footer-social a:hover{border-color:var(--accent);color:var(--accent)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:24px 0;display:flex;align-items:center;justify-content:space-between;font-size:13px;flex-wrap:wrap;gap:12px}
+.footer-bottom a{color:rgba(255,255,255,.5);transition:color .25s}
+.footer-bottom a:hover{color:var(--accent)}
 
 @media(max-width:900px){
-  .reformed-bar{padding:0 24px}
-  .reformed-bar-links{display:none}
+  .reformed-bar{padding:0 20px}
+  .reformed-bar-links{display:none;flex-direction:column;position:absolute;top:72px;left:0;right:0;background:var(--dark);padding:20px 24px;gap:16px;border-top:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(0,0,0,.3)}
   .hamburger{display:flex}
   .page-hero{padding:120px 24px 60px}
   .sec-pad{padding:60px 0}
-  .container{padding:0 24px}
+  .container{padding:0 20px}
   .info-grid{grid-template-columns:1fr}
   .service-grid{grid-template-columns:1fr 1fr}
   .form-split{grid-template-columns:1fr}
   .form-image{display:none}
-  .directions-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
   .faq-grid{grid-template-columns:1fr}
   .cta-section{padding:60px 0}
-  footer{padding:50px 0 24px}
-  .footer-grid{grid-template-columns:1fr;gap:28px}
-  .footer-bottom{flex-direction:column;gap:16px;text-align:center}
-  .form-row{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-bottom{flex-direction:column;text-align:center}
 }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="reformed-bar">
-  <a href="index.html" class="reformed-bar-logo">Your Church</a>
-  <div class="reformed-bar-links">
-    <a href="about.html" data-nav="ABOUT" ABOUT>About</a>
-    <a href="ministries.html" data-nav="MINISTRIES" MINISTRIES>Ministries</a>
-    <a href="events.html" data-nav="EVENTS" EVENTS>Events</a>
-    <a href="media.html" data-nav="MEDIA" MEDIA>Media</a>
-    <a href="give.html" data-nav="GIVE" GIVE>Give</a>
-    <a href="visit.html" class="nav-cta active">Visit Us</a>
-  </div>
-  <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+<header class="reformed-bar">
+  <a href="index.html" class="reformed-bar-logo">Reformed Presbyterian</a>
+  <nav class="reformed-bar-links" id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </nav>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-</nav>
-<div class="mobile-menu">
-  <a href="about.html" ABOUT>About</a><a href="ministries.html" MINISTRIES>Ministries</a><a href="events.html" EVENTS>Events</a><a href="media.html" MEDIA>Media</a><a href="give.html" GIVE>Give</a><a href="visit.html">Visit Us</a>
-</div>
+</header>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="page-hero-overlay"></div>
   <div class="page-hero-content">
-    <div class="eyebrow">We'd Love to Meet You</div>
-    <h1>Plan Your First Visit</h1>
-    <p>Whether it's your very first time at church or your first time at ours, we want to make sure you feel welcome, comfortable, and right at home from the moment you arrive.</p>
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.6)">Visit</span></div>
+    <span class="eyebrow">We'd Love to Meet You</span>
+    <h1>Visit Reformed Presbyterian</h1>
+    <p>Whether you are exploring the Reformed faith for the first time or looking for a new church home, we would love to welcome you this Lord's Day. Come as you are — all are welcome.</p>
   </div>
 </section>
 
 <!-- INFO CARDS -->
-<section class="sec-pad" style="background:var(--cream)">
+<section class="sec-pad" style="background:var(--bg)">
   <div class="container">
-    <div class="sec-title"><div class="eyebrow">What to Know</div><div class="gold-divider center"></div><h2>Everything You Need</h2><p class="sec-sub center">We've made it easy to plan your visit so you can focus on what matters most — experiencing God's love in community.</p></div>
+    <div class="text-center" style="margin-bottom:48px">
+      <span class="eyebrow">What to Know</span>
+      <hr class="gold-divider center">
+      <h2 class="sec-title">Everything You Need</h2>
+      <p class="sec-sub center">We've made it easy to plan your visit so you can focus on what matters most — experiencing God's grace in community.</p>
+    </div>
     <div class="info-grid">
-      <div class="info-card"><div class="info-icon">📍</div><h3>Where We Are</h3><p>We're located at 1234 Grace Avenue in the heart of downtown. Our campus sits right off Main Street with easy access from Highway 101 and public transit.</p></div>
-      <div class="info-card"><div class="info-icon">🅿️</div><h3>Parking</h3><p>We have a free parking lot directly behind the building with over 200 spaces. Look for the "First-Time Guest" signs near the main entrance — those are reserved for you.</p></div>
-      <div class="info-card"><div class="info-icon">🤝</div><h3>What to Expect</h3><p>A warm greeting at the door, great coffee in the lobby, contemporary and traditional worship, a relevant message, and a community genuinely glad you're here. Come as you are.</p></div>
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <h3>Where We Are</h3>
+        <p>We're located at 123 Reformation Lane in the heart of Geneva, IL. Our historic campus sits just off Main Street with easy access from I-88 and Metra commuter rail.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🅿️</div>
+        <h3>Parking &amp; Access</h3>
+        <p>Free parking is available in the lot behind the church and along Reformation Lane. Look for the "First-Time Guest" signs near the main entrance — reserved just for you.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🤝</div>
+        <h3>What to Expect</h3>
+        <p>A warm welcome at the door, reverent Reformed worship, faithful expository preaching, and a congregation genuinely glad you're here. Dress is varied — come as you are.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -191,96 +211,210 @@ footer{background:var(--dark);padding:80px 0 40px}
 <!-- SERVICE TIMES -->
 <section class="sec-pad" style="background:var(--dark)">
   <div class="container">
-    <div class="sec-title light" style="margin-bottom:56px"><div class="eyebrow" style="color:var(--accent-light)">Join Us</div><div class="gold-divider center"></div><h2>Service Times</h2><p class="sec-sub center" style="color:rgba(255,255,255,.65)">Multiple services to fit your schedule. Each one offers the same excellent worship experience, teaching, and kids programming.</p></div>
+    <div class="text-center" style="margin-bottom:56px">
+      <span class="eyebrow" style="color:var(--accent)">Join Us</span>
+      <hr class="gold-divider center">
+      <h2 class="sec-title light">Service Times</h2>
+      <p class="sec-sub center" style="color:rgba(255,255,255,.65)">Multiple services throughout the week to fit your schedule. Each offers the same faithful teaching, warm fellowship, and Christ-centered worship.</p>
+    </div>
     <div class="service-grid">
-      <div class="service-card"><div class="day">Sunday</div><div class="time">8:00 AM</div><div class="label">Early Morning Worship</div></div>
-      <div class="service-card"><div class="day">Sunday</div><div class="time">10:30 AM</div><div class="label">Main Worship Service</div></div>
-      <div class="service-card"><div class="day">Sunday</div><div class="time">6:00 PM</div><div class="label">Evening Gathering</div></div>
-      <div class="service-card"><div class="day">Wednesday</div><div class="time">7:00 PM</div><div class="label">Midweek Bible Study</div></div>
+      <div class="service-card">
+        <div class="day">Lord's Day</div>
+        <div class="time">10:00 AM</div>
+        <div class="label">Morning Worship</div>
+      </div>
+      <div class="service-card">
+        <div class="day">Lord's Day</div>
+        <div class="time">6:00 PM</div>
+        <div class="label">Evening Worship</div>
+      </div>
+      <div class="service-card">
+        <div class="day">Sunday</div>
+        <div class="time">9:00 AM</div>
+        <div class="label">Sunday School</div>
+      </div>
+      <div class="service-card">
+        <div class="day">Wednesday</div>
+        <div class="time">7:00 PM</div>
+        <div class="label">Prayer Meeting</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- VISIT FORM -->
-<section class="sec-pad" style="background:#fff">
+<!-- CONTACT FORM -->
+<section class="sec-pad" style="background:var(--card)">
   <div class="container">
     <div class="form-split">
       <div>
-        <div class="eyebrow">Let Us Know You're Coming</div>
-        <div class="gold-divider"></div>
-        <h2 style="font-size:clamp(28px,3.5vw,42px);color:var(--dark);margin-bottom:20px">Pre-Register Your Visit</h2>
-        <p style="color:var(--muted);margin-bottom:32px;line-height:1.8">Fill out the form below and our hospitality team will have everything ready for you — a personal welcome, reserved parking, and a gift waiting at the door.</p>
-        <form onsubmit="event.preventDefault();alert('Thank you! We look forward to seeing you.')">
-          <div class="form-row"><div class="form-group"><label>Your Name</label><input type="text" placeholder="John Smith" required></div><div class="form-group"><label>Email Address</label><input type="email" placeholder="john@example.com" required></div></div>
-          <div class="form-row"><div class="form-group"><label>Phone Number</label><input type="tel" placeholder="(555) 123-4567"></div><div class="form-group"><label>Service Preference</label><select><option>Sunday 8:00 AM</option><option>Sunday 10:30 AM</option><option>Sunday 6:00 PM</option><option>Wednesday 7:00 PM</option></select></div></div>
-          <div class="form-group"><label>Group Size</label><select><option>Just me</option><option>2 people</option><option>3–4 people</option><option>5+ people</option></select></div>
-          <div class="form-group"><label>Questions or Special Needs</label><textarea placeholder="Let us know if you have kids, need accessibility accommodations, or have any questions..."></textarea></div>
+        <span class="eyebrow">Let Us Know You're Coming</span>
+        <hr class="gold-divider">
+        <h2 style="font-size:clamp(28px,3.5vw,42px);color:var(--text);margin-bottom:20px">Pre-Register Your Visit</h2>
+        <p style="color:var(--muted);margin-bottom:32px;line-height:1.8">Fill out the form below and our hospitality team will have everything ready — a personal welcome, reserved parking, and a visitor packet at the door.</p>
+        <form onsubmit="event.preventDefault();alert('Thank you! We look forward to seeing you this Lord\'s Day.')">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Knox" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="(630) 555-0000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Service Preference</label>
+              <select>
+                <option value="">Select a service...</option>
+                <option>Lord's Day 10:00 AM — Morning Worship</option>
+                <option>Lord's Day 6:00 PM — Evening Worship</option>
+                <option>Sunday 9:00 AM — Sunday School</option>
+                <option>Wednesday 7:00 PM — Prayer Meeting</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Group Size</label>
+              <select>
+                <option>Just me</option>
+                <option>2 people</option>
+                <option>3–4 people</option>
+                <option>5+ people</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Message / Questions</label>
+            <textarea placeholder="Let us know if you have children, need accessibility accommodations, or have any questions about the service..."></textarea>
+          </div>
           <button type="submit" class="btn btn-primary" style="width:100%;text-align:center;padding:16px 32px">Submit My Visit</button>
         </form>
       </div>
-      <div class="form-image"><img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Welcome to our church"></div>
+      <div class="form-image">
+        <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Welcome to Reformed Presbyterian" loading="lazy">
+      </div>
     </div>
   </div>
 </section>
 
-<!-- MAP & DIRECTIONS -->
-<section class="sec-pad" style="background:var(--cream)">
+<!-- MAP -->
+<section class="sec-pad" style="background:var(--bg)">
   <div class="container">
-    <div class="sec-title"><div class="eyebrow">Getting Here</div><div class="gold-divider center"></div><h2>Find Us Easily</h2></div>
-    <div class="map-placeholder"><span>📍 1234 Grace Avenue, Downtown</span></div>
-    <div class="directions-grid">
-      <div class="direction-card"><h4>🚗 By Car</h4><p>Take Highway 101 to Exit 14 (Grace Ave). Turn east and our campus is 0.5 miles ahead on your left. Look for the white steeple and the "Your Church" sign.</p></div>
-      <div class="direction-card"><h4>🚌 By Bus</h4><p>Bus routes 12, 15, and 27 all stop within a block of our campus at the Grace Avenue & 3rd Street stop. Service runs every 15 minutes on Sundays.</p></div>
-      <div class="direction-card"><h4>🚶 On Foot</h4><p>We're a 10-minute walk from the downtown transit center. Follow 3rd Street north past the park and you'll see our campus on the right. Fully wheelchair accessible.</p></div>
+    <div class="text-center" style="margin-bottom:48px">
+      <span class="eyebrow">Getting Here</span>
+      <hr class="gold-divider center">
+      <h2 class="sec-title">Find Us Easily</h2>
+    </div>
+    <div class="map-wrap">
+      <div class="map-label">📍 123 Reformation Lane, Geneva, IL 60134</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+      <div style="background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 2px 16px rgba(124,45,18,.06)">
+        <h4 style="font-size:16px;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:10px">🚗 By Car</h4>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7">Take I-88 to Farnsworth Ave exit. Head south to State Street, then turn east. Our campus is two blocks ahead on your right. Look for the stone steeple.</p>
+      </div>
+      <div style="background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 2px 16px rgba(124,45,18,.06)">
+        <h4 style="font-size:16px;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:10px">🚂 By Train</h4>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7">The Geneva Metra station is a 10-minute walk from the church. Take the BNSF line from downtown Chicago. We're happy to arrange a ride from the station.</p>
+      </div>
+      <div style="background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 2px 16px rgba(124,45,18,.06)">
+        <h4 style="font-size:16px;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:10px">🚶 On Foot</h4>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7">We're right on Reformation Lane in downtown Geneva. The campus is fully wheelchair accessible with a ramp at the west entrance and an elevator inside.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ SECTION -->
-<section class="sec-pad" style="background:#fff">
+<!-- FAQ + CONTACT -->
+<section class="sec-pad" style="background:var(--card)">
   <div class="container">
     <div class="faq-grid">
       <div>
-        <div class="eyebrow">Common Questions</div><div class="gold-divider"></div><h2 style="font-size:clamp(28px,3.5vw,42px);color:var(--dark);margin-bottom:32px">Frequently Asked</h2>
-        <div class="faq-item"><h4>What should I wear?</h4><p>Come as you are! Our congregation wears everything from jeans and sneakers to dresses and slacks. There's no dress code here — we care about your heart, not your wardrobe.</p></div>
-        <div class="faq-item"><h4>Do you have programs for kids?</h4><p>Absolutely. We offer age-appropriate programming for infants through 5th grade during every service. Check-in opens 15 minutes before each service at our kids' wing.</p></div>
-        <div class="faq-item"><h4>How long is a typical service?</h4><p>About 75 minutes. We start with 20–25 minutes of worship music, followed by a 35–40 minute message, and close with a few minutes of response and community announcements.</p></div>
-        <div class="faq-item"><h4>Is there coffee?</h4><p>Yes! Our coffee bar opens 30 minutes before each service with complimentary drip coffee, espresso drinks, and pastries. It's the perfect place to ease into your Sunday morning.</p></div>
-        <div class="faq-item" style="border-bottom:none"><h4>Will I be singled out as a visitor?</h4><p>Never. We want you to feel comfortable, not spotlighted. You're welcome to be as anonymous or as engaged as you'd like.</p></div>
+        <span class="eyebrow">Common Questions</span>
+        <hr class="gold-divider">
+        <h2 style="font-size:clamp(28px,3.5vw,42px);color:var(--text);margin-bottom:32px">Frequently Asked</h2>
+        <div class="faq-item">
+          <h4>What should I wear?</h4>
+          <p>Our congregation wears everything from suits and dresses to jeans and polos. There is no dress code — we care about your heart, not your wardrobe. Come as you are.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you have programs for children?</h4>
+          <p>Yes! We offer nursery care for infants and toddlers, a children's catechism class for ages 4–12 during the sermon, and a full Sunday School program at 9:00 AM for all ages.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How long is a typical service?</h4>
+          <p>About 75 minutes. We begin with a call to worship, sing psalms and hymns, hear the reading and preaching of God's Word, celebrate the sacraments as appropriate, and close with a benediction.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What Bible translation do you use?</h4>
+          <p>We primarily use the English Standard Version (ESV) in our preaching and teaching. Pew Bibles are available in every row, and we project the text on screen as well.</p>
+        </div>
+        <div class="faq-item" style="border-bottom:none">
+          <h4>Will I be singled out as a visitor?</h4>
+          <p>Never publicly. We want you to feel comfortable, not spotlighted. You may choose to fill out a visitor card, and our greeters are available to answer any questions — but there is no pressure at all.</p>
+        </div>
       </div>
       <div class="contact-box">
         <h3>Still Have Questions?</h3>
-        <p>We'd love to hear from you. Our team is here to help make your first visit as smooth as possible.</p>
-        <div class="gold-divider"></div>
-        <p><strong>Phone:</strong> (555) 123-4567</p>
-        <p><strong>Email:</strong> hello@yourchurch.com</p>
-        <p><strong>Office Hours:</strong><br>Mon–Fri: 9:00 AM – 5:00 PM<br>Sat: 10:00 AM – 2:00 PM</p>
-        <p style="margin-top:12px"><strong>Address:</strong><br>1234 Grace Avenue<br>Downtown, ST 12345</p>
-        <a href="#" class="btn btn-primary" style="margin-top:24px">Send Us a Message</a>
+        <p>Our church office is here to help make your first visit as smooth and welcoming as possible.</p>
+        <hr class="gold-divider">
+        <p><strong style="color:var(--text)">Phone:</strong> <a href="tel:+16305551892" style="color:var(--accent)">(630) 555-1892</a></p>
+        <p><strong style="color:var(--text)">Email:</strong> <a href="mailto:office@reformedpres.org" style="color:var(--accent)">office@reformedpres.org</a></p>
+        <p style="margin-top:12px"><strong style="color:var(--text)">Office Hours:</strong><br>Mon–Fri: 9:00 AM – 4:00 PM<br>Saturday: Closed<br>Sunday: 8:30 AM – 1:00 PM</p>
+        <p style="margin-top:12px"><strong style="color:var(--text)">Address:</strong><br>123 Reformation Lane<br>Geneva, IL 60134</p>
+        <a href="mailto:office@reformedpres.org" class="btn btn-primary" style="margin-top:24px">Send Us a Message</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA SECTION -->
+<!-- CTA -->
 <section class="cta-section">
   <div class="container" style="position:relative;z-index:2">
-    <div class="sec-title light" style="margin-bottom:40px"><div class="eyebrow" style="color:var(--accent-light)">This Sunday</div><div class="gold-divider center"></div><h2 style="color:#fff">We're Saving You a Seat</h2><p class="sec-sub center" style="color:rgba(255,255,255,.7)">You don't need to have it all figured out. You don't need to believe everything we believe. You just need to show up — and we'll take it from there, together.</p></div>
-    <div class="btns"><a href="#" class="btn btn-primary">Get Directions</a><a href="#" class="btn btn-outline">Contact Us</a></div>
+    <div class="text-center" style="margin-bottom:40px">
+      <span class="eyebrow" style="color:var(--accent)">This Lord's Day</span>
+      <hr class="gold-divider center">
+      <h2 class="sec-title light">We're Saving You a Seat</h2>
+      <p class="sec-sub center" style="color:rgba(255,255,255,.65)">You don't need to have it all figured out. You just need to come — and we will welcome you as part of the family of God.</p>
+    </div>
+    <div class="btns">
+      <a href="#" class="btn btn-primary">Get Directions</a>
+      <a href="#" class="btn btn-outline">Contact Us</a>
+    </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
+<footer class="footer">
+  <div class="container">
     <div class="footer-grid">
-      <div class="footer-brand"><span class="logo">Your Church</span><p>Rooted in Scripture, reformed in doctrine, and reaching our community with the timeless truth of God's Word.</p></div>
-      <div class="footer-col"><h5>Navigate</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="ministries.html">Ministries</a></li><li><a href="events.html">Events</a></li></ul></div>
-      <div class="footer-col"><h5>Resources</h5><ul><li><a href="media.html">Media</a></li><li><a href="give.html">Give</a></li><li><a href="visit.html">Visit</a></li></ul></div>
-      <div class="footer-col"><h5>Connect</h5><ul><li><a href="#">Facebook</a></li><li><a href="#">Instagram</a></li><li><a href="#">YouTube</a></li></ul></div>
+      <div class="footer-brand">
+        <h3>Reformed Presbyterian</h3>
+        <p>A congregation rooted in the Reformed tradition, committed to the faithful preaching of God's Word, the proper administration of the sacraments, and the loving care of His people.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="4"/><polygon points="10,8 16,12 10,16"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Navigate</h4><ul><li><a href="about.html">About Us</a></li><li><a href="ministries.html">Ministries</a></li><li><a href="events.html">Events</a></li><li><a href="media.html">Sermons</a></li><li><a href="give.html">Give</a></li></ul></div>
+      <div class="footer-col"><h4>Connect</h4><ul><li><a href="visit.html">Plan a Visit</a></li><li><a href="#">Membership</a></li><li><a href="#">Small Groups</a></li><li><a href="#">Prayer Requests</a></li><li><a href="#">Contact Us</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li style="margin-bottom:14px;line-height:1.6"><strong style="color:rgba(255,255,255,.85)">Address</strong><br>123 Reformation Lane<br>Geneva, IL 60134</li><li style="margin-bottom:14px"><strong style="color:rgba(255,255,255,.85)">Phone</strong><br><a href="tel:+16305551892">(630) 555-1892</a></li><li><strong style="color:rgba(255,255,255,.85)">Email</strong><br><a href="mailto:office@reformedpres.org">office@reformedpres.org</a></li></ul></div>
     </div>
-    <hr class="footer-divider">
-    <div class="footer-bottom"><span>© 2025 Your Church. All rights reserved.</span></div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Reformed Presbyterian Church. All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms</a> &nbsp;·&nbsp; <a href="#">Accessibility</a></span>
+    </div>
   </div>
 </footer>
 

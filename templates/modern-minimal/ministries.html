@@ -1,208 +1,326 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="modern-minimal">
 <head>
-  <title>Ministries — Your Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ministries | Your Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--accent:#0EA5E9;--dark:#0F172A;--bg:#FAFAFA;--text:#1E293B;--muted:#64748B;--light:#F1F5F9}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Sleek nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,0.06)}
-.nav-logo{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--dark);text-decoration:none;letter-spacing:-0.5px}
-.nav-links{display:flex;gap:36px;list-style:none;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:0.3px;transition:color 0.2s}
-.nav-links a:hover,.nav-links a.active{color:var(--dark)}
-.nav-cta{background:var(--accent)!important;color:white!important;padding:10px 24px;border-radius:8px;font-weight:600!important}
+    :root {
+      --accent: #0EA5E9;
+      --accent-dark: #0284C7;
+      --dark: #0F172A;
+      --light: #F8FAFC;
+      --text: #334155;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --heading: 'Crimson Pro', serif;
+      --body: 'Inter', sans-serif;
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow: 0 4px 16px rgba(15,23,42,0.06);
+      --shadow-lg: 0 8px 32px rgba(15,23,42,0.08);
+      --radius: 12px;
+      --radius-sm: 10px;
+    }
 
-/* Hero */
-.page-header{padding:140px 48px 80px;text-align:center;max-width:840px;margin:0 auto}
-.page-header h1{font-family:'Crimson Pro',serif;font-size:clamp(40px,5vw,64px);font-weight:600;color:var(--dark);line-height:1.15;margin-bottom:20px;letter-spacing:-1.2px}
-.page-header .lead{font-size:20px;color:var(--muted);line-height:1.6;max-width:680px;margin:0 auto}
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--body); color: var(--text); background: #fff; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3, h4 { font-family: var(--heading); color: var(--dark); line-height: 1.2; }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; }
+    h3 { font-size: 1.3rem; font-weight: 600; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { margin-bottom: 20px; }
+    .section-subtitle { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
 
-/* Ministries grid */
-.ministries{max-width:1280px;margin:0 auto;padding:0 48px 100px}
-.ministries-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:32px}
-.ministry-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
-.ministry-card:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,0,0,0.12)}
-.ministry-img{position:relative;height:240px;overflow:hidden}
-.ministry-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s}
-.ministry-card:hover .ministry-img img{transform:scale(1.05)}
-.ministry-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px;background:linear-gradient(to top,rgba(15,23,42,0.9),transparent)}
-.ministry-tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
-.ministry-overlay h3{font-size:22px;color:white;font-weight:600}
-.ministry-body{padding:28px}
-.ministry-body p{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:20px}
-.ministry-body a{color:var(--accent);font-weight:600;text-decoration:none;font-size:14px;transition:color 0.2s}
-.ministry-body a:hover{text-decoration:underline}
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff; padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: none; cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--dark); padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: 2px solid var(--dark); cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { background: var(--dark); color: #fff; }
 
-/* Footer */
-footer{padding:80px 48px 40px;border-top:1px solid rgba(0,0,0,0.08);max-width:1280px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
-.footer-brand{font-family:'Crimson Pro',serif;font-size:24px;font-weight:600;color:var(--dark);margin-bottom:12px;letter-spacing:-0.5px}
-.footer-desc{color:var(--muted);font-size:14px;line-height:1.6;max-width:300px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:var(--text);text-decoration:none;font-size:14px;transition:color 0.2s}
-.footer-col a:hover{color:var(--accent)}
-.footer-bottom{padding-top:32px;border-top:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: var(--dark);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .nav-logo { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75); font-size: 0.9rem; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px; transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.08); }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 10px 22px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--accent-dark) !important; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; margin: 5px 0; border-radius: 2px; transition: 0.3s; }
 
-@media(max-width:900px){
-  nav{padding:16px 24px}
-  .nav-links{display:none}
-  .page-header{padding:120px 24px 60px}
-  .ministries{padding:0 24px 80px}
-  .ministries-grid{grid-template-columns:1fr;gap:24px}
-  footer{padding:60px 24px 32px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
-}
-</style>
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; position: absolute;
+        top: 72px; left: 0; right: 0; background: var(--dark);
+        padding: 16px 24px 24px; gap: 4px; border-top: 1px solid rgba(255,255,255,0.08);
+      }
+      .nav-links a { padding: 12px 16px; width: 100%; }
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      position: relative; padding: 180px 0 100px; text-align: center;
+      background: linear-gradient(160deg, var(--dark) 0%, #1E293B 100%);
+      margin-top: 72px; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;
+      opacity: 0.12;
+    }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-hero .section-label { color: var(--accent); }
+    .page-hero h1 { color: #fff; margin-bottom: 16px; }
+    .page-hero p { color: rgba(248,250,252,0.65); font-size: 1.1rem; max-width: 540px; margin: 0 auto; }
+
+    /* MINISTRY CARDS */
+    .ministry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+    .ministry-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .ministry-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .ministry-card img { width: 100%; height: 220px; object-fit: cover; }
+    .ministry-card-body { padding: 28px; }
+    .ministry-card-body h3 { margin-bottom: 10px; }
+    .ministry-card-body p { color: var(--muted); font-size: 0.92rem; margin-bottom: 16px; }
+    .card-link { color: var(--accent); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
+    .card-link:hover { color: var(--accent-dark); }
+
+    @media (max-width: 768px) {
+      .ministry-grid { grid-template-columns: 1fr; }
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      text-align: center; color: #fff;
+    }
+    .cta-section h2 { color: #fff; margin-bottom: 16px; }
+    .cta-section p { color: rgba(255,255,255,0.85); max-width: 540px; margin: 0 auto 32px; font-size: 1.05rem; }
+    .cta-section .btn-primary { background: #fff; color: var(--accent); }
+    .cta-section .btn-primary:hover { background: rgba(255,255,255,0.9); }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(248,250,252,0.65); padding: 80px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+    .footer-brand { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .footer-desc { font-size: 0.9rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a {
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6);
+      font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+    }
+    .footer-social a:hover { background: var(--accent); color: #fff; }
+    .footer-col h4 { color: #fff; font-family: var(--body); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      margin-top: 60px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="nav-logo">Your Church</a>
-  <ul class="nav-links">
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-  </ul>
-  <a href="visit.html" class="nav-cta">Visit Us</a>
-</nav>
 
-<div class="page-header">
-  <h1>Our Ministries</h1>
-  <p class="lead">From children to seniors, there's a place for you to connect, grow, and serve. Discover opportunities to get involved and make a difference.</p>
-</div>
-
-<div class="ministries">
-  <div class="ministries-grid">
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Kids">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">Ages 0-12</div>
-          <h3>Children's Ministry</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>Safe, engaging environments where kids learn about God's love through age-appropriate teaching, worship, and activities.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-    
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/1708936/pexels-photo-1708936.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Youth">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">Ages 13-18</div>
-          <h3>Youth Ministry</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>A vibrant community where teens can explore faith, ask tough questions, and build lasting friendships.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-    
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Young Adults">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">Ages 18-30</div>
-          <h3>Young Adults</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>Navigate life's transitions with a supportive community of peers pursuing God together.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-    
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Small Groups">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">All Ages</div>
-          <h3>Small Groups</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>Life-giving community in homes throughout the week. Bible study, prayer, and authentic relationships.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-    
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">Music & Arts</div>
-          <h3>Worship Ministry</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>Lead our congregation in heartfelt worship. Opportunities for vocalists, musicians, and tech team.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-    
-    <div class="ministry-card">
-      <div class="ministry-img">
-        <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outreach">
-        <div class="ministry-overlay">
-          <div class="ministry-tag">Community</div>
-          <h3>Outreach & Missions</h3>
-        </div>
-      </div>
-      <div class="ministry-body">
-        <p>Serve our community and support global missions. Make a tangible difference in people's lives.</p>
-        <a href="#">Learn More →</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-grid">
-    <div>
-      <div class="footer-brand">Your Church</div>
-      <p class="footer-desc">A community of faith, hope, and love. You're always welcome here.</p>
-    </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="ministries.html">Ministries</a></li>
-        <li><a href="events.html">Events</a></li>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Your Church</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
       </ul>
     </div>
-    <div class="footer-col">
-      <h5>Resources</h5>
-      <ul>
-        <li><a href="media.html">Media</a></li>
-        <li><a href="give.html">Give</a></li>
-        <li><a href="visit.html">Visit</a></li>
-      </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <div class="section-label">Get Involved</div>
+      <h1>Our Ministries</h1>
+      <p>Discover where you can serve, connect, and grow. There's a place for everyone in our church family.</p>
     </div>
-    <div class="footer-col">
-      <h5>Connect</h5>
-      <ul>
-        <li><a href="visit.html">Contact</a></li>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
-      </ul>
+  </section>
+
+  <!-- MINISTRIES -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Find Your Place</div>
+        <h2 class="section-title">Ministry Areas</h2>
+        <p class="section-subtitle mx-auto">Each ministry is an opportunity to use your gifts, build community, and make a lasting impact.</p>
+      </div>
+      <div class="ministry-grid">
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship Ministry" />
+          <div class="ministry-card-body">
+            <h3>Worship Ministry</h3>
+            <p>Join our team of musicians, vocalists, and production crew leading our church into heartfelt worship every week.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth Ministry" />
+          <div class="ministry-card-body">
+            <h3>Youth Ministry</h3>
+            <p>A vibrant community for students in grades 6-12 to explore faith, build lasting friendships, and discover their calling.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/8612993/pexels-photo-8612993.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Kids Ministry" />
+          <div class="ministry-card-body">
+            <h3>Kids Ministry</h3>
+            <p>Safe, fun, and faith-filled environments where children from birth through 5th grade learn about God's love.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Outreach" />
+          <div class="ministry-card-body">
+            <h3>Community Outreach</h3>
+            <p>Making a tangible difference through local service projects, food drives, partnerships, and global mission trips.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/7015020/pexels-photo-7015020.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Small Groups" />
+          <div class="ministry-card-body">
+            <h3>Small Groups</h3>
+            <p>Intimate gatherings of 8-12 people meeting weekly for Bible study, prayer, and authentic community building.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Welcome Team" />
+          <div class="ministry-card-body">
+            <h3>Welcome Team</h3>
+            <p>Be the first smile our guests see. Serve as a greeter, usher, or host and help create a warm, inviting atmosphere.</p>
+            <span class="card-link">Learn More &rarr;</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 Your Church. All rights reserved.</span>
-    <span>Built with faith</span>
-  </div>
-</footer>
+  </section>
+
+  <!-- VOLUNTEER CTA -->
+  <section class="section cta-section">
+    <div class="container text-center">
+      <div class="section-label" style="color: rgba(255,255,255,0.7);">Make a Difference</div>
+      <h2>Ready to Serve?</h2>
+      <p>We believe everyone has a gift to share. Join one of our ministry teams and start making an impact today.</p>
+      <a href="visit.html" class="btn-primary">Get Connected &rarr;</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">Your Church</div>
+          <p class="footer-desc">A community of Christ-followers committed to loving God, loving people, and making a difference in the world.</p>
+          <div class="footer-social">
+            <a href="#">f</a>
+            <a href="#">ig</a>
+            <a href="#">yt</a>
+            <a href="#">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="ministries.html">Ministries</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="media.html">Media</a></li>
+            <li><a href="give.html">Give</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="visit.html">Plan a Visit</a></li>
+            <li><a href="#">Small Groups</a></li>
+            <li><a href="#">Volunteer</a></li>
+            <li><a href="#">Prayer Request</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>123 Main Street</li>
+            <li>City, State 12345</li>
+            <li style="margin-top: 12px;"><a href="tel:+15551234567">(555) 123-4567</a></li>
+            <li><a href="mailto:hello@yourchurch.com">hello@yourchurch.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Your Church. All rights reserved.</span>
+        <span><a href="#">Privacy Policy</a> &middot; <a href="#">Terms</a></span>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

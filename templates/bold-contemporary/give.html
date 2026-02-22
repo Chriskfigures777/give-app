@@ -1,100 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="bold-contemporary">
 <head>
-  <title>Give - Your Church</title>
+  <title>Give - Faith Church</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--primary:#E63946;--primary-dark:#C62828;--dark:#0D1821;--light:#F8F9FA;--text:#212529;--muted:#6C757D;--card:#FFFFFF}
 body{font-family:'Open Sans',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
 html{scroll-behavior:smooth}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,24,33,0.95);backdrop-filter:blur(12px);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,0.06)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,24,33,0.97);backdrop-filter:blur(12px);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,0.06)}
 .logo{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.5px;text-transform:uppercase}
 .logo span{color:var(--primary)}
-nav ul{display:flex;gap:32px;list-style:none;align-items:center}
-nav ul a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s}
-nav ul a:hover,nav ul a.active{color:#fff}
-.nav-cta{background:var(--primary);color:#fff!important;padding:10px 26px;border-radius:6px;font-weight:700;transition:background 0.2s}
-.nav-cta:hover{background:var(--primary-dark)}
+#navLinks{display:flex;gap:32px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s}
+#navLinks a:hover,#navLinks a.active{color:#fff}
+.nav-cta{background:var(--primary)!important;color:#fff!important;padding:10px 26px;border-radius:6px;font-weight:700;transition:background 0.2s}
+.nav-cta:hover{background:var(--primary-dark)!important}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
 .hamburger span{display:block;width:26px;height:2px;background:#fff;border-radius:2px}
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+
+.hero{position:relative;min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,24,33,0.92),rgba(230,57,70,0.6))}
 .hero-content{position:relative;z-index:2;max-width:840px;padding:0 32px}
-.hero .eyebrow{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:20px;background:rgba(230,57,70,0.15);padding:8px 20px;border-radius:50px;border:1px solid rgba(230,57,70,0.3)}
-.hero h1{font-family:'Montserrat',sans-serif;font-size:clamp(42px,6vw,80px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:24px;letter-spacing:-2px}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:20px;background:rgba(230,57,70,0.15);padding:8px 20px;border-radius:50px;border:1px solid rgba(230,57,70,0.3)}
+.hero h1{font-family:'Montserrat',sans-serif;font-size:clamp(40px,6vw,76px);font-weight:800;color:#fff;line-height:1.05;margin-bottom:24px;letter-spacing:-2px;text-transform:uppercase}
 .hero h1 em{font-style:normal;color:var(--primary)}
 .hero p{font-size:20px;color:rgba(255,255,255,0.85);max-width:640px;margin:0 auto 40px;line-height:1.6}
-.btn{display:inline-block;padding:16px 36px;border-radius:6px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.3s;letter-spacing:0.5px}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
+.btn{display:inline-block;padding:16px 36px;border-radius:6px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.3s;letter-spacing:0.5px;font-family:'Montserrat',sans-serif}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 20px rgba(230,57,70,0.3)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 30px rgba(230,57,70,0.4)}
 .btn-outline{border:2px solid rgba(255,255,255,0.3);color:#fff;margin-left:16px}
 .btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.08)}
+
 .give-form{max-width:1280px;margin:0 auto;padding:100px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.give-form h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;color:var(--dark);line-height:1.1;margin-bottom:24px;letter-spacing:-1px}
+.give-form h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;color:var(--dark);line-height:1.1;margin-bottom:24px;letter-spacing:-1px;text-transform:uppercase}
 .give-form h2 em{font-style:normal;color:var(--primary)}
 .give-text p{font-size:17px;color:var(--muted);line-height:1.8;margin-bottom:20px}
 .give-form blockquote{border-left:4px solid var(--primary);padding:20px 24px;margin:32px 0;background:rgba(230,57,70,0.04);border-radius:0 8px 8px 0}
 .give-form blockquote p{font-family:'Montserrat',sans-serif;font-style:italic;font-size:16px;color:var(--dark);margin:0}
-.form-card{background:var(--card);border-radius:16px;padding:48px 40px;box-shadow:0 8px 40px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.04)}
-.form-card h3{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:800;color:var(--dark);margin-bottom:24px;text-align:center}
-.amount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
-.amount-btn{padding:16px;border:2px solid #E5E7EB;border-radius:10px;background:transparent;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;color:var(--dark);cursor:pointer;transition:all 0.2s;text-align:center}
-.amount-btn:hover,.amount-btn.active{border-color:var(--primary);background:rgba(230,57,70,0.06);color:var(--primary)}
-.custom-input{width:100%;padding:16px 20px;border:2px solid #E5E7EB;border-radius:10px;font-size:16px;font-family:'Open Sans',sans-serif;margin-bottom:16px;transition:border 0.2s;outline:none}
-.custom-input:focus{border-color:var(--primary)}
-.freq-toggle{display:flex;gap:0;margin-bottom:24px;border-radius:10px;overflow:hidden;border:2px solid #E5E7EB}
-.freq-toggle button{flex:1;padding:12px;border:none;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;color:var(--muted)}
-.freq-toggle button.active{background:var(--primary);color:#fff}
-.donate-btn{width:100%;padding:18px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;cursor:pointer;transition:all 0.3s;letter-spacing:0.5px}
-.donate-btn:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(230,57,70,0.3)}
-.secure-note{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+
+section{padding:100px 60px}
+.container{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .eyebrow{color:var(--primary)}
+.section-header h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing:-1px;text-transform:uppercase;margin-top:12px}
+.section-header p{font-size:18px;max-width:600px;margin:16px auto 0}
+
 .impact{padding:100px 60px;background:var(--dark)}
 .impact-inner{max-width:1280px;margin:0 auto}
-.section-header{text-align:center;margin-bottom:64px}
-.section-header .eyebrow{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:16px}
-.section-header h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;color:#fff;letter-spacing:-1px}
-.section-header p{font-size:18px;color:rgba(255,255,255,0.6);max-width:600px;margin:16px auto 0}
+.impact .section-header h2{color:#fff}
+.impact .section-header p{color:rgba(255,255,255,0.6)}
 .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-.impact-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;transition:all 0.3s}
+.impact-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;transition:all 0.3s}
 .impact-card:hover{transform:translateY(-6px);border-color:var(--primary);box-shadow:0 12px 40px rgba(230,57,70,0.15)}
 .impact-card img{width:100%;height:220px;object-fit:cover}
 .impact-card-body{padding:32px}
-.impact-card h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:12px}
+.impact-stat{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:800;color:var(--primary);margin-bottom:8px}
+.impact-card h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:12px;text-transform:uppercase}
 .impact-card p{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.7}
-.impact-stat{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;color:var(--primary);margin-bottom:8px}
-.testimonials{padding:100px 60px;background:var(--light)}
+
+.testimonials{padding:100px 60px;background:#fff}
 .testimonials-inner{max-width:1280px;margin:0 auto}
 .testimonials .section-header h2{color:var(--dark)}
 .testimonials .section-header p{color:var(--muted)}
 .testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-.testimonial-card{background:var(--card);border-radius:16px;padding:40px 32px;box-shadow:0 4px 24px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);position:relative;transition:all 0.3s}
+.testimonial-card{background:var(--light);border-radius:10px;padding:40px 32px;border-top:4px solid var(--primary);box-shadow:0 4px 24px rgba(0,0,0,0.04);transition:all 0.3s}
 .testimonial-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
-.testimonial-card blockquote{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:24px;font-style:italic;position:relative;z-index:1}
+.testimonial-card blockquote{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:24px;font-style:italic}
 .testimonial-author{display:flex;align-items:center;gap:16px}
 .testimonial-author img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)}
 .testimonial-author h4{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--dark)}
 .testimonial-author span{font-size:13px;color:var(--muted)}
-.ways{padding:100px 60px;background:#fff}
+
+.ways{padding:100px 60px;background:var(--light)}
 .ways-inner{max-width:1280px;margin:0 auto}
 .ways .section-header h2{color:var(--dark)}
 .ways .section-header p{color:var(--muted)}
 .ways-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
-.way-card{background:var(--light);border-radius:16px;padding:40px 28px;text-align:center;border:2px solid transparent;transition:all 0.3s}
-.way-card:hover{border-color:var(--primary);transform:translateY(-4px);box-shadow:0 8px 32px rgba(230,57,70,0.1)}
-.way-icon{width:64px;height:64px;border-radius:16px;background:rgba(230,57,70,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
-.way-card h3{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;color:var(--dark);margin-bottom:12px}
+.way-card{background:var(--card);border-radius:10px;padding:40px 28px;text-align:center;border-top:4px solid transparent;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.04)}
+.way-card:hover{border-top-color:var(--primary);transform:translateY(-4px);box-shadow:0 8px 32px rgba(230,57,70,0.1)}
+.way-icon{width:64px;height:64px;border-radius:50%;background:rgba(230,57,70,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.way-card h3{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;color:var(--dark);margin-bottom:12px;text-transform:uppercase}
 .way-card p{font-size:14px;color:var(--muted);line-height:1.7}
+
 .scripture{position:relative;padding:120px 60px;text-align:center;background:url('https://images.pexels.com/photos/2526105/pexels-photo-2526105.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;background-attachment:fixed}
 .scripture::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,24,33,0.92),rgba(230,57,70,0.5))}
 .scripture-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
 .scripture blockquote{font-family:'Montserrat',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:700;color:#fff;line-height:1.5;margin-bottom:20px}
 .scripture blockquote em{font-style:normal;color:var(--primary)}
 .scripture cite{font-size:16px;color:rgba(255,255,255,0.7);font-style:normal;font-weight:600;letter-spacing:2px;text-transform:uppercase}
+
 footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px;border-top:3px solid var(--primary)}
 .footer-inner{max-width:1280px;margin:0 auto}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
@@ -109,23 +108,46 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
 .footer-col a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;transition:color 0.2s}
 .footer-col a:hover{color:#fff}
+.footer-col li{font-size:14px;color:rgba(255,255,255,0.6)}
 .footer-bottom{max-width:1280px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,0.4)}
-@media(max-width:1024px){.impact-grid,.testimonial-grid{grid-template-columns:1fr 1fr}.ways-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:900px){nav{padding:0 24px;height:64px}nav ul{display:none}.hamburger{display:flex}.hero-content{padding:0 20px}.give-form{grid-template-columns:1fr;padding:60px 24px;gap:48px}.impact{padding:60px 24px}.impact-grid{grid-template-columns:1fr}.testimonials{padding:60px 24px}.testimonial-grid{grid-template-columns:1fr}.ways{padding:60px 24px}.ways-grid{grid-template-columns:1fr}.scripture{padding:80px 24px;background-attachment:scroll}footer{padding:60px 24px 32px}.footer-grid{grid-template-columns:1fr;gap:32px}.footer-bottom{flex-direction:column;gap:8px;text-align:center}}
-</style>
+
+@media(max-width:1024px){
+.impact-grid,.testimonial-grid{grid-template-columns:1fr 1fr}
+.ways-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+nav{padding:0 24px;height:64px}
+#navLinks{display:none;position:absolute;top:64px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-top:1px solid rgba(255,255,255,0.08)}
+#navLinks[style*="flex"]{display:flex!important}
+.hamburger{display:flex}
+.hero-content{padding:0 20px}
+.give-form{grid-template-columns:1fr;padding:60px 24px;gap:48px}
+.impact{padding:60px 24px}
+.impact-grid{grid-template-columns:1fr}
+.testimonials{padding:60px 24px}
+.testimonial-grid{grid-template-columns:1fr}
+.ways{padding:60px 24px}
+.ways-grid{grid-template-columns:1fr}
+.scripture{padding:80px 24px;background-attachment:scroll}
+footer{padding:60px 24px 32px}
+.footer-grid{grid-template-columns:1fr;gap:32px}
+.footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+  </style>
 </head>
 <body>
+
 <nav>
-  <a href="index.html" class="logo">Your <span>Church</span></a>
-  <ul>
-    <li><a href="about.html">About</a></li>
-    <li><a href="ministries.html">Ministries</a></li>
-    <li><a href="events.html">Events</a></li>
-    <li><a href="media.html">Media</a></li>
-    <li><a href="give.html" class="active">Give</a></li>
+  <a href="index.html" class="logo">Faith <span>Church</span></a>
+  <ul id="navLinks">
+    <li><a href="about.html" ABOUT>About</a></li>
+    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+    <li><a href="events.html" EVENTS>Events</a></li>
+    <li><a href="media.html" MEDIA>Media</a></li>
+    <li><a href="give.html" GIVE>Give</a></li>
     <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
   </ul>
-  <button class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('show')">
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -135,7 +157,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="eyebrow">Generosity Changes Everything</div>
-    <h1>Support <em>Our Mission</em></h1>
+    <h1>Make a <em>Gift</em></h1>
     <p>Your generosity fuels every ministry, every outreach, and every life changed through the gospel. Together, we are making an eternal impact.</p>
     <a href="#give" class="btn btn-primary">Give Now</a>
     <a href="#impact" class="btn btn-outline">See Your Impact</a>
@@ -145,32 +167,15 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
 <section class="give-form" id="give">
   <div class="give-text">
     <h2>Every Gift <em>Matters</em></h2>
-    <p>When you give to our church, you are investing in something bigger than a building or a program. You are investing in people. Your generosity funds youth programs that shape the next generation, outreach ministries that serve the vulnerable, and mission trips that carry the gospel to the ends of the earth.</p>
-    <p>We believe in financial transparency and faithful stewardship. Every dollar is carefully managed and directed toward kingdom impact. Our annual financial reports are available to all members.</p>
+    <p>When you give to Faith Church, you are investing in something bigger than a building or a program. You are investing in people. Your generosity funds youth programs that shape the next generation, outreach ministries that serve the vulnerable, and mission trips that carry the gospel to the ends of the earth.</p>
+    <p>We believe in financial transparency and faithful stewardship. Every dollar is carefully managed and directed toward kingdom impact.</p>
     <blockquote>
       <p>Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver. &mdash; 2 Corinthians 9:7</p>
     </blockquote>
     <p>Whether it is a one-time gift or a recurring commitment, your generosity makes a lasting difference in our community and beyond.</p>
   </div>
-  <div class="form-card">
-    <h3>Make a Gift</h3>
-    <div class="amount-grid">
-      <div class="amount-btn">$25</div>
-      <div class="amount-btn active">$50</div>
-      <div class="amount-btn">$100</div>
-      <div class="amount-btn">$250</div>
-      <div class="amount-btn">$500</div>
-      <div class="amount-btn">$1,000</div>
-    </div>
-    <input type="text" class="custom-input" placeholder="Custom Amount ($)">
-    <div class="freq-toggle">
-      <button class="active">One-Time</button>
-      <button>Weekly</button>
-      <button>Monthly</button>
-    </div>
-    <input type="text" class="custom-input" placeholder="Fund (General, Missions, Building)">
-    <button class="donate-btn">Give Now</button>
-    <p class="secure-note">Secure, encrypted giving powered by Stripe</p>
+  <div>
+    {{cms:give_embed}}
   </div>
 </section>
 
@@ -263,7 +268,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
       <div class="way-card">
         <div class="way-icon">&#128179;</div>
         <h3>Online</h3>
-        <p>Give securely through our website anytime, anywhere. Set up one-time or recurring gifts with automatic receipts delivered to your email.</p>
+        <p>Give securely through our website anytime, anywhere. Set up one-time or recurring gifts with automatic receipts.</p>
       </div>
       <div class="way-card">
         <div class="way-icon">&#128241;</div>
@@ -273,12 +278,12 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
       <div class="way-card">
         <div class="way-icon">&#9993;</div>
         <h3>By Mail</h3>
-        <p>Send a check made payable to Your Church at 123 Main Street, Grand Rapids, MI 49503. Include your name for a tax receipt.</p>
+        <p>Send a check payable to Faith Church at 123 Main Street, Grand Rapids, MI 49503.</p>
       </div>
       <div class="way-card">
         <div class="way-icon">&#127963;</div>
         <h3>In Person</h3>
-        <p>Drop your gift in the offering during any service, or visit our welcome center during office hours Monday through Friday.</p>
+        <p>Drop your gift in the offering during any service, or visit our welcome center during office hours.</p>
       </div>
     </div>
   </div>
@@ -295,8 +300,8 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">Your <span>Church</span></div>
-        <p class="footer-desc">A community of faith, hope, and love. Making disciples and transforming lives through the gospel of Jesus Christ.</p>
+        <div class="footer-brand">Faith <span>Church</span></div>
+        <p class="footer-desc">Bold faith, Christ-centered community, and a relentless passion to make disciples and transform lives through the gospel.</p>
         <div class="social-links">
           <a href="#"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
           <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
@@ -326,15 +331,16 @@ footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px
           <li>123 Main Street</li>
           <li>Grand Rapids, MI 49503</li>
           <li><a href="tel:+16165551234">(616) 555-1234</a></li>
-          <li><a href="mailto:info@yourchurch.org">info@yourchurch.org</a></li>
+          <li><a href="mailto:info@faithchurch.org">info@faithchurch.org</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; 2025 Your Church. All rights reserved.</span>
-      <span>Bold faith. Bold generosity.</span>
+      <span>&copy; 2025 Faith Church. All rights reserved.</span>
+      <span>Bold faith. Real community.</span>
     </div>
   </div>
 </footer>
+
 </body>
 </html>

@@ -1,294 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="serene-light">
 <head>
-  <title>Home — Your Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-/* ── SHARED STYLES: Serene Light Church Template ── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --accent: #7C3AED; --dark: #4C1D95; --cream: #FAF5FF;
-  --text: #581C87; --muted: #A78BFA;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home — Serenity Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#7C3AED;
+  --accent-light:#A78BFA;
+  --dark:#581C87;
+  --bg:#FAF5FF;
+  --card:#FFFFFF;
+  --text:#581C87;
+  --muted:#7C3AED80;
+  --radius:14px;
 }
-body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--text); line-height: 1.6; }
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Lora',serif;line-height:1.2}
 
-/* NAV */
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; background: rgba(76,29,149,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(124,58,237,0.2); }
-.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.cross { width: 28px; height: 28px; position: relative; }
-.cross::before, .cross::after { content:''; position: absolute; background: var(--muted); border-radius: 2px; }
-.cross::before { width: 4px; height: 100%; left: 50%; transform: translateX(-50%); }
-.cross::after { width: 100%; height: 4px; top: 30%; transform: translateY(-50%); }
-.nav-logo span { font-family: 'Lora', serif; font-size: 20px; color: white; font-weight: 600; }
-.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
-.nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.2s; }
-.nav-links a:hover, .nav-links a.active { color: var(--muted); }
-.nav-cta { background: var(--accent) !important; color: white !important; padding: 9px 22px; border-radius: 6px; font-weight: 700 !important; }
-.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
-.hamburger span { width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; display: block; }
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:72px;background:rgba(88,28,135,0.97);backdrop-filter:blur(12px);box-shadow:0 2px 20px rgba(88,28,135,0.15)}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo-icon{width:28px;height:28px;position:relative}
+.nav-logo-icon::before,.nav-logo-icon::after{content:'';position:absolute;background:var(--accent-light);border-radius:2px}
+.nav-logo-icon::before{width:4px;height:100%;left:50%;transform:translateX(-50%)}
+.nav-logo-icon::after{width:100%;height:4px;top:30%;transform:translateY(-50%)}
+.nav-logo span{font-family:'Lora',serif;font-size:20px;color:#fff;font-weight:700}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--accent-light)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:9px 22px;border-radius:var(--radius);font-weight:700!important;box-shadow:0 2px 12px rgba(124,58,237,0.3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;display:block}
 
-/* PAGE HERO (inner pages) */
-.page-hero { padding: 160px 60px 80px; background: linear-gradient(135deg, var(--dark) 0%, #6D28D9 100%); position: relative; overflow: hidden; }
-.page-hero::before { content:''; position: absolute; inset: 0; background-image: var(--hero-img, none); background-size: cover; background-position: center; filter: brightness(0.18); }
-.page-hero-content { position: relative; max-width: 700px; }
-.eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 14px; display: block; }
-.page-hero h1 { font-family: 'Lora', serif; font-size: clamp(36px, 5vw, 64px); color: white; line-height: 1.15; margin-bottom: 20px; }
-.page-hero p { color: rgba(255,255,255,0.7); font-size: 17px; line-height: 1.7; max-width: 520px; }
-.breadcrumb { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
-.breadcrumb a { color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: color 0.2s; }
-.breadcrumb a:hover { color: var(--muted); }
-.breadcrumb span { color: rgba(255,255,255,0.3); font-size: 13px; }
+.hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/5206038/pexels-photo-5206038.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;filter:brightness(0.25)}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(88,28,135,0.6),rgba(124,58,237,0.3))}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:820px;padding:0 24px}
+.hero-eye{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-light);margin-bottom:24px;font-weight:600}
+.hero h1{font-size:clamp(40px,7vw,78px);color:#fff;line-height:1.1;margin-bottom:26px;font-weight:700}
+.hero h1 em{font-style:italic;color:var(--accent-light)}
+.hero-desc{font-size:18px;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:44px;max-width:540px;margin-left:auto;margin-right:auto}
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.45);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);animation:sl 2s ease-in-out infinite}
+@keyframes sl{0%,100%{opacity:1}50%{opacity:0.3}}
 
-/* TYPOGRAPHY */
-.sec-eye { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 14px; display: block; }
-.sec-title { font-family: 'Lora', serif; font-size: clamp(28px, 4vw, 48px); color: var(--dark); line-height: 1.2; margin-bottom: 18px; }
-.sec-title.light { color: white; }
-.sec-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 560px; }
-.sec-sub.light { color: rgba(255,255,255,0.65); }
-.text-center { text-align: center; }
-.text-center .sec-sub { margin: 0 auto; }
+.service-strip{background:var(--dark);display:flex}
+.si{flex:1;padding:26px 20px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);transition:background 0.2s}
+.si:last-child{border-right:none}
+.si:hover{background:rgba(124,58,237,0.12)}
+.si .icon{font-size:20px;margin-bottom:7px}
+.si .day{color:var(--accent-light);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px}
+.si .time{color:#fff;font-size:16px;font-weight:600;font-family:'Lora',serif}
+.si .label{color:rgba(255,255,255,0.45);font-size:12px;margin-top:2px}
 
-/* BUTTONS */
-.btn-primary { background: var(--accent); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 20px rgba(124,58,237,0.35); transition: transform 0.2s, box-shadow 0.2s; display: inline-block; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
-.btn-secondary { background: var(--dark); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; display: inline-block; }
-.btn-secondary:hover { background: #5B21B6; }
-.btn-outline { border: 2px solid rgba(255,255,255,0.5); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: border-color 0.2s; display: inline-block; background: transparent; }
-.btn-outline:hover { border-color: var(--muted); }
-.btn-outline-dark { border: 2px solid var(--dark); color: var(--dark); padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; display: inline-block; }
-.btn-outline-dark:hover { background: var(--dark); color: white; }
-.btn-sm { background: var(--dark); color: white; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; display: inline-block; }
-.btn-sm:hover { background: var(--accent); color: white; }
-.btns { display: flex; gap: 14px; flex-wrap: wrap; }
+.welcome-wrap{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto;padding:100px 60px}
+.wi{position:relative}
+.wi img{width:100%;height:500px;object-fit:cover;border-radius:16px}
+.badge{position:absolute;bottom:-22px;right:-22px;background:var(--accent);color:#fff;width:115px;height:115px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;text-align:center;font-size:12px;line-height:1.3;box-shadow:0 8px 30px rgba(124,58,237,0.4)}
+.badge strong{font-family:'Lora',serif;font-size:26px;display:block}
+.wt p{color:var(--muted);line-height:1.8;margin-bottom:14px;font-size:16px}
+.pastor-sig{display:flex;align-items:center;gap:14px;margin-top:32px}
+.pastor-sig img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
+.pastor-name{font-weight:700;color:var(--dark);font-size:14px}
+.pastor-role{color:var(--accent);font-size:11px;letter-spacing:1px;text-transform:uppercase}
 
-/* CARDS */
-.img-card { border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 24px rgba(124,58,237,0.08); transition: transform 0.3s, box-shadow 0.3s; }
-.img-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(124,58,237,0.13); }
-.img-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
-.img-card .card-body { padding: 24px; }
-.img-card h3 { font-family: 'Lora', serif; font-size: 20px; color: var(--dark); margin-bottom: 8px; }
-.img-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.img-card .card-tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; display: block; }
+.section{padding:90px 60px}
+.section.dark{background:var(--dark)}
+.section.cream{background:var(--bg)}
+.section.white{background:#fff}
+.container{max-width:1100px;margin:0 auto}
+.sec-eye{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.sec-title{font-size:clamp(28px,4vw,44px);color:var(--dark);margin-bottom:18px}
+.sec-title.light{color:#fff}
+.sec-sub{color:var(--muted);font-size:16px;line-height:1.7;max-width:560px}
+.sec-sub.light{color:rgba(255,255,255,0.65)}
+.text-center{text-align:center}
+.text-center .sec-sub{margin:0 auto}
+.btn-primary{background:var(--accent);color:#fff;padding:14px 32px;border-radius:var(--radius);font-weight:700;font-size:14px;display:inline-block;box-shadow:0 4px 20px rgba(124,58,237,0.3);transition:transform 0.2s,box-shadow 0.2s;border:none;cursor:pointer;font-family:'Nunito',sans-serif}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.4)}
+.btn-outline{border:2px solid rgba(255,255,255,0.4);color:#fff;padding:14px 32px;border-radius:var(--radius);font-weight:600;font-size:14px;display:inline-block;background:transparent;transition:border-color 0.2s}
+.btn-outline:hover{border-color:var(--accent-light)}
+.btn-outline-dark{border:2px solid var(--dark);color:var(--dark);padding:12px 28px;border-radius:var(--radius);font-weight:600;font-size:14px;display:inline-block;transition:all 0.2s}
+.btn-outline-dark:hover{background:var(--dark);color:#fff}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
 
-/* SECTION WRAPPERS */
-.section { padding: 90px 60px; }
-.section.dark { background: var(--dark); }
-.section.purple { background: #6D28D9; }
-.section.cream { background: var(--cream); }
-.section.white { background: white; }
-.container { max-width: 1100px; margin: 0 auto; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.quote-block{border-left:4px solid var(--accent);padding-left:24px;margin:28px 0}
+.quote-block p{font-family:'Lora',serif;font-size:20px;color:var(--dark);font-style:italic;line-height:1.6}
+.quote-block cite{font-size:13px;color:var(--accent);font-style:normal;font-weight:600;letter-spacing:1px;margin-top:8px;display:block}
 
-/* QUOTE BLOCK */
-.quote-block { border-left: 4px solid var(--accent); padding-left: 24px; margin: 28px 0; }
-.quote-block p { font-family: 'Lora', serif; font-size: 20px; color: var(--dark); font-style: italic; line-height: 1.6; }
-.quote-block cite { font-size: 13px; color: var(--accent); font-style: normal; font-weight: 600; letter-spacing: 1px; margin-top: 8px; display: block; }
+.ministry-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto}
+.mc{border-radius:var(--radius);overflow:hidden;position:relative;height:340px;cursor:pointer;transition:transform 0.3s}
+.mc:hover{transform:translateY(-6px)}
+.mc img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.mc:hover img{transform:scale(1.06)}
+.ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(88,28,135,0.95) 0%,rgba(88,28,135,0.1) 65%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:26px}
+.ov .tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);font-weight:700;margin-bottom:7px}
+.ov h3{color:#fff;font-size:21px;margin-bottom:7px}
+.ov p{color:rgba(255,255,255,0.65);font-size:13px;line-height:1.5}
 
-/* SCRIPTURE BANNER */
-.scripture-banner { position: relative; padding: 100px 60px; text-align: center; overflow: hidden; }
-.scripture-banner .sb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-attachment: fixed; filter: brightness(0.18); }
-.scripture-banner .sb-content { position: relative; max-width: 800px; margin: 0 auto; }
-.scripture-banner .verse { font-family: 'Lora', serif; font-size: clamp(22px, 3.5vw, 42px); color: white; line-height: 1.4; margin-bottom: 18px; font-style: italic; }
-.scripture-banner .ref { color: var(--muted); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+.scripture-banner{position:relative;padding:100px 60px;text-align:center;overflow:hidden}
+.scripture-banner .sb-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-attachment:fixed;filter:brightness(0.18)}
+.scripture-banner .sb-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(88,28,135,0.7),rgba(124,58,237,0.5))}
+.scripture-banner .sb-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.scripture-banner .verse{font-family:'Lora',serif;font-size:clamp(22px,3.5vw,42px);color:#fff;line-height:1.4;margin-bottom:18px;font-style:italic}
+.scripture-banner .ref{color:var(--accent-light);font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
 
-/* FOOTER */
-footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60px 36px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
-.footer-brand .logo-text { font-family: 'Lora', serif; font-size: 20px; color: white; margin-bottom: 14px; display: block; }
-.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 260px; }
-.footer-col h5 { color: white; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-.footer-col a:hover { color: var(--muted); }
-.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
-.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-.social-links { display: flex; gap: 12px; }
-.social-links a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: all 0.2s; }
-.social-links a:hover { border-color: var(--muted); color: var(--muted); }
+.events-list{display:flex;flex-direction:column;gap:16px}
+.er{display:grid;grid-template-columns:80px 1fr auto;gap:24px;align-items:center;padding:24px 28px;background:var(--card);border-radius:12px;box-shadow:0 2px 18px rgba(124,58,237,0.06);border-left:4px solid transparent;transition:border-color 0.2s,transform 0.2s}
+.er:hover{border-left-color:var(--accent);transform:translateX(4px)}
+.ed{text-align:center;background:var(--bg);border-radius:10px;padding:10px 6px}
+.ed .em{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.ed .eday{font-family:'Lora',serif;font-size:32px;color:var(--dark);line-height:1;font-weight:700}
+.ei h4{font-size:16px;color:var(--dark);font-weight:700;margin-bottom:5px}
+.ei p{color:var(--muted);font-size:13px}
 
-/* DIVIDER */
-.gold-divider { width: 50px; height: 3px; background: var(--accent); margin: 20px 0; border-radius: 2px; }
-.gold-divider.center { margin: 20px auto; }
+.give-cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:48px}
+.gc{background:rgba(255,255,255,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:34px 36px;text-align:center;min-width:190px;transition:background 0.2s}
+.gc:hover{background:rgba(124,58,237,0.1)}
+.gc .gi{font-size:32px;margin-bottom:11px}
+.gc h4{color:#fff;font-size:17px;margin-bottom:5px}
+.gc p{color:rgba(255,255,255,0.5);font-size:13px}
 
-/* STATS ROW */
-.stats-row { display: flex; gap: 0; }
-.stat-item { flex: 1; text-align: center; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.08); }
-.stat-item:last-child { border-right: none; }
-.stat-num { font-family: 'Lora', serif; font-size: 48px; color: var(--muted); font-weight: 700; line-height: 1; margin-bottom: 8px; }
-.stat-label { color: rgba(255,255,255,0.6); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.gal-grid img{width:100%;height:250px;object-fit:cover;transition:filter 0.3s}
+.gal-grid img:hover{filter:brightness(0.75)}
 
-/* TEAM CARD */
-.team-card { text-align: center; }
-.team-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 18px; }
-.team-card h3 { font-family: 'Lora', serif; font-size: 20px; color: var(--dark); margin-bottom: 4px; }
-.team-card .role { color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.team-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1100px;margin:0 auto 50px}
+.footer-brand .logo-text{font-family:'Lora',serif;font-size:22px;color:#fff;font-weight:700;display:block;margin-bottom:14px}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,0.6);font-size:14px;transition:color 0.2s}
+.footer-col a:hover{color:var(--accent-light)}
+.footer-divider{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:0}
+.footer-bottom{max-width:1100px;margin:0 auto;padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent-light);transition:color 0.2s}
+.footer-bottom a:hover{color:#fff}
+.social-links{display:flex;gap:12px}
+.social-links a{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:13px;transition:all 0.2s}
+.social-links a:hover{border-color:var(--accent-light);color:var(--accent-light)}
 
-/* ── HERO ── */
-.hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.hero-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/5206038/pexels-photo-5206038.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-size: cover; background-position: center; filter: brightness(0.3); }
-.hero-content { position: relative; text-align: center; max-width: 820px; padding: 0 24px; }
-.hero-eye { display: inline-block; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; font-weight: 600; }
-.hero h1 { font-family: 'Lora', serif; font-size: clamp(40px, 7vw, 78px); color: white; line-height: 1.1; margin-bottom: 26px; font-weight: 700; }
-.hero h1 em { font-style: italic; color: var(--muted); }
-.hero-desc { font-size: 18px; color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 44px; max-width: 540px; margin-left: auto; margin-right: auto; }
-.scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,255,255,0.45); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
-.scroll-line { width: 1px; height: 38px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: sl 2s ease-in-out infinite; }
-@keyframes sl { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
-
-/* ── SERVICE STRIP ── */
-.service-strip { background: var(--dark); display: flex; }
-.si { flex: 1; padding: 26px 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.08); transition: background 0.2s; }
-.si:last-child { border-right: none; }
-.si:hover { background: rgba(124,58,237,0.12); }
-.si .icon { font-size: 20px; margin-bottom: 7px; }
-.si .day { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; }
-.si .time { color: white; font-size: 16px; font-weight: 600; font-family: 'Lora', serif; }
-.si .label { color: rgba(255,255,255,0.45); font-size: 12px; margin-top: 2px; }
-
-/* ── WELCOME/ABOUT ── */
-.welcome-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 100px 60px; }
-.wi { position: relative; }
-.wi img { width: 100%; height: 500px; object-fit: cover; border-radius: 16px; display: block; }
-.badge { position: absolute; bottom: -22px; right: -22px; background: var(--accent); color: white; width: 115px; height: 115px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; text-align: center; font-size: 12px; line-height: 1.3; box-shadow: 0 8px 30px rgba(124,58,237,0.4); }
-.badge strong { font-family: 'Lora', serif; font-size: 26px; display: block; }
-.wt p { color: #7E6C9A; line-height: 1.8; margin-bottom: 14px; font-size: 16px; }
-.pastor-sig { display: flex; align-items: center; gap: 14px; margin-top: 32px; }
-.pastor-sig img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
-.pastor-name { font-weight: 700; color: var(--dark); font-size: 14px; }
-.pastor-role { color: var(--accent); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
-
-/* ── MINISTRY CARDS ── */
-.ministry-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; max-width: 1100px; margin: 0 auto; }
-.mc { border-radius: 12px; overflow: hidden; position: relative; height: 340px; cursor: pointer; transition: transform 0.3s; }
-.mc:hover { transform: translateY(-6px); }
-.mc img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-.mc:hover img { transform: scale(1.06); }
-.ov { position: absolute; inset: 0; background: linear-gradient(to top, rgba(76,29,149,0.95) 0%, rgba(76,29,149,0.1) 65%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 26px; }
-.ov .tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 7px; }
-.ov h3 { font-family: 'Lora', serif; color: white; font-size: 21px; margin-bottom: 7px; }
-.ov p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.5; }
-
-/* ── CMS BLOCKS: Events ── */
-.events-list, .ev-full-list { display: flex; flex-direction: column; gap: 16px; }
-.er, .erow { display: grid; grid-template-columns: 80px 1fr auto; gap: 24px; align-items: center; padding: 24px 28px; background: white; border-radius: 12px; box-shadow: 0 2px 18px rgba(124,58,237,0.06); border-left: 4px solid transparent; transition: border-color 0.2s, transform 0.2s; }
-.er:hover, .erow:hover { border-left-color: var(--accent); transform: translateX(4px); }
-.ed, .edate { text-align: center; background: var(--cream); border-radius: 10px; padding: 10px 6px; }
-.ed .em, .edate .em { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-.ed .eday, .edate .eday { font-family: 'Lora', serif; font-size: 32px; color: var(--dark); line-height: 1; font-weight: 700; }
-.ei h4, .einfo h4 { font-size: 16px; color: var(--dark); font-weight: 700; margin-bottom: 5px; }
-.ei p, .einfo p { color: var(--muted); font-size: 13px; }
-
-/* CMS: Event grid cards */
-.ev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-.ev-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(124,58,237,0.06); transition: transform 0.2s; }
-.ev-card:hover { transform: translateY(-3px); }
-.ev-card img { width: 100%; height: 160px; object-fit: cover; display: block; }
-.ev-body { padding: 20px; }
-.ev-meta { display: flex; gap: 12px; margin-bottom: 8px; }
-.ev-date-pill { background: var(--cream); color: var(--accent); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px; }
-.ev-cat { color: var(--muted); font-size: 11px; font-weight: 600; padding: 4px 0; letter-spacing: 0.5px; text-transform: uppercase; }
-.ev-body h3 { font-family: 'Lora', serif; font-size: 18px; color: var(--dark); font-weight: 600; margin-bottom: 8px; }
-.ev-body p { font-size: 13px; line-height: 1.6; color: #7E6C9A; }
-.ev-detail { font-size: 12px; color: var(--muted); margin-top: 10px; display: flex; gap: 12px; }
-
-/* CMS: Media / Sermons */
-.sermon-featured { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 16px; overflow: hidden; background: var(--dark); }
-.sf-thumb { position: relative; min-height: 280px; }
-.sf-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.sf-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(76,29,149,0.3); }
-.play-btn { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; font-size: 20px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
-.sf-info { padding: 32px; color: white; }
-.sf-info .stag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; display: block; }
-.sf-info h3 { font-family: 'Lora', serif; font-size: 24px; margin-bottom: 12px; }
-.sf-info p { color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
-.sf-info .smeta { font-size: 12px; color: rgba(255,255,255,0.4); display: flex; gap: 16px; margin-bottom: 20px; }
-
-.sermon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-.sc { border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 2px 16px rgba(124,58,237,0.06); }
-.sc-thumb { position: relative; }
-.sc-thumb img { width: 100%; height: 160px; object-fit: cover; display: block; }
-.sc-body { padding: 20px; }
-.sc-body .stag { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 6px; display: block; }
-.sc-body h4 { font-family: 'Lora', serif; font-size: 17px; color: var(--dark); margin-bottom: 6px; }
-.sc-body .smeta { font-size: 12px; color: var(--muted); display: flex; gap: 12px; }
-
-/* CMS: Podcasts */
-.podcast-row { display: flex; flex-direction: column; }
-.pod-ep { display: grid; grid-template-columns: 48px 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.pod-ep:last-child { border-bottom: none; }
-.ep-num { width: 48px; height: 48px; background: rgba(124,58,237,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--muted); font-size: 14px; }
-.ep-info h4 { color: white; font-size: 15px; font-weight: 600; margin-bottom: 3px; }
-.ep-info p { color: rgba(255,255,255,0.5); font-size: 12px; }
-.ep-dur { color: rgba(255,255,255,0.4); font-size: 12px; white-space: nowrap; }
-
-/* ── GIVING CARDS ── */
-.give-cards { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin-top: 48px; }
-.gc { background: rgba(255,255,255,0.06); border: 1px solid rgba(124,58,237,0.25); border-radius: 12px; padding: 34px 36px; text-align: center; min-width: 190px; transition: background 0.2s; }
-.gc:hover { background: rgba(124,58,237,0.1); }
-.gc .gi { font-size: 32px; margin-bottom: 11px; }
-.gc h4 { color: white; font-size: 17px; margin-bottom: 5px; font-family: 'Lora', serif; }
-.gc p { color: rgba(255,255,255,0.5); font-size: 13px; }
-
-/* ── GALLERY ── */
-.gal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-.gal-grid img { width: 100%; height: 250px; object-fit: cover; transition: filter 0.3s; display: block; }
-.gal-grid img:hover { filter: brightness(0.75); }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  nav { padding: 16px 24px; }
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .section { padding: 60px 24px; }
-  .page-hero { padding: 120px 24px 60px; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 28px; }
-  .stats-row { flex-wrap: wrap; }
-  .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
-  footer { padding: 50px 24px 30px; }
-  .welcome-wrap { grid-template-columns: 1fr; padding: 60px 24px; }
-  .ministry-cards { grid-template-columns: 1fr; }
-  .service-strip { flex-direction: column; }
-  .gal-grid { grid-template-columns: repeat(2, 1fr); }
-  .er, .erow { grid-template-columns: 70px 1fr; }
-  .er > div:last-child, .erow > div:last-child { grid-column: span 2; }
-  .sermon-featured { grid-template-columns: 1fr; }
-  .media-two-col, .ev-grid { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
+@media(max-width:900px){
+  .nav{padding:0 24px}
+  .nav-links{display:none;position:fixed;top:72px;left:0;right:0;background:rgba(88,28,135,0.98);flex-direction:column;padding:24px;gap:16px;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+  .nav-links a{padding:8px 0;font-size:15px}
+  .hamburger{display:flex}
+  .hero h1{font-size:clamp(36px,8vw,56px)}
+  .service-strip{flex-direction:column}
+  .welcome-wrap{grid-template-columns:1fr;padding:60px 24px;gap:40px}
+  .wi img{height:350px}
+  .section{padding:60px 24px}
+  .ministry-cards{grid-template-columns:1fr}
+  .gal-grid{grid-template-columns:repeat(2,1fr)}
+  .er{grid-template-columns:70px 1fr}
+  .er>div:last-child{grid-column:span 2}
+  .scripture-banner{padding:60px 24px}
+  footer{padding:50px 24px 30px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
-  </style>
+</style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════════
-     1. FIXED NAVIGATION BAR
-     ════════════════════════════════════════════════ -->
-<nav>
-  <a href="index.html" class="nav-logo"><div class="cross"></div><span>Your Church</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
-  </ul>
-  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'"><span></span><span></span><span></span></button>
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"></div>
+    <span>Serenity Church</span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<!-- ════════════════════════════════════════════════
-     2. FULL-SCREEN HERO
-     ════════════════════════════════════════════════ -->
+<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
     <span class="hero-eye">Welcome Home</span>
-    <h1>Peace, <em>Purpose</em><br>&amp; Community</h1>
+    <h1>Peace &amp; <em>Purpose</em><br>in Every Season</h1>
     <p class="hero-desc">A gentle, grace-filled community where every soul is welcomed. Come rest in His presence and find your place among family.</p>
     <div class="btns" style="justify-content:center">
       <a href="visit.html" class="btn-primary">Plan Your Visit</a>
@@ -298,9 +204,7 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
   <div class="scroll-hint"><div class="scroll-line"></div>Scroll</div>
 </section>
 
-<!-- ════════════════════════════════════════════════
-     3. SERVICE TIMES STRIP
-     ════════════════════════════════════════════════ -->
+<!-- SERVICE TIMES -->
 <div class="service-strip">
   <div class="si"><div class="icon">☀️</div><div class="day">Sunday</div><div class="time">8:00 AM</div><div class="label">Traditional Service</div></div>
   <div class="si"><div class="icon">✝️</div><div class="day">Sunday</div><div class="time">10:30 AM</div><div class="label">Contemporary Service</div></div>
@@ -308,9 +212,7 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
   <div class="si"><div class="icon">👨‍👩‍👧</div><div class="day">Sunday</div><div class="time">9:15 AM</div><div class="label">Kids &amp; Youth</div></div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     4. WELCOME / ABOUT SECTION
-     ════════════════════════════════════════════════ -->
+<!-- WELCOME -->
 <div class="welcome-wrap">
   <div class="wi">
     <img src="https://images.pexels.com/photos/8468459/pexels-photo-8468459.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Church community gathering">
@@ -323,9 +225,9 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
       <p>"For where two or three gather in my name, there am I with them."</p>
       <cite>— Matthew 18:20</cite>
     </div>
-    <p>Founded over twenty-five years ago in the heart of our community, our church has been a sanctuary of peace, healing, and spiritual growth for families across the region.</p>
-    <p>Whether you are exploring faith for the first time or seeking to deepen your walk with God, there is a place for you here. We believe in the transformative power of grace, and we invite you to experience it alongside us.</p>
-    <div style="margin-top:28px;display:flex;gap:14px;flex-wrap:wrap;">
+    <p>Founded over twenty-five years ago in the heart of our community, Serenity Church has been a sanctuary of peace, healing, and spiritual growth for families across the region.</p>
+    <p>Whether you are exploring faith for the first time or seeking to deepen your walk with God, there is a place for you here. We believe in the transformative power of grace.</p>
+    <div style="margin-top:28px" class="btns">
       <a href="about.html" class="btn-primary">Our Story</a>
       <a href="visit.html" class="btn-outline-dark">Plan a Visit</a>
     </div>
@@ -336,60 +238,53 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     5. MINISTRY CARDS
-     ════════════════════════════════════════════════ -->
+<!-- MINISTRY CARDS -->
 <div class="section dark">
   <div class="container">
-    <div class="text-center" style="margin-bottom:50px;">
-      <span class="sec-eye">Get Involved</span>
+    <div class="text-center" style="margin-bottom:50px">
+      <span class="sec-eye" style="color:var(--accent-light)">Get Involved</span>
       <h2 class="sec-title light">Ministries For Every Season of Life</h2>
-      <p class="sec-sub light">From children to seniors, there's a community waiting to walk alongside you in every chapter.</p>
+      <p class="sec-sub light" style="margin:0 auto">From children to seniors, there's a community waiting to walk alongside you in every chapter.</p>
     </div>
     <div class="ministry-cards">
-      <div class="mc"><img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Worship Ministry"><div class="ov"><div class="tag">Worship</div><h3>Praise &amp; Worship</h3><p>Spirit-led music and contemporary worship encounters every Sunday.</p></div></div>
-      <div class="mc"><img src="https://images.pexels.com/photos/1448735/pexels-photo-1448735.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Youth Ministry"><div class="ov"><div class="tag">Youth</div><h3>Next Generation</h3><p>A vibrant, caring community for teens and young adults to grow in faith.</p></div></div>
-      <div class="mc"><img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Outreach Ministry"><div class="ov"><div class="tag">Outreach</div><h3>Community Outreach</h3><p>Serving our neighbors through food drives, mentoring, and compassion projects.</p></div></div>
+      <div class="mc"><img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Worship"><div class="ov"><div class="tag">Worship</div><h3>Praise &amp; Worship</h3><p>Spirit-led music and contemporary worship encounters every Sunday.</p></div></div>
+      <div class="mc"><img src="https://images.pexels.com/photos/1448735/pexels-photo-1448735.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Youth"><div class="ov"><div class="tag">Youth</div><h3>Next Generation</h3><p>A vibrant, caring community for teens and young adults to grow in faith.</p></div></div>
+      <div class="mc"><img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Outreach"><div class="ov"><div class="tag">Outreach</div><h3>Community Outreach</h3><p>Serving our neighbors through food drives, mentoring, and compassion projects.</p></div></div>
     </div>
-    <div class="text-center" style="margin-top:44px;"><a href="ministries.html" class="btn-primary">View All Ministries</a></div>
+    <div class="text-center" style="margin-top:44px"><a href="ministries.html" class="btn-primary">View All Ministries</a></div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     6. SCRIPTURE PARALLAX BANNER
-     ════════════════════════════════════════════════ -->
+<!-- SCRIPTURE BANNER -->
 <div class="scripture-banner">
   <div class="sb-bg" style="background-image:url('https://images.pexels.com/photos/5206038/pexels-photo-5206038.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+  <div class="sb-overlay"></div>
   <div class="sb-content">
     <p class="verse">"Come to me, all you who are weary and burdened, and I will give you rest."</p>
     <p class="ref">— Matthew 11:28, NIV</p>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     7. EVENTS SECTION
-     ════════════════════════════════════════════════ -->
+<!-- EVENTS -->
 <div class="section white">
   <div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px">
       <div><span class="sec-eye">Calendar</span><h2 class="sec-title">Upcoming Events</h2></div>
-      <a href="events.html" style="color:var(--accent);font-weight:600;text-decoration:none;font-size:14px;">View All Events →</a>
+      <a href="events.html" style="color:var(--accent);font-weight:600;font-size:14px">View All Events →</a>
     </div>
     <!-- cms:events_list -->
-    <div class="events-list" data-cms-block="events_list">{{cms:events_list}}</div>
+    <div data-cms-block="events_list">{{cms:events_list}}</div>
     <!-- /cms:events_list -->
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     8. GIVING SECTION
-     ════════════════════════════════════════════════ -->
-<div class="section" style="background:linear-gradient(135deg,var(--dark) 0%,#6D28D9 100%);text-align:center;">
+<!-- GIVE CTA -->
+<div class="section" style="background:linear-gradient(135deg,var(--dark) 0%,#6D28D9 100%);text-align:center">
   <div class="container">
-    <span class="sec-eye" style="color:var(--muted)">Generosity</span>
+    <span class="sec-eye" style="color:var(--accent-light)">Generosity</span>
     <h2 class="sec-title light">Give &amp; Make a Difference</h2>
-    <p class="sec-sub light" style="margin:0 auto 36px;">Your generosity fuels our mission — locally in our community and around the world. Every gift plants a seed of hope.</p>
-    <div class="btns" style="justify-content:center;">
+    <p class="sec-sub light" style="margin:0 auto 36px">Your generosity fuels our mission — locally in our community and around the world. Every gift plants a seed of hope.</p>
+    <div class="btns" style="justify-content:center">
       <a href="give.html" class="btn-primary">Give Online</a>
       <a href="give.html" class="btn-outline">Learn About Tithing</a>
     </div>
@@ -401,11 +296,9 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     9. PHOTO GALLERY
-     ════════════════════════════════════════════════ -->
-<div class="section cream" style="padding-bottom:0;padding-left:0;padding-right:0;">
-  <div class="text-center" style="padding:0 60px 48px;"><span class="sec-eye">Life at Our Church</span><h2 class="sec-title">See What We're Up To</h2></div>
+<!-- GALLERY -->
+<div class="section cream" style="padding-bottom:0;padding-left:0;padding-right:0">
+  <div class="text-center" style="padding:0 60px 48px"><span class="sec-eye">Life at Serenity</span><h2 class="sec-title">See What We're Up To</h2></div>
   <div class="gal-grid">
     <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community gathering">
     <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship service">
@@ -418,13 +311,11 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     10. FULL FOOTER
-     ════════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <span class="logo-text">✝ Your Church</span>
+      <span class="logo-text">✝ Serenity Church</span>
       <p>A place of peace, healing, and community. Where every soul finds rest in His presence. You are always welcome here.</p>
     </div>
     <div class="footer-col">
@@ -438,28 +329,29 @@ footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 70px 60
       </ul>
     </div>
     <div class="footer-col">
-      <h5>Ministries</h5>
+      <h5>Get Involved</h5>
       <ul>
-        <li><a href="ministries.html">Children's Ministry</a></li>
-        <li><a href="ministries.html">Youth Group</a></li>
-        <li><a href="ministries.html">Men's Ministry</a></li>
-        <li><a href="ministries.html">Women's Ministry</a></li>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
         <li><a href="ministries.html">Small Groups</a></li>
+        <li><a href="ministries.html">Volunteer</a></li>
+        <li><a href="#">Prayer Requests</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Contact</h5>
       <ul>
-        <li><a href="visit.html">📍 123 Serenity Lane, Your City</a></li>
-        <li><a href="tel:5555550123">📞 (555) 555-0123</a></li>
-        <li><a href="mailto:hello@yourchurch.org">✉️ hello@yourchurch.org</a></li>
-        <li><a href="visit.html">Sun 8AM · 10:30AM</a></li>
+        <li><a href="visit.html">123 Serenity Lane</a></li>
+        <li><a href="visit.html">Your City, ST 12345</a></li>
+        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
+        <li><a href="mailto:hello@serenitychurch.org">hello@serenitychurch.org</a></li>
+        <li><a href="visit.html">Sun 8:00 &amp; 10:30 AM</a></li>
       </ul>
     </div>
   </div>
   <hr class="footer-divider">
   <div class="footer-bottom">
-    <span>© 2025 Your Church. All rights reserved.</span>
+    <span>&copy; 2025 Serenity Church. All rights reserved.</span>
     <div class="social-links">
       <a href="#" title="Facebook">f</a>
       <a href="#" title="Instagram">ig</a>

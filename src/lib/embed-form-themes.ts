@@ -8,22 +8,231 @@ export type EmbedFormThemeId = "default" | "grace" | "dark-elegant" | "bold-cont
 
 export const EMBED_FORM_THEMES: { id: EmbedFormThemeId; name: string; description: string }[] = [
   { id: "default", name: "Default", description: "Clean, modern form styling" },
-  {
-    id: "grace",
-    name: "Grace Community",
-    description: "Dark navy panel, gold accents, Playfair Display",
-  },
-  {
-    id: "dark-elegant",
-    name: "Dark Elegant",
-    description: "Dark background, warm gold accents, Cormorant Garamond",
-  },
-  {
-    id: "bold-contemporary",
-    name: "Bold Contemporary",
-    description: "Light card, bold red accents, Montserrat",
-  },
+  { id: "grace", name: "Grace Community", description: "Dark navy panel, gold accents, Playfair Display" },
+  { id: "dark-elegant", name: "Dark Elegant", description: "Dark background, warm gold accents, Cormorant Garamond" },
+  { id: "bold-contemporary", name: "Bold Contemporary", description: "Light card, bold red accents, Montserrat" },
 ];
+
+export type SeamlessThemeId =
+  | "church-grace" | "dark-elegant" | "bold-contemporary"
+  | "modern-minimal" | "vibrant-community" | "serene-light"
+  | "urban-modern" | "classic-reformed" | "organic-natural" | "warm-heritage";
+
+type SeamlessThemeConfig = {
+  accentColor: string;
+  accentRgb: string;
+  buttonTextColor: string;
+  bgColor: string;
+  textColor: string;
+  headingFont: string;
+  bodyFont: string;
+  fontUrl: string;
+  borderRadius: string;
+  isDark: boolean;
+  darkBg?: string;
+};
+
+const SEAMLESS_THEMES: Record<SeamlessThemeId, SeamlessThemeConfig> = {
+  "church-grace": {
+    accentColor: "#C9A84C", accentRgb: "201,168,76", buttonTextColor: "#1A1A2E",
+    bgColor: "#FAF7F2", textColor: "#333344",
+    headingFont: "'Playfair Display',serif", bodyFont: "'Inter',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap",
+    borderRadius: "8px", isDark: false,
+  },
+  "dark-elegant": {
+    accentColor: "#FBBF24", accentRgb: "251,191,36", buttonTextColor: "#0F0F0F",
+    bgColor: "#171717", textColor: "#E5E5E5",
+    headingFont: "'Cormorant Garamond',serif", bodyFont: "'Inter',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap",
+    borderRadius: "8px", isDark: true, darkBg: "#0F0F0F",
+  },
+  "bold-contemporary": {
+    accentColor: "#E63946", accentRgb: "230,57,70", buttonTextColor: "#ffffff",
+    bgColor: "#F8F9FA", textColor: "#212529",
+    headingFont: "'Montserrat',sans-serif", bodyFont: "'Open Sans',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap",
+    borderRadius: "10px", isDark: false,
+  },
+  "modern-minimal": {
+    accentColor: "#0EA5E9", accentRgb: "14,165,233", buttonTextColor: "#ffffff",
+    bgColor: "#FAFAFA", textColor: "#1E293B",
+    headingFont: "'Crimson Pro',serif", bodyFont: "'Inter',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=Inter:wght@400;500;600&display=swap",
+    borderRadius: "10px", isDark: false,
+  },
+  "vibrant-community": {
+    accentColor: "#059669", accentRgb: "5,150,105", buttonTextColor: "#ffffff",
+    bgColor: "#ECFDF5", textColor: "#065F46",
+    headingFont: "'Fredoka',sans-serif", bodyFont: "'Poppins',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap",
+    borderRadius: "14px", isDark: false,
+  },
+  "serene-light": {
+    accentColor: "#7C3AED", accentRgb: "124,58,237", buttonTextColor: "#ffffff",
+    bgColor: "#FAF5FF", textColor: "#581C87",
+    headingFont: "'Lora',serif", bodyFont: "'Nunito',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;500;600&display=swap",
+    borderRadius: "14px", isDark: false,
+  },
+  "urban-modern": {
+    accentColor: "#6366F1", accentRgb: "99,102,241", buttonTextColor: "#ffffff",
+    bgColor: "#F4F4F5", textColor: "#27272A",
+    headingFont: "'Space Grotesk',sans-serif", bodyFont: "'DM Sans',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap",
+    borderRadius: "10px", isDark: false,
+  },
+  "classic-reformed": {
+    accentColor: "#B45309", accentRgb: "180,83,9", buttonTextColor: "#ffffff",
+    bgColor: "#FFF7ED", textColor: "#7C2D12",
+    headingFont: "'Libre Baskerville',serif", bodyFont: "'Source Serif 4',Georgia,serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap",
+    borderRadius: "10px", isDark: false,
+  },
+  "organic-natural": {
+    accentColor: "#65A30D", accentRgb: "101,163,13", buttonTextColor: "#ffffff",
+    bgColor: "#F7FEE7", textColor: "#1A2E05",
+    headingFont: "'Merriweather',serif", bodyFont: "'Quicksand',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Quicksand:wght@400;500;600&display=swap",
+    borderRadius: "16px", isDark: false,
+  },
+  "warm-heritage": {
+    accentColor: "#D4AF37", accentRgb: "212,175,55", buttonTextColor: "#3E2723",
+    bgColor: "#FFF8DC", textColor: "#3E2723",
+    headingFont: "'Merriweather',serif", bodyFont: "'Lato',sans-serif",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap",
+    borderRadius: "4px", isDark: false,
+  },
+};
+
+export function getSeamlessTheme(id: string): SeamlessThemeConfig | null {
+  return SEAMLESS_THEMES[id as SeamlessThemeId] ?? null;
+}
+
+export function getSeamlessThemeFontUrl(id: string): string | null {
+  return SEAMLESS_THEMES[id as SeamlessThemeId]?.fontUrl ?? null;
+}
+
+/** Base CSS that strips all generic chrome from the DonationForm in seamless mode. */
+export const SEAMLESS_BASE_CSS = `
+  html, body {
+    background: transparent !important;
+    color: inherit;
+  }
+
+  /* Kill outer form wrapper borders/background */
+  #checkout, [id="checkout"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Kill inner .give-form-tithely wrapper — has inline bg:#f8f9fa + border */
+  .give-form-tithely {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 8px 0 !important;
+  }
+
+  /* Kill ALL section card borders — DonationForm uses inline style={{ borderColor }} */
+  .p-4.rounded-lg.border,
+  .rounded-lg.border,
+  div[class*="rounded-lg"][class*="border"] {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Section dividers */
+  .border-t, .border-slate-200 {
+    border-color: rgba(0,0,0,0.06) !important;
+  }
+`;
+
+export function buildSeamlessThemeCSS(id: string): string {
+  const t = SEAMLESS_THEMES[id as SeamlessThemeId];
+  if (!t) return SEAMLESS_BASE_CSS;
+  const accent = t.accentColor;
+  const rgb = t.accentRgb;
+
+  return `
+    ${SEAMLESS_BASE_CSS}
+
+    .seamless-theme { font-family: ${t.bodyFont}; color: ${t.textColor}; }
+    .seamless-theme h3 { font-family: ${t.headingFont}; color: ${t.textColor} !important; }
+
+    /* Amount / frequency toggle buttons — override inline styles */
+    .seamless-theme button[type="button"] {
+      border: 2px solid rgba(${rgb},0.2) !important;
+      background: rgba(${rgb},0.04) !important;
+      color: ${t.textColor} !important;
+      border-radius: ${t.borderRadius} !important;
+      transition: all 0.2s !important;
+    }
+    .seamless-theme button[type="button"]:hover,
+    .seamless-theme button[type="button"].ring-2,
+    .seamless-theme button[type="button"][aria-pressed="true"] {
+      background: ${accent} !important;
+      color: ${t.buttonTextColor} !important;
+      border-color: ${accent} !important;
+    }
+
+    /* Primary action button (Continue / Give) — override inline bg */
+    .seamless-theme [class*="py-3"][class*="font-medium"][class*="rounded"],
+    .seamless-theme button[type="submit"] {
+      background: ${accent} !important;
+      color: ${t.buttonTextColor} !important;
+      border: none !important;
+      border-radius: ${t.borderRadius} !important;
+      box-shadow: 0 4px 16px rgba(${rgb},0.25) !important;
+    }
+
+    /* Inputs — override inline border */
+    .seamless-theme input[type="text"],
+    .seamless-theme input[type="email"],
+    .seamless-theme input[type="number"],
+    .seamless-theme input[type="tel"],
+    .seamless-theme select,
+    .seamless-theme textarea {
+      border: 2px solid rgba(${rgb},0.15) !important;
+      border-radius: ${t.borderRadius} !important;
+      transition: border-color 0.2s !important;
+    }
+    .seamless-theme input:focus,
+    .seamless-theme select:focus,
+    .seamless-theme textarea:focus {
+      border-color: ${accent} !important;
+      outline: none !important;
+    }
+
+    /* Section dividers */
+    .seamless-theme .border-t,
+    .seamless-theme .border-slate-200,
+    .seamless-theme .border-slate-300 {
+      border-color: rgba(${rgb},0.08) !important;
+    }
+
+    /* Labels & headings */
+    .seamless-theme label,
+    .seamless-theme .font-semibold,
+    .seamless-theme .text-slate-700,
+    .seamless-theme .text-slate-900 {
+      color: ${t.textColor} !important;
+    }
+    .seamless-theme .text-slate-500,
+    .seamless-theme .text-slate-400,
+    .seamless-theme .text-slate-600 {
+      color: ${t.textColor}99 !important;
+    }
+    .seamless-theme .text-3xl,
+    .seamless-theme .tabular-nums {
+      color: ${t.textColor} !important;
+    }
+  `;
+}
 
 /** Google Fonts URL for Grace theme (Playfair Display + Inter) */
 export const GRACE_THEME_FONT_URL =

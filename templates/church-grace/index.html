@@ -1,335 +1,370 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="church-grace">
 <head>
-  <title>Home — Grace Community Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grace Community Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-/* ── SHARED STYLES: Grace Community Church ── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --gold: #C9A84C; --deep: #1A1A2E; --navy: #16213E;
-  --cream: #FAF7F2; --text: #333344; --muted: #6B7280;
-}
-body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text); }
+    :root{--gold:#C9A84C;--deep:#1A1A2E;--navy:#16213E;--cream:#FAF7F2;--text:#333344;--muted:#6B7280}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream);line-height:1.6}
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;color:var(--deep)}
+    a{text-decoration:none}
+    img{max-width:100%;display:block}
 
-/* NAV */
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; background: rgba(26,26,46,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,0.2); }
-.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.cross { width: 28px; height: 28px; position: relative; }
-.cross::before, .cross::after { content:''; position: absolute; background: var(--gold); border-radius: 2px; }
-.cross::before { width: 4px; height: 100%; left: 50%; transform: translateX(-50%); }
-.cross::after { width: 100%; height: 4px; top: 30%; transform: translateY(-50%); }
-.nav-logo span { font-family: 'Playfair Display', serif; font-size: 20px; color: white; font-weight: 600; }
-.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
-.nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.2s; }
-.nav-links a:hover, .nav-links a.active { color: var(--gold); }
-.nav-cta { background: var(--gold) !important; color: var(--deep) !important; padding: 9px 22px; border-radius: 6px; font-weight: 700 !important; color: var(--deep); }
-.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
-.hamburger span { width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; display: block; }
+    nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(26,26,46,0.97);backdrop-filter:blur(12px);padding:0 2rem}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600}
+    .cross-icon{width:28px;height:28px;position:relative;flex-shrink:0}
+    .cross-icon::before,.cross-icon::after{content:'';position:absolute;background:var(--gold);border-radius:1px}
+    .cross-icon::before{width:4px;height:28px;left:12px;top:0}
+    .cross-icon::after{width:20px;height:4px;left:4px;top:8px}
+    .nav-links{display:flex;list-style:none;gap:4px;align-items:center}
+    .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.9rem;font-weight:400;padding:8px 14px;border-radius:6px;transition:all 0.3s}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-cta{background:var(--gold)!important;color:var(--deep)!important;font-weight:500!important;padding:8px 20px!important}
+    .nav-cta:hover{background:#b8943d!important}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{width:24px;height:2px;background:#fff;border-radius:2px}
 
-/* PAGE HERO (inner pages) */
-.page-hero { padding: 160px 60px 80px; background: linear-gradient(135deg, var(--deep) 0%, var(--navy) 100%); position: relative; overflow: hidden; }
-.page-hero::before { content:''; position: absolute; inset: 0; background-image: var(--hero-img, none); background-size: cover; background-position: center; filter: brightness(0.18); }
-.page-hero-content { position: relative; max-width: 700px; }
-.eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
-.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 64px); color: white; line-height: 1.15; margin-bottom: 20px; }
-.page-hero p { color: rgba(255,255,255,0.7); font-size: 17px; line-height: 1.7; max-width: 520px; }
-.breadcrumb { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
-.breadcrumb a { color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: color 0.2s; }
-.breadcrumb a:hover { color: var(--gold); }
-.breadcrumb span { color: rgba(255,255,255,0.3); font-size: 13px; }
+    .btn-primary{display:inline-block;background:var(--gold);color:var(--deep);padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;border:none;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif}
+    .btn-primary:hover{background:#b8943d;transform:translateY(-1px)}
+    .btn-outline{display:inline-block;border:2px solid #fff;color:#fff;padding:12px 30px;border-radius:8px;font-weight:500;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-outline:hover{background:rgba(255,255,255,0.1)}
+    .btn-secondary{display:inline-block;background:var(--deep);color:#fff;padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-secondary:hover{background:var(--navy)}
 
-/* TYPOGRAPHY */
-.sec-eye { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
-.sec-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); color: var(--deep); line-height: 1.2; margin-bottom: 18px; }
-.sec-title.light { color: white; }
-.sec-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 560px; }
-.sec-sub.light { color: rgba(255,255,255,0.65); }
-.text-center { text-align: center; }
-.text-center .sec-sub { margin: 0 auto; }
+    section{padding:80px 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-header h2{font-size:2.25rem;margin-bottom:12px}
+    .section-header p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+    .section-label{font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
 
-/* BUTTONS */
-.btn-primary { background: var(--gold); color: var(--deep); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 20px rgba(201,168,76,0.35); transition: transform 0.2s, box-shadow 0.2s; display: inline-block; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
-.btn-secondary { background: var(--deep); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; display: inline-block; }
-.btn-secondary:hover { background: #2a2a4e; }
-.btn-outline { border: 2px solid rgba(255,255,255,0.5); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: border-color 0.2s; display: inline-block; }
-.btn-outline:hover { border-color: var(--gold); }
-.btn-outline-dark { border: 2px solid var(--deep); color: var(--deep); padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; display: inline-block; }
-.btn-outline-dark:hover { background: var(--deep); color: white; }
-.btn-sm { background: var(--deep); color: white; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; display: inline-block; }
-.btn-sm:hover { background: var(--gold); color: var(--deep); }
-.btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .card{background:#fff;border-radius:14px;box-shadow:0 2px 20px rgba(0,0,0,0.06);overflow:hidden;transition:transform 0.3s,box-shadow 0.3s}
+    .card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+    .card img{width:100%;height:220px;object-fit:cover}
+    .card-body{padding:24px}
+    .card-body h3{font-size:1.25rem;margin-bottom:8px}
+    .card-body p{color:var(--muted);font-size:0.95rem;line-height:1.6}
 
-/* CARDS */
-.img-card { border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
-.img-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(0,0,0,0.13); }
-.img-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
-.img-card .card-body { padding: 24px; }
-.img-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 8px; }
-.img-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.img-card .card-tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 8px; display: block; }
+    .scripture-banner{background:var(--deep);color:#fff;text-align:center;padding:60px 2rem}
+    .scripture-banner blockquote{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;max-width:800px;margin:0 auto 12px;line-height:1.6}
+    .scripture-banner cite{color:var(--gold);font-style:normal;font-size:1rem}
 
-/* SECTION WRAPPERS */
-.section { padding: 90px 60px; }
-.section.dark { background: var(--deep); }
-.section.navy { background: var(--navy); }
-.section.cream { background: var(--cream); }
-.section.white { background: white; }
-.container { max-width: 1100px; margin: 0 auto; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    footer{background:var(--deep);color:rgba(255,255,255,0.7);padding:60px 2rem 30px}
+    .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px}
+    .footer-brand p{font-size:0.9rem;line-height:1.7;margin:16px 0 20px}
+    footer h4{color:#fff;font-size:1rem;margin-bottom:16px;font-family:'Inter',sans-serif;font-weight:600}
+    footer ul{list-style:none}
+    footer ul li{margin-bottom:10px}
+    footer ul a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;transition:color 0.3s}
+    footer ul a:hover{color:var(--gold)}
+    .social-links{display:flex;gap:12px;margin-top:8px}
+    .social-links a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;transition:all 0.3s}
+    .social-links a:hover{border-color:var(--gold);color:var(--gold)}
+    .footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.85rem}
 
-/* QUOTE BLOCK */
-.quote-block { border-left: 4px solid var(--gold); padding-left: 24px; margin: 28px 0; }
-.quote-block p { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); font-style: italic; line-height: 1.6; }
-.quote-block cite { font-size: 13px; color: var(--gold); font-style: normal; font-weight: 600; letter-spacing: 1px; margin-top: 8px; display: block; }
+    @media(max-width:768px){
+      .hamburger{display:flex}
+      .nav-links{display:none;position:absolute;top:72px;left:0;width:100%;background:rgba(26,26,46,0.98);flex-direction:column;padding:20px;gap:4px}
+      .nav-links a{padding:12px 16px;width:100%}
+      .footer-grid{grid-template-columns:1fr;gap:30px}
+      .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+    }
 
-/* SCRIPTURE BANNER */
-.scripture-banner { position: relative; padding: 100px 60px; text-align: center; overflow: hidden; }
-.scripture-banner .sb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-attachment: fixed; filter: brightness(0.18); }
-.scripture-banner .sb-content { position: relative; max-width: 800px; margin: 0 auto; }
-.scripture-banner .verse { font-family: 'Playfair Display', serif; font-size: clamp(22px, 3.5vw, 42px); color: white; line-height: 1.4; margin-bottom: 18px; font-style: italic; }
-.scripture-banner .ref { color: var(--gold); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+    .hero{position:relative;height:100vh;min-height:640px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:var(--deep)}
+    .hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2351722/pexels-photo-2351722.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;opacity:0.35}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,26,46,0.4) 0%,rgba(26,26,46,0.7) 100%)}
+    .hero-content{position:relative;z-index:2;max-width:800px;padding:0 2rem}
+    .hero-content .section-label{color:var(--gold);margin-bottom:16px}
+    .hero-content h1{color:#fff;font-size:3.5rem;line-height:1.2;margin-bottom:20px}
+    .hero-content p{color:rgba(255,255,255,0.85);font-size:1.15rem;max-width:560px;margin:0 auto 32px;font-weight:300}
+    .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 
-/* FOOTER */
-footer { background: var(--deep); color: rgba(255,255,255,0.6); padding: 70px 60px 36px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
-.footer-brand .logo-text { font-family: 'Playfair Display', serif; font-size: 20px; color: white; margin-bottom: 14px; display: block; }
-.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 260px; }
-.footer-col h5 { color: white; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-.footer-col a:hover { color: var(--gold); }
-.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
-.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-.social-links { display: flex; gap: 12px; }
-.social-links a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: all 0.2s; }
-.social-links a:hover { border-color: var(--gold); color: var(--gold); }
+    .service-strip{background:var(--navy);padding:0;overflow:hidden}
+    .service-strip-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+    .service-item{padding:28px 24px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);color:#fff}
+    .service-item:last-child{border-right:none}
+    .service-item .time{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:4px}
+    .service-item .label{font-size:0.85rem;color:rgba(255,255,255,0.7);font-weight:300}
 
-/* DIVIDER */
-.gold-divider { width: 50px; height: 3px; background: var(--gold); margin: 20px 0; border-radius: 2px; }
-.gold-divider.center { margin: 20px auto; }
+    .welcome{background:#fff}
+    .welcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .welcome-img{border-radius:14px;overflow:hidden;position:relative}
+    .welcome-img img{width:100%;height:480px;object-fit:cover}
+    .welcome-text .section-label{text-align:left}
+    .welcome-text h2{font-size:2.25rem;margin-bottom:16px}
+    .welcome-text p{color:var(--muted);margin-bottom:20px;font-size:1rem;line-height:1.7}
+    .quote-block{background:var(--cream);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 10px 10px 0;margin:24px 0}
+    .quote-block p{font-family:'Playfair Display',serif;font-style:italic;color:var(--deep);font-size:1.05rem}
+    .quote-block cite{color:var(--gold);font-style:normal;font-size:0.9rem;margin-top:8px;display:block}
 
-/* STATS ROW */
-.stats-row { display: flex; gap: 0; }
-.stat-item { flex: 1; text-align: center; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.08); }
-.stat-item:last-child { border-right: none; }
-.stat-num { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--gold); font-weight: 700; line-height: 1; margin-bottom: 8px; }
-.stat-label { color: rgba(255,255,255,0.6); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+    .ministries-home{background:var(--cream)}
+    .ministry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .ministry-card{position:relative;border-radius:14px;overflow:hidden;height:340px;cursor:pointer}
+    .ministry-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s}
+    .ministry-card:hover img{transform:scale(1.05)}
+    .ministry-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(26,26,46,0.85) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:28px}
+    .ministry-card-overlay h3{color:#fff;font-size:1.4rem;margin-bottom:6px}
+    .ministry-card-overlay p{color:rgba(255,255,255,0.8);font-size:0.9rem}
 
-/* TEAM CARD */
-.team-card { text-align: center; }
-.team-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 18px; }
-.team-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 4px; }
-.team-card .role { color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.team-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .events-home{background:#fff}
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  nav { padding: 16px 24px; }
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .section { padding: 60px 24px; }
-  .page-hero { padding: 120px 24px 60px; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 28px; }
-  .stats-row { flex-wrap: wrap; }
-  .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
-  footer { padding: 50px 24px 30px; }
-}
+    .give-home{background:var(--cream)}
+    .fund-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .fund-card{background:#fff;border-radius:14px;padding:32px;text-align:center;box-shadow:0 2px 20px rgba(0,0,0,0.06);transition:transform 0.3s}
+    .fund-card:hover{transform:translateY(-4px)}
+    .fund-icon{width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem}
+    .fund-card h3{font-size:1.2rem;margin-bottom:8px}
+    .fund-card p{color:var(--muted);font-size:0.9rem;margin-bottom:20px}
 
+    .gallery{background:#fff}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .gallery-grid img{width:100%;height:220px;object-fit:cover;border-radius:8px;transition:opacity 0.3s}
+    .gallery-grid img:hover{opacity:0.85}
 
-.hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.hero-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/1006121/pexels-photo-1006121.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;filter:brightness(0.3);}
-.hero-content{position:relative;text-align:center;max-width:820px;padding:0 24px;}
-.hero-eye{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;font-weight:600;}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(40px,7vw,78px);color:white;line-height:1.1;margin-bottom:26px;font-weight:700;}
-.hero h1 em{font-style:normal;color:var(--gold);}
-.hero-desc{font-size:18px;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:44px;max-width:540px;margin-left:auto;margin-right:auto;}
-.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.45);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
-.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);animation:sl 2s ease-in-out infinite;}
-@keyframes sl{0%,100%{opacity:1}50%{opacity:0.3}}
-.service-strip{background:var(--deep);display:flex;}
-.si{flex:1;padding:26px 20px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);transition:background 0.2s;}
-.si:last-child{border-right:none;}
-.si:hover{background:rgba(201,168,76,0.08);}
-.si .icon{font-size:20px;margin-bottom:7px;}
-.si .day{color:var(--gold);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px;}
-.si .time{color:white;font-size:16px;font-weight:600;font-family:'Playfair Display',serif;}
-.si .label{color:rgba(255,255,255,0.45);font-size:12px;margin-top:2px;}
-.welcome-wrap{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto;padding:100px 60px;}
-.wi{position:relative;}
-.wi img{width:100%;height:500px;object-fit:cover;border-radius:16px;display:block;}
-.badge{position:absolute;bottom:-22px;right:-22px;background:var(--gold);color:var(--deep);width:115px;height:115px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;text-align:center;font-size:12px;line-height:1.3;box-shadow:0 8px 30px rgba(201,168,76,0.4);}
-.badge strong{font-family:'Playfair Display',serif;font-size:26px;display:block;}
-.wt p{color:var(--muted);line-height:1.8;margin-bottom:14px;font-size:16px;}
-.pastor-sig{display:flex;align-items:center;gap:14px;margin-top:32px;}
-.pastor-sig img{width:52px;height:52px;border-radius:50%;object-fit:cover;}
-.pastor-name{font-weight:700;color:var(--deep);font-size:14px;}
-.pastor-role{color:var(--gold);font-size:11px;letter-spacing:1px;text-transform:uppercase;}
-.ministry-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
-.mc{border-radius:12px;overflow:hidden;position:relative;height:340px;cursor:pointer;transition:transform 0.3s;}
-.mc:hover{transform:translateY(-6px);}
-.mc img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
-.mc:hover img{transform:scale(1.06);}
-.ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,26,46,0.95) 0%,rgba(26,26,46,0.1) 65%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:26px;}
-.ov .tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:7px;}
-.ov h3{font-family:'Playfair Display',serif;color:white;font-size:21px;margin-bottom:7px;}
-.ov p{color:rgba(255,255,255,0.65);font-size:13px;line-height:1.5;}
-.events-list,.ev-full-list{display:flex;flex-direction:column;gap:16px;}
-.er,.erow{display:grid;grid-template-columns:80px 1fr auto;gap:24px;align-items:center;padding:24px 28px;background:white;border-radius:12px;box-shadow:0 2px 18px rgba(0,0,0,0.06);border-left:4px solid transparent;transition:border-color 0.2s,transform 0.2s;}
-.er:hover,.erow:hover{border-left-color:var(--gold);transform:translateX(4px);}
-.ed,.edate{text-align:center;background:var(--cream);border-radius:10px;padding:10px 6px;}
-.ed .em,.edate .em{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
-.ed .eday,.edate .eday{font-family:'Playfair Display',serif;font-size:32px;color:var(--deep);line-height:1;font-weight:700;}
-.ei h4,.einfo h4{font-size:16px;color:var(--deep);font-weight:700;margin-bottom:5px;}
-.ei p,.einfo p{color:var(--muted);font-size:13px;}
-.give-cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:48px;}
-.gc{background:rgba(255,255,255,0.06);border:1px solid rgba(201,168,76,0.25);border-radius:12px;padding:34px 36px;text-align:center;min-width:190px;transition:background 0.2s;}
-.gc:hover{background:rgba(201,168,76,0.1);}
-.gc .gi{font-size:32px;margin-bottom:11px;}
-.gc h4{color:white;font-size:17px;margin-bottom:5px;font-family:'Playfair Display',serif;}
-.gc p{color:rgba(255,255,255,0.5);font-size:13px;}
-.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
-.gal-grid img{width:100%;height:250px;object-fit:cover;transition:filter 0.3s;display:block;}
-.gal-grid img:hover{filter:brightness(0.75);}
-@media(max-width:900px){.welcome-wrap{grid-template-columns:1fr;padding:60px 24px;}.ministry-cards{grid-template-columns:1fr;}.service-strip{flex-direction:column;}.gal-grid{grid-template-columns:repeat(2,1fr);}.er,.erow{grid-template-columns:70px 1fr;}.er>div:last-child,.erow>div:last-child{grid-column:span 2;}}
-
+    @media(max-width:1024px){
+      .service-strip-inner{grid-template-columns:repeat(2,1fr)}
+      .ministry-grid{grid-template-columns:repeat(2,1fr)}
+      .fund-grid{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .hero-content h1{font-size:2.25rem}
+      .service-strip-inner{grid-template-columns:1fr}
+      .welcome-grid{grid-template-columns:1fr;gap:32px}
+      .welcome-img img{height:320px}
+      .ministry-grid{grid-template-columns:1fr}
+      .fund-grid{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid img{height:160px}
+    }
   </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="nav-logo"><div class="cross"></div><span>Grace Community</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
-  </ul>
-  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'"><span></span><span></span><span></span></button>
-</nav>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <span class="hero-eye">Welcome Home</span>
-    <h1>A Place to <em>Belong,</em><br>Believe &amp; Become</h1>
-    <p class="hero-desc">Join thousands of families growing in faith, community, and purpose every Sunday. You don't have to have it all together — just come as you are.</p>
-    <div class="btns" style="justify-content:center">
-      <a href="visit.html" class="btn-primary">Plan Your Visit</a>
-      <a href="media.html" class="btn-outline">Watch Online →</a>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="section-label">Welcome to Grace Community Church</div>
+      <h1>A Place to Belong, Believe &amp; Become</h1>
+      <p>Join a Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith.</p>
+      <div class="hero-btns">
+        <a href="visit.html" class="btn-primary">Plan Your Visit</a>
+        <a href="#services" class="btn-outline">Service Times</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="service-strip" id="services">
+    <div class="service-strip-inner">
+      <div class="service-item">
+        <div class="time">Sunday 8:00 AM</div>
+        <div class="label">Traditional Worship</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Sunday 10:30 AM</div>
+        <div class="label">Contemporary Worship</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Wednesday 6:30 PM</div>
+        <div class="label">Bible Study</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Sunday 9:15 AM</div>
+        <div class="label">Kids Ministry</div>
+      </div>
     </div>
   </div>
-  <div class="scroll-hint"><div class="scroll-line"></div>Scroll</div>
-</section>
 
-<div class="service-strip">
-  <div class="si"><div class="icon">☀️</div><div class="day">Sunday</div><div class="time">8:00 AM</div><div class="label">Traditional Service</div></div>
-  <div class="si"><div class="icon">✝️</div><div class="day">Sunday</div><div class="time">10:30 AM</div><div class="label">Contemporary Service</div></div>
-  <div class="si"><div class="icon">🌙</div><div class="day">Wednesday</div><div class="time">6:30 PM</div><div class="label">Midweek Bible Study</div></div>
-  <div class="si"><div class="icon">👨‍👩‍👧</div><div class="day">Sunday</div><div class="time">9:15 AM</div><div class="label">Kids &amp; Youth</div></div>
-</div>
+  <section class="welcome">
+    <div class="container">
+      <div class="welcome-grid">
+        <div class="welcome-img">
+          <img src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Pastor welcome">
+        </div>
+        <div class="welcome-text">
+          <div class="section-label">Welcome Home</div>
+          <h2>A Word from Our Pastor</h2>
+          <p>At Grace Community Church, we believe that every person has a purpose and a place. Whether you're a lifelong believer or just beginning to explore faith, you'll find a warm and welcoming community here.</p>
+          <p>We are committed to authentic worship, biblical teaching, and caring for one another as we walk through life together.</p>
+          <div class="quote-block">
+            <p>"For where two or three gather in my name, there am I with them."</p>
+            <cite>— Matthew 18:20</cite>
+          </div>
+          <a href="about.html" class="btn-secondary">Our Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="welcome-wrap">
-  <div class="wi">
-    <img src="https://images.pexels.com/photos/8468459/pexels-photo-8468459.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Pastor speaking">
-    <div class="badge"><strong>25+</strong>Years of<br>Ministry</div>
-  </div>
-  <div class="wt">
-    <span class="sec-eye">Our Story</span>
-    <h2 class="sec-title">A Church That Feels Like Family</h2>
-    <div class="quote-block"><p>"For where two or three gather in my name, there am I with them."</p><cite>— Matthew 18:20</cite></div>
-    <p>Founded in 1999 in the heart of Grand Rapids, Grace Community Church has been a beacon of hope, healing, and transformation for over two decades.</p>
-    <p>Whether you're exploring faith for the first time or looking to deepen your walk with God, there is a place for you here.</p>
-    <div style="margin-top:28px;display:flex;gap:14px;flex-wrap:wrap;">
-      <a href="about.html" class="btn-primary">Our Story</a>
-      <a href="visit.html" class="btn-outline-dark">Plan a Visit</a>
+  <section class="ministries-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Get Involved</div>
+        <h2>Ministries That Transform</h2>
+        <p>Discover meaningful ways to connect, serve, and grow in your faith journey.</p>
+      </div>
+      <div class="ministry-grid">
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship">
+          <div class="ministry-card-overlay">
+            <h3>Worship Ministry</h3>
+            <p>Lifting hearts through music and praise</p>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Youth">
+          <div class="ministry-card-overlay">
+            <h3>Youth Ministry</h3>
+            <p>Building the next generation of leaders</p>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outreach">
+          <div class="ministry-card-overlay">
+            <h3>Outreach Ministry</h3>
+            <p>Serving our neighbors with compassion</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="pastor-sig">
-      <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Pastor">
-      <div><div class="pastor-name">Pastor David Mercer</div><div class="pastor-role">Senior Pastor</div></div>
-    </div>
-  </div>
-</div>
+  </section>
 
-<div class="section dark">
-  <div class="container">
-    <div class="text-center" style="margin-bottom:50px;">
-      <span class="sec-eye">Get Involved</span>
-      <h2 class="sec-title light">Ministries For Every Season of Life</h2>
-      <p class="sec-sub light">From children to seniors, there's a community waiting to walk alongside you.</p>
-    </div>
-    <div class="ministry-cards">
-      <div class="mc"><img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Worship"><div class="ov"><div class="tag">Worship</div><h3>Praise &amp; Worship</h3><p>Spirit-led music and contemporary worship encounters.</p></div></div>
-      <div class="mc"><img src="https://images.pexels.com/photos/1448735/pexels-photo-1448735.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Youth"><div class="ov"><div class="tag">Youth</div><h3>Next Generation</h3><p>A vibrant community for teens and young adults.</p></div></div>
-      <div class="mc"><img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Outreach"><div class="ov"><div class="tag">Outreach</div><h3>Community Outreach</h3><p>Serving Grand Rapids through food drives and mentoring.</p></div></div>
-    </div>
-    <div class="text-center" style="margin-top:44px;"><a href="ministries.html" class="btn-primary">View All Ministries</a></div>
+  <div class="scripture-banner">
+    <blockquote>"Come to me, all you who are weary and burdened, and I will give you rest."</blockquote>
+    <cite>— Matthew 11:28</cite>
   </div>
-</div>
 
-<div class="scripture-banner">
-  <div class="sb-bg" style="background-image:url('https://images.pexels.com/photos/5206038/pexels-photo-5206038.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
-  <div class="sb-content"><p class="verse">"Come to me, all you who are weary and burdened, and I will give you rest."</p><p class="ref">— Matthew 11:28, NIV</p></div>
-</div>
-
-<div class="section white">
-  <div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px;">
-      <div><span class="sec-eye">Calendar</span><h2 class="sec-title">Upcoming Events</h2></div>
-      <a href="events.html" style="color:var(--gold);font-weight:600;text-decoration:none;font-size:14px;">View All Events →</a>
+  <section class="events-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">What's Happening</div>
+        <h2>Upcoming Events</h2>
+        <p>Stay connected with everything happening at Grace Community.</p>
+      </div>
+      <!-- cms:events_list -->
+      <div class="events-list" data-cms-block="events_list">{{cms:events_list}}</div>
+      <!-- /cms:events_list -->
     </div>
-    <!-- cms:events_list -->
-    <div class="events-list" data-cms-block="events_list">{{cms:events_list}}</div>
-    <!-- /cms:events_list -->
-  </div>
-</div>
+  </section>
 
-<div class="section" style="background:linear-gradient(135deg,var(--deep) 0%,var(--navy) 100%);text-align:center;">
-  <div class="container">
-    <span class="sec-eye">Generosity</span>
-    <h2 class="sec-title light">Give &amp; Make a Difference</h2>
-    <p class="sec-sub light" style="margin:0 auto 36px;">Your generosity fuels our mission — locally in Grand Rapids and around the world.</p>
-    <div class="btns" style="justify-content:center;">
-      <a href="give.html" class="btn-primary">Give Online</a>
-      <a href="give.html" class="btn-outline">Learn About Tithing</a>
+  <section class="give-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Generosity</div>
+        <h2>Give Generously</h2>
+        <p>Your generosity makes our ministry possible and changes lives in our community and beyond.</p>
+      </div>
+      <div class="fund-grid">
+        <div class="fund-card">
+          <div class="fund-icon">✝</div>
+          <h3>Tithes &amp; Offerings</h3>
+          <p>Support the ongoing ministry and operations of our church family.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+        <div class="fund-card">
+          <div class="fund-icon">🏗</div>
+          <h3>Building Fund</h3>
+          <p>Help us expand our facilities to reach more people for Christ.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+        <div class="fund-card">
+          <div class="fund-icon">🌍</div>
+          <h3>Missions Fund</h3>
+          <p>Support our local and global mission partners sharing the gospel.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+      </div>
     </div>
-    <div class="give-cards">
-      <div class="gc"><div class="gi">🙏</div><h4>Tithes &amp; Offerings</h4><p>Support the local church and weekly ministry</p></div>
-      <div class="gc"><div class="gi">🌍</div><h4>Missions Fund</h4><p>Reaching unreached communities worldwide</p></div>
-      <div class="gc"><div class="gi">🏫</div><h4>Building Fund</h4><p>Expanding facilities to serve more families</p></div>
-    </div>
-  </div>
-</div>
+  </section>
 
-<div class="section cream" style="padding-bottom:0;padding-left:0;padding-right:0;">
-  <div class="text-center" style="padding:0 60px 48px;"><span class="sec-eye">Life at Grace</span><h2 class="sec-title">See What We're Up To</h2></div>
-  <div class="gal-grid">
-    <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
-    <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship">
-    <img src="https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Music">
-    <img src="https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
-    <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving">
-    <img src="https://images.pexels.com/photos/1616113/pexels-photo-1616113.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth">
-    <img src="https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
-    <img src="https://images.pexels.com/photos/9555700/pexels-photo-9555700.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
-  </div>
-</div>
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand"><span class="logo-text">✝ Grace Community Church</span><p>A place of hope, healing, and community in Grand Rapids, Michigan. You are always welcome here.</p></div>
-    <div class="footer-col"><h5>Navigate</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="ministries.html">Ministries</a></li><li><a href="events.html">Events</a></li><li><a href="media.html">Media</a></li></ul></div>
-    <div class="footer-col"><h5>Ministries</h5><ul><li><a href="ministries.html">Children's Ministry</a></li><li><a href="ministries.html">Youth Group</a></li><li><a href="ministries.html">Men's Ministry</a></li><li><a href="ministries.html">Women's Ministry</a></li><li><a href="ministries.html">Small Groups</a></li></ul></div>
-    <div class="footer-col"><h5>Contact</h5><ul><li><a href="visit.html">📍 123 Faith Ave, Grand Rapids, MI</a></li><li><a href="tel:6165550199">📞 (616) 555-0199</a></li><li><a href="mailto:info@gracegr.church">✉️ info@gracegr.church</a></li><li><a href="visit.html">Sun 8AM · 10:30AM</a></li></ul></div>
-  </div>
-  <hr class="footer-divider">
-  <div class="footer-bottom"><span>© 2025 Grace Community Church. All rights reserved.</span><div class="social-links"><a href="#" title="Facebook">f</a><a href="#" title="Instagram">ig</a><a href="#" title="YouTube">▶</a><a href="#" title="Podcast">♪</a></div></div>
-</footer>
+  <section class="gallery">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Life at Grace</div>
+        <h2>Our Community</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Church life">
+        <img src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
+        <img src="https://images.pexels.com/photos/8815895/pexels-photo-8815895.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
+        <img src="https://images.pexels.com/photos/3807755/pexels-photo-3807755.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
+        <img src="https://images.pexels.com/photos/3184613/pexels-photo-3184613.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
+        <img src="https://images.pexels.com/photos/6994982/pexels-photo-6994982.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Service">
+        <img src="https://images.pexels.com/photos/3280130/pexels-photo-3280130.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship night">
+        <img src="https://images.pexels.com/photos/3408353/pexels-photo-3408353.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Nature retreat">
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+        <p>A Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith and serve others.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="YouTube">yt</a>
+          <a href="#" aria-label="Twitter">x</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="give.html">Give</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ministries</h4>
+        <ul>
+          <li><a href="ministries.html">Worship</a></li>
+          <li><a href="ministries.html">Youth</a></li>
+          <li><a href="ministries.html">Children</a></li>
+          <li><a href="ministries.html">Small Groups</a></li>
+          <li><a href="ministries.html">Outreach</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul>
+          <li>1234 Grace Avenue</li>
+          <li>Springfield, IL 62701</li>
+          <li><a href="tel:+15551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@gracecommunity.org">hello@gracecommunity.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Grace Community Church. All rights reserved.</span>
+      <span><a href="#" style="color:rgba(255,255,255,0.5)">Privacy Policy</a></span>
+    </div>
+  </footer>
+
 </body>
 </html>

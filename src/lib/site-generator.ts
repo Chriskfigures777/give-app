@@ -14,9 +14,11 @@ import {
   renderSermonArchive,
   renderEventsGrid,
   renderEventsList,
+  renderTeamMembers,
   resolveCmsBinding,
   APP_URL,
 } from "@/lib/website-cms-render";
+import { injectFormsScript } from "@/lib/site-forms";
 
 export type PageDef = { id?: string; name: string; component?: string };
 
@@ -127,13 +129,15 @@ export async function injectCmsContent(
     { data: worshipRecordings },
     { data: sermonArchive },
     { data: events },
+    { data: teamMembers },
   ] = await Promise.all([
     supabase.from("website_cms_featured_sermon").select("*").eq("organization_id", orgId).maybeSingle(),
     supabase.from("website_cms_podcast_config").select("*").eq("organization_id", orgId).maybeSingle(),
     supabase.from("website_cms_podcast_episodes").select("*").eq("organization_id", orgId).order("episode_number", { ascending: false }),
     supabase.from("website_cms_worship_recordings").select("*").eq("organization_id", orgId).order("sort_order", { ascending: true }),
     supabase.from("website_cms_sermon_archive").select("id, title, tag, image_url, published_at, duration_minutes, speaker_name, video_url, audio_url").eq("organization_id", orgId).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
-    supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date().toISOString()).order("start_at", { ascending: true }),
+    supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()).order("start_at", { ascending: true }),
+    supabase.from("organization_team_members").select("name, role, bio, image_url, sort_order").eq("organization_id", orgId).order("sort_order", { ascending: true }),
   ]);
 
   const [featuredResolved, ...archiveResolved] = await Promise.all([
@@ -192,6 +196,12 @@ export async function injectCmsContent(
     out = out.replace(
       "{{cms:sermon_archive}}",
       `<div data-cms-block="sermon_archive">${renderSermonArchive(sermonArchiveEnriched as Parameters<typeof renderSermonArchive>[0])}</div>`
+    );
+  }
+  if (out.includes("{{cms:team_members}}")) {
+    out = out.replace(
+      "{{cms:team_members}}",
+      `<div data-cms-block="team_members">${renderTeamMembers(teamMembers ?? [])}</div>`
     );
   }
 
@@ -337,7 +347,7 @@ s.onload=function(){
   try{
     var c=window.supabase.createClient(SU,SK);
     var tables=["website_cms_featured_sermon","website_cms_podcast_config","website_cms_podcast_episodes",
-     "website_cms_worship_recordings","website_cms_sermon_archive","events"];
+     "website_cms_worship_recordings","website_cms_sermon_archive","events","organization_team_members"];
     tables.forEach(function(t){
       c.channel("cms_"+t+"_"+OID)
         .on("postgres_changes",{event:"*",schema:"public",table:t,filter:"organization_id=eq."+OID},
@@ -398,6 +408,9 @@ export async function generateStaticSite(
         html += realtimeScript;
       }
     }
+
+    // Inject forms script so template <form> elements post to the platform
+    html = injectFormsScript(html, orgSlug);
 
     result.push({ slug, name: page.name, html });
   }

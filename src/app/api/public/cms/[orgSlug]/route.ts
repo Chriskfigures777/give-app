@@ -15,6 +15,7 @@ import {
   renderSermonArchive,
   renderEventsGrid,
   renderEventsList,
+  renderTeamMembers,
   resolveCmsBinding,
   APP_URL,
 } from "@/lib/website-cms-render";
@@ -55,6 +56,7 @@ export async function GET(
     { data: worshipRecordings },
     { data: sermonArchive },
     { data: events },
+    { data: teamMembers },
   ] = await Promise.all([
     supabase.from("website_cms_featured_sermon").select("*").eq("organization_id", orgId).maybeSingle(),
     supabase.from("website_cms_podcast_config").select("*").eq("organization_id", orgId).maybeSingle(),
@@ -68,8 +70,12 @@ export async function GET(
     supabase.from("events")
       .select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category")
       .eq("organization_id", orgId)
-      .gte("start_at", new Date().toISOString())
+      .gte("start_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString())
       .order("start_at", { ascending: true }),
+    supabase.from("organization_team_members")
+      .select("name, role, bio, image_url, sort_order")
+      .eq("organization_id", orgId)
+      .order("sort_order", { ascending: true }),
   ]);
 
   const [featuredResolved, ...archiveResolved] = await Promise.all([
@@ -109,6 +115,7 @@ export async function GET(
     ),
     events_grid: renderEventsGrid(events ?? [], APP_URL),
     events_list: renderEventsList(events ?? [], APP_URL),
+    team_members: renderTeamMembers(teamMembers ?? []),
   };
 
   const cmsData = {

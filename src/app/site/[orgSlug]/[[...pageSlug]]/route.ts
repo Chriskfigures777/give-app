@@ -8,9 +8,12 @@ import {
   renderSermonArchive,
   renderEventsGrid,
   renderEventsList,
+  renderTeamMembers,
+  injectGiveEmbedFallback,
   resolveCmsBinding,
   APP_URL,
 } from "@/lib/website-cms-render";
+import { injectFormsScript } from "@/lib/site-forms";
 
 export const dynamic = "force-dynamic";
 
@@ -31,29 +34,26 @@ const PAGE_ID_TO_SLUG: Record<string, string> = {
   "page-visit": "visit",
 };
 
-function rewriteLinks(html: string, basePath: string): string {
+function rewriteLinks(html: string, basePath: string, previewProjectId?: string | null): string {
   if (!basePath.endsWith("/")) basePath += "/";
   const baseNoTrail = basePath.replace(/\/$/, "");
+  const qs = previewProjectId ? `?preview=${encodeURIComponent(previewProjectId)}` : "";
   let out = html;
 
-  // href="about.html" or href='/about.html' -> href="/site/org/about" (no .html)
   out = out.replace(/href=["']([a-z0-9-]+)\.html["']/gi, (_, slug) => {
     const path = slug === "index" ? baseNoTrail : `${basePath}${slug}`;
-    return `href="${path}"`;
+    return `href="${path}${qs}"`;
   });
-  // href="/about.html" (absolute from root) -> clean path
   out = out.replace(/href=["']\/([a-z0-9-]+)\.html["']/gi, (_, slug) => {
     const path = slug === "index" ? baseNoTrail : `${basePath}${slug}`;
-    return `href="${path}"`;
+    return `href="${path}${qs}"`;
   });
-  // href="page://page-about" or href='page://page-about' -> href="/site/org/about"
   out = out.replace(/href=["']page:\/\/page-([a-z0-9-]+)["']/gi, (_, idPart) => {
     const pageId = `page-${idPart}`;
     const slug = PAGE_ID_TO_SLUG[pageId] ?? idPart;
     const path = slug ? `${basePath}${slug}` : baseNoTrail;
-    return `href="${path}"`;
+    return `href="${path}${qs}"`;
   });
-  // href="#" with link text -> proper path (for templates that use #)
   const textToSlug: Record<string, string> = {
     Home: "",
     About: "about",
@@ -67,8 +67,22 @@ function rewriteLinks(html: string, basePath: string): string {
   for (const [text, slug] of Object.entries(textToSlug)) {
     const path = slug ? `${basePath}${slug}` : baseNoTrail;
     const re = new RegExp(`<a href="#"([^>]*)>\\s*${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*</a>`, "gi");
-    out = out.replace(re, `<a href="${path}"$1>${text}</a>`);
+    out = out.replace(re, `<a href="${path}${qs}"$1>${text}</a>`);
   }
+
+  // Catch links already in /site/orgSlug/slug format (from a previous save cycle)
+  // and ensure they carry the preview param when in preview mode
+  if (qs) {
+    const escaped = baseNoTrail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    out = out.replace(
+      new RegExp(`href="(${escaped}(?:/[a-z0-9-]*)?)"`, "gi"),
+      (match, path) => {
+        if (match.includes("?preview=")) return match;
+        return `href="${path}${qs}"`;
+      }
+    );
+  }
+
   return out;
 }
 
@@ -83,6 +97,13 @@ async function injectCmsContent(
     html.includes("<!-- cms:");
   if (!needsCms) return html;
 
+  const { data: orgRow } = await supabase
+    .from("organizations")
+    .select("slug")
+    .eq("id", orgId)
+    .single();
+  const orgSlug = (orgRow as { slug: string } | null)?.slug ?? "";
+
   const [
     { data: featuredSermon },
     { data: podcastConfig },
@@ -90,13 +111,15 @@ async function injectCmsContent(
     { data: worshipRecordings },
     { data: sermonArchive },
     { data: events },
+    { data: teamMembers },
   ] = await Promise.all([
     supabase.from("website_cms_featured_sermon").select("*").eq("organization_id", orgId).maybeSingle(),
     supabase.from("website_cms_podcast_config").select("*").eq("organization_id", orgId).maybeSingle(),
     supabase.from("website_cms_podcast_episodes").select("*").eq("organization_id", orgId).order("episode_number", { ascending: false }),
     supabase.from("website_cms_worship_recordings").select("*").eq("organization_id", orgId).order("sort_order", { ascending: true }),
     supabase.from("website_cms_sermon_archive").select("id, title, tag, image_url, published_at, duration_minutes, speaker_name, video_url, audio_url").eq("organization_id", orgId).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
-    supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date().toISOString()).order("start_at", { ascending: true }),
+    supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()).order("start_at", { ascending: true }),
+    supabase.from("organization_team_members").select("name, role, bio, image_url, sort_order").eq("organization_id", orgId).order("sort_order", { ascending: true }),
   ]);
 
   // Resolve video URLs (Pexels, YouTube, direct MP4) for hover preview
@@ -167,6 +190,14 @@ async function injectCmsContent(
       renderSermonArchive(sermonArchiveEnriched)
     );
   }
+  if (out.includes("{{cms:team_members}}")) {
+    out = out.replace(
+      "{{cms:team_members}}",
+      renderTeamMembers(teamMembers ?? [])
+    );
+  }
+  // Give embed is handled by injectGiveEmbedFallback (with theme detection)
+  // after injectCmsContent returns — do NOT replace here without a theme.
 
   if (out.includes("data-cms-binding")) {
     const cmsData = {
@@ -351,11 +382,17 @@ export async function GET(
     }
   }
 
-  html = rewriteLinks(html, basePath);
+  html = rewriteLinks(html, basePath, previewProjectId);
 
   // Inject CMS content for org (events, media)
   const orgId = (org as { id: string }).id;
   html = await injectCmsContent(html, orgId, supabase);
+
+  // Replace static give forms with working embedded donate iframe
+  html = injectGiveEmbedFallback(html, orgSlug);
+
+  // Inject forms script so template <form> elements post to the platform
+  html = injectFormsScript(html, orgSlug);
 
   return new NextResponse(html, {
     headers: {

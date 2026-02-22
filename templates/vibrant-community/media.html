@@ -1,151 +1,246 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="vibrant-community">
 <head>
-  <title>Media — Your Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--primary:#10B981;--dark:#1F2937;--light:#F9FAFB;--text:#111827;--muted:#6B7280}
-body{font-family:'Roboto',sans-serif;background:var(--light);color:var(--text);line-height:1.6}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);padding:20px 60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.1)}
-.logo{font-family:'Poppins',sans-serif;font-size:24px;font-weight:700;color:white;text-decoration:none}
-nav ul{display:flex;gap:32px;list-style:none}
-nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;transition:color 0.2s}
-nav a:hover,.nav a.active{color:var(--primary)}
-.nav-cta{background:var(--primary)!important;color:white!important;padding:10px 24px;border-radius:6px}
-.hero{min-height:70vh;background:linear-gradient(135deg,var(--dark),#1F2937dd);display:flex;align-items:center;padding:140px 60px 80px;text-align:center}
-.hero h1{font-family:'Poppins',sans-serif;font-size:clamp(48px,6vw,80px);font-weight:700;color:white;margin-bottom:24px}
-.hero p{font-size:20px;color:rgba(255,255,255,0.85);max-width:720px;margin:0 auto 36px}
-.content{max-width:1200px;margin:80px auto;padding:0 60px}
-.btn-primary{background:var(--primary);color:white;padding:14px 32px;border-radius:6px;font-weight:700;font-size:15px;text-decoration:none;display:inline-block}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Media - Community Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#059669;--accent-light:#6EE7B7;--accent-hover:#047857;--dark:#064E3B;--bg:#ECFDF5;--card:#FFFFFF;--text:#065F46;--muted:#047857;--radius:14px;--shadow:0 4px 24px rgba(6,78,59,.10);--orange:#F97316;--orange-light:#FED7AA}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Fredoka',sans-serif;line-height:1.25}
 
-.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin:60px 0}
-.ev-card{background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:all 0.3s}
-.ev-card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
-.ev-card img{width:100%;height:200px;object-fit:cover}
-.ev-body{padding:24px}
-.ev-meta{display:flex;gap:12px;margin-bottom:12px}
-.ev-date-pill{font-size:11px;font-weight:700;color:white;background:var(--primary);padding:4px 10px;border-radius:4px;text-transform:uppercase}
-.ev-cat{font-size:11px;color:var(--muted);text-transform:uppercase}
-.ev-body h3{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:10px}
-.ev-body p{color:var(--muted);font-size:14px}
-.ev-detail{color:var(--muted);font-size:13px;margin-top:6px}
-.events-list,.ev-full-list{display:flex;flex-direction:column;gap:14px}
-.erow{display:grid;grid-template-columns:90px 1fr auto;gap:24px;align-items:center;padding:24px;background:white;border-radius:8px;border-left:4px solid var(--primary);box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.2s}
-.erow:hover{transform:translateX(6px)}
-.edate{text-align:center;background:var(--dark);border-radius:6px;padding:12px 8px;color:white}
-.edate .em{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary)}
-.edate .eday{font-family:'Poppins',sans-serif;font-size:32px;line-height:1;font-weight:700}
-.einfo h4{font-size:16px;color:var(--dark);font-weight:700;margin-bottom:6px}
-.einfo p{color:var(--muted);font-size:14px}
-.btn-sm{background:var(--primary);color:white;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none}
-.sermon-featured{background:var(--dark);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:60px 0}
-.sf-thumb{position:relative;min-height:400px}
-.sf-thumb img{width:100%;height:100%;object-fit:cover}
-.sf-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3)}
-.play-btn{width:72px;height:72px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:24px;color:white;transition:all 0.2s}
-.sf-info{padding:48px;display:flex;flex-direction:column;justify-content:center}
-.sf-info .tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:12px}
-.sf-info h2{font-family:'Poppins',sans-serif;font-size:32px;color:white;margin-bottom:16px}
-.sf-info p{color:rgba(255,255,255,0.75);font-size:16px;margin-bottom:20px}
-.sf-meta{color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:24px}
-.sermon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px;margin:48px 0}
-.sc{background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
-.sc:hover{transform:translateY(-6px)}
-.sc-thumb{position:relative}
-.sc-thumb img{width:100%;height:200px;object-fit:cover}
-.sc-play{position:absolute;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s}
-.sc:hover .sc-play{opacity:1}
-.sc-play-sm{width:48px;height:48px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:18px;color:white}
-.sc-body{padding:24px}
-.sc-body .stag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:8px}
-.sc-body h4{font-size:17px;font-weight:700;color:var(--dark);margin-bottom:8px}
-.sc-body .smeta{color:var(--muted);font-size:13px}
-.sec-title{font-family:'Poppins',sans-serif;font-size:clamp(28px,3vw,40px);font-weight:700;color:var(--dark);margin-bottom:16px}
-.sec-title.light{color:white}
-.gold-divider{width:60px;height:4px;background:var(--primary);margin:20px 0}
-.podcast-row{display:flex;flex-direction:column;gap:0;margin-top:32px}
-.pod-ep{display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;padding:20px 0;border-bottom:1px solid rgba(0,0,0,0.06)}
-.pod-ep:last-child{border-bottom:none}
-.ep-num{width:48px;height:48px;border-radius:10px;background:rgba(var(--primary-rgb),0.12);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary);font-size:16px}
-.ep-info h5{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px}
-.ep-info p{color:var(--muted);font-size:13px}
-.ep-dur{color:var(--muted);font-size:13px;font-weight:600}
-.btn-outline{border:2px solid var(--dark);color:var(--dark);padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;display:inline-block}
-.btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--accent-light)}
+#navLinks{display:flex;gap:28px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:1px;transition:color .25s;position:relative}
+#navLinks a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2.5px;background:var(--accent-light);border-radius:2px;transition:width .25s}
+#navLinks a:hover{color:#fff}
+#navLinks a:hover::after,#navLinks a.active::after{width:100%}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 26px;border-radius:50px;font-weight:600!important;font-size:14px;transition:all .3s;letter-spacing:0}
+.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px)}
+.nav-cta::after{display:none!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+.hamburger span{display:block;width:24px;height:2.5px;background:#fff;border-radius:2px}
 
-footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:60px 60px 32px}
-.footer-grid{max-width:1200px;margin:0 auto 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
-.footer-brand{font-family:'Poppins',sans-serif;font-size:24px;font-weight:700;color:white;margin-bottom:12px}
-.footer-desc{font-size:14px;line-height:1.7;max-width:300px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:14px;transition:color 0.2s}
-.footer-col a:hover{color:var(--primary)}
-.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);text-align:center;font-size:13px;opacity:0.7}
-@media(max-width:900px){nav{padding:18px 24px}nav ul{display:none}.hero{padding:120px 24px 60px}.content{padding:0 24px}.ev-grid{grid-template-columns:1fr}.sermon-grid{grid-template-columns:1fr}.sermon-featured{grid-template-columns:1fr}.erow{grid-template-columns:70px 1fr}.erow>div:last-child{grid-column:span 2}footer{padding:50px 24px 24px}.footer-grid{grid-template-columns:1fr;gap:28px}}
+.hero{position:relative;min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8613312/pexels-photo-8613312.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.9),rgba(5,150,105,0.65))}
+.hero-content{position:relative;z-index:2;max-width:800px;padding:0 32px}
+.badge{display:inline-block;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);font-weight:600;margin-bottom:20px;background:rgba(110,231,183,0.15);padding:8px 22px;border-radius:50px;border:1px solid rgba(110,231,183,0.3)}
+.hero h1{font-family:'Fredoka',sans-serif;font-size:clamp(40px,6vw,76px);font-weight:700;color:#fff;line-height:1.08;margin-bottom:24px}
+.hero h1 em{font-style:normal;color:var(--accent-light)}
+.hero p{font-size:20px;color:rgba(255,255,255,.85);max-width:640px;margin:0 auto;line-height:1.7}
+
+.btn{display:inline-block;padding:16px 36px;border-radius:var(--radius);font-weight:600;font-size:15px;text-decoration:none;transition:all .3s;font-family:'Poppins',sans-serif;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(5,150,105,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(5,150,105,.4)}
+
+section{padding:100px 48px}
+.container{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .badge{color:var(--accent);border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.08)}
+.section-header h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,50px);font-weight:700;color:var(--dark);line-height:1.15;margin-top:12px}
+.section-header h2 em{font-style:normal;color:var(--accent)}
+.section-header p{font-size:18px;color:var(--muted);max-width:600px;margin:16px auto 0}
+
+.featured-section{background:#fff}
+.archive-section{background:var(--bg)}
+.podcast-section{background:#fff}
+.worship-section{background:var(--dark)}
+.worship-section .section-header h2{color:#fff}
+.worship-section .section-header p{color:rgba(255,255,255,.6)}
+.worship-section .section-header .badge{color:var(--accent-light);border-color:rgba(110,231,183,.3);background:rgba(110,231,183,.1)}
+
+.gallery-section{background:var(--bg)}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.gallery-grid img{width:100%;height:250px;object-fit:cover;border-radius:var(--radius);transition:transform .3s}
+.gallery-grid img:hover{transform:scale(1.03)}
+.gallery-grid img:first-child{grid-column:span 2;grid-row:span 2;height:100%}
+
+footer{background:var(--dark);color:rgba(255,255,255,.8);padding:80px 48px 40px;border-top:4px solid var(--accent)}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:16px}
+.footer-brand span{color:var(--accent-light)}
+.footer-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.55);max-width:300px;margin-bottom:20px}
+.social-links{display:flex;gap:12px}
+.social-links a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .2s;border:1px solid rgba(255,255,255,.08)}
+.social-links a:hover{background:var(--accent);border-color:var(--accent)}
+.social-links svg{width:16px;height:16px;fill:#fff}
+.footer-col h5{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);margin-bottom:20px;font-family:'Poppins',sans-serif}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,.4)}
+.footer-bottom a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
+.footer-bottom a:hover{color:#fff}
+
+@media(max-width:1024px){
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid img:first-child{grid-column:span 2;height:300px}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  nav{padding:0 24px}
+  #navLinks{display:none;position:absolute;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-top:1px solid rgba(255,255,255,.08)}
+  .hamburger{display:flex}
+  section{padding:64px 24px}
+  .hero h1{font-size:clamp(32px,9vw,52px)}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .gallery-grid img:first-child{grid-column:span 1;grid-row:span 1;height:250px}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
 </style>
 </head>
 <body>
+
 <nav>
-  <a href="index.html" class="logo">Your Church</a>
-  <ul>
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-  </ul>
-  <a href="visit.html" class="nav-cta">Visit Us</a>
+  <a href="index.html" class="logo">Community <span>Church</span></a>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
 </nav>
 
-<div class="hero">
-  <div style="max-width:900px;margin:0 auto">
-    <h1>Sermons & Media</h1>
-    <p>Watch past sermons and grow in your faith</p>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="badge">Resources</span>
+    <h1>Watch &amp; <em>Listen</em></h1>
+    <p>Catch up on sermons, explore our podcast, and experience worship from wherever you are.</p>
   </div>
-</div>
-<div class="content">
-  <div data-cms-block="featured_sermon">{{cms:featured_sermon}}</div>
-  <div data-cms-block="sermon_archive">{{cms:sermon_archive}}</div>
-  <div data-cms-block="podcast">{{cms:podcast}}</div>
-  <div data-cms-block="worship_recordings">{{cms:worship_recordings}}</div>
-</div>
+</section>
+
+<section class="featured-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Latest Message</span>
+      <h2>Featured <em>Sermon</em></h2>
+      <p>Watch or listen to this week's message from Community Church.</p>
+    </div>
+    <!-- cms:featured_sermon -->
+    <div data-cms-block="featured_sermon">{{cms:featured_sermon}}</div>
+    <!-- /cms:featured_sermon -->
+  </div>
+</section>
+
+<section class="archive-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Archive</span>
+      <h2>Sermon <em>Archive</em></h2>
+      <p>Browse past messages and find the encouragement you need today.</p>
+    </div>
+    <!-- cms:sermon_archive -->
+    <div data-cms-block="sermon_archive">{{cms:sermon_archive}}</div>
+    <!-- /cms:sermon_archive -->
+  </div>
+</section>
+
+<section class="podcast-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Podcast</span>
+      <h2>Community Church <em>Podcast</em></h2>
+      <p>Subscribe and listen on your favorite podcast platform.</p>
+    </div>
+    <!-- cms:podcast -->
+    <div data-cms-block="podcast">{{cms:podcast}}</div>
+    <!-- /cms:podcast -->
+  </div>
+</section>
+
+<section class="worship-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Worship</span>
+      <h2>Worship <em>Recordings</em></h2>
+      <p>Revisit your favorite worship moments and experience God's presence through music.</p>
+    </div>
+    <!-- cms:worship_recordings -->
+    <div data-cms-block="worship_recordings">{{cms:worship_recordings}}</div>
+    <!-- /cms:worship_recordings -->
+  </div>
+</section>
+
+<section class="gallery-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Gallery</span>
+      <h2>Life at <em>Community Church</em></h2>
+    </div>
+    <div class="gallery-grid">
+      <img src="https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship service" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship" loading="lazy">
+      <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Events" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Together" loading="lazy">
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div class="footer-grid">
-    <div>
-      <div class="footer-brand">Your Church</div>
-      <p class="footer-desc">A community of faith, hope, and love.</p>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Community <span>Church</span></div>
+        <p class="footer-desc">A vibrant, welcoming community where faith comes alive and everyone has a place to belong.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Visit</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="visit.html">Plan a Visit</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="ministries.html">Ministries</a></li>
+          <li><a href="#">Small Groups</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="give.html">Give</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="#">123 Community Lane</a></li>
+          <li><a href="#">Springfield, ST 12345</a></li>
+          <li><a href="tel:5551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@communitychurch.org">hello@communitychurch.org</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="ministries.html">Ministries</a></li>
-        <li><a href="events.html">Events</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Resources</h5>
-      <ul>
-        <li><a href="media.html">Media</a></li>
-        <li><a href="give.html">Give</a></li>
-        <li><a href="visit.html">Visit</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Connect</h5>
-      <ul>
-        <li><a href="visit.html">Contact</a></li>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Community Church. All rights reserved.</p>
+      <div><a href="#">Privacy Policy</a> &nbsp;|&nbsp; <a href="#">Terms</a></div>
     </div>
   </div>
-  <div class="footer-bottom">© 2025 Your Church. All rights reserved.</div>
 </footer>
+
 </body>
 </html>

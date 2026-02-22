@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="organic-natural">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Give — Your Church | Organic Natural</title>
+<title>Give — Creation Church</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Variables ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --accent:#65A30D;
-  --accent-hover:#84CC16;
-  --dark:#365314;
+  --accent-dark:#4D7C0F;
+  --dark:#1A2E05;
   --bg:#F7FEE7;
+  --card:#FFFFFF;
   --text:#1A2E05;
-  --muted:#4D7C0F;
-  --white:#ffffff;
+  --muted:#3F6212;
+  --border:#D9F99D;
   --radius:16px;
 }
 html{scroll-behavior:smooth}
@@ -26,228 +26,178 @@ h1,h2,h3,h4,h5,h6{font-family:'Merriweather',serif}
 a{text-decoration:none;color:inherit}
 img{display:block;max-width:100%}
 
-/* ── NAV ── */
-.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;transition:box-shadow 0.3s}
-.nav-logo{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:0.5px}
+/* NAV */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;transition:box-shadow .3s}
+.site-nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.nav-logo{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:.5px}
 .nav-logo span{color:var(--accent)}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-links a{color:rgba(255,255,255,0.8);font-size:14px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s}
-.nav-links a:hover,.nav-links a.active{color:var(--accent)}
-.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:24px;font-weight:700!important;font-size:13px!important;letter-spacing:1px;transition:all 0.2s}
-.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(101,163,13,0.4)}
+#navLinks{display:flex;align-items:center;gap:32px}
+#navLinks a{color:rgba(255,255,255,.8);font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:color .2s}
+#navLinks a:hover,#navLinks a.active{color:var(--accent)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:var(--radius)!important;font-weight:600!important;font-size:13px!important;letter-spacing:1px;transition:all .2s}
+.nav-cta:hover{background:var(--accent-dark)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(101,163,13,.4)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
 .hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;display:block}
 
-/* ── PAGE HERO ── */
+/* PAGE HERO */
 .page-hero{padding:160px 60px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
-.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;filter:brightness(0.15)}
-.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(54,83,20,0.8),rgba(26,46,5,0.6))}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;filter:brightness(.15)}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(26,46,5,.8),rgba(26,46,5,.6))}
 .page-hero-content{position:relative;z-index:2;max-width:700px}
 .breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
-.breadcrumb a{color:rgba(255,255,255,0.5);font-size:13px;transition:color 0.2s}
+.breadcrumb a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
 .breadcrumb a:hover{color:var(--accent)}
-.breadcrumb span{color:rgba(255,255,255,0.3);font-size:13px}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.breadcrumb span{color:rgba(255,255,255,.3);font-size:13px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 .eyebrow::before,.eyebrow::after{content:'';width:28px;height:1px;background:var(--accent)}
 .leaf-divider{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:16px 0 24px}
-.leaf-divider.center{margin-left:auto;margin-right:auto}
+.leaf-divider.center{margin:16px auto 24px}
 .page-hero h1{font-size:clamp(36px,5vw,60px);color:#fff;line-height:1.15;margin-bottom:20px;font-weight:700}
-.page-hero p{color:rgba(255,255,255,0.75);font-size:17px;line-height:1.7;max-width:520px}
+.page-hero p{color:rgba(255,255,255,.75);font-size:17px;line-height:1.7;max-width:520px}
 
-/* ── SECTIONS ── */
+/* SECTIONS */
 .section{padding:100px 60px}
 .container{max-width:1200px;margin:0 auto}
-.sec-title-block{text-align:center;margin-bottom:56px}
-.sec-title-block .sec-eye{display:block;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;font-family:'Quicksand',sans-serif}
-.sec-title-block h2{font-size:clamp(28px,4vw,46px);color:var(--dark);margin-bottom:16px;font-weight:700}
-.sec-title-block h2.light{color:#fff}
-.sec-title-block p{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto;line-height:1.7}
-.sec-title-block p.light{color:rgba(255,255,255,0.7)}
+.sec-eye{font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+.sec-title{font-size:clamp(30px,4vw,46px);color:var(--dark);line-height:1.2;margin-bottom:16px;font-weight:700}
+.sec-title.light{color:#fff}
+.sec-sub{color:var(--muted);font-size:16px;line-height:1.7;max-width:560px}
+.sec-sub.light{color:rgba(255,255,255,.7)}
 .text-center{text-align:center}
+.text-center .sec-sub{margin:0 auto}
 
-/* ── GIVE FORM SPLIT ── */
-.give-split{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:600px}
-.give-img{position:relative;overflow:hidden}
-.give-img img{width:100%;height:100%;object-fit:cover;min-height:600px}
-.give-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(54,83,20,0.2),rgba(101,163,13,0.1))}
-.give-form-wrap{background:var(--dark);padding:60px 48px;display:flex;flex-direction:column;justify-content:center}
-.give-form-wrap h2{font-size:32px;color:#fff;margin-bottom:8px}
-.give-form-wrap .sub{color:rgba(255,255,255,0.6);font-size:15px;margin-bottom:32px}
-.fund-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
-.fund-tab{padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);transition:all 0.2s;font-family:'Quicksand',sans-serif}
-.fund-tab:hover{border-color:var(--accent);color:#fff}
-.fund-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.amount-btn{padding:16px 8px;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;transition:all 0.2s;font-family:'Quicksand',sans-serif}
-.amount-btn:hover{border-color:var(--accent);background:rgba(101,163,13,0.12)}
-.amount-btn.active{background:var(--accent);border-color:var(--accent)}
-.custom-input{width:100%;padding:16px 20px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;font-size:18px;font-family:'Quicksand',sans-serif;font-weight:600;margin-bottom:20px;outline:none;transition:border-color 0.2s}
-.custom-input::placeholder{color:rgba(255,255,255,0.3)}
-.custom-input:focus{border-color:var(--accent)}
-.give-btn{width:100%;padding:18px;border-radius:28px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:'Quicksand',sans-serif;letter-spacing:0.5px;transition:all 0.25s;box-shadow:0 6px 20px rgba(101,163,13,0.35)}
-.give-btn:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 28px rgba(101,163,13,0.45)}
-.secure-note{display:flex;align-items:center;gap:8px;margin-top:16px;color:rgba(255,255,255,0.35);font-size:12px}
-.secure-note svg{flex-shrink:0}
+/* BUTTONS */
+.btn-primary{background:var(--accent);color:#fff;padding:16px 36px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:all .25s;display:inline-block;letter-spacing:.5px;border:none;cursor:pointer;font-family:'Quicksand',sans-serif}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(101,163,13,.4)}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;padding:14px 34px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:all .25s;display:inline-block}
+.btn-outline:hover{background:rgba(255,255,255,.1);border-color:#fff}
 
-/* ── IMPACT GRID ── */
+/* GIVE EMBED CONTAINER */
+.give-embed-section{background:linear-gradient(135deg,rgba(26,46,5,.95),rgba(63,98,18,.9)),url('https://images.pexels.com/photos/957024/forest-trees-perspective-bright-957024.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;padding:80px 60px}
+.give-embed-wrap{max-width:800px;margin:0 auto;background:rgba(255,255,255,.06);border:2px solid rgba(101,163,13,.3);border-radius:var(--radius);padding:48px;text-align:center}
+.give-embed-wrap h2{color:#fff;font-size:32px;margin-bottom:8px}
+.give-embed-wrap .sub{color:rgba(255,255,255,.6);font-size:15px;margin-bottom:32px}
+
+/* IMPACT GRID */
 .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.impact-card{background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:40px 28px;text-align:center;transition:transform 0.3s,border-color 0.3s}
+.impact-card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:40px 28px;text-align:center;transition:transform .3s,border-color .3s}
 .impact-card:hover{transform:translateY(-4px);border-color:var(--accent)}
 .impact-icon{font-size:36px;margin-bottom:12px}
 .impact-num{font-family:'Merriweather',serif;font-size:40px;font-weight:700;color:#fff;margin-bottom:6px}
-.impact-label{color:rgba(255,255,255,0.65);font-size:14px;font-weight:600}
+.impact-label{color:rgba(255,255,255,.65);font-size:14px;font-weight:600}
 
-/* ── TESTIMONIALS ── */
+/* TESTIMONIALS */
 .testimonial-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
-.testimonial-card{background:var(--white);border-radius:var(--radius);padding:40px;box-shadow:0 4px 24px rgba(54,83,20,0.08);transition:transform 0.3s}
+.testimonial-card{background:var(--card);border-radius:var(--radius);padding:40px;box-shadow:0 4px 24px rgba(26,46,5,.08);border:1px solid var(--border);transition:transform .3s}
 .testimonial-card:hover{transform:translateY(-4px)}
 .testimonial-card .quote{font-family:'Merriweather',serif;font-size:16px;font-style:italic;color:var(--text);line-height:1.8;margin-bottom:24px;border-left:3px solid var(--accent);padding-left:20px}
 .testimonial-author{display:flex;align-items:center;gap:14px}
 .testimonial-author img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
-.testimonial-author .name{font-family:'Merriweather',serif;font-weight:700;color:var(--dark);font-size:15px}
+.testimonial-author .name{font-weight:700;color:var(--dark);font-size:15px}
 .testimonial-author .role{font-size:13px;color:var(--muted);font-weight:600}
 
-/* ── WAYS TO GIVE ── */
+/* WAYS TO GIVE */
 .ways-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.way-card{background:var(--white);border-radius:var(--radius);padding:36px 28px;text-align:center;box-shadow:0 4px 20px rgba(54,83,20,0.06);transition:transform 0.3s,box-shadow 0.3s}
-.way-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(54,83,20,0.12)}
-.way-icon{width:60px;height:60px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
-.way-card h3{font-family:'Merriweather',serif;font-size:18px;color:var(--dark);margin-bottom:8px}
+.way-card{background:var(--card);border-radius:var(--radius);padding:36px 28px;text-align:center;box-shadow:0 4px 20px rgba(26,46,5,.06);border:1px solid var(--border);transition:transform .3s,box-shadow .3s}
+.way-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(26,46,5,.12)}
+.way-icon{width:60px;height:60px;border-radius:50%;background:rgba(101,163,13,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
+.way-card h3{font-size:18px;color:var(--dark);margin-bottom:8px}
 .way-card p{font-size:14px;color:var(--muted);line-height:1.6}
 
-/* ── SCRIPTURE BANNER ── */
-.scripture-banner{min-height:400px;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 40px;background:linear-gradient(rgba(26,46,5,0.7),rgba(54,83,20,0.75)),url('https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed}
+/* SCRIPTURE BANNER */
+.scripture-banner{min-height:400px;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 40px;background:linear-gradient(rgba(26,46,5,.75),rgba(26,46,5,.7)),url('https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed}
 .scripture-inner{max-width:800px}
 .scripture-inner .quote-mark{font-size:64px;color:var(--accent);font-family:'Merriweather',serif;line-height:1;margin-bottom:12px}
-.scripture-inner blockquote{font-family:'Merriweather',serif;font-size:clamp(22px,3vw,36px);color:#fff;line-height:1.5;font-weight:300;font-style:italic;margin-bottom:24px}
-.scripture-inner cite{font-style:normal;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
+.scripture-inner blockquote{font-family:'Merriweather',serif;font-size:clamp(22px,3vw,36px);color:#fff;line-height:1.5;font-weight:400;font-style:italic;margin-bottom:24px}
+.scripture-inner cite{font-style:normal;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
 
-/* ── CTA SECTION ── */
+/* CTA SECTION */
 .cta-section{text-align:center;background:var(--dark);padding:100px 60px}
 .cta-section h2{font-size:clamp(28px,4vw,46px);color:#fff;margin-bottom:16px}
-.cta-section p{color:rgba(255,255,255,0.7);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
-.btn-primary{background:var(--accent);color:#fff;padding:16px 36px;border-radius:28px;font-weight:700;font-size:15px;transition:all 0.25s;display:inline-block;letter-spacing:0.5px}
-.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(101,163,13,0.4)}
-.btn-outline{background:transparent;border:2px solid rgba(255,255,255,0.5);color:#fff;padding:14px 34px;border-radius:28px;font-weight:700;font-size:15px;transition:all 0.25s;display:inline-block}
-.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:#fff}
+.cta-section p{color:rgba(255,255,255,.7);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
 
-/* ── FOOTER ── */
-footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1200px;margin:0 auto 50px}
-.footer-brand .logo{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:14px}
+/* FOOTER */
+footer{background:var(--dark);color:rgba(255,255,255,.6);padding:80px 60px 40px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 50px}
+.footer-brand .logo{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:14px;display:block}
 .footer-brand .logo span{color:var(--accent)}
 .footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:'Quicksand',sans-serif}
+.footer-col h5{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:'Quicksand',sans-serif}
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:rgba(255,255,255,0.6);font-size:14px;transition:color 0.2s}
+.footer-col a{color:rgba(255,255,255,.6);font-size:14px;transition:color .2s}
 .footer-col a:hover{color:var(--accent)}
-.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.footer-bottom a{color:var(--accent);transition:color 0.2s}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent);transition:color .2s}
 .footer-bottom a:hover{color:#fff}
 
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media(max-width:900px){
   .site-nav{padding:0 24px}
-  .nav-links{display:none}
+  #navLinks{display:none;position:fixed;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-bottom:3px solid var(--accent);z-index:999}
   .hamburger{display:flex}
   .page-hero{padding:120px 24px 60px}
   .section{padding:60px 24px}
-  .give-split{grid-template-columns:1fr}
-  .give-img{min-height:300px}
-  .give-img img{min-height:300px}
-  .give-form-wrap{padding:40px 24px}
-  .amount-grid{grid-template-columns:repeat(2,1fr)}
+  .give-embed-section{padding:60px 24px}
+  .give-embed-wrap{padding:32px 20px}
   .impact-grid{grid-template-columns:1fr 1fr}
   .testimonial-grid{grid-template-columns:1fr}
   .ways-grid{grid-template-columns:1fr}
+  .scripture-banner{background-attachment:scroll;padding:60px 24px}
+  .cta-section{padding:70px 24px}
+  footer{padding:60px 24px 32px}
   .footer-grid{grid-template-columns:1fr;gap:32px}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
-  .scripture-banner{padding:60px 24px}
-  .cta-section{padding:70px 24px}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     1. FIXED NAV
-     ══════════════════════════════════════════════ -->
+<!-- NAV -->
 <nav class="site-nav">
-  <a href="index.html" class="nav-logo">Your <span>Church</span></a>
-  <div class="nav-links">
+  <a href="index.html" class="nav-logo">Creation <span>Church</span></a>
+  <div id="navLinks">
     <a href="about.html" ABOUT>About</a>
     <a href="ministries.html" MINISTRIES>Ministries</a>
     <a href="events.html" EVENTS>Events</a>
     <a href="media.html" MEDIA>Media</a>
-    <a href="give.html" class="active" GIVE>Give</a>
+    <a href="give.html" GIVE>Give</a>
     <a href="visit.html" class="nav-cta">Visit Us</a>
   </div>
-  <button class="hamburger" aria-label="Menu">
+  <button class="hamburger" aria-label="Menu" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- ══════════════════════════════════════════════
-     2. PAGE HERO
-     ══════════════════════════════════════════════ -->
+<!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="page-hero-overlay"></div>
   <div class="page-hero-content">
-    <div class="breadcrumb">
-      <a href="index.html">Home</a>
-      <span>›</span>
-      <span style="color:rgba(255,255,255,0.7)">Give</span>
-    </div>
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.7)">Give</span></div>
     <span class="eyebrow">Generosity</span>
     <div class="leaf-divider"></div>
-    <h1>Your Gift Changes Lives&nbsp;&amp;&nbsp;Communities</h1>
-    <p>Every act of generosity helps us reach more families, serve our community, and share the hope of the Gospel. Thank you for partnering with us in this mission.</p>
+    <h1>Plant a Seed</h1>
+    <p>Every act of generosity helps us reach more families, serve our community, and share the hope of the Gospel. Thank you for partnering with us.</p>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     3. GIVE FORM SPLIT
-     ══════════════════════════════════════════════ -->
-<section class="give-split">
-  <div class="give-img">
-    <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Hands in prayer and community">
-    <div class="give-img-overlay"></div>
-  </div>
-  <div class="give-form-wrap">
-    <h2>Make a Gift</h2>
-    <p class="sub">Choose a fund and amount to support our ministries.</p>
-    <div class="fund-tabs">
-      <button class="fund-tab active">Tithes</button>
-      <button class="fund-tab">Missions</button>
-      <button class="fund-tab">Building</button>
-      <button class="fund-tab">Benevolence</button>
-    </div>
-    <div class="amount-grid">
-      <button class="amount-btn">$25</button>
-      <button class="amount-btn active">$50</button>
-      <button class="amount-btn">$100</button>
-      <button class="amount-btn">$250</button>
-    </div>
-    <input type="text" class="custom-input" placeholder="$ Custom Amount">
-    <button class="give-btn">Give Now</button>
-    <div class="secure-note">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Secure &amp; encrypted · Powered by Stripe
-    </div>
+<!-- GIVE EMBED -->
+<section class="give-embed-section">
+  <div class="give-embed-wrap">
+    <h2>Give Online</h2>
+    <p class="sub">Your generous contribution makes an eternal difference.</p>
+    {{cms:give_embed}}
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     4. IMPACT SECTION
-     ══════════════════════════════════════════════ -->
+<!-- IMPACT -->
 <section class="section" style="background:var(--dark)">
   <div class="container">
-    <div class="sec-title-block">
+    <div class="text-center">
       <span class="sec-eye">Our Impact Together</span>
       <div class="leaf-divider center"></div>
-      <h2 class="light">See What Your Generosity Makes Possible</h2>
-      <p class="light">Through your faithful giving, we are making a difference locally and globally. Here's a snapshot of what God is doing through this church.</p>
+      <h2 class="sec-title light">See What Your Generosity Makes Possible</h2>
+      <p class="sec-sub light" style="margin:0 auto">Through your faithful giving, we are making a difference locally and globally.</p>
     </div>
     <div class="impact-grid">
       <div class="impact-card">
@@ -284,15 +234,14 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     5. TESTIMONIALS
-     ══════════════════════════════════════════════ -->
+<!-- TESTIMONIALS -->
 <section class="section" style="background:var(--bg)">
   <div class="container">
-    <div class="sec-title-block">
+    <div class="text-center">
       <span class="sec-eye">Stories of Generosity</span>
-      <h2>Why We Give</h2>
-      <p>Hear from members of our community about how giving has transformed their lives and deepened their faith.</p>
+      <h2 class="sec-title">Why We Give</h2>
+      <div class="leaf-divider center"></div>
+      <p class="sec-sub" style="margin:0 auto">Hear from members of our community about how giving has transformed their lives and deepened their faith.</p>
     </div>
     <div class="testimonial-grid">
       <div class="testimonial-card">
@@ -306,7 +255,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
         </div>
       </div>
       <div class="testimonial-card">
-        <p class="quote">I sponsor a child through the missions fund and got to visit the school we built last summer. Seeing those kids' faces and knowing our church made that happen — that's something money can't buy. Generosity connects us to God's heart.</p>
+        <p class="quote">I sponsor a child through the missions fund and got to visit the school we built last summer. Seeing those kids' faces and knowing our church made that happen — that's something money can't buy.</p>
         <div class="testimonial-author">
           <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120" alt="James Rodriguez">
           <div>
@@ -319,15 +268,14 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     6. WAYS TO GIVE
-     ══════════════════════════════════════════════ -->
-<section class="section" style="background:var(--white)">
+<!-- WAYS TO GIVE -->
+<section class="section" style="background:#fff">
   <div class="container">
-    <div class="sec-title-block">
+    <div class="text-center">
       <span class="sec-eye">Multiple Options</span>
-      <h2>Ways to Give</h2>
-      <p>We want to make it easy for you to be generous. Choose the method that works best for you.</p>
+      <h2 class="sec-title">Ways to Give</h2>
+      <div class="leaf-divider center"></div>
+      <p class="sec-sub" style="margin:0 auto">We want to make it easy for you to be generous. Choose the method that works best.</p>
     </div>
     <div class="ways-grid">
       <div class="way-card">
@@ -338,7 +286,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
       <div class="way-card">
         <div class="way-icon">✉️</div>
         <h3>Give by Mail</h3>
-        <p>Send a check made payable to Your Church at <strong>321 Meadow Lane, Your City, ST 12345</strong>.</p>
+        <p>Send a check made payable to Creation Church at <strong>321 Meadow Lane, Your City, ST 12345</strong>.</p>
       </div>
       <div class="way-card">
         <div class="way-icon">🏦</div>
@@ -364,9 +312,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     7. SCRIPTURE BANNER
-     ══════════════════════════════════════════════ -->
+<!-- SCRIPTURE BANNER -->
 <section class="scripture-banner">
   <div class="scripture-inner">
     <div class="quote-mark">"</div>
@@ -375,9 +321,7 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     8. CTA SECTION
-     ══════════════════════════════════════════════ -->
+<!-- CTA -->
 <section class="cta-section">
   <div class="container">
     <span class="sec-eye" style="color:var(--accent);display:block;margin-bottom:12px">Stewardship</span>
@@ -385,20 +329,18 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
     <h2>Questions About Giving?</h2>
     <p>Our stewardship team is here to help with tax receipts, recurring gifts, estate planning, or any questions about how your generosity makes an impact.</p>
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a href="mailto:giving@yourchurch.org" class="btn-primary">Contact Stewardship Team</a>
+      <a href="mailto:giving@creationchurch.org" class="btn-primary">Contact Stewardship Team</a>
       <a href="tel:+15555550123" class="btn-outline">Call (555) 555-0123</a>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     9. FOOTER
-     ══════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo">Your <span>Church</span></div>
-      <p>Growing together in faith, rooted in grace, and reaching out to our community with the love of Christ. All are welcome here.</p>
+      <span class="logo">Creation <span>Church</span></span>
+      <p>A faith community rooted in creation, growing in grace, and branching out with love. You're always welcome here.</p>
     </div>
     <div class="footer-col">
       <h5>Navigate</h5>
@@ -426,16 +368,22 @@ footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px
         <li><a href="#">321 Meadow Lane</a></li>
         <li><a href="#">Your City, ST 12345</a></li>
         <li><a href="tel:+15555550123">(555) 555-0123</a></li>
-        <li><a href="mailto:hello@yourchurch.org">hello@yourchurch.org</a></li>
-        <li><a href="#">Sun 9:00 &amp; 10:45 AM</a></li>
+        <li><a href="mailto:hello@creationchurch.org">hello@creationchurch.org</a></li>
+        <li><a href="#">Sun 9:00 &amp; 11:00 AM</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>&copy; 2025 Your Church. All rights reserved.</span>
+    <span>&copy; 2025 Creation Church. All rights reserved.</span>
     <a href="#">Powered by Stripe GIVE</a>
   </div>
 </footer>
 
+<script>
+document.addEventListener('scroll',function(){
+  var nav=document.querySelector('.site-nav');
+  if(window.scrollY>60){nav.classList.add('scrolled')}else{nav.classList.remove('scrolled')}
+});
+</script>
 </body>
 </html>

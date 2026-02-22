@@ -1,149 +1,230 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="urban-modern">
 <head>
-  <title>Events — Your Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--primary:#3B82F6;--dark:#1E293B;--light:#F8FAFC;--text:#0F172A;--muted:#64748B}
-body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.6}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);padding:20px 60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.1)}
-.logo{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:white;text-decoration:none}
-nav ul{display:flex;gap:32px;list-style:none}
-nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;transition:color 0.2s}
-nav a:hover,.nav a.active{color:var(--primary)}
-.nav-cta{background:var(--primary)!important;color:white!important;padding:10px 24px;border-radius:6px}
-.hero{min-height:70vh;background:linear-gradient(135deg,var(--dark),#1E293Bdd);display:flex;align-items:center;padding:140px 60px 80px;text-align:center}
-.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(48px,6vw,80px);font-weight:700;color:white;margin-bottom:24px}
-.hero p{font-size:20px;color:rgba(255,255,255,0.85);max-width:720px;margin:0 auto 36px}
-.content{max-width:1200px;margin:80px auto;padding:0 60px}
-.btn-primary{background:var(--primary);color:white;padding:14px 32px;border-radius:6px;font-weight:700;font-size:15px;text-decoration:none;display:inline-block}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Events — City Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6366F1;--accent-light:#818CF8;--accent-hover:#4F46E5;--dark:#18181B;--bg:#F4F4F5;--card:#FFFFFF;--text:#27272A;--muted:#71717A;--border:#E4E4E7;--accent-glow:rgba(99,102,241,.25)}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
 
-.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin:60px 0}
-.ev-card{background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:all 0.3s}
-.ev-card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+/* NAV */
+.urb-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,.06)}
+.urb-nav-logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.urb-nav-logo span{color:var(--accent)}
+.urb-nav-links{display:flex;align-items:center;gap:32px}
+.urb-nav-links a{color:rgba(255,255,255,.7);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.urb-nav-links a:hover,.urb-nav-links a.active{color:var(--accent)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:10px;font-weight:600!important;font-size:13px!important;letter-spacing:.5px;transition:all .2s}
+.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
+
+/* PAGE HERO */
+.page-hero{padding:160px 48px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2263436/pexels-photo-2263436.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,24,27,.7) 0%,rgba(24,24,27,.88) 100%)}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,.4);font-size:13px;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:rgba(255,255,255,.25);font-size:13px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.eyebrow::before,.eyebrow::after{content:'';width:28px;height:1px;background:var(--accent)}
+.accent-bar{width:48px;height:3px;background:var(--accent);border-radius:2px;margin:16px 0 24px}
+.accent-bar.center{margin-left:auto;margin-right:auto}
+.page-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,64px);color:#fff;line-height:1.1;margin-bottom:20px;font-weight:700;letter-spacing:-1.5px}
+.page-hero p{color:rgba(255,255,255,.7);font-size:17px;line-height:1.7;max-width:520px}
+
+/* SECTIONS */
+.section{padding:100px 48px}
+.container{max-width:1280px;margin:0 auto}
+.sec-eye{display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+
+/* FILTER */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;max-width:1280px;margin:0 auto 48px}
+.filter-btn{padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all .2s;font-family:'DM Sans',sans-serif}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* CMS Events */
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;max-width:1280px;margin:0 auto}
+.ev-card{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:all .3s;border:1px solid rgba(0,0,0,.04)}
+.ev-card:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,0,0,.1)}
 .ev-card img{width:100%;height:200px;object-fit:cover}
 .ev-body{padding:24px}
-.ev-meta{display:flex;gap:12px;margin-bottom:12px}
-.ev-date-pill{font-size:11px;font-weight:700;color:white;background:var(--primary);padding:4px 10px;border-radius:4px;text-transform:uppercase}
-.ev-cat{font-size:11px;color:var(--muted);text-transform:uppercase}
-.ev-body h3{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:10px}
-.ev-body p{color:var(--muted);font-size:14px}
-.ev-detail{color:var(--muted);font-size:13px;margin-top:6px}
-.events-list,.ev-full-list{display:flex;flex-direction:column;gap:14px}
-.erow{display:grid;grid-template-columns:90px 1fr auto;gap:24px;align-items:center;padding:24px;background:white;border-radius:8px;border-left:4px solid var(--primary);box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.2s}
-.erow:hover{transform:translateX(6px)}
-.edate{text-align:center;background:var(--dark);border-radius:6px;padding:12px 8px;color:white}
-.edate .em{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary)}
-.edate .eday{font-family:'Space Grotesk',sans-serif;font-size:32px;line-height:1;font-weight:700}
-.einfo h4{font-size:16px;color:var(--dark);font-weight:700;margin-bottom:6px}
-.einfo p{color:var(--muted);font-size:14px}
-.btn-sm{background:var(--primary);color:white;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none}
-.sermon-featured{background:var(--dark);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:60px 0}
-.sf-thumb{position:relative;min-height:400px}
-.sf-thumb img{width:100%;height:100%;object-fit:cover}
-.sf-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3)}
-.play-btn{width:72px;height:72px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:24px;color:white;transition:all 0.2s}
-.sf-info{padding:48px;display:flex;flex-direction:column;justify-content:center}
-.sf-info .tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:12px}
-.sf-info h2{font-family:'Space Grotesk',sans-serif;font-size:32px;color:white;margin-bottom:16px}
-.sf-info p{color:rgba(255,255,255,0.75);font-size:16px;margin-bottom:20px}
-.sf-meta{color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:24px}
-.sermon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px;margin:48px 0}
-.sc{background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
-.sc:hover{transform:translateY(-6px)}
-.sc-thumb{position:relative}
-.sc-thumb img{width:100%;height:200px;object-fit:cover}
-.sc-play{position:absolute;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s}
-.sc:hover .sc-play{opacity:1}
-.sc-play-sm{width:48px;height:48px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:18px;color:white}
-.sc-body{padding:24px}
-.sc-body .stag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:8px}
-.sc-body h4{font-size:17px;font-weight:700;color:var(--dark);margin-bottom:8px}
-.sc-body .smeta{color:var(--muted);font-size:13px}
-.sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3vw,40px);font-weight:700;color:var(--dark);margin-bottom:16px}
-.sec-title.light{color:white}
-.gold-divider{width:60px;height:4px;background:var(--primary);margin:20px 0}
-.podcast-row{display:flex;flex-direction:column;gap:0;margin-top:32px}
-.pod-ep{display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;padding:20px 0;border-bottom:1px solid rgba(0,0,0,0.06)}
-.pod-ep:last-child{border-bottom:none}
-.ep-num{width:48px;height:48px;border-radius:10px;background:rgba(var(--primary-rgb),0.12);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary);font-size:16px}
-.ep-info h5{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px}
-.ep-info p{color:var(--muted);font-size:13px}
-.ep-dur{color:var(--muted);font-size:13px;font-weight:600}
-.btn-outline{border:2px solid var(--dark);color:var(--dark);padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;display:inline-block}
-.btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+.ev-meta{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+.ev-date-pill{font-size:11px;font-weight:600;color:#fff;background:var(--accent);padding:4px 12px;border-radius:6px;letter-spacing:.5px}
+.ev-cat{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.ev-body h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--dark);margin-bottom:8px}
+.ev-body p{color:var(--muted);font-size:14px;line-height:1.6}
+.ev-detail{color:var(--muted);font-size:13px;margin-top:8px}
 
-footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:60px 60px 32px}
-.footer-grid{max-width:1200px;margin:0 auto 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
-.footer-brand{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:white;margin-bottom:12px}
-.footer-desc{font-size:14px;line-height:1.7;max-width:300px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
+.events-list{display:flex;flex-direction:column;gap:16px;max-width:1280px;margin:0 auto}
+.ev-full-list{display:flex;flex-direction:column;gap:12px}
+.erow{display:grid;grid-template-columns:90px 1fr auto;gap:24px;align-items:center;padding:24px 28px;background:var(--card);border-radius:14px;border-left:4px solid var(--accent);box-shadow:0 2px 12px rgba(0,0,0,.04);transition:all .25s}
+.erow:hover{transform:translateX(6px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.edate{text-align:center;background:var(--dark);border-radius:10px;padding:14px 10px;color:#fff}
+.edate .em{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.edate .eday{font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:1.1;font-weight:700}
+.einfo h4{font-family:'Space Grotesk',sans-serif;font-size:17px;color:var(--dark);font-weight:600;margin-bottom:5px}
+.einfo p{color:var(--muted);font-size:13px;line-height:1.5}
+.btn-sm{background:var(--accent);color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;display:inline-block;transition:all .2s;white-space:nowrap}
+.btn-sm:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 4px 16px var(--accent-glow)}
+
+/* CTA */
+.cta-section{text-align:center;background:var(--dark);padding:100px 48px;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:-200px;right:-200px;width:500px;height:500px;border-radius:50%;background:var(--accent-glow);filter:blur(120px);pointer-events:none}
+.cta-section h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:700;color:#fff;margin-bottom:16px;letter-spacing:-1px}
+.cta-section p{color:rgba(255,255,255,.5);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
+.btn-fill{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;font-size:15px;transition:all .2s}
+.btn-fill:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 6px 24px var(--accent-glow)}
+.btn-ghost-w{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:2px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;font-weight:600;font-size:15px;transition:all .2s;background:transparent}
+.btn-ghost-w:hover{border-color:var(--accent);color:var(--accent)}
+
+/* FOOTER */
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.5);padding:80px 48px 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1280px;margin:0 auto 50px}
+.footer-brand .logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:14px;letter-spacing:-.5px}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h5{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:'DM Sans',sans-serif}
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:14px;transition:color 0.2s}
-.footer-col a:hover{color:var(--primary)}
-.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);text-align:center;font-size:13px;opacity:0.7}
-@media(max-width:900px){nav{padding:18px 24px}nav ul{display:none}.hero{padding:120px 24px 60px}.content{padding:0 24px}.ev-grid{grid-template-columns:1fr}.sermon-grid{grid-template-columns:1fr}.sermon-featured{grid-template-columns:1fr}.erow{grid-template-columns:70px 1fr}.erow>div:last-child{grid-column:span 2}footer{padding:50px 24px 24px}.footer-grid{grid-template-columns:1fr;gap:28px}}
+.footer-col a{color:rgba(255,255,255,.5);font-size:14px;transition:color .2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{max-width:1280px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent);transition:color .2s}
+.footer-bottom a:hover{color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .urb-nav{padding:0 24px}
+  .urb-nav-links{display:none;position:fixed;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-bottom:1px solid rgba(255,255,255,.06);z-index:999}
+  .hamburger{display:flex}
+  .page-hero{padding:120px 24px 60px}
+  .section{padding:60px 24px}
+  .ev-grid{grid-template-columns:1fr}
+  .erow{grid-template-columns:72px 1fr}
+  .erow>*:last-child:nth-child(3){grid-column:1/-1;text-align:center}
+  .cta-section{padding:60px 24px}
+  footer{padding:50px 24px 24px}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+  .filter-bar{margin-left:24px;margin-right:24px}
+}
 </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="logo">Your Church</a>
-  <ul>
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-  </ul>
-  <a href="visit.html" class="nav-cta">Visit Us</a>
+
+<!-- NAV -->
+<nav class="urb-nav">
+  <a href="index.html" class="urb-nav-logo">City<span>Church</span></a>
+  <div class="urb-nav-links" id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
-<div class="hero">
-  <div style="max-width:900px;margin:0 auto">
-    <h1>Upcoming Events</h1>
-    <p>Join us for worship, fellowship, and community</p>
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.6)">Events</span></div>
+    <span class="eyebrow">Community Life</span>
+    <div class="accent-bar"></div>
+    <h1>What's On</h1>
+    <p>From worship nights and workshops to community service days and youth events — there's always something happening at City Church.</p>
   </div>
-</div>
-<div class="content">
-  <div data-cms-block="events_grid">{{cms:events_grid}}</div>
-  <div class="events-list" data-cms-block="events_list">{{cms:events_list}}</div>
-</div>
+</section>
+
+<!-- FILTER + EVENTS -->
+<section class="section" style="background:var(--bg)">
+  <div class="filter-bar">
+    <button class="filter-btn active">All Events</button>
+    <button class="filter-btn">Worship</button>
+    <button class="filter-btn">Community</button>
+    <button class="filter-btn">Youth</button>
+    <button class="filter-btn">Missions</button>
+    <button class="filter-btn">Classes</button>
+  </div>
+
+  <!-- cms:events_grid --><div data-cms-block="events_grid">{{cms:events_grid}}</div><!-- /cms:events_grid -->
+
+  <div style="margin-top:48px">
+    <!-- cms:events_list --><div data-cms-block="events_list">{{cms:events_list}}</div><!-- /cms:events_list -->
+  </div>
+</section>
+
+<!-- HOST CTA -->
+<section class="cta-section">
+  <div style="position:relative;z-index:2;max-width:640px;margin:0 auto">
+    <span class="sec-eye" style="display:block;margin-bottom:16px">Get Involved</span>
+    <div class="accent-bar center"></div>
+    <h2>Want to Host an Event?</h2>
+    <p>Have an idea for a gathering, workshop, or outreach event? We'd love to hear it. Our events team is ready to help you bring your vision to life.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="mailto:events@citychurch.org" class="btn-fill">Contact Events Team &rarr;</a>
+      <a href="visit.html" class="btn-ghost-w">Plan a Visit</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
   <div class="footer-grid">
-    <div>
-      <div class="footer-brand">Your Church</div>
-      <p class="footer-desc">A community of faith, hope, and love.</p>
+    <div class="footer-brand">
+      <div class="logo">City<span>Church</span></div>
+      <p>A Christ-centered, urban community rooted in faith, love, and service. Real people. Real faith. One city.</p>
     </div>
     <div class="footer-col">
       <h5>Navigate</h5>
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
+        <li><a href="about.html">About Us</a></li>
         <li><a href="ministries.html">Ministries</a></li>
         <li><a href="events.html">Events</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Resources</h5>
-      <ul>
         <li><a href="media.html">Media</a></li>
-        <li><a href="give.html">Give</a></li>
-        <li><a href="visit.html">Visit</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5>Connect</h5>
+      <h5>Get Involved</h5>
       <ul>
-        <li><a href="visit.html">Contact</a></li>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="#">Small Groups</a></li>
+        <li><a href="#">Volunteer</a></li>
+        <li><a href="#">Prayer Requests</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">200 Urban Way</a></li>
+        <li><a href="#">Metro City, ST 10001</a></li>
+        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
+        <li><a href="mailto:hello@citychurch.org">hello@citychurch.org</a></li>
+        <li><a href="#">Sun 9 &amp; 11 AM · Wed 7 PM</a></li>
       </ul>
     </div>
   </div>
-  <div class="footer-bottom">© 2025 Your Church. All rights reserved.</div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 City Church. All rights reserved.</span>
+    <a href="#">Powered by Stripe GIVE</a>
+  </div>
 </footer>
+
 </body>
 </html>

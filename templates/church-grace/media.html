@@ -1,262 +1,235 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="church-grace">
 <head>
-  <title>Media — Grace Community Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media - Grace Community Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-/* ── SHARED STYLES: Grace Community Church ── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --gold: #C9A84C; --deep: #1A1A2E; --navy: #16213E;
-  --cream: #FAF7F2; --text: #333344; --muted: #6B7280;
-}
-body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text); }
+    :root{--gold:#C9A84C;--deep:#1A1A2E;--navy:#16213E;--cream:#FAF7F2;--text:#333344;--muted:#6B7280}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream);line-height:1.6}
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;color:var(--deep)}
+    a{text-decoration:none}
+    img{max-width:100%;display:block}
 
-/* NAV */
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; background: rgba(26,26,46,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,0.2); }
-.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.cross { width: 28px; height: 28px; position: relative; }
-.cross::before, .cross::after { content:''; position: absolute; background: var(--gold); border-radius: 2px; }
-.cross::before { width: 4px; height: 100%; left: 50%; transform: translateX(-50%); }
-.cross::after { width: 100%; height: 4px; top: 30%; transform: translateY(-50%); }
-.nav-logo span { font-family: 'Playfair Display', serif; font-size: 20px; color: white; font-weight: 600; }
-.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
-.nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.2s; }
-.nav-links a:hover, .nav-links a.active { color: var(--gold); }
-.nav-cta { background: var(--gold) !important; color: var(--deep) !important; padding: 9px 22px; border-radius: 6px; font-weight: 700 !important; color: var(--deep); }
-.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
-.hamburger span { width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; display: block; }
+    nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(26,26,46,0.97);backdrop-filter:blur(12px);padding:0 2rem}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600}
+    .cross-icon{width:28px;height:28px;position:relative;flex-shrink:0}
+    .cross-icon::before,.cross-icon::after{content:'';position:absolute;background:var(--gold);border-radius:1px}
+    .cross-icon::before{width:4px;height:28px;left:12px;top:0}
+    .cross-icon::after{width:20px;height:4px;left:4px;top:8px}
+    .nav-links{display:flex;list-style:none;gap:4px;align-items:center}
+    .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.9rem;font-weight:400;padding:8px 14px;border-radius:6px;transition:all 0.3s}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-cta{background:var(--gold)!important;color:var(--deep)!important;font-weight:500!important;padding:8px 20px!important}
+    .nav-cta:hover{background:#b8943d!important}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{width:24px;height:2px;background:#fff;border-radius:2px}
 
-/* PAGE HERO (inner pages) */
-.page-hero { padding: 160px 60px 80px; background: linear-gradient(135deg, var(--deep) 0%, var(--navy) 100%); position: relative; overflow: hidden; }
-.page-hero::before { content:''; position: absolute; inset: 0; background-image: var(--hero-img, none); background-size: cover; background-position: center; filter: brightness(0.18); }
-.page-hero-content { position: relative; max-width: 700px; }
-.eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
-.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 64px); color: white; line-height: 1.15; margin-bottom: 20px; }
-.page-hero p { color: rgba(255,255,255,0.7); font-size: 17px; line-height: 1.7; max-width: 520px; }
-.breadcrumb { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
-.breadcrumb a { color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: color 0.2s; }
-.breadcrumb a:hover { color: var(--gold); }
-.breadcrumb span { color: rgba(255,255,255,0.3); font-size: 13px; }
+    .btn-primary{display:inline-block;background:var(--gold);color:var(--deep);padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;border:none;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif}
+    .btn-primary:hover{background:#b8943d;transform:translateY(-1px)}
+    .btn-outline{display:inline-block;border:2px solid #fff;color:#fff;padding:12px 30px;border-radius:8px;font-weight:500;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-outline:hover{background:rgba(255,255,255,0.1)}
 
-/* TYPOGRAPHY */
-.sec-eye { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
-.sec-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); color: var(--deep); line-height: 1.2; margin-bottom: 18px; }
-.sec-title.light { color: white; }
-.sec-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 560px; }
-.sec-sub.light { color: rgba(255,255,255,0.65); }
-.text-center { text-align: center; }
-.text-center .sec-sub { margin: 0 auto; }
+    section{padding:80px 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-header h2{font-size:2.25rem;margin-bottom:12px}
+    .section-header p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+    .section-label{font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
 
-/* BUTTONS */
-.btn-primary { background: var(--gold); color: var(--deep); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 20px rgba(201,168,76,0.35); transition: transform 0.2s, box-shadow 0.2s; display: inline-block; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
-.btn-secondary { background: var(--deep); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; display: inline-block; }
-.btn-secondary:hover { background: #2a2a4e; }
-.btn-outline { border: 2px solid rgba(255,255,255,0.5); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: border-color 0.2s; display: inline-block; }
-.btn-outline:hover { border-color: var(--gold); }
-.btn-outline-dark { border: 2px solid var(--deep); color: var(--deep); padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; display: inline-block; }
-.btn-outline-dark:hover { background: var(--deep); color: white; }
-.btn-sm { background: var(--deep); color: white; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; display: inline-block; }
-.btn-sm:hover { background: var(--gold); color: var(--deep); }
-.btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    footer{background:var(--deep);color:rgba(255,255,255,0.7);padding:60px 2rem 30px}
+    .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px}
+    .footer-brand p{font-size:0.9rem;line-height:1.7;margin:16px 0 20px}
+    footer h4{color:#fff;font-size:1rem;margin-bottom:16px;font-family:'Inter',sans-serif;font-weight:600}
+    footer ul{list-style:none}
+    footer ul li{margin-bottom:10px}
+    footer ul a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;transition:color 0.3s}
+    footer ul a:hover{color:var(--gold)}
+    .social-links{display:flex;gap:12px;margin-top:8px}
+    .social-links a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;transition:all 0.3s}
+    .social-links a:hover{border-color:var(--gold);color:var(--gold)}
+    .footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.85rem}
 
-/* CARDS */
-.img-card { border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
-.img-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(0,0,0,0.13); }
-.img-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
-.img-card .card-body { padding: 24px; }
-.img-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 8px; }
-.img-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.img-card .card-tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 8px; display: block; }
+    @media(max-width:768px){
+      .hamburger{display:flex}
+      .nav-links{display:none;position:absolute;top:72px;left:0;width:100%;background:rgba(26,26,46,0.98);flex-direction:column;padding:20px;gap:4px}
+      .nav-links a{padding:12px 16px;width:100%}
+      .footer-grid{grid-template-columns:1fr;gap:30px}
+      .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+    }
 
-/* SECTION WRAPPERS */
-.section { padding: 90px 60px; }
-.section.dark { background: var(--deep); }
-.section.navy { background: var(--navy); }
-.section.cream { background: var(--cream); }
-.section.white { background: white; }
-.container { max-width: 1100px; margin: 0 auto; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .page-hero{position:relative;background:linear-gradient(135deg,var(--deep),var(--navy));padding:160px 2rem 80px;text-align:center;overflow:hidden}
+    .page-hero::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;opacity:0.15}
+    .page-hero h1{color:#fff;font-size:3rem;position:relative;z-index:1}
+    .page-hero p{color:rgba(255,255,255,0.8);font-size:1.15rem;max-width:600px;margin:16px auto 0;position:relative;z-index:1}
+    .page-hero .section-label{position:relative;z-index:1}
 
-/* QUOTE BLOCK */
-.quote-block { border-left: 4px solid var(--gold); padding-left: 24px; margin: 28px 0; }
-.quote-block p { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); font-style: italic; line-height: 1.6; }
-.quote-block cite { font-size: 13px; color: var(--gold); font-style: normal; font-weight: 600; letter-spacing: 1px; margin-top: 8px; display: block; }
+    .featured-section{background:#fff}
+    .sermon-archive-section{background:var(--cream)}
+    .archive-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+    .archive-header a{color:var(--gold);font-weight:600;font-size:0.9rem}
 
-/* SCRIPTURE BANNER */
-.scripture-banner { position: relative; padding: 100px 60px; text-align: center; overflow: hidden; }
-.scripture-banner .sb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-attachment: fixed; filter: brightness(0.18); }
-.scripture-banner .sb-content { position: relative; max-width: 800px; margin: 0 auto; }
-.scripture-banner .verse { font-family: 'Playfair Display', serif; font-size: clamp(22px, 3.5vw, 42px); color: white; line-height: 1.4; margin-bottom: 18px; font-style: italic; }
-.scripture-banner .ref { color: var(--gold); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+    .podcast-worship-section{background:var(--deep);color:#fff}
+    .pw-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+    .pw-grid h2{color:#fff;font-size:1.75rem;margin-bottom:24px}
 
-/* FOOTER */
-footer { background: var(--deep); color: rgba(255,255,255,0.6); padding: 70px 60px 36px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
-.footer-brand .logo-text { font-family: 'Playfair Display', serif; font-size: 20px; color: white; margin-bottom: 14px; display: block; }
-.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 260px; }
-.footer-col h5 { color: white; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-.footer-col a:hover { color: var(--gold); }
-.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
-.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-.social-links { display: flex; gap: 12px; }
-.social-links a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: all 0.2s; }
-.social-links a:hover { border-color: var(--gold); color: var(--gold); }
+    .gallery-section{background:var(--cream)}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .gallery-grid img{width:100%;height:220px;object-fit:cover;border-radius:8px;transition:opacity 0.3s}
+    .gallery-grid img:hover{opacity:0.85}
 
-/* DIVIDER */
-.gold-divider { width: 50px; height: 3px; background: var(--gold); margin: 20px 0; border-radius: 2px; }
-.gold-divider.center { margin: 20px auto; }
-
-/* STATS ROW */
-.stats-row { display: flex; gap: 0; }
-.stat-item { flex: 1; text-align: center; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.08); }
-.stat-item:last-child { border-right: none; }
-.stat-num { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--gold); font-weight: 700; line-height: 1; margin-bottom: 8px; }
-.stat-label { color: rgba(255,255,255,0.6); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
-
-/* TEAM CARD */
-.team-card { text-align: center; }
-.team-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 18px; }
-.team-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 4px; }
-.team-card .role { color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.team-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  nav { padding: 16px 24px; }
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .section { padding: 60px 24px; }
-  .page-hero { padding: 120px 24px 60px; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 28px; }
-  .stats-row { flex-wrap: wrap; }
-  .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
-  footer { padding: 50px 24px 30px; }
-}
-
-
-.sermon-featured{background:var(--deep);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;margin-bottom:50px;}
-.sf-thumb{position:relative;min-height:320px;}
-.sf-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.sf-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(26,26,46,0.4);}
-.play-btn{width:70px;height:70px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:transform 0.2s;border:none;color:var(--deep);}
-.play-btn:hover{transform:scale(1.1);}
-.sf-info{padding:40px;}
-.sf-info .tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;display:block;}
-.sf-info h2{font-family:'Playfair Display',serif;font-size:26px;color:white;margin-bottom:12px;line-height:1.3;}
-.sf-info p{color:rgba(255,255,255,0.6);font-size:14px;line-height:1.6;margin-bottom:20px;}
-.sf-meta{color:rgba(255,255,255,0.4);font-size:12px;}
-.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:60px;}
-.sc{background:white;border-radius:12px;overflow:hidden;box-shadow:0 3px 20px rgba(0,0,0,0.07);transition:transform 0.2s;}
-.sc:hover{transform:translateY(-5px);}
-.sc-thumb{position:relative;}
-.sc-thumb img{width:100%;height:180px;object-fit:cover;display:block;}
-.sc-play{position:absolute;inset:0;background:rgba(26,26,46,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;}
-.sc:hover .sc-play{opacity:1;}
-.sc-play-sm{width:48px;height:48px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--deep);}
-.sc-body{padding:20px;}
-.sc-body .stag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:7px;}
-.sc-body h4{font-family:'Playfair Display',serif;font-size:17px;color:var(--deep);margin-bottom:7px;line-height:1.3;}
-.sc-body .smeta{color:var(--muted);font-size:12px;}
-.podcast-row{display:flex;flex-direction:column;gap:0;}
-.pod-ep{display:grid;grid-template-columns:60px 1fr auto;gap:16px;align-items:center;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
-.pod-ep:last-child{border-bottom:none;}
-.ep-num{width:48px;height:48px;border-radius:10px;background:rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);}
-.ep-info h5{font-size:15px;font-weight:600;color:white;margin-bottom:3px;}
-.ep-info p{color:rgba(255,255,255,0.45);font-size:12px;}
-.ep-dur{color:rgba(255,255,255,0.35);font-size:12px;white-space:nowrap;}
-.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
-.gal-grid img{width:100%;height:220px;object-fit:cover;display:block;transition:filter 0.2s;}
-.gal-grid img:hover{filter:brightness(0.75);}
-@media(max-width:900px){.sermon-featured{grid-template-columns:1fr;}.sermon-grid{grid-template-columns:1fr;}.gal-grid{grid-template-columns:repeat(2,1fr);}}
-
+    @media(max-width:1024px){
+      .pw-grid{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .page-hero h1{font-size:2rem}
+      .gallery-grid img{height:160px}
+    }
   </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="nav-logo"><div class="cross"></div><span>Grace Community</span></a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
-  </ul>
-  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'"><span></span><span></span><span></span></button>
-</nav>
 
-<div class="page-hero" style="--hero-img:url('https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=1920');">
-  <div class="page-hero-content">
-    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,0.6)">Media</span></div>
-    <span class="eyebrow">Messages &amp; Media</span>
-    <h1>Listen. Watch.<br>Be Transformed.</h1>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="section-label">Messages &amp; Media</div>
+    <h1>Listen. Watch. Be Transformed.</h1>
     <p>Catch up on sermons, worship sessions, and podcasts — wherever you are, whenever you need it.</p>
-  </div>
-</div>
+  </section>
 
-<div class="section white">
-  <div class="container">
-    <span class="sec-eye">Latest Message</span>
-    <!-- cms:featured_sermon -->
-    <h2 class="sec-title" style="margin-bottom:30px;">Featured Sermon</h2>
-    <div data-cms-block="featured_sermon">{{cms:featured_sermon}}</div>
-    <!-- /cms:featured_sermon -->
-  </div>
-</div>
-
-<div class="section cream">
-  <div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:16px;">
-      <div><span class="sec-eye">Sermon Archive</span><h2 class="sec-title">Recent Messages</h2></div>
-      <a href="#" style="color:var(--gold);font-weight:600;text-decoration:none;font-size:14px;">View All Sermons →</a>
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Latest Message</div>
+        <h2>Featured Sermon</h2>
+      </div>
+      <!-- cms:featured_sermon -->
+      <div data-cms-block="featured_sermon">{{cms:featured_sermon}}</div>
+      <!-- /cms:featured_sermon -->
     </div>
-    <!-- cms:sermon_archive -->
-    <div data-cms-block="sermon_archive">{{cms:sermon_archive}}</div>
-    <!-- /cms:sermon_archive -->
-  </div>
-</div>
+  </section>
 
-<div class="section dark">
-  <div class="container">
-    <div class="grid-2" style="gap:60px;align-items:start;">
-      <div>
-        <span class="sec-eye">Podcast</span>
-        <!-- cms:podcast -->
-        <div data-cms-block="podcast">{{cms:podcast}}</div>
-        <!-- /cms:podcast -->
+  <section class="sermon-archive-section">
+    <div class="container">
+      <div class="archive-header">
+        <div>
+          <div class="section-label">Sermon Archive</div>
+          <h2>Recent Messages</h2>
+        </div>
+        <a href="#">View All Sermons &rarr;</a>
+      </div>
+      <!-- cms:sermon_archive -->
+      <div data-cms-block="sermon_archive">{{cms:sermon_archive}}</div>
+      <!-- /cms:sermon_archive -->
+    </div>
+  </section>
+
+  <section class="podcast-worship-section">
+    <div class="container">
+      <div class="pw-grid">
+        <div>
+          <div class="section-label" style="color:var(--gold)">Podcast</div>
+          <h2>Grace Community Podcast</h2>
+          <!-- cms:podcast -->
+          <div data-cms-block="podcast">{{cms:podcast}}</div>
+          <!-- /cms:podcast -->
+        </div>
+        <div>
+          <div class="section-label" style="color:var(--gold)">Worship</div>
+          <h2>Worship Recordings</h2>
+          <!-- cms:worship_recordings -->
+          <div data-cms-block="worship_recordings">{{cms:worship_recordings}}</div>
+          <!-- /cms:worship_recordings -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Photo Gallery</div>
+        <h2>Life at Grace Community</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
+        <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship">
+        <img src="https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Music">
+        <img src="https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
+        <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving">
+        <img src="https://images.pexels.com/photos/1616113/pexels-photo-1616113.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth">
+        <img src="https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
+        <img src="https://images.pexels.com/photos/9555700/pexels-photo-9555700.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+        <p>A Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith and serve others.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="YouTube">yt</a>
+          <a href="#" aria-label="Twitter">x</a>
+        </div>
       </div>
       <div>
-        <span class="sec-eye">Worship</span>
-        <!-- cms:worship_recordings -->
-        <div data-cms-block="worship_recordings">{{cms:worship_recordings}}</div>
-        <!-- /cms:worship_recordings -->
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="give.html">Give</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ministries</h4>
+        <ul>
+          <li><a href="ministries.html">Worship</a></li>
+          <li><a href="ministries.html">Youth</a></li>
+          <li><a href="ministries.html">Children</a></li>
+          <li><a href="ministries.html">Small Groups</a></li>
+          <li><a href="ministries.html">Outreach</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul>
+          <li>1234 Grace Avenue</li>
+          <li>Springfield, IL 62701</li>
+          <li><a href="tel:+15551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@gracecommunity.org">hello@gracecommunity.org</a></li>
+        </ul>
       </div>
     </div>
-  </div>
-</div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Grace Community Church. All rights reserved.</span>
+      <span><a href="#" style="color:rgba(255,255,255,0.5)">Privacy Policy</a></span>
+    </div>
+  </footer>
 
-<div class="section cream" style="padding-bottom:0;padding-left:0;padding-right:0;">
-  <div class="text-center" style="padding:0 60px 40px;"><span class="sec-eye">Photo Gallery</span><h2 class="sec-title">Life at Grace Community</h2></div>
-  <div class="gal-grid">
-    <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
-    <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship">
-    <img src="https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Music">
-    <img src="https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
-    <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving">
-    <img src="https://images.pexels.com/photos/1616113/pexels-photo-1616113.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth">
-    <img src="https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
-    <img src="https://images.pexels.com/photos/9555700/pexels-photo-9555700.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
-  </div>
-</div>
-<footer><div class="footer-grid"><div class="footer-brand"><span class="logo-text">✝ Grace Community Church</span><p>A place of hope, healing, and community in Grand Rapids, Michigan. You are always welcome here.</p></div><div class="footer-col"><h5>Navigate</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="ministries.html">Ministries</a></li><li><a href="events.html">Events</a></li><li><a href="media.html">Media</a></li></ul></div><div class="footer-col"><h5>Ministries</h5><ul><li><a href="ministries.html">Children's Ministry</a></li><li><a href="ministries.html">Youth Group</a></li><li><a href="ministries.html">Men's Ministry</a></li><li><a href="ministries.html">Women's Ministry</a></li><li><a href="ministries.html">Small Groups</a></li></ul></div><div class="footer-col"><h5>Contact</h5><ul><li><a href="visit.html">📍 123 Faith Ave, Grand Rapids, MI</a></li><li><a href="tel:6165550199">📞 (616) 555-0199</a></li><li><a href="mailto:info@gracegr.church">✉️ info@gracegr.church</a></li><li><a href="visit.html">Sun 8AM · 10:30AM</a></li></ul></div></div><hr class="footer-divider"><div class="footer-bottom"><span>© 2025 Grace Community Church. All rights reserved.</span><div class="social-links"><a href="#" title="Facebook">f</a><a href="#" title="Instagram">ig</a><a href="#" title="YouTube">▶</a><a href="#" title="Podcast">♪</a></div></div></footer>
 </body>
 </html>

@@ -238,6 +238,154 @@ export function renderEventsList(
     .join("")}</div>`;
 }
 
+/**
+ * Finds a block element by class name and returns the start/end positions,
+ * properly handling nested tags of the same type.
+ */
+function findBlockByClass(html: string, className: string, startFrom = 0): { start: number; end: number } | null {
+  const classRe = new RegExp(`<(div|section)\\s[^>]*class="[^"]*${className}[^"]*"`, "i");
+  const match = classRe.exec(html.slice(startFrom));
+  if (!match) return null;
+  const blockStart = startFrom + match.index;
+  const tag = match[1].toLowerCase();
+  const openRe = new RegExp(`<${tag}[\\s>]`, "gi");
+  const closeRe = new RegExp(`</${tag}>`, "gi");
+  let depth = 0;
+  let pos = blockStart;
+  const openTag = new RegExp(`<${tag}[\\s>]`, "gi");
+  const closeTag = `</${tag}>`;
+  openTag.lastIndex = pos;
+  const m = openTag.exec(html);
+  if (!m || m.index !== blockStart) return null;
+  depth = 1;
+  pos = m.index + m[0].length;
+  while (depth > 0 && pos < html.length) {
+    const nextOpen = html.indexOf(`<${tag}`, pos);
+    const nextClose = html.indexOf(closeTag, pos);
+    if (nextClose === -1) break;
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      const afterOpen = html.indexOf(">", nextOpen);
+      if (afterOpen === -1) break;
+      depth++;
+      pos = afterOpen + 1;
+    } else {
+      depth--;
+      if (depth === 0) {
+        return { start: blockStart, end: nextClose + closeTag.length };
+      }
+      pos = nextClose + closeTag.length;
+    }
+  }
+  return null;
+}
+
+/**
+ * Detects old static give forms in saved project HTML and replaces them
+ * server-side with a working embedded donation iframe. No client-side JS needed.
+ */
+/** Detects which template theme the page HTML is using. Checks data-template-theme attribute first, then falls back to CSS patterns. */
+function detectTemplateTheme(html: string): string | null {
+  const attrMatch = html.match(/data-template-theme="([^"]+)"/);
+  if (attrMatch) return attrMatch[1];
+
+  if (html.includes("Playfair Display") && html.includes("#C9A84C")) return "church-grace";
+  if (html.includes("Cormorant Garamond") && html.includes("#FBBF24")) return "dark-elegant";
+  if (html.includes("Montserrat") && html.includes("#E63946")) return "bold-contemporary";
+  if (html.includes("Crimson Pro") && html.includes("#0EA5E9")) return "modern-minimal";
+  if (html.includes("Fredoka") && html.includes("#059669")) return "vibrant-community";
+  if (html.includes("Lora") && html.includes("#7C3AED")) return "serene-light";
+  if (html.includes("Space Grotesk") && html.includes("#6366F1")) return "urban-modern";
+  if (html.includes("Libre Baskerville") && html.includes("#B45309")) return "classic-reformed";
+  if (html.includes("Quicksand") && html.includes("#65A30D")) return "organic-natural";
+  if (html.includes("Merriweather") && html.includes("#D4AF37")) return "warm-heritage";
+  return null;
+}
+
+export function injectGiveEmbedFallback(html: string, orgSlug: string): string {
+  if (!orgSlug) return html;
+  let out = html;
+  const theme = detectTemplateTheme(html);
+
+  if (out.includes("{{cms:give_embed}}")) {
+    out = out.replace(/\{\{cms:give_embed\}\}/g, renderGiveEmbed(orgSlug, theme));
+  }
+
+  if (out.includes("data-give-embed")) return out;
+
+  const hasStaticForm =
+    out.includes("amount-btn") ||
+    out.includes("amount-grid") ||
+    out.includes("donate-btn") ||
+    out.includes("fund-tab");
+
+  if (!hasStaticForm) return out;
+
+  const embed = renderGiveEmbed(orgSlug, theme);
+
+  let block = findBlockByClass(out, "give-split");
+  while (block) {
+    const content = out.slice(block.start, block.end);
+    if (content.includes("amount-btn") || content.includes("amount-grid") || content.includes("fund-tab") || content.includes("gs-form") || content.includes("give-form-wrap")) {
+      out = out.slice(0, block.start) + embed + out.slice(block.end);
+    }
+    block = findBlockByClass(out, "give-split", block.start + embed.length);
+  }
+
+  if (out.includes("data-give-embed")) return out;
+
+  block = findBlockByClass(out, "form-card");
+  while (block) {
+    const content = out.slice(block.start, block.end);
+    if (content.includes("amount-btn") || content.includes("donate-btn") || content.includes("custom-input")) {
+      out = out.slice(0, block.start) + embed + out.slice(block.end);
+    }
+    block = findBlockByClass(out, "form-card", block.start + embed.length);
+  }
+
+  return out;
+}
+
+/** Generates the seamless iframe embed HTML for the giving form. Uses relative URL. */
+export function renderGiveEmbed(orgSlug: string, templateTheme?: string | null): string {
+  const themeParam = templateTheme ? `&theme=${encodeURIComponent(templateTheme)}` : "";
+  const embedSrc = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}`;
+  const iframeId = `give-embed-${orgSlug}`;
+  return `<div data-give-embed style="width:100%;max-width:600px;margin:0 auto;">
+  <iframe
+    id="${iframeId}"
+    src="${embedSrc}"
+    style="width:100%;min-height:520px;border:none;overflow:hidden;background:transparent;"
+    title="Give"
+    loading="lazy"
+    allow="payment"
+  ></iframe>
+  <script>window.addEventListener("message",function(e){if(e.data&&e.data.type==="resize"){var f=document.getElementById("${iframeId}");if(f)f.style.height=Math.max(300,e.data.height+10)+"px";}});</script>
+</div>`;
+}
+
+export function renderTeamMembers(
+  members: Array<{
+    name: string;
+    role: string | null;
+    bio: string | null;
+    image_url: string | null;
+  }>
+): string {
+  if (!members?.length) {
+    return `<div class="team-grid">
+      <div class="team-card"><img src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Team member" data-cms-field="team_members.image_url"><h3 data-cms-field="team_members.name">Pastor David Mitchell</h3><div class="role" data-cms-field="team_members.role">Senior Pastor</div><p data-cms-field="team_members.bio">Leading our community with a heart for biblical teaching and pastoral care.</p></div>
+      <div class="team-card"><img src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Team member" data-cms-field="team_members.image_url"><h3 data-cms-field="team_members.name">Pastor Sarah Williams</h3><div class="role" data-cms-field="team_members.role">Associate Pastor</div><p data-cms-field="team_members.bio">Overseeing community groups, discipleship, and women's ministry.</p></div>
+      <div class="team-card"><img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Team member" data-cms-field="team_members.image_url"><h3 data-cms-field="team_members.name">Pastor Michael Torres</h3><div class="role" data-cms-field="team_members.role">Youth &amp; Families Pastor</div><p data-cms-field="team_members.bio">Building the next generation of leaders through youth and family ministries.</p></div>
+    </div>`;
+  }
+  return `<div class="team-grid">${members
+    .map(
+      (m) =>
+        `<div class="team-card"><img src="${esc(m.image_url || "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=600")}" alt="${esc(m.name)}" data-cms-binding="team_members.image_url"><h3 data-cms-binding="team_members.name">${esc(m.name)}</h3>${m.role ? `<div class="role" data-cms-binding="team_members.role">${esc(m.role)}</div>` : ""}${m.bio ? `<p data-cms-binding="team_members.bio">${esc(m.bio)}</p>` : ""}</div>`
+    )
+    .join("")}</div>`;
+}
+
 export { APP_URL };
 
 /** Resolve a single CMS field value for data-cms-binding="collection.field" */

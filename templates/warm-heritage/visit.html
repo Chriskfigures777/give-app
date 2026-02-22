@@ -1,196 +1,364 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="warm-heritage">
 <head>
-  <title>Visit Us — Your Church</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <title>Visit — Heritage Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--warm:#8B4513;--gold:#D4AF37;--cream:#FFF8DC;--tan:#DEB887;--text:#3E2723;--muted:#8D6E63}
-body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--text);line-height:1.8;font-size:16px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#D4AF37;--dark:#3E2723;--warm:#5D4037;--cream:#FFF8DC;--bg:#FFFBEB;--text:#3E2723;--muted:#795548}
+html{scroll-behavior:smooth}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
 
-header{background:var(--warm);color:var(--cream);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
-.logo{font-family:'Merriweather',serif;font-size:28px;font-weight:700;color:var(--cream);text-decoration:none;letter-spacing:1px}
-nav ul{display:flex;gap:32px;list-style:none}
-nav a{color:var(--cream);text-decoration:none;font-size:14px;font-weight:400;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s;opacity:0.9}
-nav a:hover,.nav a.active{opacity:1;color:var(--gold)}
-.nav-cta{background:var(--gold)!important;color:var(--warm)!important;padding:10px 24px;border-radius:4px;font-weight:700!important;opacity:1!important}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);border-bottom:3px solid var(--gold);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:var(--cream);letter-spacing:.5px}
+.logo span{color:var(--gold)}
+#navLinks{display:flex;gap:32px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,248,220,.8);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+#navLinks a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold)!important;color:var(--dark)!important;padding:10px 24px;border-radius:4px;font-weight:700!important;font-size:13px;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,175,55,.4)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:26px;height:2px;background:var(--cream);border-radius:2px}
 
-.page-hero{padding:120px 60px 80px;text-align:center;background:linear-gradient(135deg,var(--tan),var(--cream));border-bottom:3px solid var(--gold)}
-.page-hero h1{font-family:'Merriweather',serif;font-size:clamp(40px,5vw,64px);color:var(--warm);margin-bottom:20px;font-weight:700}
-.page-hero p{font-size:20px;color:var(--text);max-width:700px;margin:0 auto;opacity:0.9}
+.page-hero{position:relative;padding:160px 60px 100px;text-align:center;overflow:hidden;min-height:50vh;display:flex;align-items:center;justify-content:center}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(62,39,35,.7),rgba(62,39,35,.88))}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.page-hero h1{font-family:'Merriweather',serif;font-size:clamp(36px,5vw,64px);color:var(--cream);margin-bottom:20px;font-weight:700}
+.page-hero p{font-size:19px;color:rgba(255,248,220,.85);max-width:600px;margin:0 auto;line-height:1.7}
+.gold-divider{width:60px;height:3px;background:var(--gold);border-radius:2px}
 
-.services{max-width:1100px;margin:0 auto;padding:80px 60px}
+.btn-primary{background:var(--gold);color:var(--dark);padding:16px 36px;border-radius:4px;font-weight:700;font-size:15px;transition:all .2s;display:inline-block;text-transform:uppercase;letter-spacing:1px;border:none;cursor:pointer;font-family:'Lato',sans-serif}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,175,55,.4)}
+
+.info-cards{max-width:1100px;margin:0 auto;padding:80px 60px}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.info-card{background:var(--cream);border-radius:4px;padding:40px 28px;text-align:center;border:2px solid rgba(212,175,55,.25);box-shadow:0 2px 12px rgba(0,0,0,.05);transition:all .3s}
+.info-card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,.1);border-color:var(--gold)}
+.info-icon{width:64px;height:64px;border-radius:50%;background:rgba(212,175,55,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.info-card h3{font-family:'Merriweather',serif;font-size:20px;color:var(--dark);font-weight:700;margin-bottom:12px}
+.info-card p{font-size:14px;color:var(--muted);line-height:1.7}
+
+.services{background:var(--warm);padding:100px 60px;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold)}
+.services-inner{max-width:1100px;margin:0 auto}
+.sec-header{text-align:center;margin-bottom:56px}
+.sec-header h2{font-family:'Merriweather',serif;font-size:clamp(30px,4vw,48px);font-weight:700;margin-bottom:12px}
+.sec-header p{font-size:17px;max-width:560px;margin:0 auto}
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.service-card{background:white;border-radius:8px;padding:40px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:all 0.3s;border:2px solid var(--tan)}
-.service-card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
-.service-icon{font-size:52px;margin-bottom:20px}
-.service-card h3{font-family:'Merriweather',serif;font-size:20px;font-weight:700;color:var(--warm);margin-bottom:12px}
-.service-time{font-family:'Merriweather',serif;font-size:32px;color:var(--gold);font-weight:700;margin:16px 0}
-.service-card p{color:var(--muted);font-size:14px}
+.service-card{background:rgba(255,248,220,.08);border-radius:4px;padding:40px 28px;text-align:center;border:2px solid rgba(212,175,55,.3);transition:all .3s}
+.service-card:hover{transform:translateY(-4px);border-color:var(--gold)}
+.service-icon{font-size:40px;margin-bottom:16px}
+.service-card h3{font-family:'Merriweather',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:12px}
+.service-time{font-family:'Merriweather',serif;font-size:36px;color:var(--gold);font-weight:700;margin:12px 0}
+.service-card p{color:rgba(255,248,220,.8);font-size:14px}
 
-.expect{max-width:1200px;margin:100px auto;padding:0 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.expect h2{font-family:'Merriweather',serif;font-size:clamp(32px,4vw,48px);color:var(--warm);margin-bottom:24px;font-weight:700}
-.expect-list{display:flex;flex-direction:column;gap:24px}
-.expect-item{display:flex;gap:20px}
-.expect-icon{font-size:36px;flex-shrink:0}
-.expect-item h4{font-family:'Merriweather',serif;color:var(--warm);font-size:18px;font-weight:700;margin-bottom:6px}
-.expect-item p{color:var(--muted);font-size:15px;line-height:1.7}
-.expect img{width:100%;height:500px;object-fit:cover;border-radius:8px;border:4px solid var(--tan)}
-
-.location{max-width:1200px;margin:100px auto;padding:0 60px}
-.location-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
-.location h2{font-family:'Merriweather',serif;font-size:clamp(28px,3vw,42px);color:var(--warm);margin-bottom:28px;font-weight:700}
-.contact-info{display:flex;flex-direction:column;gap:24px}
+.form-section{max-width:1200px;margin:0 auto;padding:100px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.form-info h2{font-family:'Merriweather',serif;font-size:clamp(28px,3.5vw,42px);color:var(--dark);font-weight:700;margin-bottom:16px}
+.form-info>p{font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px}
+.contact-list{display:flex;flex-direction:column;gap:24px}
 .contact-item{display:flex;gap:16px;align-items:flex-start}
-.contact-icon{font-size:28px;color:var(--gold);flex-shrink:0}
-.contact-item h4{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.contact-item p{font-size:17px;color:var(--warm);font-weight:600}
-.map{width:100%;height:400px;background:var(--tan);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--warm);font-size:18px;border:2px solid var(--gold)}
+.contact-icon{width:48px;height:48px;border-radius:50%;background:rgba(212,175,55,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-item h4{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.contact-item p{font-size:16px;color:var(--dark);font-weight:700}
+.form-card{background:var(--cream);border-radius:4px;padding:48px;border:2px solid rgba(212,175,55,.25);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.form-card h3{font-family:'Merriweather',serif;font-size:24px;color:var(--dark);font-weight:700;margin-bottom:8px;text-align:center}
+.form-card .form-sub{text-align:center;color:var(--muted);font-size:15px;margin-bottom:32px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid rgba(212,175,55,.2);border-radius:4px;font-size:15px;font-family:'Lato',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23795548' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;cursor:pointer}
 
-footer{background:var(--warm);color:var(--cream);padding:80px 60px 40px;border-top:4px solid var(--gold)}
+.map-section{padding:0 60px 100px;max-width:1200px;margin:0 auto}
+.map-wrap{width:100%;height:400px;background:var(--cream);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;border:2px solid rgba(212,175,55,.25);font-family:'Merriweather',serif}
+
+.faq{background:var(--cream);padding:100px 60px;border-top:3px solid var(--gold)}
+.faq-inner{max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid rgba(212,175,55,.25);padding:28px 0}
+.faq-item:last-child{border-bottom:none}
+.faq-q{font-family:'Merriweather',serif;font-size:18px;font-weight:700;color:var(--dark);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.faq-q::after{content:'+';font-size:24px;color:var(--gold);font-weight:700;flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:300px;padding-top:16px}
+.faq-a p{font-size:15px;color:var(--muted);line-height:1.8}
+
+.contact-strip{background:var(--warm);padding:80px 60px;text-align:center;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold)}
+.contact-strip h2{font-family:'Merriweather',serif;font-size:clamp(28px,3.5vw,42px);color:var(--cream);font-weight:700;margin-bottom:16px}
+.contact-strip p{font-size:17px;color:rgba(255,248,220,.85);margin-bottom:8px}
+.contact-strip a{color:var(--gold);font-weight:700;transition:opacity .2s}
+.contact-strip a:hover{opacity:.8}
+
+.cta-section{background:var(--dark);padding:100px 60px;text-align:center}
+.cta-section h2{font-family:'Merriweather',serif;font-size:clamp(30px,4vw,48px);color:var(--cream);font-weight:700;margin-bottom:16px}
+.cta-section p{font-size:18px;color:rgba(255,248,220,.75);max-width:560px;margin:0 auto 36px;line-height:1.7}
+
+footer{background:var(--dark);color:var(--cream);padding:80px 60px 40px;border-top:4px solid var(--gold)}
 .footer-grid{max-width:1200px;margin:0 auto 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
-.footer-brand{font-family:'Merriweather',serif;font-size:28px;font-weight:700;margin-bottom:16px}
-.footer-desc{opacity:0.85;font-size:14px;line-height:1.8;max-width:300px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.7;margin-bottom:16px}
+.footer-brand{font-family:'Merriweather',serif;font-size:26px;font-weight:700;margin-bottom:16px}
+.footer-brand span{color:var(--gold)}
+.footer-desc{opacity:.85;font-size:14px;line-height:1.8;max-width:300px}
+.footer-social{display:flex;gap:12px;margin-top:20px}
+.footer-social a{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,248,220,.2);display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:16px;transition:all .2s}
+.footer-social a:hover{background:var(--gold);border-color:var(--gold);color:var(--dark)}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-.footer-col a{color:var(--cream);text-decoration:none;font-size:14px;opacity:0.85;transition:opacity 0.2s}
+.footer-col a{color:var(--cream);font-size:14px;opacity:.85;transition:all .2s}
 .footer-col a:hover{opacity:1;color:var(--gold)}
-.footer-bottom{max-width:1200px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,248,220,0.2);text-align:center;font-size:13px;opacity:0.7}
+.footer-contact{display:flex;flex-direction:column;gap:10px;font-size:14px;opacity:.85}
+.footer-contact span{display:flex;align-items:center;gap:8px}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(212,175,55,.2);text-align:center;font-size:13px;opacity:.6}
 
+@media(max-width:1024px){
+  .info-grid{grid-template-columns:1fr 1fr}
+  .services-grid{grid-template-columns:1fr 1fr}
+}
 @media(max-width:900px){
-  header{padding:20px 24px}
-  nav ul{display:none}
-  .page-hero{padding:100px 24px 60px}
+  nav{padding:0 24px;height:64px}
+  #navLinks{display:none;position:absolute;top:64px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:20px;border-bottom:3px solid var(--gold)}
+  .hamburger{display:flex}
+  .page-hero{padding:130px 24px 80px}
+  .info-cards{padding:60px 24px}
+  .info-grid{grid-template-columns:1fr}
   .services{padding:60px 24px}
-  .services-grid{grid-template-columns:1fr;gap:24px}
-  .expect{grid-template-columns:1fr;padding:60px 24px;gap:48px}
-  .expect img{height:300px;order:-1}
-  .location{padding:0 24px}
-  .location-grid{grid-template-columns:1fr;gap:40px}
+  .services-grid{grid-template-columns:1fr}
+  .form-section{grid-template-columns:1fr;padding:60px 24px;gap:48px}
+  .form-row{grid-template-columns:1fr}
+  .map-section{padding:0 24px 60px}
+  .map-wrap{height:280px}
+  .faq{padding:60px 24px}
+  .contact-strip{padding:60px 24px}
+  .cta-section{padding:60px 24px}
   footer{padding:60px 24px 32px}
   .footer-grid{grid-template-columns:1fr;gap:32px}
 }
 </style>
 </head>
 <body>
-<header>
-  <a href="index.html" class="logo">Your Church</a>
-  <nav>
-    <ul>
-      <li><a href="about.html" ABOUT>About</a></li>
-      <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-      <li><a href="events.html" EVENTS>Events</a></li>
-      <li><a href="media.html" MEDIA>Media</a></li>
-      <li><a href="give.html" GIVE>Give</a></li>
-    </ul>
-  </nav>
-  <a href="visit.html" class="nav-cta">Visit Us</a>
-</header>
 
-<div class="page-hero">
-  <h1>Plan Your Visit</h1>
-  <p>We can't wait to welcome you! Come as you are—we're a family that loves unconditionally.</p>
-</div>
+<nav>
+  <a href="index.html" class="logo">Heritage <span>Church</span></a>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul id="navLinks">
+    <li><a href="about.html" ABOUT>About</a></li>
+    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+    <li><a href="events.html" EVENTS>Events</a></li>
+    <li><a href="media.html" MEDIA>Media</a></li>
+    <li><a href="give.html" GIVE>Give</a></li>
+    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+  </ul>
+</nav>
 
-<div class="services">
-  <div class="services-grid">
-    <div class="service-card">
-      <div class="service-icon">🌅</div>
-      <h3>Traditional Service</h3>
-      <div class="service-time">8:00 AM</div>
-      <p>Sundays<br>Classic hymns & liturgy</p>
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="gold-divider" style="margin:0 auto 20px"></div>
+    <h1>Visit Heritage Church</h1>
+    <p>We can&rsquo;t wait to welcome you! Come as you are&mdash;we&rsquo;re a family that loves unconditionally.</p>
+  </div>
+</section>
+
+<div class="info-cards">
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-icon">&#128205;</div>
+      <h3>Easy to Find</h3>
+      <p>Located at 123 Heritage Lane with ample parking. Look for our gold-trimmed steeple visible from the main road.</p>
     </div>
-    <div class="service-card">
-      <div class="service-icon">☀️</div>
-      <h3>Contemporary Worship</h3>
-      <div class="service-time">10:30 AM</div>
-      <p>Sundays<br>Modern worship & teaching</p>
+    <div class="info-card">
+      <div class="info-icon">&#128106;</div>
+      <h3>Family Friendly</h3>
+      <p>Safe, engaging children&rsquo;s programs for all ages during every service. Check in at the Welcome Desk.</p>
     </div>
-    <div class="service-card">
-      <div class="service-icon">🌙</div>
-      <h3>Midweek Study</h3>
-      <div class="service-time">7:00 PM</div>
-      <p>Wednesdays<br>Bible study & prayer</p>
+    <div class="info-card">
+      <div class="info-icon">&#9749;</div>
+      <h3>Come as You Are</h3>
+      <p>No dress code required. Enjoy complimentary coffee and fellowship before and after every service.</p>
     </div>
   </div>
 </div>
 
-<div class="expect">
-  <div>
-    <h2>What to Expect</h2>
-    <div class="expect-list">
-      <div class="expect-item">
-        <div class="expect-icon">🚪</div>
+<section class="services">
+  <div class="services-inner">
+    <div class="sec-header">
+      <h2 style="color:var(--cream)">Service Times</h2>
+      <div class="gold-divider" style="margin:16px auto"></div>
+      <p style="color:rgba(255,248,220,.8)">Join us for worship throughout the week</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">&#127749;</div>
+        <h3>Traditional Service</h3>
+        <div class="service-time">8:00 AM</div>
+        <p>Sundays &bull; Classic hymns &amp; liturgy</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#9728;</div>
+        <h3>Contemporary Worship</h3>
+        <div class="service-time">10:30 AM</div>
+        <p>Sundays &bull; Modern worship &amp; teaching</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#127769;</div>
+        <h3>Midweek Study</h3>
+        <div class="service-time">7:00 PM</div>
+        <p>Wednesdays &bull; Bible study &amp; prayer</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="form-section">
+  <div class="form-info">
+    <h2>Get in Touch</h2>
+    <div class="gold-divider" style="margin:16px 0 24px"></div>
+    <p>Have a question or want to let us know you&rsquo;re visiting? We&rsquo;d love to hear from you and help you feel right at home.</p>
+    <div class="contact-list">
+      <div class="contact-item">
+        <div class="contact-icon">&#128205;</div>
         <div>
-          <h4>Warm Welcome</h4>
-          <p>Our greeters will help you find your way, answer questions, and make you feel at home.</p>
+          <h4>Address</h4>
+          <p>123 Heritage Lane<br>Springfield, ST 12345</p>
         </div>
       </div>
-      <div class="expect-item">
-        <div class="expect-icon">👨‍👩‍👧</div>
+      <div class="contact-item">
+        <div class="contact-icon">&#128222;</div>
         <div>
-          <h4>Children's Care</h4>
-          <p>Safe, engaging programs for kids during service. Check-in at the Welcome Desk.</p>
+          <h4>Phone</h4>
+          <p>(555) 123-4567</p>
         </div>
       </div>
-      <div class="expect-item">
-        <div class="expect-icon">🎵</div>
+      <div class="contact-item">
+        <div class="contact-icon">&#9993;</div>
         <div>
-          <h4>Inspiring Worship</h4>
-          <p>Heartfelt worship and practical Bible teaching that speaks to real life.</p>
-        </div>
-      </div>
-      <div class="expect-item">
-        <div class="expect-icon">☕</div>
-        <div>
-          <h4>Fellowship Time</h4>
-          <p>Stay for coffee and conversation after service. We'd love to get to know you!</p>
+          <h4>Email</h4>
+          <p>info@heritagechurch.org</p>
         </div>
       </div>
     </div>
   </div>
-  <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church">
+
+  <div class="form-card">
+    <h3>Plan Your Visit</h3>
+    <p class="form-sub">Fill out the form and our team will reach out</p>
+    <form onsubmit="event.preventDefault();alert('Thank you! We look forward to welcoming you.')">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" name="first-name" placeholder="John" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="last-name" placeholder="Smith" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone (optional)</label>
+        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="service">Preferred Service</label>
+          <select id="service" name="service">
+            <option value="">Select a service</option>
+            <option value="traditional">Sunday 8:00 AM — Traditional</option>
+            <option value="contemporary">Sunday 10:30 AM — Contemporary</option>
+            <option value="midweek">Wednesday 7:00 PM — Midweek</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="groupSize">Group Size</label>
+          <select id="groupSize" name="group-size">
+            <option value="">Select size</option>
+            <option value="1">Just me</option>
+            <option value="2">2 people</option>
+            <option value="3-4">3–4 people</option>
+            <option value="5+">5+ people</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="message">Message (optional)</label>
+        <textarea id="message" name="message" placeholder="Let us know if you have any questions or special needs..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;text-align:center">Send Message</button>
+    </form>
+  </div>
 </div>
 
-<div class="location">
-  <div class="location-grid">
-    <div>
-      <h2>Find Us</h2>
-      <div class="contact-info">
-        <div class="contact-item">
-          <div class="contact-icon">📍</div>
-          <div>
-            <h4>Address</h4>
-            <p>123 Faith Avenue<br>Your City, ST 12345</p>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">📞</div>
-          <div>
-            <h4>Phone</h4>
-            <p>(555) 123-4567</p>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">✉️</div>
-          <div>
-            <h4>Email</h4>
-            <p>info@yourchurch.org</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="map">Map Placeholder</div>
-  </div>
+<div class="map-section">
+  <div class="map-wrap">&#9962; Map &mdash; 123 Heritage Lane, Springfield, ST 12345</div>
 </div>
+
+<section class="faq">
+  <div class="faq-inner">
+    <div class="sec-header">
+      <h2 style="color:var(--dark)">Frequently Asked Questions</h2>
+      <div class="gold-divider" style="margin:16px auto"></div>
+    </div>
+    <div class="faq-item open">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What should I wear?</div>
+      <div class="faq-a"><p>Come as you are! You&rsquo;ll see everything from suits to jeans. We want you to feel comfortable and focus on worship, not your wardrobe.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you have programs for children?</div>
+      <div class="faq-a"><p>Yes! We offer age-appropriate programs for nursery through 5th grade during all Sunday services. Check in at our secure Welcome Desk when you arrive.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Where should I park?</div>
+      <div class="faq-a"><p>We have a large parking lot with designated first-time visitor spots near the main entrance. Greeters will be available to help direct you.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How long are your services?</div>
+      <div class="faq-a"><p>Our Sunday services typically last about 75 minutes, including worship music and a message. Wednesday Bible studies are about 60 minutes.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is the building accessible?</div>
+      <div class="faq-a"><p>Absolutely. Our building is fully ADA accessible with ramp entrances, elevator access, wheelchair seating, and assisted listening devices available at the Welcome Desk.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-strip">
+  <h2>Still Have Questions?</h2>
+  <div class="gold-divider" style="margin:16px auto 24px"></div>
+  <p>Call us at <a href="tel:5551234567">(555) 123-4567</a> or email <a href="mailto:info@heritagechurch.org">info@heritagechurch.org</a></p>
+  <p>We&rsquo;re here to help Monday&ndash;Friday, 9 AM&ndash;5 PM</p>
+</section>
+
+<section class="cta-section">
+  <h2>We Can&rsquo;t Wait to Meet You</h2>
+  <div class="gold-divider" style="margin:16px auto 24px"></div>
+  <p>Heritage Church is a place where you can belong, grow in faith, and make a difference. Come see for yourself this Sunday.</p>
+  <a href="index.html" class="btn-primary">Back to Home</a>
+</section>
 
 <footer>
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">Your Church</div>
-      <p class="footer-desc">A community rooted in faith, hope, and love. You're always welcome in our church family.</p>
+      <div class="footer-brand">Heritage <span>Church</span></div>
+      <p class="footer-desc">A community rooted in faith, hope, and love. You&rsquo;re always welcome in our church family.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Instagram">&#9737;</a>
+        <a href="#" aria-label="YouTube">&#9654;</a>
+        <a href="#" aria-label="Twitter">&#120;</a>
+      </div>
     </div>
     <div class="footer-col">
       <h5>Navigate</h5>
@@ -199,26 +367,30 @@ footer{background:var(--warm);color:var(--cream);padding:80px 60px 40px;border-t
         <li><a href="about.html">About</a></li>
         <li><a href="ministries.html">Ministries</a></li>
         <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Resources</h5>
       <ul>
-        <li><a href="media.html">Media</a></li>
-        <li><a href="give.html">Give</a></li>
-        <li><a href="visit.html">Visit</a></li>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="media.html">Sermons</a></li>
+        <li><a href="events.html">Calendar</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5>Connect</h5>
-      <ul>
-        <li><a href="visit.html">Contact</a></li>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
-      </ul>
+      <h5>Contact Us</h5>
+      <div class="footer-contact">
+        <span>&#9993; info@heritagechurch.org</span>
+        <span>&#9742; (555) 123-4567</span>
+        <span>&#9962; 123 Heritage Lane</span>
+        <span>Springfield, ST 12345</span>
+      </div>
     </div>
   </div>
-  <div class="footer-bottom">© 2025 Your Church. All rights reserved. Built on faith.</div>
+  <div class="footer-bottom">&copy; 2025 Heritage Church. All rights reserved.</div>
 </footer>
+
 </body>
 </html>

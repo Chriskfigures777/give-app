@@ -1,445 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="vibrant-community">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Give — Your Church | Vibrant Community</title>
+<title>Give - Community Church</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Variables ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --accent:#059669;
-  --accent-hover:#047857;
-  --dark:#064E3B;
-  --bg:#ECFDF5;
-  --text:#065F46;
-  --muted:#047857;
-  --white:#ffffff;
-  --radius:14px;
-  --shadow:0 4px 24px rgba(6,78,59,.12);
-}
+:root{--accent:#059669;--accent-light:#6EE7B7;--accent-hover:#047857;--dark:#064E3B;--bg:#ECFDF5;--card:#FFFFFF;--text:#065F46;--muted:#047857;--radius:14px;--shadow:0 4px 24px rgba(6,78,59,.10);--orange:#F97316;--orange-light:#FED7AA}
 html{scroll-behavior:smooth}
 body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
 img{display:block;max-width:100%;height:auto}
 a{text-decoration:none;color:inherit}
 h1,h2,h3,h4,h5,h6{font-family:'Fredoka',sans-serif;line-height:1.25}
 
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);transition:box-shadow 0.3s}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;max-width:1400px;margin:0 auto}
-.nav-logo{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:10px}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;transition:color .25s;position:relative}
-.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .25s}
-.nav-links a:hover{color:var(--white)}
-.nav-links a:hover::after,.nav-links a.active::after{width:100%}
-.nav-cta{background:var(--accent);color:var(--white)!important;padding:10px 24px;border-radius:50px;font-weight:600;font-size:14px;transition:all 0.3s}
-.nav-cta:hover{background:var(--accent-hover);transform:translateY(-1px)}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--accent-light)}
+#navLinks{display:flex;gap:28px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:1px;transition:color .25s;position:relative}
+#navLinks a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2.5px;background:var(--accent-light);border-radius:2px;transition:width .25s}
+#navLinks a:hover{color:#fff}
+#navLinks a:hover::after,#navLinks a.active::after{width:100%}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 26px;border-radius:50px;font-weight:600!important;font-size:14px;transition:all .3s;letter-spacing:0}
+.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px)}
 .nav-cta::after{display:none!important}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
-.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px}
+.hamburger span{display:block;width:24px;height:2.5px;background:#fff;border-radius:2px}
 
-/* ── PAGE HERO ── */
-.page-hero{padding:160px 40px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
-.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;filter:brightness(0.2)}
-.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.8),rgba(0,0,0,0.5))}
-.page-hero-content{position:relative;z-index:2;max-width:700px;padding:0 24px}
-.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
-.breadcrumb a{color:rgba(255,255,255,0.5);font-size:13px;transition:color 0.2s}
-.breadcrumb a:hover{color:#6ee7b7}
-.breadcrumb span{color:rgba(255,255,255,0.3);font-size:13px}
-.eyebrow{display:inline-block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#6ee7b7;margin-bottom:14px;padding:6px 16px;border:2px solid rgba(110,231,183,0.3);border-radius:50px}
-.page-hero h1{font-size:clamp(36px,5vw,60px);color:var(--white);line-height:1.15;margin-bottom:20px}
-.page-hero p{color:rgba(255,255,255,0.75);font-size:17px;line-height:1.7;max-width:520px}
+.hero{position:relative;min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.9),rgba(5,150,105,0.65))}
+.hero-content{position:relative;z-index:2;max-width:800px;padding:0 32px}
+.badge{display:inline-block;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);font-weight:600;margin-bottom:20px;background:rgba(110,231,183,0.15);padding:8px 22px;border-radius:50px;border:1px solid rgba(110,231,183,0.3)}
+.hero h1{font-family:'Fredoka',sans-serif;font-size:clamp(40px,6vw,76px);font-weight:700;color:#fff;line-height:1.08;margin-bottom:24px}
+.hero h1 em{font-style:normal;color:var(--accent-light)}
+.hero p{font-size:20px;color:rgba(255,255,255,.85);max-width:640px;margin:0 auto;line-height:1.7}
 
-/* ── SECTIONS ── */
-.section{padding:90px 40px}
-.container{max-width:1200px;margin:0 auto}
-.sec-title-block{text-align:center;margin-bottom:56px}
-.sec-title-block .sec-eye{display:inline-block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-bottom:12px}
-.sec-title-block h2{font-size:clamp(28px,4vw,44px);color:var(--dark);margin-bottom:16px}
-.sec-title-block.light h2{color:var(--white)}
-.sec-title-block p{max-width:560px;margin:0 auto;color:var(--muted);font-size:17px}
-.sec-title-block.light p{color:rgba(255,255,255,0.75)}
-.sec-title-block.light .sec-eye{color:#6ee7b7}
-.gold-divider{width:60px;height:4px;border-radius:4px;background:var(--accent);margin:0 auto 20px}
-.text-center{text-align:center}
+.btn{display:inline-block;padding:16px 36px;border-radius:var(--radius);font-weight:600;font-size:15px;text-decoration:none;transition:all .3s;font-family:'Poppins',sans-serif;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(5,150,105,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(5,150,105,.4)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 20px rgba(249,115,22,.3)}
+.btn-orange:hover{background:#EA580C;transform:translateY(-2px)}
 
-/* ── GIVE FORM SPLIT ── */
-.give-split{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:600px}
-.give-img{position:relative;overflow:hidden}
-.give-img img{width:100%;height:100%;object-fit:cover;min-height:600px}
-.give-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,78,59,0.2),rgba(5,150,105,0.15))}
-.give-form-wrap{background:var(--dark);padding:60px 48px;display:flex;flex-direction:column;justify-content:center}
-.give-form-wrap h2{font-family:'Fredoka',sans-serif;font-size:32px;color:var(--white);margin-bottom:8px}
-.give-form-wrap .sub{color:rgba(255,255,255,0.6);font-size:15px;margin-bottom:32px}
-.fund-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
-.fund-tab{padding:10px 20px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);transition:all 0.2s;font-family:'Poppins',sans-serif}
-.fund-tab:hover{border-color:#6ee7b7;color:var(--white)}
-.fund-tab.active{background:var(--accent);border-color:var(--accent);color:var(--white)}
-.amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.amount-btn{padding:16px 8px;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--white);transition:all 0.2s;font-family:'Poppins',sans-serif}
-.amount-btn:hover{border-color:#6ee7b7;background:rgba(5,150,105,0.15)}
-.amount-btn.active{background:var(--accent);border-color:var(--accent)}
-.custom-input{width:100%;padding:16px 20px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--white);font-size:18px;font-family:'Poppins',sans-serif;font-weight:600;margin-bottom:20px;outline:none;transition:border-color 0.2s}
-.custom-input::placeholder{color:rgba(255,255,255,0.3)}
-.custom-input:focus{border-color:var(--accent)}
-.give-btn{width:100%;padding:18px;border-radius:50px;background:var(--accent);color:var(--white);font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:'Poppins',sans-serif;letter-spacing:0.5px;transition:all 0.25s;box-shadow:0 6px 20px rgba(5,150,105,0.35)}
-.give-btn:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 28px rgba(5,150,105,0.45)}
-.secure-note{display:flex;align-items:center;gap:8px;margin-top:16px;color:rgba(255,255,255,0.4);font-size:12px}
-.secure-note svg{flex-shrink:0}
+section{padding:100px 48px}
+.container{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .badge{color:var(--accent);border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.08)}
+.section-header h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,50px);font-weight:700;color:var(--dark);line-height:1.15;margin-top:12px}
+.section-header h2 em{font-style:normal;color:var(--accent)}
+.section-header p{font-size:18px;color:var(--muted);max-width:600px;margin:16px auto 0}
 
-/* ── IMPACT GRID ── */
-.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.impact-card{background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px 28px;text-align:center;transition:transform 0.3s,border-color 0.3s}
-.impact-card:hover{transform:translateY(-4px);border-color:#6ee7b7}
-.impact-icon{font-size:36px;margin-bottom:12px}
-.impact-num{font-family:'Fredoka',sans-serif;font-size:40px;font-weight:700;color:var(--white);margin-bottom:6px}
-.impact-label{color:rgba(255,255,255,0.65);font-size:14px;font-weight:500}
+.give-form-section{background:#fff;padding:100px 48px}
+.give-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.give-text h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,46px);font-weight:700;color:var(--dark);line-height:1.15;margin-bottom:24px}
+.give-text h2 em{font-style:normal;color:var(--accent)}
+.give-text p{font-size:17px;color:var(--muted);line-height:1.8;margin-bottom:20px}
+.give-text blockquote{border-left:4px solid var(--accent);padding:20px 24px;margin:32px 0;background:rgba(5,150,105,.04);border-radius:0 var(--radius) var(--radius) 0}
+.give-text blockquote p{font-family:'Fredoka',sans-serif;font-style:italic;font-size:16px;color:var(--dark);margin:0}
+.give-embed-container{background:var(--bg);border-radius:var(--radius);padding:48px;border:2px solid rgba(5,150,105,.15);box-shadow:var(--shadow)}
 
-/* ── TESTIMONIALS ── */
-.testimonial-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:48px}
-.testimonial-card{background:var(--white);border-radius:20px;padding:40px;box-shadow:var(--shadow);transition:transform 0.3s}
-.testimonial-card:hover{transform:translateY(-4px)}
-.testimonial-card .quote{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:24px;font-style:italic}
-.testimonial-author{display:flex;align-items:center;gap:14px}
-.testimonial-author img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
-.testimonial-author .name{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--dark);font-size:15px}
-.testimonial-author .role{font-size:13px;color:var(--muted)}
+.impact-section{background:var(--dark);padding:100px 48px}
+.impact-inner{max-width:1280px;margin:0 auto}
+.impact-section .section-header h2{color:#fff}
+.impact-section .section-header p{color:rgba(255,255,255,.6)}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.impact-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;transition:all .3s}
+.impact-card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 12px 40px rgba(5,150,105,.2)}
+.impact-card img{width:100%;height:220px;object-fit:cover}
+.impact-card-body{padding:28px}
+.impact-stat{font-family:'Fredoka',sans-serif;font-size:36px;font-weight:700;color:var(--accent-light);margin-bottom:8px}
+.impact-card h3{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:12px}
+.impact-card p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7}
 
-/* ── WAYS TO GIVE ── */
-.ways-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
-.way-card{background:var(--white);border-radius:20px;padding:36px 28px;text-align:center;box-shadow:var(--shadow);transition:transform 0.3s,box-shadow 0.3s}
-.way-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(6,78,59,0.15)}
-.way-icon{width:60px;height:60px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px}
-.way-card h3{font-family:'Fredoka',sans-serif;font-size:18px;color:var(--dark);margin-bottom:8px}
-.way-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.testimonials-section{background:#fff;padding:100px 48px}
+.testimonials-inner{max-width:1280px;margin:0 auto}
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.testimonial-card{background:var(--bg);border-radius:var(--radius);padding:36px 28px;border-bottom:4px solid var(--accent);box-shadow:var(--shadow);transition:all .3s}
+.testimonial-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(6,78,59,.12)}
+.testimonial-card blockquote{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:24px;font-style:italic}
+.testimonial-author{display:flex;align-items:center;gap:16px}
+.testimonial-author img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+.testimonial-author h4{font-family:'Fredoka',sans-serif;font-size:15px;font-weight:600;color:var(--dark)}
+.testimonial-author span{font-size:13px;color:var(--muted)}
 
-/* ── SCRIPTURE BANNER ── */
-.scripture-banner{position:relative;padding:100px 40px;text-align:center;overflow:hidden}
-.scripture-banner .sb-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed;filter:brightness(0.15)}
-.scripture-banner .sb-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.7),rgba(0,0,0,0.5))}
-.scripture-banner .sb-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
-.scripture-banner .verse{font-family:'Fredoka',sans-serif;font-size:clamp(22px,3.5vw,40px);color:var(--white);line-height:1.4;margin-bottom:18px;font-style:italic}
-.scripture-banner .ref{color:#6ee7b7;font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
+.ways-section{background:var(--bg);padding:100px 48px}
+.ways-inner{max-width:1280px;margin:0 auto}
+.ways-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.way-card{background:var(--card);border-radius:var(--radius);padding:40px 28px;text-align:center;border-top:4px solid var(--accent);box-shadow:var(--shadow);transition:all .3s}
+.way-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(6,78,59,.15)}
+.way-icon{width:72px;height:72px;border-radius:50%;background:rgba(5,150,105,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.way-card h3{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;color:var(--dark);margin-bottom:12px}
+.way-card p{font-size:15px;color:var(--muted);line-height:1.7}
 
-/* ── CTA SECTION ── */
-.cta-section{text-align:center;background:var(--dark);padding:100px 40px}
-.cta-section h2{font-family:'Fredoka',sans-serif;font-size:clamp(28px,4vw,44px);color:var(--white);margin-bottom:16px}
-.cta-section p{color:rgba(255,255,255,0.7);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--white);padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;transition:all 0.3s}
-.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(5,150,105,0.35)}
-.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;border:2px solid rgba(255,255,255,0.4);color:var(--white);padding:12px 28px;border-radius:50px;font-weight:600;font-size:15px;transition:all 0.3s}
-.btn-outline:hover{border-color:#6ee7b7;color:#6ee7b7}
+.scripture-banner{position:relative;padding:120px 48px;text-align:center;background:url('https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.scripture-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.92),rgba(5,150,105,0.7))}
+.scripture-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.scripture-content blockquote{font-family:'Fredoka',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:600;color:#fff;line-height:1.5;margin-bottom:20px}
+.scripture-content blockquote em{font-style:normal;color:var(--accent-light)}
+.scripture-content cite{font-size:16px;color:rgba(255,255,255,.7);font-style:normal;font-weight:500;letter-spacing:2px;text-transform:uppercase}
 
-/* ── FOOTER ── */
-footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 40px 36px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1200px;margin:0 auto 50px}
-.footer-brand .logo{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;color:var(--white);margin-bottom:14px}
-.footer-brand .logo span{color:var(--accent)}
-.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
-.footer-col h5{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6ee7b7;margin-bottom:16px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:rgba(255,255,255,0.6);font-size:14px;transition:color 0.2s}
-.footer-col a:hover{color:#6ee7b7}
-.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.footer-bottom a{color:var(--accent);transition:color 0.2s}
-.footer-bottom a:hover{color:var(--white)}
+footer{background:var(--dark);color:rgba(255,255,255,.8);padding:80px 48px 40px;border-top:4px solid var(--accent)}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:16px}
+.footer-brand span{color:var(--accent-light)}
+.footer-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.55);max-width:300px;margin-bottom:20px}
+.social-links{display:flex;gap:12px}
+.social-links a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .2s;border:1px solid rgba(255,255,255,.08)}
+.social-links a:hover{background:var(--accent);border-color:var(--accent)}
+.social-links svg{width:16px;height:16px;fill:#fff}
+.footer-col h5{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);margin-bottom:20px;font-family:'Poppins',sans-serif}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,.4)}
+.footer-bottom a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
+.footer-bottom a:hover{color:#fff}
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .nav-inner{padding:0 24px}
-  .nav-links{display:none}
+@media(max-width:1024px){
+  .give-grid{grid-template-columns:1fr}
+  .impact-grid,.testimonial-grid,.ways-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  nav{padding:0 24px}
+  #navLinks{display:none;position:absolute;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-top:1px solid rgba(255,255,255,.08)}
   .hamburger{display:flex}
-  .page-hero{padding:120px 24px 60px}
-  .section{padding:60px 24px}
-  .give-split{grid-template-columns:1fr}
-  .give-img{min-height:300px}
-  .give-img img{min-height:300px}
-  .give-form-wrap{padding:40px 24px}
-  .amount-grid{grid-template-columns:repeat(2,1fr)}
-  .impact-grid{grid-template-columns:1fr 1fr}
-  .testimonial-grid{grid-template-columns:1fr}
-  .ways-grid{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr;gap:32px}
-  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
-  .scripture-banner{padding:60px 24px}
-  .cta-section{padding:70px 24px}
+  section,.give-form-section,.impact-section,.testimonials-section,.ways-section{padding:64px 24px}
+  .hero h1{font-size:clamp(32px,9vw,52px)}
+  .impact-grid,.testimonial-grid,.ways-grid{grid-template-columns:1fr}
+  .give-embed-container{padding:24px}
+  .footer-bottom{flex-direction:column;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     1. FIXED NAV
-     ══════════════════════════════════════════════ -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">Your <span>Church</span></a>
-    <div class="nav-links">
-      <a href="about.html" ABOUT>About</a>
-      <a href="ministries.html" MINISTRIES>Ministries</a>
-      <a href="events.html" EVENTS>Events</a>
-      <a href="media.html" MEDIA>Media</a>
-      <a href="give.html" class="active" GIVE>Give</a>
-      <a href="visit.html" class="nav-cta">Visit Us</a>
-    </div>
-    <button class="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+<nav>
+  <a href="index.html" class="logo">Community <span>Church</span></a>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════════════
-     2. PAGE HERO
-     ══════════════════════════════════════════════ -->
-<section class="page-hero">
-  <div class="page-hero-bg"></div>
-  <div class="page-hero-overlay"></div>
-  <div class="page-hero-content">
-    <div class="breadcrumb">
-      <a href="index.html">Home</a>
-      <span>›</span>
-      <span style="color:rgba(255,255,255,0.7)">Give</span>
-    </div>
-    <span class="eyebrow">Generosity</span>
-    <h1>Your Gift Changes Lives&nbsp;&amp;&nbsp;Communities</h1>
-    <p>Every act of generosity helps us reach more families, serve our community, and share the hope of the Gospel. Thank you for partnering with us in this mission.</p>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="badge">Generosity</span>
+    <h1>Give with <em>Joy</em></h1>
+    <p>Your generosity transforms lives, strengthens our community, and advances the mission of sharing God's love.</p>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     3. GIVE FORM SPLIT
-     ══════════════════════════════════════════════ -->
-<section class="give-split">
-  <div class="give-img">
-    <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Community hands together">
-    <div class="give-img-overlay"></div>
-  </div>
-  <div class="give-form-wrap">
-    <h2>Make a Gift</h2>
-    <p class="sub">Choose a fund and amount to support our ministries.</p>
-    <div class="fund-tabs">
-      <button class="fund-tab active">Tithes</button>
-      <button class="fund-tab">Missions</button>
-      <button class="fund-tab">Building</button>
-      <button class="fund-tab">Benevolence</button>
+<div class="give-form-section">
+  <div class="give-grid">
+    <div class="give-text">
+      <span class="badge" style="color:var(--accent);border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.08)">Why Give</span>
+      <h2>Your Generosity <em>Changes Lives</em></h2>
+      <p>Every gift to Community Church supports our mission to build vibrant community, serve our neighbors, and share the hope of Jesus with everyone we meet.</p>
+      <p>Whether it's a one-time gift or recurring giving, your contribution makes an eternal difference in the lives of people right here in our community and around the world.</p>
+      <blockquote>
+        <p>&ldquo;Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.&rdquo; — 2 Corinthians 9:7</p>
+      </blockquote>
     </div>
-    <div class="amount-grid">
-      <button class="amount-btn">$25</button>
-      <button class="amount-btn active">$50</button>
-      <button class="amount-btn">$100</button>
-      <button class="amount-btn">$250</button>
-    </div>
-    <input type="text" class="custom-input" placeholder="$ Custom Amount">
-    <button class="give-btn">Give Now ♥</button>
-    <div class="secure-note">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Secure &amp; encrypted · Powered by Stripe
+    <div class="give-embed-container">
+      {{cms:give_embed}}
     </div>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════════
-     4. IMPACT SECTION
-     ══════════════════════════════════════════════ -->
-<section class="section" style="background:var(--dark)">
-  <div class="container">
-    <div class="sec-title-block light">
-      <span class="sec-eye">Our Impact Together</span>
-      <div class="gold-divider"></div>
-      <h2>See What Your Generosity Makes Possible</h2>
-      <p>Through your faithful giving, we are making a difference locally and globally. Here's a snapshot of what God is doing through this church.</p>
+<section class="impact-section">
+  <div class="impact-inner">
+    <div class="section-header">
+      <span class="badge" style="color:var(--accent-light);border-color:rgba(110,231,183,.3);background:rgba(110,231,183,.1)">Your Impact</span>
+      <h2 style="color:#fff">Where Your <em style="color:var(--accent-light)">Giving Goes</em></h2>
+      <p style="color:rgba(255,255,255,.6)">See how your generosity is making a real difference in our community and beyond.</p>
     </div>
     <div class="impact-grid">
       <div class="impact-card">
-        <div class="impact-icon">🌍</div>
-        <div class="impact-num">12</div>
-        <div class="impact-label">Mission Partners Worldwide</div>
+        <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community outreach" loading="lazy">
+        <div class="impact-card-body">
+          <div class="impact-stat">2,400+</div>
+          <h3>Meals Served</h3>
+          <p>Through our weekly food pantry and community meals program, we serve families facing food insecurity.</p>
+        </div>
       </div>
       <div class="impact-card">
-        <div class="impact-icon">👨‍👩‍👧‍👦</div>
-        <div class="impact-num">850+</div>
-        <div class="impact-label">Families Served Annually</div>
+        <img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth programs" loading="lazy">
+        <div class="impact-card-body">
+          <div class="impact-stat">150+</div>
+          <h3>Youth Impacted</h3>
+          <p>Our youth programs provide mentoring, education support, and a safe community for the next generation.</p>
+        </div>
       </div>
       <div class="impact-card">
-        <div class="impact-icon">💰</div>
-        <div class="impact-num">$2.1M</div>
-        <div class="impact-label">Invested in Community</div>
-      </div>
-      <div class="impact-card">
-        <div class="impact-icon">⛪</div>
-        <div class="impact-num">47</div>
-        <div class="impact-label">Active Ministries</div>
-      </div>
-      <div class="impact-card">
-        <div class="impact-icon">🤝</div>
-        <div class="impact-num">320</div>
-        <div class="impact-label">Dedicated Volunteers</div>
-      </div>
-      <div class="impact-card">
-        <div class="impact-icon">🏗️</div>
-        <div class="impact-num">3</div>
-        <div class="impact-label">Church Plants Launched</div>
+        <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Global missions" loading="lazy">
+        <div class="impact-card-body">
+          <div class="impact-stat">12</div>
+          <h3>Global Partners</h3>
+          <p>We support mission partners around the world, bringing clean water, education, and the gospel to communities in need.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     5. TESTIMONIALS
-     ══════════════════════════════════════════════ -->
-<section class="section" style="background:var(--bg)">
-  <div class="container">
-    <div class="sec-title-block">
-      <span class="sec-eye">Stories of Generosity</span>
-      <h2>Why We Give</h2>
-      <p>Hear from members of our community about how giving has transformed their lives and deepened their faith.</p>
+<section class="testimonials-section">
+  <div class="testimonials-inner">
+    <div class="section-header">
+      <span class="badge">Stories</span>
+      <h2>Generosity in <em>Action</em></h2>
+      <p>Hear from people whose lives have been changed by the generosity of our community.</p>
     </div>
     <div class="testimonial-grid">
       <div class="testimonial-card">
-        <p class="quote">"When we started tithing faithfully, it wasn't just our finances that changed — it was our whole perspective. We've seen God provide in ways we never imagined, and we've become part of something so much bigger than ourselves."</p>
+        <blockquote>&ldquo;When my family was going through a tough time, Community Church showed up in ways we never expected. The love and support we received changed our lives.&rdquo;</blockquote>
         <div class="testimonial-author">
-          <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Sarah Mitchell">
-          <div>
-            <div class="name">Sarah Mitchell</div>
-            <div class="role">Member since 2018</div>
-          </div>
+          <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Maria" loading="lazy">
+          <div><h4>Maria Rodriguez</h4><span>Community Member</span></div>
         </div>
       </div>
       <div class="testimonial-card">
-        <p class="quote">"I sponsor a child through the missions fund and got to visit the school we built last summer. Seeing those kids' faces and knowing our church made that happen — that's something money can't buy. Generosity connects us to God's heart."</p>
+        <blockquote>&ldquo;Giving has become one of the most joyful parts of our faith journey. Knowing that our generosity helps serve our neighbors is incredibly fulfilling.&rdquo;</blockquote>
         <div class="testimonial-author">
-          <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120" alt="James Rodriguez">
-          <div>
-            <div class="name">James Rodriguez</div>
-            <div class="role">Missions Team Volunteer</div>
-          </div>
+          <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100" alt="James" loading="lazy">
+          <div><h4>James &amp; Lisa Park</h4><span>Members Since 2019</span></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <blockquote>&ldquo;The youth mentoring program at Community Church helped me believe in myself. I'm now in college pursuing my dream — all because someone invested in me.&rdquo;</blockquote>
+        <div class="testimonial-author">
+          <img src="https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=100" alt="DeShawn" loading="lazy">
+          <div><h4>DeShawn Williams</h4><span>Youth Program Graduate</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     6. WAYS TO GIVE
-     ══════════════════════════════════════════════ -->
-<section class="section" style="background:var(--white)">
-  <div class="container">
-    <div class="sec-title-block">
-      <span class="sec-eye">Multiple Options</span>
-      <h2>Ways to Give</h2>
-      <p>We want to make it easy for you to be generous. Choose the method that works best for you.</p>
+<section class="ways-section">
+  <div class="ways-inner">
+    <div class="section-header">
+      <span class="badge">Options</span>
+      <h2>Ways to <em>Give</em></h2>
+      <p>Choose the giving method that works best for you.</p>
     </div>
     <div class="ways-grid">
       <div class="way-card">
+        <div class="way-icon">💻</div>
+        <h3>Give Online</h3>
+        <p>Safe, secure, and convenient. Set up one-time or recurring gifts using the form above in just a few clicks.</p>
+      </div>
+      <div class="way-card">
         <div class="way-icon">📱</div>
         <h3>Text to Give</h3>
-        <p>Text any amount to <strong>(555) 555-GIVE</strong> and follow the simple prompts to complete your gift in seconds.</p>
+        <p>Text any amount to (555) 123-GIVE. It's fast, easy, and you can give from anywhere at any time.</p>
       </div>
       <div class="way-card">
-        <div class="way-icon">✉️</div>
-        <h3>Give by Mail</h3>
-        <p>Send a check made payable to Your Church at <strong>456 Community Blvd, Your City, ST 12345</strong>.</p>
-      </div>
-      <div class="way-card">
-        <div class="way-icon">🏦</div>
-        <h3>ACH / Bank Transfer</h3>
-        <p>Set up a direct bank transfer for recurring gifts. Contact our office for routing details.</p>
-      </div>
-      <div class="way-card">
-        <div class="way-icon">📦</div>
-        <h3>In-Kind Donations</h3>
-        <p>Donate goods, supplies, or professional services to support our community outreach programs.</p>
-      </div>
-      <div class="way-card">
-        <div class="way-icon">📜</div>
-        <h3>Estate &amp; Planned Giving</h3>
-        <p>Leave a legacy through your will, trust, or estate plan. Contact our stewardship team to learn more.</p>
-      </div>
-      <div class="way-card">
-        <div class="way-icon">🙏</div>
-        <h3>Give In Person</h3>
-        <p>Drop your gift in the offering during any Sunday service or visit the Welcome Center in the lobby.</p>
+        <div class="way-icon">🏠</div>
+        <h3>In-Person</h3>
+        <p>Drop your gift in the offering during any weekend service. Giving envelopes are available at every entrance.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     7. SCRIPTURE BANNER
-     ══════════════════════════════════════════════ -->
-<section class="scripture-banner">
-  <div class="sb-bg"></div>
-  <div class="sb-overlay"></div>
-  <div class="sb-content">
-    <p class="verse">"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."</p>
-    <span class="ref">— 2 Corinthians 9:7</span>
+<div class="scripture-banner">
+  <div class="scripture-content">
+    <blockquote>&ldquo;Remember this: Whoever sows sparingly will also reap sparingly, and whoever sows generously will also <em>reap generously.</em>&rdquo;</blockquote>
+    <cite>— 2 Corinthians 9:6</cite>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════════
-     8. CTA SECTION
-     ══════════════════════════════════════════════ -->
-<section class="cta-section">
-  <div class="container">
-    <span class="sec-eye" style="color:#6ee7b7;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:3px;display:block;margin-bottom:14px">Stewardship</span>
-    <h2>Questions About Giving?</h2>
-    <p>Our stewardship team is here to help with tax receipts, recurring gifts, estate planning, or any questions about how your generosity makes an impact.</p>
-    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a href="mailto:giving@yourchurch.org" class="btn-primary">Contact Stewardship Team</a>
-      <a href="tel:+15555550123" class="btn-outline">Call (555) 555-0123</a>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     9. FOOTER
-     ══════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="logo">Your <span>Church</span></div>
-      <p>A vibrant community of faith, joy, and love. We believe in doing life together and serving our neighbors with open hearts.</p>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Community <span>Church</span></div>
+        <p class="footer-desc">A vibrant, welcoming community where faith comes alive and everyone has a place to belong.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Visit</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="visit.html">Plan a Visit</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="ministries.html">Ministries</a></li>
+          <li><a href="#">Small Groups</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="give.html">Give</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="#">123 Community Lane</a></li>
+          <li><a href="#">Springfield, ST 12345</a></li>
+          <li><a href="tel:5551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@communitychurch.org">hello@communitychurch.org</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="ministries.html">Ministries</a></li>
-        <li><a href="events.html">Events</a></li>
-        <li><a href="media.html">Media</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Community Church. All rights reserved.</p>
+      <div><a href="#">Privacy Policy</a> &nbsp;|&nbsp; <a href="#">Terms</a></div>
     </div>
-    <div class="footer-col">
-      <h5>Get Involved</h5>
-      <ul>
-        <li><a href="give.html">Give Online</a></li>
-        <li><a href="visit.html">Plan a Visit</a></li>
-        <li><a href="#">Small Groups</a></li>
-        <li><a href="#">Volunteer</a></li>
-        <li><a href="#">Prayer Requests</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h5>Contact</h5>
-      <ul>
-        <li><a href="#">456 Community Blvd</a></li>
-        <li><a href="#">Your City, ST 12345</a></li>
-        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
-        <li><a href="mailto:hello@yourchurch.org">hello@yourchurch.org</a></li>
-        <li><a href="#">Sun 9:00 &amp; 11:00 AM</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>&copy; 2025 Your Church. All rights reserved.</span>
-    <a href="#">Powered by Stripe GIVE</a>
   </div>
 </footer>
 

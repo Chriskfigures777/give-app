@@ -63,6 +63,8 @@ import {
   type EmbedFormThemeId,
 } from "@/lib/embed-form-themes";
 
+import { GIVING_FORM_TEMPLATES, type GivingFormTemplate } from "@/lib/form-template-preset";
+
 const PRESET_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
 type Campaign = { id: string; name: string; suggested_amounts: unknown; minimum_amount_cents: number | null; allow_recurring: boolean | null };
@@ -649,6 +651,56 @@ export function EmbedFormClient({
           </div>
 
           <div className="overflow-y-auto max-h-[70vh] lg:max-h-[calc(100vh-240px)] editor-panel customization-panel min-w-0">
+            {/* -- Form Templates Section -- */}
+            <div className="border-b border-dashboard-border/30">
+              <SectionHeader
+                icon={<Sparkles className="h-4 w-4 text-emerald-600" />}
+                label="Form Templates"
+                isOpen={openSections.has("templates")}
+                onClick={() => toggleSection("templates")}
+              />
+              {openSections.has("templates") && (
+                <div className="section-content px-6 pb-6 space-y-3">
+                  <p className="panel-field-hint">Apply a pre-designed form style matching website templates</p>
+                  <div className="grid grid-cols-2 gap-2.5 min-w-0">
+                    {GIVING_FORM_TEMPLATES.map((tpl) => (
+                      <button
+                        key={tpl.id}
+                        type="button"
+                        onClick={() => {
+                          setSuggestedAmounts(tpl.suggested_amounts);
+                          setAllowCustomAmount(tpl.allow_custom_amount);
+                          setHeaderText(tpl.header_text);
+                          setSubheaderText(tpl.subheader_text);
+                          setThankYouMessage(tpl.thank_you_message ?? "Thank you for your donation!");
+                          setButtonColor(tpl.button_color ?? "");
+                          setButtonTextColor(tpl.button_text_color ?? "");
+                          setRadiusPx(parseRadiusPx(tpl.button_border_radius));
+                          setFontFamilyKey(tpl.font_family ?? "");
+                          setEmbedFormTheme(tpl.embed_form_theme);
+                          setFormDisplayMode(tpl.form_display_mode);
+                          setFormMediaSide(tpl.form_media_side);
+                          if (tpl.design_sets?.length) {
+                            setDesignSets(tpl.design_sets.map((s) => ({ ...s })));
+                            setNumSets(tpl.design_sets.length);
+                          }
+                          toast.success(`Applied "${tpl.name}" template`);
+                        }}
+                        className="flex flex-col items-start gap-1 p-3.5 rounded-2xl text-left transition-all border border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/50 hover:shadow-sm dark:border-slate-600 dark:bg-slate-800 dark:hover:border-emerald-700/50"
+                      >
+                        <span className="text-[12px] font-semibold text-dashboard-text">{tpl.name}</span>
+                        <span className="text-[10px] text-dashboard-text-muted leading-relaxed">{tpl.description}</span>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="w-3 h-3 rounded-full border border-slate-200 dark:border-slate-600" style={{ background: tpl.button_color ?? "#059669" }} />
+                          <span className="text-[9px] text-dashboard-text-muted">{tpl.embed_form_theme === "default" ? "Default" : tpl.embed_form_theme}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* -- Content Section -- */}
             <div className="border-b border-dashboard-border/30">
               <SectionHeader

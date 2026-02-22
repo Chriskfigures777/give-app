@@ -8,6 +8,9 @@ import {
   renderSermonArchive,
   renderEventsGrid,
   renderEventsList,
+  renderTeamMembers,
+  renderGiveEmbed,
+  injectGiveEmbedFallback,
   resolveCmsBinding,
   APP_URL,
 } from "@/lib/website-cms-render";
@@ -38,13 +41,15 @@ export async function POST(req: NextRequest) {
       { data: worshipRecordings },
       { data: sermonArchive },
       { data: events },
+      { data: teamMembers },
     ] = await Promise.all([
       supabase.from("website_cms_featured_sermon").select("*").eq("organization_id", orgId).maybeSingle(),
       supabase.from("website_cms_podcast_config").select("*").eq("organization_id", orgId).maybeSingle(),
       supabase.from("website_cms_podcast_episodes").select("*").eq("organization_id", orgId).order("episode_number", { ascending: false }),
       supabase.from("website_cms_worship_recordings").select("*").eq("organization_id", orgId).order("sort_order", { ascending: true }),
       supabase.from("website_cms_sermon_archive").select("id, title, tag, image_url, published_at, duration_minutes, speaker_name, video_url, audio_url").eq("organization_id", orgId).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
-      supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date().toISOString()).order("start_at", { ascending: true }),
+      supabase.from("events").select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category").eq("organization_id", orgId).gte("start_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()).order("start_at", { ascending: true }),
+      supabase.from("organization_team_members").select("name, role, bio, image_url, sort_order").eq("organization_id", orgId).order("sort_order", { ascending: true }),
     ]);
 
     // Resolve video URLs (Pexels, YouTube, direct MP4) for hover preview
@@ -101,6 +106,27 @@ export async function POST(req: NextRequest) {
     }
     if (out.includes("{{cms:sermon_archive}}")) {
       out = out.replace("{{cms:sermon_archive}}", wrap("sermon_archive", renderSermonArchive(sermonArchiveEnriched)));
+    }
+    if (out.includes("{{cms:team_members}}")) {
+      out = out.replace("{{cms:team_members}}", wrap("team_members", renderTeamMembers(teamMembers ?? [])));
+    }
+
+    const needsSlug =
+      out.includes("{{cms:give_embed}}") ||
+      out.includes("amount-btn") ||
+      out.includes("amount-grid") ||
+      out.includes("donate-btn") ||
+      out.includes("fund-tab");
+    if (needsSlug) {
+      const { data: orgForSlug } = await supabase
+        .from("organizations")
+        .select("slug")
+        .eq("id", orgId)
+        .single();
+      const slug = (orgForSlug as { slug: string } | null)?.slug ?? "";
+      if (slug) {
+        out = injectGiveEmbedFallback(out, slug);
+      }
     }
 
     if (out.includes("data-cms-binding")) {

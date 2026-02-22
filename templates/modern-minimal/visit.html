@@ -1,237 +1,537 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-template-theme="modern-minimal">
 <head>
-  <title>Visit Us — Your Church</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visit Us | Your Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--accent:#0EA5E9;--dark:#0F172A;--bg:#FAFAFA;--text:#1E293B;--muted:#64748B;--light:#F1F5F9}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Sleek nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,0.06)}
-.nav-logo{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--dark);text-decoration:none;letter-spacing:-0.5px}
-.nav-links{display:flex;gap:36px;list-style:none;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:0.3px;transition:color 0.2s}
-.nav-links a:hover,.nav-links a.active{color:var(--dark)}
-.nav-cta{background:var(--accent)!important;color:white!important;padding:10px 24px;border-radius:8px;font-weight:600!important}
+    :root {
+      --accent: #0EA5E9;
+      --accent-dark: #0284C7;
+      --dark: #0F172A;
+      --light: #F8FAFC;
+      --text: #334155;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --heading: 'Crimson Pro', serif;
+      --body: 'Inter', sans-serif;
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow: 0 4px 16px rgba(15,23,42,0.06);
+      --shadow-lg: 0 8px 32px rgba(15,23,42,0.08);
+      --radius: 12px;
+      --radius-sm: 10px;
+    }
 
-/* Hero */
-.visit-hero{padding:140px 48px 80px;text-align:center;max-width:840px;margin:0 auto}
-.visit-hero h1{font-family:'Crimson Pro',serif;font-size:clamp(40px,5vw,64px);font-weight:600;color:var(--dark);line-height:1.15;margin-bottom:20px;letter-spacing:-1.2px}
-.visit-hero .lead{font-size:20px;color:var(--muted);line-height:1.6;max-width:680px;margin:0 auto}
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--body); color: var(--text); background: #fff; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3, h4 { font-family: var(--heading); color: var(--dark); line-height: 1.2; }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; }
+    h3 { font-size: 1.3rem; font-weight: 600; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { margin-bottom: 20px; }
+    .section-subtitle { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
 
-/* Service times */
-.services{max-width:1000px;margin:0 auto;padding:0 48px 80px}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.service-card{background:white;border-radius:14px;padding:36px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
-.service-card:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,0,0,0.12)}
-.service-icon{font-size:48px;margin-bottom:20px}
-.service-card h3{font-size:18px;font-weight:600;color:var(--dark);margin-bottom:8px}
-.service-time{font-family:'Crimson Pro',serif;font-size:28px;color:var(--accent);font-weight:600;margin:16px 0}
-.service-card p{color:var(--muted);font-size:14px}
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff; padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: none; cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--dark); padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: 2px solid var(--dark); cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { background: var(--dark); color: #fff; }
 
-/* What to expect */
-.expect{background:var(--dark);padding:100px 48px;margin:80px 0 0}
-.expect-content{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.expect h2{font-family:'Crimson Pro',serif;font-size:clamp(32px,4vw,48px);font-weight:600;color:white;margin-bottom:24px;letter-spacing:-0.8px}
-.expect-list{display:flex;flex-direction:column;gap:24px}
-.expect-item{display:flex;gap:20px}
-.expect-icon{font-size:32px;flex-shrink:0}
-.expect-item h4{color:white;font-size:18px;font-weight:600;margin-bottom:6px}
-.expect-item p{color:rgba(255,255,255,0.6);font-size:15px;line-height:1.6}
-.expect img{width:100%;height:500px;object-fit:cover;border-radius:16px}
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: var(--dark);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .nav-logo { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75); font-size: 0.9rem; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px; transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.08); }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 10px 22px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--accent-dark) !important; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; margin: 5px 0; border-radius: 2px; transition: 0.3s; }
 
-/* Location */
-.location{max-width:1280px;margin:80px auto;padding:0 48px}
-.location-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
-.location h2{font-family:'Crimson Pro',serif;font-size:clamp(28px,3vw,42px);font-weight:600;color:var(--dark);margin-bottom:24px;letter-spacing:-0.8px}
-.contact-info{display:flex;flex-direction:column;gap:20px}
-.contact-item{display:flex;gap:16px;align-items:flex-start}
-.contact-icon{font-size:24px;color:var(--accent);flex-shrink:0;margin-top:2px}
-.contact-item div h4{font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.contact-item div p{font-size:16px;color:var(--dark);font-weight:500}
-.map-placeholder{width:100%;height:400px;background:var(--light);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px}
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; position: absolute;
+        top: 72px; left: 0; right: 0; background: var(--dark);
+        padding: 16px 24px 24px; gap: 4px; border-top: 1px solid rgba(255,255,255,0.08);
+      }
+      .nav-links a { padding: 12px 16px; width: 100%; }
+    }
 
-/* Footer */
-footer{padding:80px 48px 40px;border-top:1px solid rgba(0,0,0,0.08);max-width:1280px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
-.footer-brand{font-family:'Crimson Pro',serif;font-size:24px;font-weight:600;color:var(--dark);margin-bottom:12px;letter-spacing:-0.5px}
-.footer-desc{color:var(--muted);font-size:14px;line-height:1.6;max-width:300px}
-.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col a{color:var(--text);text-decoration:none;font-size:14px;transition:color 0.2s}
-.footer-col a:hover{color:var(--accent)}
-.footer-bottom{padding-top:32px;border-top:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+    /* PAGE HERO */
+    .page-hero {
+      position: relative; padding: 180px 0 100px; text-align: center;
+      background: linear-gradient(160deg, var(--dark) 0%, #1E293B 100%);
+      margin-top: 72px; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.pexels.com/photos/2351722/pexels-photo-2351722.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;
+      opacity: 0.12;
+    }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-hero .section-label { color: var(--accent); }
+    .page-hero h1 { color: #fff; margin-bottom: 16px; }
+    .page-hero p { color: rgba(248,250,252,0.65); font-size: 1.1rem; max-width: 540px; margin: 0 auto; }
 
-@media(max-width:900px){
-  nav{padding:16px 24px}
-  .nav-links{display:none}
-  .visit-hero{padding:120px 24px 60px}
-  .services{padding:0 24px 60px}
-  .services-grid{grid-template-columns:1fr;gap:20px}
-  .expect{padding:60px 24px}
-  .expect-content{grid-template-columns:1fr;gap:48px}
-  .expect img{height:300px;order:-1}
-  .location{padding:0 24px}
-  .location-grid{grid-template-columns:1fr;gap:32px}
-  footer{padding:60px 24px 32px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
-}
-</style>
+    /* INFO CARDS */
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+    .info-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 40px 28px; text-align: center;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .info-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .info-icon { font-size: 2rem; margin-bottom: 16px; }
+    .info-card h3 { margin-bottom: 10px; }
+    .info-card p { color: var(--muted); font-size: 0.92rem; }
+
+    @media (max-width: 768px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    /* SERVICE TIMES */
+    .times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+    .time-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 36px 28px; text-align: center;
+    }
+    .time-day { font-family: var(--heading); font-size: 1.15rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .time-value { color: var(--accent); font-weight: 600; font-size: 1.4rem; margin-bottom: 8px; }
+    .time-card p { color: var(--muted); font-size: 0.88rem; }
+
+    @media (max-width: 768px) {
+      .times-grid { grid-template-columns: 1fr; }
+    }
+
+    /* CONTACT FORM */
+    .form-split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .form-split img { width: 100%; height: 580px; object-fit: cover; border-radius: var(--radius); }
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 0.85rem; font-weight: 600; color: var(--dark);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--body); font-size: 0.92rem; color: var(--text);
+      background: #fff; transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    @media (max-width: 768px) {
+      .form-split { grid-template-columns: 1fr; }
+      .form-split img { height: 320px; order: -1; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* MAP */
+    .map-placeholder {
+      width: 100%; height: 400px; background: var(--light); border: 1px solid var(--border);
+      border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 1rem; margin-top: 48px;
+    }
+
+    /* FAQ */
+    .faq-list { max-width: 760px; margin: 48px auto 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border); padding: 24px 0;
+    }
+    .faq-item:first-child { border-top: 1px solid var(--border); }
+    .faq-question {
+      font-family: var(--heading); font-weight: 600; font-size: 1.1rem;
+      color: var(--dark); cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .faq-question span { font-size: 1.3rem; color: var(--accent); transition: transform 0.2s; }
+    .faq-answer {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+    }
+    .faq-answer p { color: var(--muted); font-size: 0.95rem; padding-top: 16px; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 200px; }
+    .faq-item.open .faq-question span { transform: rotate(45deg); }
+
+    /* CONTACT INFO BAR */
+    .contact-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px;
+    }
+    .contact-bar-item {
+      text-align: center; padding: 32px 20px; background: #fff;
+      border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .contact-bar-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .contact-bar-item h3 { font-size: 1rem; margin-bottom: 6px; }
+    .contact-bar-item p { color: var(--muted); font-size: 0.9rem; }
+    .contact-bar-item a { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .contact-bar { grid-template-columns: 1fr; }
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      text-align: center; color: #fff;
+    }
+    .cta-section h2 { color: #fff; margin-bottom: 16px; }
+    .cta-section p { color: rgba(255,255,255,0.85); max-width: 540px; margin: 0 auto 32px; font-size: 1.05rem; }
+    .cta-section .btn-primary { background: #fff; color: var(--accent); }
+    .cta-section .btn-primary:hover { background: rgba(255,255,255,0.9); }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(248,250,252,0.65); padding: 80px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+    .footer-brand { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .footer-desc { font-size: 0.9rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a {
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6);
+      font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+    }
+    .footer-social a:hover { background: var(--accent); color: #fff; }
+    .footer-col h4 { color: #fff; font-family: var(--body); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      margin-top: 60px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="nav-logo">Your Church</a>
-  <ul class="nav-links">
-    <li><a href="about.html" ABOUT>About</a></li>
-    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
-    <li><a href="events.html" EVENTS>Events</a></li>
-    <li><a href="media.html" MEDIA>Media</a></li>
-    <li><a href="give.html" GIVE>Give</a></li>
-  </ul>
-  <a href="visit.html" class="nav-cta">Visit Us</a>
-</nav>
 
-<div class="visit-hero">
-  <h1>Plan Your Visit</h1>
-  <p class="lead">We can't wait to meet you! Come as you are—casual attire is welcome, and childcare is provided for all services.</p>
-</div>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Your Church</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<div class="services">
-  <div class="services-grid">
-    <div class="service-card">
-      <div class="service-icon">🌅</div>
-      <h3>Traditional Service</h3>
-      <div class="service-time">8:00 AM</div>
-      <p>Sunday mornings<br>Classic hymns & liturgy</p>
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <div class="section-label">We'd Love to See You</div>
+      <h1>Visit Us</h1>
+      <p>Your first visit is a big deal to us. Here's everything you need to know to feel right at home.</p>
     </div>
-    <div class="service-card">
-      <div class="service-icon">☀️</div>
-      <h3>Contemporary Service</h3>
-      <div class="service-time">10:30 AM</div>
-      <p>Sunday mornings<br>Modern worship & teaching</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🌙</div>
-      <h3>Midweek Study</h3>
-      <div class="service-time">7:00 PM</div>
-      <p>Wednesday evenings<br>Bible study & prayer</p>
-    </div>
-  </div>
-</div>
+  </section>
 
-<div class="expect">
-  <div class="expect-content">
-    <div>
-      <h2>What to Expect</h2>
-      <div class="expect-list">
-        <div class="expect-item">
-          <div class="expect-icon">🚪</div>
-          <div>
-            <h4>Warm Welcome</h4>
-            <p>Our greeters will help you find your way and answer any questions. Grab coffee and connect before service.</p>
-          </div>
+  <!-- INFO CARDS -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">What to Expect</div>
+        <h2 class="section-title">Your First Visit</h2>
+        <p class="section-subtitle mx-auto">We want your experience to be welcoming, comfortable, and life-giving from the moment you arrive.</p>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">&#128205;</div>
+          <h3>Easy to Find</h3>
+          <p>We're located at 123 Main Street with plenty of free parking. Our welcome team will greet you and help you find your way.</p>
         </div>
-        <div class="expect-item">
-          <div class="expect-icon">👨‍👩‍👧</div>
-          <div>
-            <h4>Kids & Youth</h4>
-            <p>Safe, engaging programs for all ages during service. Check-in at our Welcome Desk.</p>
-          </div>
+        <div class="info-card">
+          <div class="info-icon">&#128101;</div>
+          <h3>Come as You Are</h3>
+          <p>There's no dress code here. Whether you're in jeans or a suit, you'll fit right in. We want you to be comfortable.</p>
         </div>
-        <div class="expect-item">
-          <div class="expect-icon">🎵</div>
-          <div>
-            <h4>Inspiring Worship</h4>
-            <p>Authentic worship through music, followed by practical, Bible-based teaching.</p>
-          </div>
-        </div>
-        <div class="expect-item">
-          <div class="expect-icon">☕</div>
-          <div>
-            <h4>Stay Connected</h4>
-            <p>Join us for coffee and connection after service. We'd love to get to know you!</p>
-          </div>
+        <div class="info-card">
+          <div class="info-icon">&#9829;</div>
+          <h3>Kids Are Welcome</h3>
+          <p>We have safe, age-appropriate programs for kids of all ages during every service. Your children will love it here.</p>
         </div>
       </div>
     </div>
-    <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church">
-  </div>
-</div>
+  </section>
 
-<div class="location">
-  <div class="location-grid">
-    <div>
-      <h2>Find Us</h2>
-      <div class="contact-info">
-        <div class="contact-item">
-          <div class="contact-icon">📍</div>
-          <div>
-            <h4>Address</h4>
-            <p>123 Faith Avenue<br>Your City, ST 12345</p>
-          </div>
+  <!-- SERVICE TIMES -->
+  <section class="section" style="background: var(--light);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Join Us</div>
+        <h2 class="section-title">Service Times</h2>
+        <p class="section-subtitle mx-auto">We'd love to worship with you. Choose a time that works best for your schedule.</p>
+      </div>
+      <div class="times-grid">
+        <div class="time-card">
+          <div class="time-day">Sunday Morning</div>
+          <div class="time-value">9:00 AM</div>
+          <p>Traditional worship with full band and choir</p>
         </div>
-        <div class="contact-item">
-          <div class="contact-icon">📞</div>
-          <div>
-            <h4>Phone</h4>
-            <p>(555) 123-4567</p>
-          </div>
+        <div class="time-card">
+          <div class="time-day">Sunday Morning</div>
+          <div class="time-value">11:00 AM</div>
+          <p>Contemporary worship with modern music</p>
         </div>
-        <div class="contact-item">
-          <div class="contact-icon">✉️</div>
-          <div>
-            <h4>Email</h4>
-            <p>info@yourchurch.org</p>
-          </div>
+        <div class="time-card">
+          <div class="time-day">Wednesday Evening</div>
+          <div class="time-value">7:00 PM</div>
+          <p>Midweek Bible study and prayer meeting</p>
         </div>
       </div>
     </div>
-    <div class="map-placeholder">
-      Map Placeholder
-    </div>
-  </div>
-</div>
+  </section>
 
-<footer>
-  <div class="footer-grid">
-    <div>
-      <div class="footer-brand">Your Church</div>
-      <p class="footer-desc">A community of faith, hope, and love. You're always welcome here.</p>
+  <!-- CONTACT FORM -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 60px;">
+        <div class="section-label">Let Us Know You're Coming</div>
+        <h2 class="section-title">Plan Your Visit</h2>
+        <p class="section-subtitle mx-auto">Fill out the form below and we'll make sure you have the best experience possible.</p>
+      </div>
+      <div class="form-split">
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! We look forward to seeing you.');">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Smith" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="john@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="service">Preferred Service</label>
+              <select id="service" name="service">
+                <option value="">Select a service...</option>
+                <option value="sunday-9">Sunday 9:00 AM</option>
+                <option value="sunday-11">Sunday 11:00 AM</option>
+                <option value="wednesday-7">Wednesday 7:00 PM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="groupSize">Group Size</label>
+              <select id="groupSize" name="groupSize">
+                <option value="">Select...</option>
+                <option value="1">Just me</option>
+                <option value="2">2 people</option>
+                <option value="3-4">3-4 people</option>
+                <option value="5+">5 or more</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message (Optional)</label>
+            <textarea id="message" name="message" placeholder="Anything you'd like us to know? Questions about parking, kids programs, accessibility..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="align-self: flex-start;">Submit &rarr;</button>
+        </form>
+        <img src="https://images.pexels.com/photos/8815879/pexels-photo-8815879.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Welcome" />
+      </div>
     </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="ministries.html">Ministries</a></li>
-        <li><a href="events.html">Events</a></li>
-      </ul>
+  </section>
+
+  <!-- MAP -->
+  <section class="section" style="background: var(--light); padding-top: 60px; padding-bottom: 60px;">
+    <div class="container">
+      <div class="map-placeholder">
+        <span>&#128205; Map — 123 Main Street, City, State 12345</span>
+      </div>
     </div>
-    <div class="footer-col">
-      <h5>Resources</h5>
-      <ul>
-        <li><a href="media.html">Media</a></li>
-        <li><a href="give.html">Give</a></li>
-        <li><a href="visit.html">Visit</a></li>
-      </ul>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Common Questions</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle mx-auto">We've answered the most common questions visitors ask. Still have questions? Reach out!</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question">What should I wear? <span>+</span></div>
+          <div class="faq-answer"><p>Come as you are! You'll see everything from jeans and t-shirts to dresses and suits. We care more about you being here than what you're wearing.</p></div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question">Where do I park? <span>+</span></div>
+          <div class="faq-answer"><p>We have a large free parking lot right next to the building. First-time visitors can use the designated visitor spots near the main entrance. Our parking team will help guide you.</p></div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question">What about my kids? <span>+</span></div>
+          <div class="faq-answer"><p>We have age-appropriate programs for kids from nursery through 5th grade during every service. Our volunteers are background-checked and trained to create a safe, fun environment. Check-in is easy — just stop by our kids' area when you arrive.</p></div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question">How long is a typical service? <span>+</span></div>
+          <div class="faq-answer"><p>Our services typically last about 75 minutes and include worship music, a message, and time for prayer. We always finish on time so you can plan your day accordingly.</p></div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question">Is there anything for teens? <span>+</span></div>
+          <div class="faq-answer"><p>Absolutely! Our youth ministry meets on Fridays at 6:30 PM and during Sunday services. It's a great place for students to connect, have fun, and grow in their faith with other teens.</p></div>
+        </div>
+      </div>
     </div>
-    <div class="footer-col">
-      <h5>Connect</h5>
-      <ul>
-        <li><a href="visit.html">Contact</a></li>
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
-      </ul>
+  </section>
+
+  <!-- CONTACT INFO -->
+  <section class="section" style="background: var(--light);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Reach Out</div>
+        <h2 class="section-title">Contact Information</h2>
+      </div>
+      <div class="contact-bar">
+        <div class="contact-bar-item">
+          <div class="contact-bar-icon">&#128205;</div>
+          <h3>Address</h3>
+          <p>123 Main Street<br />City, State 12345</p>
+        </div>
+        <div class="contact-bar-item">
+          <div class="contact-bar-icon">&#128222;</div>
+          <h3>Phone</h3>
+          <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+        </div>
+        <div class="contact-bar-item">
+          <div class="contact-bar-icon">&#9993;</div>
+          <h3>Email</h3>
+          <p><a href="mailto:hello@yourchurch.com">hello@yourchurch.com</a></p>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 Your Church. All rights reserved.</span>
-    <span>Built with faith</span>
-  </div>
-</footer>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container text-center">
+      <div class="section-label" style="color: rgba(255,255,255,0.7);">See You Sunday</div>
+      <h2>We Can't Wait to Meet You</h2>
+      <p>No matter where you are on your journey, you're welcome here. Come experience our community firsthand.</p>
+      <a href="give.html" class="btn-primary">Support Our Mission &rarr;</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">Your Church</div>
+          <p class="footer-desc">A community of Christ-followers committed to loving God, loving people, and making a difference in the world.</p>
+          <div class="footer-social">
+            <a href="#">f</a>
+            <a href="#">ig</a>
+            <a href="#">yt</a>
+            <a href="#">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="ministries.html">Ministries</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="media.html">Media</a></li>
+            <li><a href="give.html">Give</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="visit.html">Plan a Visit</a></li>
+            <li><a href="#">Small Groups</a></li>
+            <li><a href="#">Volunteer</a></li>
+            <li><a href="#">Prayer Request</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>123 Main Street</li>
+            <li>City, State 12345</li>
+            <li style="margin-top: 12px;"><a href="tel:+15551234567">(555) 123-4567</a></li>
+            <li><a href="mailto:hello@yourchurch.com">hello@yourchurch.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Your Church. All rights reserved.</span>
+        <span><a href="#">Privacy Policy</a> &middot; <a href="#">Terms</a></span>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

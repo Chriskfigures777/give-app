@@ -19,6 +19,10 @@ import {
   DARK_ELEGANT_FONT_URL,
   BOLD_CONTEMPORARY_THEME_CSS,
   BOLD_CONTEMPORARY_FONT_URL,
+  SEAMLESS_BASE_CSS,
+  getSeamlessTheme,
+  getSeamlessThemeFontUrl,
+  buildSeamlessThemeCSS,
 } from "@/lib/embed-form-themes";
 import { EmbedResizeObserver } from "./embed-resize-observer";
 
@@ -26,7 +30,7 @@ const DEFAULT_SUGGESTED_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string }>;
+  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string; seamless?: string; theme?: string }>;
 };
 
 type EmbedCardRow = {
@@ -54,9 +58,13 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const compactParam = resolved.compact;
   const fullscreenParam = resolved.fullscreen;
   const cardParam = resolved.card;
+  const seamlessParam = resolved.seamless;
+  const themeParam = resolved.theme;
   const initialFrequency = (typeof frequencyParam === "string" ? frequencyParam : frequencyParam?.[0]) as "monthly" | "yearly" | undefined;
   const isCompact = compactParam === "1" || compactParam === "true";
   const isFullscreen = fullscreenParam === "1" || fullscreenParam === "true";
+  const isSeamless = seamlessParam === "1" || seamlessParam === "true";
+  const seamlessTheme = typeof themeParam === "string" ? themeParam : themeParam?.[0];
   const cardId = typeof cardParam === "string" ? cardParam : cardParam?.[0];
   const supabase = await createClient();
 
@@ -487,6 +495,53 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     );
   };
 
+  // Seamless mode: transparent background, no borders/padding/shadow — for embedding directly in website templates
+  if (isSeamless) {
+    const theme = seamlessTheme ? getSeamlessTheme(seamlessTheme) : null;
+    const themeFontUrl = seamlessTheme ? getSeamlessThemeFontUrl(seamlessTheme) : null;
+    const themeCSS = seamlessTheme ? buildSeamlessThemeCSS(seamlessTheme) : SEAMLESS_BASE_CSS;
+    const effectiveButtonColor = theme?.accentColor ?? embedCard?.button_color ?? formCustom?.button_color;
+    const effectiveButtonTextColor = theme?.buttonTextColor ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
+    const effectiveBorderRadius = theme?.borderRadius ?? borderRadius;
+    const effectiveFont = theme ? theme.bodyFont : fontFamily;
+
+    return (
+      <main
+        className={`w-full${theme ? " seamless-theme" : ""}`}
+        style={{
+          background: "transparent",
+          color: theme?.textColor ?? formCustom?.text_color ?? "inherit",
+          fontFamily: effectiveFont,
+        }}
+      >
+        <EmbedResizeObserver />
+        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+        {themeFontUrl && <link rel="stylesheet" href={themeFontUrl} />}
+        {!themeFontUrl && googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
+        <DonationForm
+          organizationId={org.id}
+          organizationName={org.name}
+          campaigns={campaigns ?? []}
+          endowmentFunds={endowmentFunds ?? []}
+          suggestedAmounts={suggestedAmounts}
+          minimumAmountCents={minCents}
+          showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+          allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+          allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+          buttonColor={effectiveButtonColor}
+          buttonTextColor={effectiveButtonTextColor}
+          borderRadius={effectiveBorderRadius}
+          slug={slug}
+          noCard
+          initialFrequency={initialFrequency}
+          fullWidth
+          embedCardId={embedCard?.id}
+        />
+        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+      </main>
+    );
+  }
+
   // Fullscreen: side-by-side layout (image left, form right) on md+, stacked on mobile
   if (isFullscreen) {
     if (useThemedLayout) {
@@ -572,9 +627,9 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
 
   return (
     <main
-      className="min-h-full p-5 flex flex-col items-center justify-center"
+      className="min-h-full flex flex-col items-center justify-center"
       style={{
-        backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+        backgroundColor: formCustom?.background_color ?? "transparent",
         color: formCustom?.text_color ?? "var(--stripe-dark)",
         fontFamily,
       }}
@@ -585,12 +640,6 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       )}
       <div
         className="w-full max-w-[480px] overflow-hidden"
-        style={{
-          border: "1px solid #e5e7eb",
-          borderRadius,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-          background: "#fff",
-        }}
       >
         {cardDesignSets.length > 0 ? (
           cardDesignSets.map((set, i) => (
