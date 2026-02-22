@@ -677,6 +677,276 @@ export async function GET(req: NextRequest) {
             setTimeout(injectPanel, 1500);
             setTimeout(injectPanel, 3500);
           })();
+
+          /* ─── Theme Changer Panel ─── */
+          (function addThemeChangerPanel() {
+            var PRESET_THEMES = [
+              { id:'church-grace', name:'Grace', vars:{'--gold':'#C9A84C','--deep':'#1A1A2E','--navy':'#16213E','--cream':'#FAF7F2','--text':'#333344','--muted':'#6B7280'} },
+              { id:'modern-minimal', name:'Modern Minimal', vars:{'--accent':'#0EA5E9','--accent-dark':'#0284C7','--dark':'#0F172A','--light':'#F8FAFC','--text':'#334155','--muted':'#64748B','--border':'#E2E8F0'} },
+              { id:'warm-heritage', name:'Warm Heritage', vars:{'--gold':'#D4AF37','--dark':'#3E2723','--warm':'#5D4037','--cream':'#FFF8DC','--bg':'#FFFBEB','--text':'#3E2723','--muted':'#795548'} },
+              { id:'bold-contemporary', name:'Bold', vars:{'--primary':'#E63946','--primary-dark':'#C62828','--dark':'#0D1821','--light':'#F8F9FA','--text':'#212529','--muted':'#6C757D','--card':'#FFFFFF'} },
+              { id:'serene-light', name:'Serene', vars:{'--accent':'#7C3AED','--accent-light':'#A78BFA','--dark':'#581C87','--bg':'#FAF5FF','--card':'#FFFFFF','--text':'#581C87','--muted':'#7C3AED80'} },
+              { id:'dark-elegant', name:'Dark Elegant', vars:{'--accent':'#FBBF24','--accent-hover':'#F59E0B','--dark':'#0F0F0F','--bg':'#171717','--card':'#1F1F1F','--text':'#E5E5E5','--muted':'#A3A3A3'} },
+              { id:'vibrant-community', name:'Vibrant', vars:{'--accent':'#059669','--accent-light':'#6EE7B7','--accent-hover':'#047857','--dark':'#064E3B','--bg':'#ECFDF5','--card':'#FFFFFF','--text':'#065F46','--muted':'#047857'} },
+              { id:'classic-reformed', name:'Classic', vars:{'--accent':'#B45309','--accent-dark':'#92400E','--accent-light':'#D97706','--dark':'#7C2D12','--bg':'#FFF7ED','--card':'#FFFFFF','--text':'#431407','--muted':'#9A3412'} },
+              { id:'organic-natural', name:'Natural', vars:{'--accent':'#65A30D','--accent-dark':'#4D7C0F','--dark':'#1A2E05','--bg':'#F7FEE7','--card':'#FFFFFF','--text':'#1A2E05','--muted':'#3F6212'} },
+              { id:'urban-modern', name:'Urban', vars:{'--accent':'#6366F1','--accent-light':'#818CF8','--accent-hover':'#4F46E5','--dark':'#18181B','--bg':'#F4F4F5','--card':'#FFFFFF','--text':'#27272A','--muted':'#71717A'} }
+            ];
+
+            function hexToHSL(hex) {
+              if (!hex || hex.length < 7) return {h:0,s:0,l:0.5};
+              var r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
+              var max = Math.max(r,g,b), min = Math.min(r,g,b), l = (max+min)/2;
+              if (max === min) return {h:0,s:0,l:l};
+              var d = max - min, s = l > 0.5 ? d/(2-max-min) : d/(max+min), h = 0;
+              if (max===r) h = ((g-b)/d + (g<b?6:0))/6;
+              else if (max===g) h = ((b-r)/d+2)/6;
+              else h = ((r-g)/d+4)/6;
+              return {h:h*360,s:s,l:l};
+            }
+            function hslToHex(h,s,l) {
+              h /= 360;
+              function hue2rgb(p,q,t) { if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p; }
+              if (s===0) { var v=Math.round(l*255); var hx=v.toString(16).padStart(2,'0'); return '#'+hx+hx+hx; }
+              var q = l<0.5?l*(1+s):l+s-l*s, p = 2*l-q;
+              var r = Math.round(hue2rgb(p,q,h+1/3)*255), g = Math.round(hue2rgb(p,q,h)*255), bv = Math.round(hue2rgb(p,q,h-1/3)*255);
+              return '#'+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+bv.toString(16).padStart(2,'0');
+            }
+            function isColor(v) { return /^#[0-9a-fA-F]{3,8}$/.test((v||'').trim()); }
+
+            function getCanvasDoc() {
+              try {
+                var frames = document.querySelectorAll('iframe');
+                for (var i = 0; i < frames.length; i++) {
+                  try {
+                    var d = frames[i].contentDocument || frames[i].contentWindow.document;
+                    if (d && d.body && d.body.innerHTML.length > 50) return d;
+                  } catch(e) {}
+                }
+              } catch(e) {}
+              return null;
+            }
+
+            function extractCSSVars() {
+              var vars = {};
+              var doc = getCanvasDoc();
+              if (!doc) return vars;
+              var styles = doc.querySelectorAll('style');
+              for (var i = 0; i < styles.length; i++) {
+                var text = styles[i].textContent || '';
+                var rootMatch = text.match(/:root[^{]*\\{([^}]*)\\}/);
+                if (!rootMatch) continue;
+                var body = rootMatch[1];
+                var re = /--([\w-]+)\s*:\s*([^;]+)/g;
+                var m;
+                while ((m = re.exec(body)) !== null) {
+                  var name = '--' + m[1];
+                  var val = m[2].trim();
+                  if (isColor(val)) vars[name] = val;
+                }
+              }
+              return vars;
+            }
+
+            function setCSSVar(name, val) {
+              var doc = getCanvasDoc();
+              if (!doc) return;
+              doc.documentElement.style.setProperty(name, val);
+            }
+
+            function persistCSSVarsToComponents(changedVars) {
+              var ed = (editor && editor.getEditor) ? editor.getEditor() : editor;
+              if (!ed) return;
+              try {
+                var pm = ed.Pages || ed.PageManager;
+                if (!pm || !pm.getAll) return;
+                var pages = pm.getAll();
+                for (var pi = 0; pi < pages.length; pi++) {
+                  var page = pages[pi];
+                  var wrapper = page.getMainComponent ? page.getMainComponent() : null;
+                  if (!wrapper) continue;
+                  function walkComponents(comp) {
+                    if (!comp) return;
+                    var tag = comp.get ? comp.get('tagName') : '';
+                    if (tag === 'style' || (comp.get && comp.get('type') === 'textnode')) {
+                      var content = comp.get('content') || '';
+                      if (content.indexOf(':root') >= 0) {
+                        var updated = content;
+                        Object.keys(changedVars).forEach(function(varName) {
+                          var escapedName = varName.replace(/[-/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');
+                          var regex = new RegExp('(' + escapedName + '\\\\s*:\\\\s*)([^;]+)', 'g');
+                          updated = updated.replace(regex, '$1' + changedVars[varName]);
+                        });
+                        if (updated !== content) comp.set('content', updated);
+                      }
+                    }
+                    var children = comp.components ? comp.components() : [];
+                    if (children && children.forEach) children.forEach(walkComponents);
+                  }
+                  walkComponents(wrapper);
+                }
+              } catch(e) { console.warn('Theme persist error:', e); }
+            }
+
+            var themePanel = document.createElement('div');
+            themePanel.id = 'theme-changer-panel';
+            themePanel.style.cssText = 'position:fixed;top:56px;right:16px;width:320px;background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.18);z-index:100000;display:none;max-height:calc(100vh - 80px);overflow-y:auto;font-family:Inter,system-ui,sans-serif;';
+
+            var themeBtn = document.createElement('button');
+            themeBtn.type = 'button';
+            themeBtn.id = 'theme-changer-btn';
+            themeBtn.title = 'Theme Colors';
+            themeBtn.textContent = '\\uD83C\\uDFA8';
+            themeBtn.style.cssText = 'position:fixed;top:8px;right:200px;z-index:100001;width:36px;height:36px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:all .15s;';
+            themeBtn.onmouseover = function() { themeBtn.style.background = '#f1f5f9'; themeBtn.style.transform = 'scale(1.05)'; };
+            themeBtn.onmouseout = function() { themeBtn.style.background = '#fff'; themeBtn.style.transform = 'scale(1)'; };
+            themeBtn.onclick = function() {
+              var show = themePanel.style.display === 'none';
+              themePanel.style.display = show ? 'block' : 'none';
+              if (show) refreshPanel();
+            };
+
+            var hueShift = 0;
+            var baseVars = {};
+
+            function refreshPanel() {
+              var vars = extractCSSVars();
+              if (Object.keys(vars).length === 0 && Object.keys(baseVars).length > 0) vars = Object.assign({}, baseVars);
+              if (Object.keys(baseVars).length === 0) baseVars = Object.assign({}, vars);
+              var varKeys = Object.keys(vars);
+
+              var html = '<div style="padding:16px 16px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">'
+                + '<div style="font-size:13px;font-weight:700;color:#1e293b;">Theme Colors</div>'
+                + '<button type="button" id="tc-close" style="background:none;border:none;cursor:pointer;font-size:18px;color:#94a3b8;line-height:1;">&times;</button>'
+                + '</div>';
+
+              html += '<div style="padding:12px 16px;">';
+              html += '<div style="display:flex;border-radius:10px;overflow:hidden;height:44px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">';
+              varKeys.forEach(function(name) {
+                var c = vars[name];
+                var hsl = hexToHSL(c);
+                var tc = hsl.l > 0.55 ? '#1e293b' : '#fff';
+                var label = name.replace('--','');
+                html += '<button type="button" class="tc-swatch" data-var="' + name + '" style="flex:1;background:' + c + ';border:none;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding:0 2px 4px;transition:transform .15s;position:relative;z-index:1;" title="' + label + ': ' + c + '">'
+                  + '<span style="font-size:8px;font-weight:600;text-transform:uppercase;color:' + tc + ';opacity:0;transition:opacity .15s;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + label + '</span></button>';
+              });
+              html += '</div></div>';
+
+              html += '<div id="tc-editor" style="display:none;padding:0 16px 12px;"></div>';
+
+              html += '<div style="padding:0 16px 12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+                + '<span style="font-size:11px;font-weight:500;color:#64748b;">Hue shift</span>'
+                + '<span id="tc-hue-val" style="font-size:10px;font-family:monospace;color:#94a3b8;">' + hueShift + '\\u00B0</span></div>'
+                + '<input type="range" id="tc-hue" min="-180" max="180" value="' + hueShift + '" style="width:100%;height:8px;border-radius:4px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;'
+                + 'background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));">'
+                + '</div>';
+
+              html += '<div style="padding:0 16px 12px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Preset Themes</div>';
+              html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:200px;overflow-y:auto;">';
+              PRESET_THEMES.forEach(function(t) {
+                var vk = Object.keys(t.vars);
+                html += '<button type="button" class="tc-preset" data-theme="' + t.id + '" style="display:flex;flex-direction:column;align-items:stretch;padding:6px;border-radius:8px;border:1.5px solid #e7e5e4;background:#fff;cursor:pointer;transition:all .15s;">'
+                  + '<div style="display:flex;height:18px;border-radius:4px;overflow:hidden;margin-bottom:4px;">';
+                vk.slice(0,5).forEach(function(k) { html += '<div style="flex:1;background:' + t.vars[k] + ';"></div>'; });
+                html += '</div><span style="font-size:10px;font-weight:500;color:#57534e;text-align:center;line-height:1;">' + t.name + '</span></button>';
+              });
+              html += '</div></div>';
+
+              html += '<div style="padding:8px 16px 16px;text-align:center;">'
+                + '<button type="button" id="tc-apply" style="padding:8px 20px;font-size:12px;font-weight:600;color:#fff;background:#6366f1;border:none;border-radius:8px;cursor:pointer;transition:background .15s;">Apply to all pages</button></div>';
+
+              themePanel.innerHTML = html;
+
+              themePanel.querySelector('#tc-close').onclick = function() { themePanel.style.display = 'none'; };
+
+              var swatches = themePanel.querySelectorAll('.tc-swatch');
+              swatches.forEach(function(sw) {
+                sw.onmouseover = function() { sw.style.transform = 'scaleY(1.15)'; sw.style.zIndex = '2'; sw.querySelector('span').style.opacity = '1'; };
+                sw.onmouseout = function() { sw.style.transform = 'scaleY(1)'; sw.style.zIndex = '1'; sw.querySelector('span').style.opacity = '0'; };
+                sw.onclick = function() {
+                  var varName = sw.getAttribute('data-var');
+                  var current = vars[varName] || '#000000';
+                  var editorDiv = themePanel.querySelector('#tc-editor');
+                  editorDiv.style.display = 'block';
+                  editorDiv.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;font-weight:600;color:#334155;">' + varName.replace('--','') + '</span><span style="font-size:11px;font-family:monospace;color:#64748b;" id="tc-hex-display">' + current + '</span></div>'
+                    + '<div style="display:flex;align-items:center;gap:8px;"><input type="color" id="tc-color-pick" value="' + current + '" style="width:36px;height:36px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;padding:0;background:none;">'
+                    + '<input type="text" id="tc-hex-input" value="' + current + '" style="flex:1;font-size:13px;font-family:monospace;padding:6px 10px;border:1px solid #e2e8f0;border-radius:8px;outline:none;"></div>';
+                  function applyColor(val) {
+                    if (!/^#[0-9a-fA-F]{6}$/.test(val)) return;
+                    vars[varName] = val;
+                    baseVars[varName] = val;
+                    setCSSVar(varName, val);
+                    editorDiv.querySelector('#tc-hex-display').textContent = val;
+                    editorDiv.querySelector('#tc-color-pick').value = val;
+                    editorDiv.querySelector('#tc-hex-input').value = val;
+                    sw.style.background = val;
+                    var hsl = hexToHSL(val);
+                    sw.querySelector('span').style.color = hsl.l > 0.55 ? '#1e293b' : '#fff';
+                  }
+                  editorDiv.querySelector('#tc-color-pick').oninput = function(e) { applyColor(e.target.value); };
+                  editorDiv.querySelector('#tc-hex-input').onchange = function(e) { applyColor(e.target.value); };
+                };
+              });
+
+              var hueInput = themePanel.querySelector('#tc-hue');
+              var hueVal = themePanel.querySelector('#tc-hue-val');
+              if (hueInput) {
+                var thumbCSS = document.createElement('style');
+                thumbCSS.textContent = '#tc-hue::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:grab;}#tc-hue::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:grab;}';
+                document.head.appendChild(thumbCSS);
+                hueInput.oninput = function() {
+                  hueShift = parseInt(hueInput.value);
+                  hueVal.textContent = (hueShift > 0 ? '+' : '') + hueShift + '\\u00B0';
+                  Object.keys(baseVars).forEach(function(name) {
+                    var hsl = hexToHSL(baseVars[name]);
+                    var shifted = hslToHex((hsl.h + hueShift + 360) % 360, hsl.s, hsl.l);
+                    setCSSVar(name, shifted);
+                  });
+                };
+              }
+
+              var presetBtns = themePanel.querySelectorAll('.tc-preset');
+              presetBtns.forEach(function(btn) {
+                btn.onmouseover = function() { btn.style.borderColor = '#a5b4fc'; btn.style.boxShadow = '0 2px 8px rgba(99,102,241,.12)'; };
+                btn.onmouseout = function() { btn.style.borderColor = '#e7e5e4'; btn.style.boxShadow = 'none'; };
+                btn.onclick = function() {
+                  var themeId = btn.getAttribute('data-theme');
+                  var theme = PRESET_THEMES.find(function(t) { return t.id === themeId; });
+                  if (!theme) return;
+                  Object.keys(theme.vars).forEach(function(name) { setCSSVar(name, theme.vars[name]); });
+                  baseVars = Object.assign({}, theme.vars);
+                  hueShift = 0;
+                  refreshPanel();
+                };
+              });
+
+              var applyBtn = themePanel.querySelector('#tc-apply');
+              if (applyBtn) {
+                applyBtn.onclick = function() {
+                  var currentVars = {};
+                  Object.keys(baseVars).forEach(function(name) {
+                    var hsl = hexToHSL(baseVars[name]);
+                    currentVars[name] = hueShift !== 0 ? hslToHex((hsl.h + hueShift + 360) % 360, hsl.s, hsl.l) : baseVars[name];
+                  });
+                  persistCSSVarsToComponents(currentVars);
+                  baseVars = Object.assign({}, currentVars);
+                  hueShift = 0;
+                  applyBtn.textContent = 'Applied!';
+                  applyBtn.style.background = '#16a34a';
+                  setTimeout(function() { applyBtn.textContent = 'Apply to all pages'; applyBtn.style.background = '#6366f1'; }, 1500);
+                };
+              }
+            }
+
+            function injectThemeBtn() {
+              if (document.getElementById('theme-changer-btn')) return;
+              document.body.appendChild(themeBtn);
+              document.body.appendChild(themePanel);
+            }
+            setTimeout(injectThemeBtn, 1000);
+            setTimeout(injectThemeBtn, 3000);
+            setTimeout(injectThemeBtn, 6000);
+          })();
         });
         document.getElementById('project-selector').style.display = 'none';
         document.getElementById('template-picker').style.display = 'none';
