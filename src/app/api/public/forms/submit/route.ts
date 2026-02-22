@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name, website_forms_auto_reply_enabled, website_forms_auto_reply_message")
+      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name")
       .eq("slug", orgSlug)
       .maybeSingle();
 
@@ -260,12 +260,10 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Auto-reply confirmation email to the visitor ---
-    const autoReplyEnabled =
-      (org as { website_forms_auto_reply_enabled?: boolean }).website_forms_auto_reply_enabled ?? true;
+    const autoReplyEnabled = true;
 
     if (autoReplyEnabled && visitorEmail) {
-      const customMessage =
-        (org as { website_forms_auto_reply_message?: string | null }).website_forms_auto_reply_message ?? null;
+      const customMessage: string | null = null;
 
       const displayName = visitorName ?? "there";
 
