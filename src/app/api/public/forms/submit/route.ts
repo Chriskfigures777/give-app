@@ -268,7 +268,7 @@ export async function POST(req: NextRequest) {
       const displayName = visitorName ?? "there";
 
       const bodyText = customMessage
-        ? customMessage.replace(/\{\{name\}\}/gi, displayName)
+        ? (customMessage as string).replace(/\{\{name\}\}/gi, displayName)
         : `Thank you for reaching out! We received your message and someone from our team will get back to you shortly.`;
 
       const bodyHtmlParagraphs = bodyText
