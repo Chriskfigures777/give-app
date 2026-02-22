@@ -680,331 +680,274 @@ export async function GET(req: NextRequest) {
 
           /* ─── Theme Changer Panel ─── */
           (function addThemeChangerPanel() {
+            var PALETTES = {
+              'bold-contemporary':  {primary:'#E63946',secondary:'#C62828',background:'#F8F9FA',surface:'#FFFFFF',text:'#212529',textMuted:'#6C757D'},
+              'church-grace':       {primary:'#C9A84C',secondary:'#16213E',background:'#FAF7F2',surface:'#FFFFFF',text:'#333344',textMuted:'#6B7280'},
+              'classic-reformed':   {primary:'#B45309',secondary:'#92400E',background:'#FFF7ED',surface:'#FFFFFF',text:'#431407',textMuted:'#9A3412'},
+              'dark-elegant':       {primary:'#FBBF24',secondary:'#F59E0B',background:'#171717',surface:'#1F1F1F',text:'#E5E5E5',textMuted:'#A3A3A3'},
+              'modern-minimal':     {primary:'#0EA5E9',secondary:'#0284C7',background:'#FFFFFF',surface:'#FFFFFF',text:'#334155',textMuted:'#64748B'},
+              'organic-natural':    {primary:'#65A30D',secondary:'#4D7C0F',background:'#F7FEE7',surface:'#FFFFFF',text:'#1A2E05',textMuted:'#3F6212'},
+              'serene-light':       {primary:'#7C3AED',secondary:'#A78BFA',background:'#FAF5FF',surface:'#FFFFFF',text:'#581C87',textMuted:'#7C3AED'},
+              'urban-modern':       {primary:'#6366F1',secondary:'#818CF8',background:'#F4F4F5',surface:'#FFFFFF',text:'#27272A',textMuted:'#71717A'},
+              'vibrant-community':  {primary:'#059669',secondary:'#6EE7B7',background:'#ECFDF5',surface:'#FFFFFF',text:'#065F46',textMuted:'#047857'},
+              'warm-heritage':      {primary:'#D4AF37',secondary:'#5D4037',background:'#FFFBEB',surface:'#FFF8DC',text:'#3E2723',textMuted:'#795548'}
+            };
+            var COLOR_KEYS = ['primary','secondary','background','surface','text','textMuted'];
+            var COLOR_LABELS = {primary:'Primary',secondary:'Secondary',background:'Background',surface:'Surface',text:'Text',textMuted:'Muted'};
             var PRESETS = [
-              { name:'Grace',    colors:['#C9A84C','#1A1A2E','#16213E','#FAF7F2','#333344','#6B7280'] },
-              { name:'Modern',   colors:['#0EA5E9','#0F172A','#0284C7','#F8FAFC','#334155','#64748B'] },
-              { name:'Heritage', colors:['#D4AF37','#3E2723','#5D4037','#FFFBEB','#3E2723','#795548'] },
-              { name:'Bold',     colors:['#E63946','#0D1821','#C62828','#F8F9FA','#212529','#6C757D'] },
-              { name:'Serene',   colors:['#7C3AED','#581C87','#A78BFA','#FAF5FF','#581C87','#9F7AEA'] },
-              { name:'Dark',     colors:['#FBBF24','#0F0F0F','#F59E0B','#171717','#E5E5E5','#A3A3A3'] },
-              { name:'Vibrant',  colors:['#059669','#064E3B','#047857','#ECFDF5','#065F46','#047857'] },
-              { name:'Classic',  colors:['#B45309','#7C2D12','#92400E','#FFF7ED','#431407','#9A3412'] },
-              { name:'Natural',  colors:['#65A30D','#1A2E05','#4D7C0F','#F7FEE7','#1A2E05','#3F6212'] },
-              { name:'Urban',    colors:['#6366F1','#18181B','#4F46E5','#F4F4F5','#27272A','#71717A'] }
+              {name:'Grace',   id:'church-grace'},
+              {name:'Modern',  id:'modern-minimal'},
+              {name:'Heritage',id:'warm-heritage'},
+              {name:'Bold',    id:'bold-contemporary'},
+              {name:'Serene',  id:'serene-light'},
+              {name:'Dark',    id:'dark-elegant'},
+              {name:'Vibrant', id:'vibrant-community'},
+              {name:'Classic', id:'classic-reformed'},
+              {name:'Natural', id:'organic-natural'},
+              {name:'Urban',   id:'urban-modern'}
             ];
 
             function hexToHSL(hex) {
               if (!hex || hex.length < 7) return {h:0,s:0,l:0.5};
-              var r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
-              var mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2;
+              var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+              var mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;
               if(mx===mn) return {h:0,s:0,l:l};
-              var d=mx-mn, s=l>0.5?d/(2-mx-mn):d/(mx+mn), h=0;
-              if(mx===r) h=((g-b)/d+(g<b?6:0))/6;
-              else if(mx===g) h=((b-r)/d+2)/6;
-              else h=((r-g)/d+4)/6;
+              var d=mx-mn,s=l>0.5?d/(2-mx-mn):d/(mx+mn),h=0;
+              if(mx===r)h=((g-b)/d+(g<b?6:0))/6;else if(mx===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;
               return {h:h*360,s:s,l:l};
             }
             function hslToHex(h,s,l) {
               h/=360;
               function f(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
               if(s===0){var v=Math.round(l*255),hx=v.toString(16).padStart(2,'0');return '#'+hx+hx+hx;}
-              var q=l<0.5?l*(1+s):l+s-l*s, p=2*l-q;
-              var rv=Math.round(f(p,q,h+1/3)*255), gv=Math.round(f(p,q,h)*255), bv=Math.round(f(p,q,h-1/3)*255);
-              return '#'+rv.toString(16).padStart(2,'0')+gv.toString(16).padStart(2,'0')+bv.toString(16).padStart(2,'0');
+              var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+              return '#'+Math.round(f(p,q,h+1/3)*255).toString(16).padStart(2,'0')+Math.round(f(p,q,h)*255).toString(16).padStart(2,'0')+Math.round(f(p,q,h-1/3)*255).toString(16).padStart(2,'0');
             }
+            function escRe(s){return s.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&');}
+            function getEd(){return (editor&&editor.getEditor)?editor.getEditor():editor;}
 
-            function getEd() {
-              var e = (editor && editor.getEditor) ? editor.getEditor() : editor;
-              return e;
-            }
-
-            function getCanvasDoc() {
-              var ed = getEd();
-              if (!ed) return null;
-              try { if (ed.Canvas && ed.Canvas.getDocument) return ed.Canvas.getDocument(); } catch(e) {}
+            function detectTheme() {
               try {
-                var frames = document.querySelectorAll('iframe');
-                for (var i=0;i<frames.length;i++) {
-                  try { var d=frames[i].contentDocument; if(d&&d.body&&d.body.innerHTML.length>100) return d; } catch(e) {}
+                var ed=getEd(); if(!ed) return null;
+                var pages=(ed.Pages&&ed.Pages.getAll)?ed.Pages.getAll():[];
+                for(var i=0;i<pages.length;i++){
+                  var w=pages[i].getMainComponent?pages[i].getMainComponent():null;
+                  if(!w) continue;
+                  var html='';
+                  try{html=w.toHTML?w.toHTML().substring(0,2000):'';}catch(e){}
+                  var m=html.match(/data-template-theme="([^"]+)"/i);
+                  if(m&&PALETTES[m[1]]) return m[1];
                 }
-              } catch(e) {}
+              }catch(e){}
               return null;
             }
 
-            function extractCSSVars() {
-              var vars = {};
-              var ed = getEd();
-              if (!ed) return vars;
-              try {
-                var html = '';
-                var pm = ed.Pages;
-                if (pm && pm.getSelected) {
-                  var page = pm.getSelected();
-                  var wrapper = page && page.getMainComponent ? page.getMainComponent() : null;
-                  if (wrapper) {
-                    function walkForStyle(comp) {
-                      if (!comp) return;
-                      var tag = comp.get ? comp.get('tagName') : '';
-                      if (tag === 'style') {
-                        var kids = comp.components ? comp.components() : [];
-                        if (kids && kids.length) {
-                          kids.forEach(function(k) { html += k.get('content') || ''; });
-                        } else {
-                          html += comp.get('content') || '';
-                        }
-                      }
-                      var children = comp.components ? comp.components() : [];
-                      if (children && children.forEach) children.forEach(walkForStyle);
-                    }
-                    walkForStyle(wrapper);
+            function replaceColorInProject(oldHex,newHex){
+              if(!oldHex||!newHex||oldHex.toLowerCase()===newHex.toLowerCase()) return;
+              var ed=getEd(); if(!ed) return;
+              var oldLower=oldHex.toLowerCase();
+              var re=new RegExp(escRe(oldHex),'gi');
+              function replStyle(obj){
+                try{
+                  var st=obj.getStyle?obj.getStyle():{};
+                  var ch=false,ns={};
+                  for(var p in st){
+                    var v=st[p];
+                    if(typeof v==='string'&&v.toLowerCase().indexOf(oldLower)>=0){ns[p]=v.replace(re,newHex);ch=true;}
+                    else ns[p]=v;
                   }
-                }
-                if (!html) {
-                  try { html = ed.getHtml ? ed.getHtml() : ''; } catch(e) {}
-                }
-                var rootRe = /:root[^{]*\{([^}]+)\}/g;
-                var rootM;
-                while ((rootM = rootRe.exec(html)) !== null) {
-                  var body = rootM[1];
-                  var varRe = /--([\w-]+)\s*:\s*([^;]+)/g;
-                  var vm;
-                  while ((vm = varRe.exec(body)) !== null) {
-                    var val = vm[2].trim();
-                    if (/^#[0-9a-fA-F]{3,8}$/.test(val)) {
-                      vars['--' + vm[1]] = val;
-                    }
+                  if(ch&&obj.setStyle) obj.setStyle(ns);
+                }catch(e){}
+              }
+              function walkComp(comp){
+                if(!comp) return;
+                replStyle(comp);
+                try{
+                  var content=comp.get?comp.get('content'):'';
+                  if(typeof content==='string'&&content.toLowerCase().indexOf(oldLower)>=0){
+                    comp.set('content',content.replace(re,newHex));
                   }
+                }catch(e){}
+                var ch=comp.components?comp.components():[];
+                if(ch.models) ch=ch.models;
+                if(ch) for(var i=0;i<ch.length;i++) walkComp(ch[i]);
+              }
+              var pages=(ed.Pages&&ed.Pages.getAll)?ed.Pages.getAll():[];
+              for(var pi=0;pi<pages.length;pi++){
+                var w=pages[pi].getMainComponent?pages[pi].getMainComponent():null;
+                if(w) walkComp(w);
+              }
+              try{
+                var css=ed.CssComposer||ed.Css;
+                if(css&&css.getAll){
+                  var rules=css.getAll();
+                  if(rules.models) rules=rules.models;
+                  if(rules) for(var ri=0;ri<rules.length;ri++) replStyle(rules[ri]);
                 }
-              } catch(e) { console.warn('extractCSSVars error:', e); }
-              return vars;
+              }catch(e){}
             }
 
-            function setCSSVarLive(name, val) {
-              var doc = getCanvasDoc();
-              if (doc) doc.documentElement.style.setProperty(name, val);
+            var activePalette=null, originalPalette=null, hueShift=0;
+
+            var tcPanel=document.createElement('div');
+            tcPanel.id='tc-panel';
+            tcPanel.style.cssText='position:fixed;top:0;left:0;width:340px;height:100%;background:#fff;box-shadow:4px 0 24px rgba(0,0,0,0.12);z-index:99999;display:none;overflow-y:auto;font-family:Inter,system-ui,sans-serif;border-right:1px solid #e2e8f0;';
+
+            function togglePanel(){
+              var show=tcPanel.style.display==='none';
+              tcPanel.style.display=show?'block':'none';
+              if(show) buildPanel();
             }
-
-            function persistToAllPages(newVarMap) {
-              var ed = getEd();
-              if (!ed) return false;
-              var changed = false;
-              try {
-                var pm = ed.Pages;
-                if (!pm || !pm.getAll) return false;
-                var pages = pm.getAll();
-                for (var pi=0; pi<pages.length; pi++) {
-                  var wrapper = pages[pi].getMainComponent ? pages[pi].getMainComponent() : null;
-                  if (!wrapper) continue;
-                  (function walk(comp) {
-                    if (!comp) return;
-                    var tag = comp.get ? comp.get('tagName') : '';
-                    if (tag === 'style') {
-                      var kids = comp.components ? comp.components() : [];
-                      if (kids && kids.length) {
-                        kids.forEach(function(textNode) {
-                          var content = textNode.get('content') || '';
-                          if (content.indexOf(':root') < 0) return;
-                          var updated = content;
-                          Object.keys(newVarMap).forEach(function(vn) {
-                            var safe = vn.replace(/[.*+?^$\{|\}()\[\]\\\\]/g, '\\\\$&');
-                            var re = new RegExp('(' + safe + '\\\\s*:\\\\s*)([^;]+)', 'g');
-                            updated = updated.replace(re, '$1' + newVarMap[vn]);
-                          });
-                          if (updated !== content) { textNode.set('content', updated); changed = true; }
-                        });
-                      } else {
-                        var content = comp.get('content') || '';
-                        if (content.indexOf(':root') >= 0) {
-                          var updated = content;
-                          Object.keys(newVarMap).forEach(function(vn) {
-                            var safe = vn.replace(/[.*+?^$\{|\}()\[\]\\\\]/g, '\\\\$&');
-                            var re = new RegExp('(' + safe + '\\\\s*:\\\\s*)([^;]+)', 'g');
-                            updated = updated.replace(re, '$1' + newVarMap[vn]);
-                          });
-                          if (updated !== content) { comp.set('content', updated); changed = true; }
-                        }
-                      }
-                    }
-                    var children = comp.components ? comp.components() : [];
-                    if (children && children.forEach) children.forEach(walk);
-                  })(wrapper);
-                }
-              } catch(e) { console.warn('persistToAllPages error:', e); }
-              return changed;
-            }
-
-            var tcPanel = document.createElement('div');
-            tcPanel.id = 'tc-panel';
-            tcPanel.style.cssText = 'position:fixed;top:0;left:0;width:340px;height:100%;background:#fff;box-shadow:4px 0 24px rgba(0,0,0,0.12);z-index:99999;display:none;overflow-y:auto;font-family:Inter,system-ui,sans-serif;border-right:1px solid #e2e8f0;';
-            var hueShift = 0;
-            var baseVars = {};
-            var currentVarNames = [];
-
-            function togglePanel() {
-              var show = tcPanel.style.display === 'none';
-              tcPanel.style.display = show ? 'block' : 'none';
-              if (show) buildPanel();
-            }
-
-            window.addEventListener('message', function(e) {
-              if (e.data && e.data.type === 'toggle-theme-panel') togglePanel();
+            window.addEventListener('message',function(e){
+              if(e.data&&e.data.type==='toggle-theme-panel') togglePanel();
             });
 
-            function buildPanel() {
-              var vars = extractCSSVars();
-              if (Object.keys(vars).length === 0 && Object.keys(baseVars).length > 0) vars = Object.assign({}, baseVars);
-              if (Object.keys(baseVars).length === 0) baseVars = Object.assign({}, vars);
-              currentVarNames = Object.keys(vars);
-
-              var h = '';
-              h += '<div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">';
-              h += '<div style="font-size:15px;font-weight:700;color:#1e293b;">Theme Colors</div>';
-              h += '<button type="button" id="tc-close-btn" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">&times;</button>';
-              h += '</div>';
-
-              if (currentVarNames.length === 0) {
-                h += '<div style="padding:32px 20px;text-align:center;color:#64748b;font-size:13px;">No CSS color variables detected.<br>Open a project that uses a template first.</div>';
-                tcPanel.innerHTML = h;
-                tcPanel.querySelector('#tc-close-btn').onclick = function() { tcPanel.style.display='none'; };
-                return;
+            function buildPanel(){
+              if(!activePalette){
+                var tid=detectTheme();
+                if(tid&&PALETTES[tid]){
+                  originalPalette=JSON.parse(JSON.stringify(PALETTES[tid]));
+                  activePalette=JSON.parse(JSON.stringify(PALETTES[tid]));
+                } else {
+                  tcPanel.innerHTML='<div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;"><div style="font-size:15px;font-weight:700;color:#1e293b;">Theme Colors</div><button type="button" id="tc-close-btn" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">&times;</button></div><div style="padding:32px 20px;text-align:center;color:#64748b;font-size:13px;">No template theme detected.<br>Open a project that uses a template first.</div>';
+                  tcPanel.querySelector('#tc-close-btn').onclick=function(){tcPanel.style.display='none';};
+                  return;
+                }
               }
+              var pal=activePalette;
+              var h='';
+              h+='<div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">';
+              h+='<div style="font-size:15px;font-weight:700;color:#1e293b;">Theme Colors</div>';
+              h+='<button type="button" id="tc-close-btn" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">&times;</button></div>';
 
-              h += '<div style="padding:16px 20px 12px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Current Palette</div>';
-              h += '<div style="display:flex;border-radius:12px;overflow:hidden;height:52px;box-shadow:0 2px 6px rgba(0,0,0,0.1);cursor:pointer;">';
-              currentVarNames.forEach(function(name,i) {
-                var c = vars[name];
-                var hsl = hexToHSL(c);
-                var tc = hsl.l>0.55?'#1e293b':'#fff';
-                var lbl = name.replace('--','');
-                h += '<div class="tc-sw" data-idx="'+i+'" style="flex:1;background:'+c+';display:flex;align-items:flex-end;justify-content:center;padding:0 2px 6px;transition:transform .15s,filter .15s;cursor:pointer;" title="'+lbl+': '+c+'">';
-                h += '<span style="font-size:7px;font-weight:700;text-transform:uppercase;color:'+tc+';opacity:0;transition:opacity .15s;letter-spacing:.03em;white-space:nowrap;overflow:hidden;">'+lbl+'</span></div>';
+              h+='<div style="padding:16px 20px 12px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Current Palette</div>';
+              h+='<div style="display:flex;border-radius:12px;overflow:hidden;height:52px;box-shadow:0 2px 6px rgba(0,0,0,0.1);">';
+              COLOR_KEYS.forEach(function(key,i){
+                var c=pal[key];
+                var hsl=hexToHSL(c);
+                var tc=hsl.l>0.55?'#1e293b':'#fff';
+                h+='<div class="tc-sw" data-key="'+key+'" style="flex:1;background:'+c+';display:flex;align-items:flex-end;justify-content:center;padding:0 2px 6px;transition:transform .15s;cursor:pointer;" title="'+COLOR_LABELS[key]+': '+c+'">';
+                h+='<span style="font-size:7px;font-weight:700;text-transform:uppercase;color:'+tc+';opacity:0;transition:opacity .15s;letter-spacing:.03em;white-space:nowrap;">'+COLOR_LABELS[key]+'</span></div>';
               });
-              h += '</div></div>';
+              h+='</div></div>';
 
-              h += '<div id="tc-color-edit" style="display:none;padding:0 20px 12px;"></div>';
+              h+='<div id="tc-color-edit" style="display:none;padding:0 20px 12px;"></div>';
 
-              h += '<div style="padding:4px 20px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">';
-              h += '<span style="font-size:11px;font-weight:500;color:#64748b;">Hue Shift</span>';
-              h += '<span id="tc-hv" style="font-size:10px;font-family:monospace;color:#94a3b8;">'+(hueShift>0?'+':'')+hueShift+'&deg;</span></div>';
-              h += '<input type="range" id="tc-hue-range" min="-180" max="180" step="1" value="'+hueShift+'" style="width:100%;height:10px;border-radius:5px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));">';
-              if (hueShift !== 0) h += '<button type="button" id="tc-hue-reset" style="margin-top:4px;font-size:11px;color:#6366f1;background:none;border:none;cursor:pointer;">Reset hue</button>';
-              h += '</div>';
+              h+='<div style="padding:4px 20px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">';
+              h+='<span style="font-size:11px;font-weight:500;color:#64748b;">Hue Shift</span>';
+              h+='<span id="tc-hv" style="font-size:10px;font-family:monospace;color:#94a3b8;">'+(hueShift>0?'+':'')+hueShift+'&deg;</span></div>';
+              h+='<input type="range" id="tc-hue-range" min="-180" max="180" step="5" value="'+hueShift+'" style="width:100%;height:10px;border-radius:5px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));">';
+              if(hueShift!==0) h+='<button type="button" id="tc-hue-reset" style="margin-top:4px;font-size:11px;color:#6366f1;background:none;border:none;cursor:pointer;">Reset hue</button>';
+              h+='</div>';
 
-              h += '<div style="padding:0 20px 16px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Preset Themes</div>';
-              h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-              PRESETS.forEach(function(p,pi) {
-                h += '<button type="button" class="tc-pre" data-pi="'+pi+'" style="display:flex;flex-direction:column;align-items:stretch;padding:8px;border-radius:10px;border:1.5px solid #e7e5e4;background:#fff;cursor:pointer;transition:all .15s;">';
-                h += '<div style="display:flex;height:22px;border-radius:5px;overflow:hidden;margin-bottom:5px;">';
-                p.colors.slice(0,5).forEach(function(c) { h+='<div style="flex:1;background:'+c+';"></div>'; });
-                h += '</div><span style="font-size:10px;font-weight:600;color:#57534e;text-align:center;">'+p.name+'</span></button>';
+              h+='<div style="padding:0 20px 16px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Preset Themes</div>';
+              h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+              PRESETS.forEach(function(p,pi){
+                var pc=PALETTES[p.id];
+                h+='<button type="button" class="tc-pre" data-pi="'+pi+'" style="display:flex;flex-direction:column;align-items:stretch;padding:8px;border-radius:10px;border:1.5px solid #e7e5e4;background:#fff;cursor:pointer;transition:all .15s;">';
+                h+='<div style="display:flex;height:22px;border-radius:5px;overflow:hidden;margin-bottom:5px;">';
+                ['primary','secondary','background','surface','text'].forEach(function(k){h+='<div style="flex:1;background:'+pc[k]+';"></div>';});
+                h+='</div><span style="font-size:10px;font-weight:600;color:#57534e;text-align:center;">'+p.name+'</span></button>';
               });
-              h += '</div></div>';
+              h+='</div></div>';
 
-              h += '<div style="padding:8px 20px 20px;display:flex;gap:8px;">';
-              h += '<button type="button" id="tc-apply-btn" style="flex:1;padding:10px 16px;font-size:13px;font-weight:600;color:#fff;background:#6366f1;border:none;border-radius:10px;cursor:pointer;transition:all .15s;">Save to All Pages</button>';
-              h += '</div>';
+              tcPanel.innerHTML=h;
 
-              tcPanel.innerHTML = h;
-
-              var thumbStyle = document.getElementById('tc-thumb-css');
-              if (!thumbStyle) {
-                thumbStyle = document.createElement('style');
-                thumbStyle.id = 'tc-thumb-css';
-                thumbStyle.textContent = '#tc-hue-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}#tc-hue-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}';
+              var thumbStyle=document.getElementById('tc-thumb-css');
+              if(!thumbStyle){
+                thumbStyle=document.createElement('style');
+                thumbStyle.id='tc-thumb-css';
+                thumbStyle.textContent='#tc-hue-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}#tc-hue-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}';
                 document.head.appendChild(thumbStyle);
               }
 
-              tcPanel.querySelector('#tc-close-btn').onclick = function() { tcPanel.style.display='none'; };
+              tcPanel.querySelector('#tc-close-btn').onclick=function(){tcPanel.style.display='none';};
 
-              var swatches = tcPanel.querySelectorAll('.tc-sw');
-              swatches.forEach(function(sw) {
-                sw.onmouseenter = function() { sw.style.transform='scaleY(1.18)';sw.style.zIndex='2';sw.querySelector('span').style.opacity='1'; };
-                sw.onmouseleave = function() { sw.style.transform='';sw.style.zIndex='';sw.querySelector('span').style.opacity='0'; };
-                sw.onclick = function() {
-                  var idx = parseInt(sw.getAttribute('data-idx'));
-                  var varName = currentVarNames[idx];
-                  var cur = vars[varName]||'#000000';
-                  var editDiv = tcPanel.querySelector('#tc-color-edit');
-                  editDiv.style.display = 'block';
-                  editDiv.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:8px 12px;background:#f8fafc;border-radius:8px;"><span style="font-size:12px;font-weight:600;color:#334155;">'+varName.replace('--','')+'</span><span id="tc-cv" style="font-size:11px;font-family:monospace;color:#64748b;">'+cur+'</span></div><div style="display:flex;align-items:center;gap:10px;"><input type="color" id="tc-cp" value="'+cur+'" style="width:40px;height:40px;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;padding:0;background:none;flex-shrink:0;"><input type="text" id="tc-ci" value="'+cur+'" style="flex:1;font-size:13px;font-family:monospace;padding:8px 12px;border:1px solid #e2e8f0;border-radius:10px;outline:none;"></div>';
-                  function setC(v) {
+              var swatches=tcPanel.querySelectorAll('.tc-sw');
+              swatches.forEach(function(sw){
+                sw.onmouseenter=function(){sw.style.transform='scaleY(1.18)';sw.style.zIndex='2';sw.querySelector('span').style.opacity='1';};
+                sw.onmouseleave=function(){sw.style.transform='';sw.style.zIndex='';sw.querySelector('span').style.opacity='0';};
+                sw.onclick=function(){
+                  var key=sw.getAttribute('data-key');
+                  var cur=pal[key]||'#000000';
+                  var editDiv=tcPanel.querySelector('#tc-color-edit');
+                  editDiv.style.display='block';
+                  editDiv.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:8px 12px;background:#f8fafc;border-radius:8px;"><span style="font-size:12px;font-weight:600;color:#334155;">'+COLOR_LABELS[key]+'</span><span id="tc-cv" style="font-size:11px;font-family:monospace;color:#64748b;">'+cur+'</span></div><div style="display:flex;align-items:center;gap:10px;"><input type="color" id="tc-cp" value="'+cur+'" style="width:40px;height:40px;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;padding:0;background:none;flex-shrink:0;"><input type="text" id="tc-ci" value="'+cur+'" style="flex:1;font-size:13px;font-family:monospace;padding:8px 12px;border:1px solid #e2e8f0;border-radius:10px;outline:none;"></div>';
+                  function applyColor(v){
                     if(!/^#[0-9a-fA-F]{6}$/.test(v)) return;
-                    vars[varName]=v; baseVars[varName]=v;
-                    setCSSVarLive(varName,v);
+                    var oldC=activePalette[key];
+                    replaceColorInProject(oldC,v);
+                    activePalette[key]=v;
+                    originalPalette[key]=v;
                     editDiv.querySelector('#tc-cv').textContent=v;
                     editDiv.querySelector('#tc-cp').value=v;
                     editDiv.querySelector('#tc-ci').value=v;
                     sw.style.background=v;
-                    var hl=hexToHSL(v); sw.querySelector('span').style.color=hl.l>0.55?'#1e293b':'#fff';
+                    var hl=hexToHSL(v);sw.querySelector('span').style.color=hl.l>0.55?'#1e293b':'#fff';
                   }
-                  editDiv.querySelector('#tc-cp').oninput=function(e){setC(e.target.value);};
-                  editDiv.querySelector('#tc-ci').onchange=function(e){setC(e.target.value);};
+                  editDiv.querySelector('#tc-cp').onchange=function(e){applyColor(e.target.value);};
+                  editDiv.querySelector('#tc-ci').onchange=function(e){applyColor(e.target.value);};
                 };
               });
 
-              var hueRange = tcPanel.querySelector('#tc-hue-range');
-              var hueValSpan = tcPanel.querySelector('#tc-hv');
-              if (hueRange) {
-                hueRange.oninput = function() {
-                  hueShift = parseInt(hueRange.value);
-                  hueValSpan.textContent = (hueShift>0?'+':'')+hueShift+String.fromCharCode(176);
-                  currentVarNames.forEach(function(name) {
-                    var hl = hexToHSL(baseVars[name]);
-                    setCSSVarLive(name, hslToHex((hl.h+hueShift+360)%360, hl.s, hl.l));
-                  });
+              var hueRange=tcPanel.querySelector('#tc-hue-range');
+              var hueValSpan=tcPanel.querySelector('#tc-hv');
+              var hueTimer=null;
+              if(hueRange){
+                hueRange.oninput=function(){
+                  var newShift=parseInt(hueRange.value);
+                  hueValSpan.textContent=(newShift>0?'+':'')+newShift+String.fromCharCode(176);
+                  if(hueTimer) clearTimeout(hueTimer);
+                  hueTimer=setTimeout(function(){
+                    COLOR_KEYS.forEach(function(key){
+                      var base=originalPalette[key];
+                      var hl=hexToHSL(base);
+                      var shifted=hslToHex((hl.h+newShift+360)%360,hl.s,hl.l);
+                      replaceColorInProject(activePalette[key],shifted);
+                      activePalette[key]=shifted;
+                    });
+                    hueShift=newShift;
+                    var sws=tcPanel.querySelectorAll('.tc-sw');
+                    COLOR_KEYS.forEach(function(key,idx){
+                      if(sws[idx]){sws[idx].style.background=activePalette[key];sws[idx].title=COLOR_LABELS[key]+': '+activePalette[key];}
+                    });
+                  },200);
                 };
               }
-              var hueReset = tcPanel.querySelector('#tc-hue-reset');
-              if (hueReset) hueReset.onclick = function() { hueShift=0; buildPanel(); currentVarNames.forEach(function(n){setCSSVarLive(n,baseVars[n]);}); };
+              var hueReset=tcPanel.querySelector('#tc-hue-reset');
+              if(hueReset) hueReset.onclick=function(){
+                COLOR_KEYS.forEach(function(key){
+                  replaceColorInProject(activePalette[key],originalPalette[key]);
+                  activePalette[key]=originalPalette[key];
+                });
+                hueShift=0;buildPanel();
+              };
 
-              var presetBtns = tcPanel.querySelectorAll('.tc-pre');
-              presetBtns.forEach(function(btn) {
+              var presetBtns=tcPanel.querySelectorAll('.tc-pre');
+              presetBtns.forEach(function(btn){
                 btn.onmouseenter=function(){btn.style.borderColor='#a5b4fc';btn.style.boxShadow='0 2px 8px rgba(99,102,241,.15)';btn.style.transform='translateY(-1px)';};
                 btn.onmouseleave=function(){btn.style.borderColor='#e7e5e4';btn.style.boxShadow='none';btn.style.transform='';};
-                btn.onclick = function() {
-                  var pi = parseInt(btn.getAttribute('data-pi'));
-                  var preset = PRESETS[pi];
-                  if (!preset) return;
-                  currentVarNames.forEach(function(name, i) {
-                    var c = preset.colors[i] || preset.colors[preset.colors.length-1];
-                    baseVars[name] = c;
-                    setCSSVarLive(name, c);
-                    vars[name] = c;
+                btn.onclick=function(){
+                  var pi=parseInt(btn.getAttribute('data-pi'));
+                  var preset=PRESETS[pi];
+                  if(!preset||!PALETTES[preset.id]) return;
+                  var newPal=PALETTES[preset.id];
+                  COLOR_KEYS.forEach(function(key){
+                    replaceColorInProject(activePalette[key],newPal[key]);
+                    activePalette[key]=newPal[key];
                   });
-                  hueShift = 0;
-                  buildPanel();
+                  originalPalette=JSON.parse(JSON.stringify(activePalette));
+                  hueShift=0;buildPanel();
                 };
               });
-
-              var applyBtn = tcPanel.querySelector('#tc-apply-btn');
-              if (applyBtn) {
-                applyBtn.onclick = function() {
-                  var final = {};
-                  currentVarNames.forEach(function(name) {
-                    if (hueShift !== 0) {
-                      var hl = hexToHSL(baseVars[name]);
-                      final[name] = hslToHex((hl.h+hueShift+360)%360, hl.s, hl.l);
-                    } else {
-                      final[name] = baseVars[name];
-                    }
-                  });
-                  var ok = persistToAllPages(final);
-                  baseVars = Object.assign({}, final);
-                  hueShift = 0;
-                  applyBtn.textContent = ok ? 'Saved!' : 'Saved!';
-                  applyBtn.style.background = '#16a34a';
-                  setTimeout(function() { applyBtn.textContent='Save to All Pages'; applyBtn.style.background='#6366f1'; }, 2000);
-                  buildPanel();
-                };
-              }
             }
 
-            function inject() {
-              if (document.getElementById('tc-panel')) return;
+            function inject(){
+              if(document.getElementById('tc-panel')) return;
               document.body.appendChild(tcPanel);
             }
-            setTimeout(inject, 1000);
-            setTimeout(inject, 3000);
+            setTimeout(inject,1000);
+            setTimeout(inject,3000);
           })();
         });
         document.getElementById('project-selector').style.display = 'none';
