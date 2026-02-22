@@ -289,7 +289,7 @@ function injectCmsBindings(
   );
 
   out = out.replace(
-    /<(h[1-6]|p|span|div|td|th|li|strong|em)([^>]*?)data-cms-binding="([^"]+)"([^>]*)>([^<]*)<\/\1>/gi,
+    /<(h[1-6]|p|span|div|td|th|li|strong|em)([^>]*?)data-cms-binding="([^"]+)"([^>]*)>([\s\S]*?)<\/\1>/gi,
     (_, tag, before, binding, after, inner) => {
       const value = resolveCmsBinding(binding, cmsData);
       return `<${tag}${before}data-cms-binding="${binding}"${after}>${esc(value) || inner}</${tag}>`;

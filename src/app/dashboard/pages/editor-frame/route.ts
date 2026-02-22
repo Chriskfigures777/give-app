@@ -1027,7 +1027,7 @@ export async function GET(req: NextRequest) {
       function renderProjectCards(projects) {
         var container = document.getElementById('project-cards');
         container.innerHTML = '';
-        var esc = function(s) { return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); };
+        var esc = function(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
         function getPreviewHtml(proj) {
           var p = proj.project || {};
           if (typeof p.previewHtml === 'string' && p.previewHtml.length > 50) {
@@ -1149,7 +1149,7 @@ export async function GET(req: NextRequest) {
               container.innerHTML = '<p style="color:hsl(215,16%,47%);">No templates available.</p>';
               return;
             }
-            var esc = function(s) { return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); };
+            var esc = function(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
             templates.forEach(function(t) {
               var card = document.createElement('div');
               card.style.cssText = 'background:#fff;border:1px solid hsl(220,13%,91%);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.06);';
