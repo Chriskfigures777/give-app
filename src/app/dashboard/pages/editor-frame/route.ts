@@ -723,7 +723,7 @@ export async function GET(req: NextRequest) {
               var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
               return '#'+Math.round(f(p,q,h+1/3)*255).toString(16).padStart(2,'0')+Math.round(f(p,q,h)*255).toString(16).padStart(2,'0')+Math.round(f(p,q,h-1/3)*255).toString(16).padStart(2,'0');
             }
-            function escRe(s){return s.replace(/[.*+?^\${}()|[\\]\\\\]/g,'\\\\$&');}
+            function escRe(s){return s.replace(new RegExp('[.*+?^' + String.fromCharCode(36) + '{}()|[\\\\]\\\\\\\\]','g'),'\\\\' + String.fromCharCode(36) + '&');}
             function getEd(){return (editor&&editor.getEditor)?editor.getEditor():editor;}
 
             function detectTheme() {
