@@ -430,43 +430,12 @@ export async function GET(req: NextRequest) {
             var doc = win.document;
             if (!doc.body) return;
             if (!doc.body.getAttribute('data-gjs-pagelinks-bound')) {
-            var pages = editor.Pages;
-            if (!pages || !pages.getAll) return;
             if (doc.body) doc.body.setAttribute('data-gjs-pagelinks-bound', '1');
-            function slug(s) { return (s || '').toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9-]/g, ''); }
             function preventLinkNav(e) {
               var target = e.target;
               while (target && target !== doc.body) {
                 if (target.tagName === 'A') {
                   e.preventDefault();
-                  e.stopPropagation();
-                  if (e.type === 'click') {
-                    var href = (target.getAttribute('href') || '').trim();
-                    var pageRef = href.indexOf('#') === 0 ? href.slice(1) : (href || '').split('?')[0].split('#')[0];
-                    if (pageRef.substring(0, 7) === 'page://') pageRef = pageRef.substring(7);
-                    else if (pageRef.substring(0, 5) === 'page:') pageRef = pageRef.substring(5);
-                    if (pageRef) {
-                      var all = pages.getAll();
-                      var pageRefLower = pageRef.toLowerCase();
-                      var pageRefNoPrefix = pageRef.replace(/^page-/, '');
-                      for (var i = 0; i < all.length; i++) {
-                        var p = all[i];
-                        var id = (p.getId && p.getId()) || (p.id !== undefined ? p.id : (p.get && p.get('id')));
-                        var name = (p.getName && p.getName()) || (p.name !== undefined ? p.name : (p.get && p.get('name')));
-                        var idStr = String(id || '');
-                        var nameStr = String(name || '');
-                        var idStrNoPrefix = idStr.replace(/^page-/, '');
-                        var nameSlug = slug(nameStr);
-                        var match = idStr === pageRef || idStr === pageRefNoPrefix ||
-                            idStrNoPrefix === pageRef || idStrNoPrefix === pageRefNoPrefix ||
-                            nameSlug === slug(pageRef) || nameSlug === pageRefLower ||
-                            nameStr.toLowerCase() === pageRefLower ||
-                            (/^page-\d+$/.test(pageRef) && parseInt(pageRef.replace('page-', ''), 10) === i) ||
-                            (/^\d+$/.test(pageRef) && parseInt(pageRef, 10) === i);
-                        if (match) { pages.select(p); break; }
-                      }
-                    }
-                  }
                   return;
                 }
                 target = target.parentElement;
@@ -479,7 +448,11 @@ export async function GET(req: NextRequest) {
             if (doc.body.getAttribute('data-gjs-cms-styles-bound')) return;
             doc.body.setAttribute('data-gjs-cms-styles-bound', '1');
             var style = doc.createElement('style');
-            style.textContent = '[data-cms-binding],[data-cms-block],[data-cms-field]{outline:2px dashed #9333ea !important;outline-offset:2px;}[data-cms-binding]:hover,[data-cms-block]:hover,[data-cms-field]:hover{outline-color:#7c3aed !important;}';
+            style.textContent = [
+              '[data-cms-binding]:hover,[data-cms-block]:hover,[data-cms-field]:hover{outline:1px dashed rgba(147,51,234,0.4) !important;outline-offset:1px;}',
+              'html,body{background-color:inherit;}',
+              '[data-gjs-type="wrapper"]{background:transparent !important;}'
+            ].join('');
             (doc.head || doc.documentElement).appendChild(style);
           });
           function hasCmsBinding(comp) {
