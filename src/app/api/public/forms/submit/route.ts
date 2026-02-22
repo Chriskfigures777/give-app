@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name")
+      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name, website_forms_auto_reply_enabled, website_forms_auto_reply_message")
       .eq("slug", orgSlug)
       .maybeSingle();
 
@@ -257,6 +257,70 @@ export async function POST(req: NextRequest) {
         .from("website_form_messages")
         .update({ resend_email_id: sendRes.id })
         .eq("id", (messageInsert.data as { id: string }).id);
+    }
+
+    // --- Auto-reply confirmation email to the visitor ---
+    const autoReplyEnabled =
+      (org as { website_forms_auto_reply_enabled?: boolean }).website_forms_auto_reply_enabled ?? true;
+
+    if (autoReplyEnabled && visitorEmail) {
+      const customMessage =
+        (org as { website_forms_auto_reply_message?: string | null }).website_forms_auto_reply_message ?? null;
+
+      const displayName = visitorName ?? "there";
+
+      const bodyText = customMessage
+        ? customMessage.replace(/\{\{name\}\}/gi, displayName)
+        : `Thank you for reaching out! We received your message and someone from our team will get back to you shortly.`;
+
+      const bodyHtmlParagraphs = bodyText
+        .split(/\n{2,}/)
+        .map((p) => `<p style="margin:0 0 14px;">${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
+        .join("");
+
+      const autoReplySubject = `Re: ${subjectBase}`;
+      const autoReplyHtml = `<!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8"><title>${escapeHtml(autoReplySubject)}</title></head>
+  <body style="font-family:system-ui,-apple-system,sans-serif;line-height:1.6;color:#0f172a;max-width:640px;margin:0 auto;padding:24px;">
+    <p style="margin:0 0 14px;">Hi ${escapeHtml(displayName)},</p>
+    ${bodyHtmlParagraphs}
+    ${forwardToEmail ? `<p style="margin:0 0 14px;color:#475569;font-size:13px;">You can also reach us directly at <a href="mailto:${escapeHtml(forwardToEmail)}" style="color:#0284c7;">${escapeHtml(forwardToEmail)}</a>.</p>` : ""}
+    <p style="margin:24px 0 0;color:#475569;font-size:13px;">&mdash; ${escapeHtml(orgName)}</p>
+  </body>
+</html>`;
+
+      const autoReplyPlain = [
+        `Hi ${displayName},`,
+        "",
+        bodyText,
+        "",
+        forwardToEmail ? `You can also reach us directly at ${forwardToEmail}.` : null,
+        "",
+        `— ${orgName}`,
+      ]
+        .filter((line) => line !== null)
+        .join("\n");
+
+      const autoReplyRes = await sendEmail({
+        to: visitorEmail,
+        subject: autoReplySubject,
+        html: autoReplyHtml,
+        from: withDisplayName(DEFAULT_FROM, replyName),
+        replyTo: forwardToEmail ?? undefined,
+      });
+
+      // Store auto-reply message (best-effort, regardless of send success)
+      await supabase.from("website_form_messages").insert({
+        inquiry_id: (inquiry as { id: string }).id,
+        direction: "org_to_visitor",
+        from_email: DEFAULT_FROM.replace(/.*<([^>]+)>.*/, "$1"),
+        to_email: visitorEmail,
+        subject: autoReplySubject,
+        text: autoReplyPlain,
+        html: autoReplyHtml,
+        resend_email_id: autoReplyRes.ok ? autoReplyRes.id : null,
+      });
     }
 
     return NextResponse.json(

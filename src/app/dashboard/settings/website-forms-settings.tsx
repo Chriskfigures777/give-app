@@ -9,6 +9,8 @@ type Props = {
 type FormSettings = {
   forwardToEmail: string | null;
   replyName: string | null;
+  autoReplyEnabled: boolean;
+  autoReplyMessage: string | null;
   defaults: { forwardToEmail: string | null };
 };
 
@@ -18,6 +20,8 @@ export function WebsiteFormsSettings({ organizationId }: Props) {
   const [saving, setSaving] = useState(false);
   const [forwardEmail, setForwardEmail] = useState("");
   const [replyName, setReplyName] = useState("");
+  const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
+  const [autoReplyMessage, setAutoReplyMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -32,6 +36,8 @@ export function WebsiteFormsSettings({ organizationId }: Props) {
       setSettings(data);
       setForwardEmail(data.forwardToEmail ?? "");
       setReplyName(data.replyName ?? "");
+      setAutoReplyEnabled(data.autoReplyEnabled ?? true);
+      setAutoReplyMessage(data.autoReplyMessage ?? "");
     } catch {
       // ignore
     } finally {
@@ -55,6 +61,8 @@ export function WebsiteFormsSettings({ organizationId }: Props) {
           organizationId,
           forwardToEmail: forwardEmail.trim() || null,
           replyName: replyName.trim() || null,
+          autoReplyEnabled,
+          autoReplyMessage: autoReplyMessage.trim() || null,
         }),
         credentials: "include",
       });
@@ -127,6 +135,64 @@ export function WebsiteFormsSettings({ organizationId }: Props) {
           The name visitors see when they receive a reply email from you.
         </p>
       </div>
+
+      <div className="border-t border-slate-200 pt-4 dark:border-slate-700/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <label
+              htmlFor="auto_reply_enabled"
+              className="mb-0.5 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+            >
+              Auto-reply to visitors
+            </label>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Send a confirmation email to visitors after they submit a form.
+            </p>
+          </div>
+          <button
+            id="auto_reply_enabled"
+            type="button"
+            role="switch"
+            aria-checked={autoReplyEnabled}
+            onClick={() => setAutoReplyEnabled((v) => !v)}
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-400/20 ${
+              autoReplyEnabled
+                ? "bg-sky-500"
+                : "bg-slate-200 dark:bg-slate-600"
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${
+                autoReplyEnabled ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      {autoReplyEnabled && (
+        <div>
+          <label
+            htmlFor="auto_reply_message"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+          >
+            Custom auto-reply message
+          </label>
+          <textarea
+            id="auto_reply_message"
+            value={autoReplyMessage}
+            onChange={(e) => setAutoReplyMessage(e.target.value)}
+            placeholder={`Hi {{name}},\n\nThank you for reaching out! We received your message and someone from our team will get back to you shortly.\n\nBest regards`}
+            rows={5}
+            maxLength={2000}
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+          />
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Use <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px] dark:bg-slate-700">{"{{name}}"}</code> to
+            include the visitor&apos;s name. Leave blank to use the default message.
+          </p>
+        </div>
+      )}
 
       {error && (
         <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p>

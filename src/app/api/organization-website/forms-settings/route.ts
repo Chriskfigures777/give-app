@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
 
     const { data: org, error } = await supabase
       .from("organizations")
-      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name")
+      .select("id, name, slug, owner_user_id, website_forms_forward_to_email, website_forms_reply_name, website_forms_auto_reply_enabled, website_forms_auto_reply_message")
       .eq("id", organizationId)
       .single();
     if (error || !org) {
@@ -85,6 +85,8 @@ export async function GET(req: NextRequest) {
       orgSlug: (org as { slug?: string }).slug ?? "",
       forwardToEmail: (org as { website_forms_forward_to_email?: string | null }).website_forms_forward_to_email ?? null,
       replyName: (org as { website_forms_reply_name?: string | null }).website_forms_reply_name ?? null,
+      autoReplyEnabled: (org as { website_forms_auto_reply_enabled?: boolean }).website_forms_auto_reply_enabled ?? true,
+      autoReplyMessage: (org as { website_forms_auto_reply_message?: string | null }).website_forms_auto_reply_message ?? null,
       defaults: {
         forwardToEmail: defaultForwardTo,
       },
@@ -117,6 +119,8 @@ export async function POST(req: NextRequest) {
 
     const forwardToEmailRaw = body?.forwardToEmail;
     const replyNameRaw = body?.replyName;
+    const autoReplyEnabledRaw = body?.autoReplyEnabled;
+    const autoReplyMessageRaw = body?.autoReplyMessage;
 
     const forwardToEmail =
       forwardToEmailRaw === null || forwardToEmailRaw === ""
@@ -131,20 +135,44 @@ export async function POST(req: NextRequest) {
         ? null
         : normalizeName(replyNameRaw);
 
+    const autoReplyEnabled =
+      typeof autoReplyEnabledRaw === "boolean" ? autoReplyEnabledRaw : undefined;
+
+    const autoReplyMessage =
+      autoReplyMessageRaw === null || autoReplyMessageRaw === ""
+        ? null
+        : typeof autoReplyMessageRaw === "string"
+          ? autoReplyMessageRaw.trim().slice(0, 2000)
+          : undefined;
+
+    const updatePayload: Record<string, unknown> = {
+      website_forms_forward_to_email: forwardToEmail,
+      website_forms_reply_name: replyName,
+      updated_at: new Date().toISOString(),
+    };
+    if (autoReplyEnabled !== undefined) {
+      updatePayload.website_forms_auto_reply_enabled = autoReplyEnabled;
+    }
+    if (autoReplyMessage !== undefined) {
+      updatePayload.website_forms_auto_reply_message = autoReplyMessage;
+    }
+
     const { error } = await supabase
       .from("organizations")
-      .update({
-        website_forms_forward_to_email: forwardToEmail,
-        website_forms_reply_name: replyName,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq("id", organizationId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, forwardToEmail, replyName });
+    return NextResponse.json({
+      ok: true,
+      forwardToEmail,
+      replyName,
+      autoReplyEnabled: autoReplyEnabled ?? true,
+      autoReplyMessage: autoReplyMessage ?? null,
+    });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ error: msg }, { status: 500 });
