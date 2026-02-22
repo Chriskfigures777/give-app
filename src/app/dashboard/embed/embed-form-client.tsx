@@ -628,13 +628,13 @@ export function EmbedFormClient({
         <div className="relative z-10 w-full lg:w-[420px] xl:w-[440px] lg:shrink-0 lg:border-r lg:border-dashboard-border/30 min-w-0 bg-white dark:bg-dashboard-card">
           {/* Panel header with save */}
           <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-dashboard-border/30 px-6 py-5" style={{ background: "var(--dashboard-glass)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
-            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex items-center gap-3.5 min-w-0">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md shadow-emerald-500/20">
-                <Sparkles className="h-4.5 w-4.5 text-white" />
+                <Globe className="h-4.5 w-4.5 text-white" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-base font-bold text-dashboard-text">Form Editor</h2>
-                <p className="text-xs text-dashboard-text-muted mt-0.5">Live preview updates as you edit</p>
+                <h2 className="text-base font-bold text-dashboard-text">Edit website form</h2>
+                <p className="text-xs text-dashboard-text-muted mt-0.5">Content, amounts, splits — live preview below</p>
               </div>
             </div>
             <button
@@ -655,22 +655,22 @@ export function EmbedFormClient({
           </div>
 
           <div className="overflow-y-auto max-h-[70vh] lg:max-h-[calc(100vh-240px)] editor-panel customization-panel min-w-0">
-            {/* -- Website Form Section (clarifies which form is used on website) -- */}
+            {/* -- Website form callout — this is the form in your website templates -- */}
             <div className="border-b border-dashboard-border/30">
               <div className="px-6 py-4">
-                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200/60 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-900/20 p-4">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-800/50">
-                    <Globe className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex items-start gap-3 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-800/50">
+                    <Globe className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-semibold text-dashboard-text">Website form</p>
+                    <p className="text-[14px] font-bold text-dashboard-text">This is your website form</p>
                     {websiteEmbedCardId == null ? (
-                      <p className="mt-1 text-[12px] text-dashboard-text-muted leading-relaxed">
-                        This form is used on your website. Design and splits you edit here apply to the donation form shown on your website builder pages. The form styling matches your website theme.
+                      <p className="mt-1.5 text-[13px] text-dashboard-text-muted leading-relaxed">
+                        The donation sections in your website builder templates (Give page, etc.) display this form. Edit content, amounts, splits, and design below. The form layout matches your website theme.
                       </p>
                     ) : (
-                      <p className="mt-1 text-[12px] text-dashboard-text-muted leading-relaxed">
-                        Your website uses a different form (selected in Embed Cards). Switch to the <strong>Embed Cards</strong> tab to edit it, or change the website form selection there.
+                      <p className="mt-1.5 text-[13px] text-dashboard-text-muted leading-relaxed">
+                        Your website uses a different form. Go to <strong>Org page & embeds</strong> to edit it or switch back to this form.
                       </p>
                     )}
                   </div>

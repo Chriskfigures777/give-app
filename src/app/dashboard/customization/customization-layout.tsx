@@ -1,60 +1,57 @@
 "use client";
 
 import { useState } from "react";
-import { Paintbrush, Layout, Settings2 } from "lucide-react";
+import { Zap, Code2, Settings2 } from "lucide-react";
 
-type Tab = "designer" | "cards" | "settings";
+type Tab = "theme" | "custom" | "settings";
 
 type Props = {
-  designerPanel: React.ReactNode;
-  cardsPanel: React.ReactNode;
+  themePanel: React.ReactNode;
+  customPanel: React.ReactNode;
   settingsPanel: React.ReactNode;
 };
 
 export function CustomizationLayout({
-  designerPanel,
-  cardsPanel,
+  themePanel,
+  customPanel,
   settingsPanel,
 }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("designer");
+  const [activeTab, setActiveTab] = useState<Tab>("theme");
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; description: string }[] = [
     {
-      id: "designer",
-      label: "Form Designer",
-      icon: <Paintbrush className="h-4 w-4" />,
-      description: "Edit and preview your donation form",
+      id: "theme",
+      label: "Website form",
+      icon: <Zap className="h-4 w-4" />,
+      description: "Edit the form already in your website templates",
     },
     {
-      id: "cards",
-      label: "Embed Cards",
-      icon: <Layout className="h-4 w-4" />,
-      description: "Manage embeddable donation cards",
+      id: "custom",
+      label: "Custom forms",
+      icon: <Code2 className="h-4 w-4" />,
+      description: "Build forms to share with others or embed elsewhere",
     },
     {
       id: "settings",
       label: "Settings",
       icon: <Settings2 className="h-4 w-4" />,
-      description: "Configure donate button, campaigns, and embed code",
+      description: "Donate button, campaigns",
     },
   ];
 
   return (
     <div className="customization-page w-full min-w-0">
-      {/* Page header with title + segmented tab control */}
       <div className="sticky top-0 z-30 bg-dashboard-card/80 backdrop-blur-xl border-b border-dashboard-border/40">
         <div className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10">
-          {/* Title row */}
           <div className="pt-6 pb-4">
             <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">
-              Form Design
+              Forms
             </h1>
             <p className="mt-1 text-sm text-dashboard-text-muted">
-              Design your donation forms, embed cards, and configure settings
+              <strong>Website form</strong> — One form for your website templates. Edit the basics here. <strong>Custom forms</strong> — Create as many forms as you need. Each form has its own embed code and splits. Share with partners or embed elsewhere.
             </p>
           </div>
 
-          {/* Segmented control tabs */}
           <div className="pb-0 -mb-px">
             <div className="inline-flex items-center gap-1 p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
               {tabs.map((tab) => {
@@ -69,13 +66,7 @@ export function CustomizationLayout({
                         : "text-dashboard-text-muted hover:text-dashboard-text"
                     }`}
                   >
-                    <span
-                      className={`transition-colors duration-200 ${
-                        isActive
-                          ? "text-emerald-600 dark:text-emerald-400"
-                          : ""
-                      }`}
-                    >
+                    <span className={isActive ? "text-emerald-600 dark:text-emerald-400" : ""}>
                       {tab.icon}
                     </span>
                     <span>{tab.label}</span>
@@ -87,14 +78,15 @@ export function CustomizationLayout({
         </div>
       </div>
 
-      {/* Tab content — generous padding, open breathing room */}
       <div className="min-w-0 min-h-0">
-        {activeTab === "designer" && (
-          <div className="dashboard-fade-in">{designerPanel}</div>
-        )}
-        {activeTab === "cards" && (
+        {activeTab === "theme" && (
           <div className="dashboard-fade-in max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 py-8">
-            {cardsPanel}
+            {themePanel}
+          </div>
+        )}
+        {activeTab === "custom" && (
+          <div className="dashboard-fade-in max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 py-8">
+            {customPanel}
           </div>
         )}
         {activeTab === "settings" && (

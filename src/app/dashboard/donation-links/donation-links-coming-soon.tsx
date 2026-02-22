@@ -8,7 +8,7 @@ export function DonationLinksComingSoon() {
     <div className="w-full min-w-0 max-w-6xl mx-auto overflow-x-hidden">
       <div className="grid grid-cols-1 gap-6 px-4 py-6">
         <Link
-          href="/dashboard/customization"
+          href="/dashboard/website-form"
           className="inline-flex items-center gap-2 text-dashboard-text-muted hover:text-dashboard-text text-sm"
         >
           <ArrowLeft className="h-4 w-4" />

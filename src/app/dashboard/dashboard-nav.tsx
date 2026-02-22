@@ -22,6 +22,7 @@ import {
   FileStack,
   Share2,
   Receipt,
+  Code2,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -127,7 +128,8 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
               {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}
               {link("/dashboard/pages", "Website builder", <Layout className={iconClass} />)}
               {link("/dashboard/pages/cms", "Website content", <FileStack className={iconClass} />)}
-              {link("/dashboard/customization", "Form Design", <Palette className={iconClass} />)}
+              {link("/dashboard/website-form", "Website form", <Palette className={iconClass} />)}
+              {link("/dashboard/custom-forms", "Custom forms", <Code2 className={iconClass} />)}
             </>
           )}
         </NavSection>

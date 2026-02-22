@@ -22,6 +22,7 @@ import {
   Church,
   ArrowRight,
   Loader2,
+  Code2,
 } from "lucide-react";
 
 type DashboardPage = {
@@ -40,7 +41,8 @@ const DASHBOARD_PAGES: DashboardPage[] = [
   { label: "Givers", href: "/dashboard/givers", keywords: "givers donors supporters people", icon: <Users className="h-4 w-4" /> },
   { label: "Public page", href: "/dashboard/profile", keywords: "public page profile organization info", icon: <FileText className="h-4 w-4" /> },
   { label: "Website builder", href: "/dashboard/pages", keywords: "website builder pages site design", icon: <Layout className="h-4 w-4" /> },
-  { label: "Form design", href: "/dashboard/customization", keywords: "form design customization branding colors logo", icon: <Palette className="h-4 w-4" /> },
+  { label: "Website form", href: "/dashboard/website-form", keywords: "website form form design donation form customization branding colors logo", icon: <Palette className="h-4 w-4" /> },
+  { label: "Custom forms", href: "/dashboard/custom-forms", keywords: "custom forms embed forms donation form embed webflow wordpress", icon: <Code2 className="h-4 w-4" /> },
   { label: "Settings", href: "/dashboard/settings", keywords: "settings preferences configuration domain", icon: <Settings className="h-4 w-4" /> },
   { label: "Plan & billing", href: "/dashboard/billing", keywords: "plan billing subscription pricing upgrade", icon: <Receipt className="h-4 w-4" /> },
   { label: "Payout account", href: "/dashboard/connect/verify", keywords: "payout account verification stripe connect bank", icon: <CreditCard className="h-4 w-4" /> },

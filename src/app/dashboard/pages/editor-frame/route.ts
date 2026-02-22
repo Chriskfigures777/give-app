@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     <div style="max-width:800px;margin:0 auto;">
       <button type="button" id="template-back-btn" style="background:none;border:none;color:hsl(215,16%,47%);font-size:14px;cursor:pointer;margin-bottom:24px;display:flex;align-items:center;gap:6px;">← Back to projects</button>
       <h1 style="color:hsl(222,47%,11%);font-size:24px;font-weight:700;margin-bottom:8px;">Choose a template</h1>
-      <p style="color:hsl(215,16%,47%);font-size:14px;margin-bottom:32px;">Start with a blank page or a pre-built church website design.</p>
+      <p style="color:hsl(215,16%,47%);font-size:14px;margin-bottom:32px;">Start with a blank page or a pre-built church website design. Templates include donation forms — use &quot;Edit website form&quot; in the header to customize content, amounts, and splits.</p>
       <div id="template-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;"></div>
     </div>
   </div>

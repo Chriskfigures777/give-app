@@ -246,7 +246,7 @@ export default async function SettingsPage() {
               {/* Quick actions */}
               <div className="grid gap-3 px-6 py-5 sm:grid-cols-2">
                 <Link
-                  href="/dashboard/customization"
+                  href="/dashboard/website-form"
                   className="group flex items-center gap-3 rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5 transition-all duration-200 hover:border-violet-200 hover:bg-violet-50/30 hover:shadow-sm dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-violet-700/50 dark:hover:bg-violet-900/10"
                 >
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 transition-colors group-hover:bg-violet-500/15 dark:bg-violet-500/20">

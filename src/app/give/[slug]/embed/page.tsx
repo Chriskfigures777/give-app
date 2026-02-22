@@ -78,6 +78,10 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const org = orgRow as { id: string; name: string; slug: string; stripe_connect_account_id: string | null } | null;
   if (!org?.stripe_connect_account_id) notFound();
 
+  /** Only load from org_embed_cards when a specific card is requested (card param).
+   * When no card param, use form_customizations (Website form) — that's what the user edits
+   * in the Website form page. The first full card from org_embed_cards was overriding
+   * form_customizations and never got updated when saving the Website form. */
   let embedCard: EmbedCardRow | null = null;
   if (cardId) {
     const { data: cardRow } = await supabase
@@ -88,17 +92,6 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       .eq("is_enabled", true)
       .single();
     embedCard = cardRow as EmbedCardRow | null;
-  } else if (!isCompact) {
-    const { data: firstFullCard } = await supabase
-      .from("org_embed_cards")
-      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, primary_color, is_enabled, goal_description")
-      .eq("organization_id", org.id)
-      .eq("is_enabled", true)
-      .eq("style", "full")
-      .order("sort_order", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    embedCard = firstFullCard as EmbedCardRow | null;
   }
 
   const [{ data: campaignsData }, { data: formCustomRow }] = await Promise.all([

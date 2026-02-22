@@ -19,7 +19,7 @@ type EditorProjectState = {
   customDomain: string | null;
 };
 
-export function WebsiteBuilderClient({ organizationId, websiteFormName = "Main form", formDesignUrl = "/dashboard/customization" }: Props) {
+export function WebsiteBuilderClient({ organizationId, websiteFormName = "Main form", formDesignUrl = "/dashboard/website-form" }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
@@ -161,17 +161,17 @@ export function WebsiteBuilderClient({ organizationId, websiteFormName = "Main f
         </div>
         {projectState && (
           <div className="flex items-center gap-2">
-            {/* Donation form — which form appears on website */}
+            {/* Edit website form — the form that appears in your website templates */}
             <Link
               href={formDesignUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
-              title="Choose which donation form appears on your website. Opens Form Design."
+              className="flex items-center gap-2 rounded-lg border-2 border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 shadow-sm hover:bg-emerald-100 hover:border-emerald-300 transition-colors"
+              title="Edit the donation form that appears in your website pages. Opens Form Design."
             >
               <CreditCard className="h-4 w-4" />
-              <span className="hidden sm:inline">Form:</span>
-              <span className="font-medium text-slate-800">{websiteFormName}</span>
+              <span>Edit website form</span>
+              <span className="text-emerald-600 font-medium">({websiteFormName})</span>
             </Link>
             {/* Theme toggle */}
             <button
@@ -245,6 +245,25 @@ export function WebsiteBuilderClient({ organizationId, websiteFormName = "Main f
           </div>
         )}
       </header>
+      {/* Website form info banner — clarifies which form appears in templates */}
+      {projectState && (
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-sm">
+          <div className="flex items-center gap-2 text-slate-600">
+            <CreditCard className="h-4 w-4 shrink-0 text-emerald-600" />
+            <span>
+              The donation forms in your website templates use the form from Form Design. Edit amounts, splits, and design there.
+            </span>
+          </div>
+          <Link
+            href={formDesignUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 font-semibold text-emerald-600 hover:text-emerald-700 underline"
+          >
+            Edit website form
+          </Link>
+        </div>
+      )}
       {/* Publish error banner */}
       {publishError && (
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-red-200 bg-red-50 px-4 py-3 text-sm">

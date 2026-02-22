@@ -17,6 +17,11 @@ import {
   X,
   Eye,
   Globe,
+  Save,
+  Loader2,
+  Image as ImageIcon,
+  Video,
+  Palette,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { PexelsMediaPicker } from "@/components/pexels-media-picker";
@@ -33,6 +38,7 @@ import { CompressedDonationCard } from "@/components/compressed-donation-card";
 import { GoalDonationCard } from "@/components/goal-donation-card";
 import { GoalCompactDonationCard } from "@/components/goal-compact-donation-card";
 import { MinimalDonationCard } from "@/components/minimal-donation-card";
+import { SplitPercentageChart } from "@/components/split-percentage-chart";
 
 import type { DesignSet } from "@/lib/stock-media";
 
@@ -325,6 +331,8 @@ type Props = {
   campaigns: Campaign[];
   orgPageEmbedCardId?: string | null;
   websiteEmbedCardId?: string | null;
+  /** When true, hide the Website button (website form is the Theme form) */
+  hideWebsiteButton?: boolean;
   hasDefaultForm?: boolean;
   defaultFormDisplayMode?: "full" | "compressed" | "full_width";
   defaultFormDesignSet?: DesignSet | null;
@@ -333,6 +341,8 @@ type Props = {
   defaultFormBorderRadius?: string | null;
   defaultEmbedFormTheme?: EmbedFormThemeId | null;
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
+  splitRecipientLimit?: number;
+  currentPlan?: "free" | "growth" | "pro";
 };
 
 export function EmbedCardsPanel({
@@ -343,6 +353,7 @@ export function EmbedCardsPanel({
   campaigns,
   orgPageEmbedCardId = null,
   websiteEmbedCardId = null,
+  hideWebsiteButton = false,
   hasDefaultForm = false,
   defaultFormDisplayMode = "full",
   defaultFormDesignSet = null,
@@ -351,6 +362,8 @@ export function EmbedCardsPanel({
   defaultFormBorderRadius = null,
   defaultEmbedFormTheme = "default",
   connectedPeers = [],
+  splitRecipientLimit = Infinity,
+  currentPlan = "free",
 }: Props) {
   const [cards, setCards] = useState<EmbedCard[]>([]);
   const [deletedCards, setDeletedCards] = useState<EmbedCard[]>([]);
@@ -364,6 +377,7 @@ export function EmbedCardsPanel({
   const [pageCardId, setPageCardId] = useState<string | null>(orgPageEmbedCardId ?? null);
   const [websiteCardId, setWebsiteCardId] = useState<string | null>(websiteEmbedCardId ?? null);
   const [previewCard, setPreviewCard] = useState<EmbedCard | null>(null);
+  const [activeTab, setActiveTab] = useState<"forms" | "edit">("forms");
   const router = useRouter();
 
   const handleThemeSelect = async (theme: EmbedFormThemeId) => {
@@ -434,10 +448,21 @@ export function EmbedCardsPanel({
     }
   }, [loading, cards, selectedCardId, hasDefaultForm]);
 
-  const modalOpen = creating || editingId !== null;
+  /** When hideWebsiteButton (Custom forms page), auto-open editor for first form */
+  useEffect(() => {
+    if (hideWebsiteButton && !loading && cards.length > 0 && editingId == null && !creating) {
+      setEditingId(cards[0].id);
+      setSelectedCardId(cards[0].id);
+    }
+  }, [hideWebsiteButton, loading, cards, editingId, creating]);
+
+  const modalOpen = creating;
   const closeModal = () => {
     setCreating(false);
+  };
+  const closeEditor = () => {
     setEditingId(null);
+    setActiveTab("forms");
   };
 
   const handleCreate = async (payload: Partial<EmbedCard>) => {
@@ -454,6 +479,7 @@ export function EmbedCardsPanel({
       closeModal();
       setSelectedCardId(data.id);
       setExpandedId(data.id);
+      if (hideWebsiteButton) setEditingId(data.id);
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to create");
@@ -471,7 +497,11 @@ export function EmbedCardsPanel({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update");
       await fetchCards();
-      setEditingId(null);
+      toast.success("Form saved");
+      if (!hideWebsiteButton) {
+        setEditingId(null);
+        setActiveTab("forms");
+      }
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to update");
@@ -604,11 +634,13 @@ export function EmbedCardsPanel({
   return (
     <section className="dashboard-fade-in min-w-0 overflow-hidden">
       {/* Section header */}
-      <div className="flex flex-wrap items-start justify-between gap-6 mb-8">
+      <div className="flex flex-wrap items-start justify-between gap-6 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-dashboard-text">Embed Cards</h2>
+          <h2 className="text-xl font-bold text-dashboard-text">Custom forms</h2>
           <p className="text-sm text-dashboard-text-muted mt-1.5 max-w-lg leading-relaxed">
-            Choose and customize donation cards. <strong>Org page</strong> = form on your public org profile. <strong>Website</strong> = form on your website builder pages. Click a card to select it, or use the buttons below to assign where each form appears.
+            {hideWebsiteButton
+              ? "Create as many forms as you need. Each form has its own design, embed code, and payment splits. Share different forms with different partners — configure splits per form for each use case."
+              : "Build donation forms for your org page and website. Use the buttons below to assign which form appears where."}
           </p>
         </div>
         <button
@@ -618,9 +650,70 @@ export function EmbedCardsPanel({
           className="inline-flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:bg-emerald-900/30 dark:border-emerald-700/50 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
         >
           <Plus className="h-4 w-4" />
-          Add card
+          Add form
         </button>
       </div>
+
+      {/* When hideWebsiteButton (Custom forms page): form selector + editor as main content. Else: tabs. */}
+      {hideWebsiteButton ? (
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          {cards.length > 0 && (
+            <div className="flex items-center gap-2">
+              <label htmlFor="form-selector" className="text-sm font-medium text-dashboard-text-muted">Editing:</label>
+              <select
+                id="form-selector"
+                value={editingId ?? ""}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  if (id) {
+                    setEditingId(id);
+                    setSelectedCardId(id);
+                  }
+                }}
+                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-medium text-dashboard-text"
+              >
+                {cards.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mb-6">
+          <div className="inline-flex items-center gap-1 p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
+            <button
+              type="button"
+              onClick={() => setActiveTab("forms")}
+              className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all ${
+                activeTab === "forms"
+                  ? "bg-white dark:bg-slate-700 text-dashboard-text shadow-sm"
+                  : "text-dashboard-text-muted hover:text-dashboard-text"
+              }`}
+            >
+              My forms
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (editingId) setActiveTab("edit");
+                else if (cards.length > 0) {
+                  setEditingId(cards[0].id);
+                  setSelectedCardId(cards[0].id);
+                  setActiveTab("edit");
+                }
+              }}
+              className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all ${
+                activeTab === "edit"
+                  ? "bg-white dark:bg-slate-700 text-dashboard-text shadow-sm"
+                  : "text-dashboard-text-muted hover:text-dashboard-text"
+              }`}
+            >
+              Edit form
+            </button>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="mb-6 rounded-2xl bg-red-50 border border-red-200/60 px-5 py-3 dark:bg-red-900/20 dark:border-red-800/30">
@@ -630,21 +723,82 @@ export function EmbedCardsPanel({
         </div>
       )}
 
+      {/* Editor content: when hideWebsiteButton always show editor; else only when Edit form tab */}
+      {(hideWebsiteButton || activeTab === "edit") && (
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+          {editingCard ? (
+            hideWebsiteButton ? (
+              <CustomFormEditor
+                card={editingCard}
+                organizationName={organizationName}
+                slug={slug}
+                baseUrl={baseUrl}
+                campaigns={campaigns}
+                campaignsWithGoals={campaignsWithGoals}
+                connectedPeers={connectedPeers}
+                splitRecipientLimit={splitRecipientLimit}
+                currentPlan={currentPlan}
+                onSave={(p) => handleUpdate(editingCard.id, p)}
+                onCancel={closeEditor}
+              />
+            ) : (
+              <CardEditor
+                card={editingCard}
+                campaigns={campaigns}
+                campaignsWithGoals={campaignsWithGoals}
+                connectedPeers={connectedPeers}
+                onSave={(p) => handleUpdate(editingCard.id, p)}
+                onCancel={closeEditor}
+              />
+            )
+          ) : hideWebsiteButton && !loading && cards.length === 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-dashboard-text-muted mb-4">Create your first custom form to get started.</p>
+              <button
+                type="button"
+                onClick={() => setCreating(true)}
+                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+              >
+                Create form
+              </button>
+            </div>
+          ) : !hideWebsiteButton ? (
+            <div className="p-12 text-center">
+              <p className="text-dashboard-text-muted mb-4">Select a form from My forms to edit it, or create a new one.</p>
+              <button
+                type="button"
+                onClick={() => setActiveTab("forms")}
+                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+              >
+                Go to My forms
+              </button>
+            </div>
+          ) : hideWebsiteButton && cards.length > 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-dashboard-text-muted mb-4">Select a form from the dropdown above to edit it.</p>
+            </div>
+          ) : null}
+        </div>
+      )}
+
+      {/* My forms tab content — only when not hideWebsiteButton (embed page has tabs) */}
+      {!hideWebsiteButton && activeTab === "forms" && (
+        <>
       {/* Empty state */}
       {!loading && displayCards.length === 0 && (
         <div className="rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 p-12 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-50 dark:bg-emerald-900/30 mx-auto mb-5">
             <Layout className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="text-base font-semibold text-dashboard-text mb-2">No embed cards yet</p>
-          <p className="text-sm text-dashboard-text-muted mb-6 max-w-md mx-auto">Create your first card to get an embeddable donation form for your website.</p>
+          <p className="text-base font-semibold text-dashboard-text mb-2">No custom forms yet</p>
+          <p className="text-sm text-dashboard-text-muted mb-6 max-w-md mx-auto">Create forms with different designs and splits for different partners. Each form gets its own embed code — share with whoever needs it.</p>
           <button
             type="button"
             onClick={() => setCreating(true)}
             className="inline-flex items-center gap-2.5 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg shadow-emerald-500/20"
           >
             <Plus className="h-4 w-4" />
-            Create your first card
+            Create your first custom form
           </button>
         </div>
       )}
@@ -661,9 +815,24 @@ export function EmbedCardsPanel({
                 onClick={() => {
                   setSelectedCardId(card.id);
                   setExpandedId(card.id === DEFAULT_FORM_ID ? null : card.id);
-                  setEditingId(null);
+                  if (card.id !== DEFAULT_FORM_ID) {
+                    setEditingId(card.id);
+                    setActiveTab("edit");
+                  } else {
+                    setEditingId(null);
+                  }
                 }}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedCardId(card.id); setExpandedId(card.id === DEFAULT_FORM_ID ? null : card.id); setEditingId(null); } }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedCardId(card.id);
+                    setExpandedId(card.id === DEFAULT_FORM_ID ? null : card.id);
+                    if (card.id !== DEFAULT_FORM_ID) {
+                      setEditingId(card.id);
+                      setActiveTab("edit");
+                    } else setEditingId(null);
+                  }
+                }}
                 className={`group relative w-full rounded-2xl border-2 overflow-hidden transition-all duration-200 cursor-pointer bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-800/80 ${
                   selectedCardId === card.id
                     ? "border-emerald-500 shadow-lg shadow-emerald-500/10"
@@ -711,11 +880,11 @@ export function EmbedCardsPanel({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium transition-colors shadow-sm"
                 >
                   {copiedId === card.id ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                  {copiedId === card.id ? "Copied" : "Embed"}
+                  {copiedId === card.id ? "Copied" : "Copy embed"}
                 </button>
                 {card.id !== DEFAULT_FORM_ID && (
                   <>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingId(card.id); }} className="p-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingId(card.id); setActiveTab("edit"); }} className="p-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
                     <button type="button" onClick={(e) => { e.stopPropagation(); handleDuplicate(card); }} className="p-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Duplicate"><CopyPlus className="h-3.5 w-3.5" /></button>
                     <button type="button" onClick={(e) => { e.stopPropagation(); handleDelete(card.id, card.name); }} className="p-2 rounded-xl border border-red-200 dark:border-red-800/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
                     {(card.page_section ?? "donation") === "donation" && (
@@ -725,11 +894,15 @@ export function EmbedCardsPanel({
                         <button type="button" onClick={(e) => { e.stopPropagation(); handleSetPageCard(card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors">Org page</button>
                       )
                     )}
-                    {/* Website form: Main form (DEFAULT_FORM_ID) is used when websiteCardId is null */}
-                    {((card.id === DEFAULT_FORM_ID && websiteCardId == null) || websiteCardId === card.id) ? (
-                      <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium transition-colors" title={card.id === DEFAULT_FORM_ID ? "Main form is used on website" : "Click to use main form on website instead"}><Globe className="h-3 w-3" /> Website</button>
-                    ) : (
-                      <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(card.id === DEFAULT_FORM_ID ? null : card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors" title="Use this form on your website"><Globe className="h-3 w-3" /> Website</button>
+                    {!hideWebsiteButton && (
+                      <>
+                        {/* Website form: Main form (DEFAULT_FORM_ID) is used when websiteCardId is null */}
+                        {((card.id === DEFAULT_FORM_ID && websiteCardId == null) || websiteCardId === card.id) ? (
+                          <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium transition-colors" title={card.id === DEFAULT_FORM_ID ? "Main form is used on website" : "Click to use main form on website instead"}><Globe className="h-3 w-3" /> Website</button>
+                        ) : (
+                          <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(card.id === DEFAULT_FORM_ID ? null : card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors" title="Use this form on your website"><Globe className="h-3 w-3" /> Website</button>
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -737,7 +910,7 @@ export function EmbedCardsPanel({
             </div>
           ))}
 
-          {/* Add card placeholder */}
+          {/* Add form placeholder */}
           <div className="flex flex-col">
             <button
               type="button"
@@ -748,7 +921,7 @@ export function EmbedCardsPanel({
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700">
                 <Plus className="h-6 w-6 text-slate-400 dark:text-slate-500" />
               </div>
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Add card</span>
+              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Add form</span>
             </button>
           </div>
         </div>
@@ -775,6 +948,8 @@ export function EmbedCardsPanel({
           </ul>
         </div>
       )}
+        </>
+      )}
 
       {/* Fullscreen card preview modal */}
       <CardPreviewModal
@@ -787,13 +962,11 @@ export function EmbedCardsPanel({
         campaigns={campaigns}
       />
 
-      {/* Modal for Add/Edit */}
+      {/* Modal for Add form only */}
       <Dialog open={modalOpen} onOpenChange={(open) => !open && closeModal()}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-hidden p-0">
-          <DialogTitle className="sr-only">
-            {creating ? "Add embed card" : "Edit embed card"}
-          </DialogTitle>
-          {creating ? (
+          <DialogTitle className="sr-only">Add embed card</DialogTitle>
+          {creating && (
             <CardEditor
               organizationId={organizationId}
               currentTheme={defaultEmbedFormTheme ?? "default"}
@@ -804,19 +977,317 @@ export function EmbedCardsPanel({
               onSave={(p) => handleCreate(p)}
               onCancel={closeModal}
             />
-          ) : editingCard ? (
-            <CardEditor
-              card={editingCard}
-              campaigns={campaigns}
-              campaignsWithGoals={campaignsWithGoals}
-              connectedPeers={connectedPeers}
-              onSave={(p) => handleUpdate(editingCard.id, p)}
-              onCancel={closeModal}
-            />
-          ) : null}
+          )}
         </DialogContent>
       </Dialog>
     </section>
+  );
+}
+
+/** Full panel editor for custom forms — like ThemeFormEditor, not Typeform wizard. */
+function CustomFormEditor({
+  card,
+  organizationName,
+  slug,
+  baseUrl,
+  campaigns,
+  campaignsWithGoals,
+  connectedPeers = [],
+  splitRecipientLimit = Infinity,
+  currentPlan = "free",
+  onSave,
+  onCancel,
+}: {
+  card: EmbedCard;
+  organizationName: string;
+  slug: string;
+  baseUrl: string;
+  campaigns: Campaign[];
+  campaignsWithGoals: Campaign[];
+  connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
+  splitRecipientLimit?: number;
+  currentPlan?: "free" | "growth" | "pro";
+  onSave: (payload: Partial<EmbedCard>) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState(card.name);
+  const [style, setStyle] = useState<EmbedCard["style"]>(card.style);
+  const [campaignId, setCampaignId] = useState(card.campaign_id ?? "");
+  const [goalDescription, setGoalDescription] = useState(card.goal_description ?? "");
+  const defaultDesignSet = { media_type: "image" as const, media_url: null as string | null, title: null as string | null, subtitle: null as string | null };
+  const initialDesignSet = card.design_set && typeof card.design_set === "object" && (card.design_set.media_type || card.design_set.media_url)
+    ? { media_type: (card.design_set.media_type === "video" ? "video" : "image") as "image" | "video", media_url: card.design_set.media_url ?? null, title: card.design_set.title ?? null, subtitle: card.design_set.subtitle ?? null }
+    : defaultDesignSet;
+  const [designSet, setDesignSet] = useState(initialDesignSet);
+  const [buttonColor, setButtonColor] = useState(card.button_color ?? "#059669");
+  const [buttonTextColor, setButtonTextColor] = useState(card.button_text_color ?? "#ffffff");
+  const [primaryColor, setPrimaryColor] = useState(card.primary_color ?? "#059669");
+  const [isEnabled, setIsEnabled] = useState(card.is_enabled);
+  const [pageSection, setPageSection] = useState(card.page_section);
+  const [splits, setSplits] = useState<{ percentage: number; accountId: string }[]>(
+    (card.splits as { percentage: number; accountId: string }[] | undefined) ?? []
+  );
+  const [saving, setSaving] = useState(false);
+  const [resolveError, setResolveError] = useState<string | null>(null);
+  const [resolving, setResolving] = useState(false);
+  const [pexelsPicker, setPexelsPicker] = useState<"photos" | "videos" | null>(null);
+
+  useEffect(() => {
+    setName(card.name);
+    setStyle(card.style);
+    setCampaignId(card.campaign_id ?? "");
+    setGoalDescription(card.goal_description ?? "");
+    if (card.design_set && typeof card.design_set === "object") {
+      setDesignSet({ media_type: (card.design_set.media_type === "video" ? "video" : "image") as "image" | "video", media_url: card.design_set.media_url ?? null, title: card.design_set.title ?? null, subtitle: card.design_set.subtitle ?? null });
+    }
+    setButtonColor(card.button_color ?? "#059669");
+    setButtonTextColor(card.button_text_color ?? "#ffffff");
+    setPrimaryColor(card.primary_color ?? "#059669");
+    setIsEnabled(card.is_enabled);
+    setPageSection(card.page_section);
+    setSplits((card.splits as { percentage: number; accountId: string }[] | undefined) ?? []);
+  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.is_enabled, card.page_section, card.splits]);
+
+  async function resolvePexelsUrl(): Promise<string | null> {
+    const url = designSet.media_url?.trim();
+    if (!url || !isPexelsUrl(url)) return url || null;
+    setResolving(true);
+    setResolveError(null);
+    try {
+      const res = await fetch("/api/pexels-resolve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url, type: designSet.media_type }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to resolve");
+      return data.mediaUrl ?? null;
+    } catch (err) {
+      setResolveError(err instanceof Error ? err.message : "Failed to resolve Pexels URL");
+      return null;
+    } finally {
+      setResolving(false);
+    }
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setResolveError(null);
+    let mediaUrl = designSet.media_url?.trim() || null;
+    if (mediaUrl && isPexelsUrl(mediaUrl)) {
+      const resolved = await resolvePexelsUrl();
+      if (resolved) mediaUrl = resolved;
+      else { setSaving(false); return; }
+    }
+    try {
+      await onSave({
+        name: name.trim() || "Untitled card",
+        style,
+        campaign_id: ["goal", "goal_compact"].includes(style) && campaignId ? campaignId : null,
+        goal_description: ["goal", "goal_compact"].includes(style) && goalDescription.trim() ? goalDescription.trim() : null,
+        design_set: { media_type: designSet.media_type === "video" ? "video" : "image", media_url: mediaUrl, title: designSet.title?.trim() || null, subtitle: designSet.subtitle?.trim() || null },
+        button_color: buttonColor.trim() || null,
+        button_text_color: buttonTextColor.trim() || null,
+        primary_color: primaryColor.trim() || null,
+        is_enabled: isEnabled,
+        page_section: pageSection,
+        splits: SPLITS_ENABLED && splits.length > 0 ? splits : undefined,
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const previewCard: EmbedCard = {
+    ...card,
+    name,
+    style,
+    campaign_id: campaignId || null,
+    goal_description: goalDescription || null,
+    design_set: { ...designSet, media_url: designSet.media_url || null },
+    button_color: buttonColor || null,
+    button_text_color: buttonTextColor || null,
+    primary_color: primaryColor || null,
+    is_enabled: isEnabled,
+    page_section: pageSection,
+    splits,
+  };
+  const inputClass = "w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-dashboard-text text-sm";
+  const labelClass = "block text-sm font-medium text-dashboard-text mb-1.5";
+
+  return (
+    <div className="flex flex-col lg:flex-row min-w-0 min-h-0 gap-8">
+      {/* Left: Editor panels */}
+      <div className="w-full lg:w-[400px] shrink-0 space-y-6 overflow-y-auto max-h-[calc(100vh-280px)]">
+        {/* Basics */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Basics</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Name and form style</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div>
+              <label className={labelClass}>Form name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Building Fund" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Style</label>
+              <select value={style} onChange={(e) => setStyle(e.target.value as EmbedCard["style"])} className={inputClass}>
+                <option value="full">Full form</option>
+                <option value="compressed">Compressed</option>
+                <option value="goal">Goal card</option>
+                <option value="goal_compact">Goal compact</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </div>
+            {["goal", "goal_compact"].includes(style) && (
+              <>
+                <div>
+                  <label className={labelClass}>Campaign</label>
+                  <select value={campaignId} onChange={(e) => setCampaignId(e.target.value)} className={inputClass}>
+                    <option value="">Select campaign</option>
+                    {campaignsWithGoals.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Goal description</label>
+                  <textarea value={goalDescription} onChange={(e) => setGoalDescription(e.target.value)} placeholder="Describe what this campaign is about..." rows={2} className={inputClass} />
+                </div>
+                <p className="text-xs text-dashboard-text-muted"><Link href="/dashboard/goals" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Manage campaigns</Link></p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Content</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Header, media, and copy</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div>
+              <label className={labelClass}>Header (title)</label>
+              <input type="text" value={designSet.title ?? ""} onChange={(e) => setDesignSet((s) => ({ ...s, title: e.target.value || null }))} placeholder="Make a Donation" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Subheader</label>
+              <input type="text" value={designSet.subtitle ?? ""} onChange={(e) => setDesignSet((s) => ({ ...s, subtitle: e.target.value || null }))} placeholder="Support our mission" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Image or video</label>
+              <div className="flex gap-2 mb-2">
+                <button type="button" onClick={() => setDesignSet((s) => ({ ...s, media_type: "image" }))} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium ${designSet.media_type === "image" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30" : "bg-slate-100 dark:bg-slate-800"}`}><ImageIcon className="h-3.5 w-3.5" /> Image</button>
+                <button type="button" onClick={() => setDesignSet((s) => ({ ...s, media_type: "video" }))} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium ${designSet.media_type === "video" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30" : "bg-slate-100 dark:bg-slate-800"}`}><Video className="h-3.5 w-3.5" /> Video</button>
+                <button type="button" onClick={() => setPexelsPicker(designSet.media_type === "video" ? "videos" : "photos")} className="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700">Pexels</button>
+              </div>
+              <div className="flex gap-2">
+                <input type="url" value={designSet.media_url ?? ""} onChange={(e) => { setDesignSet((s) => ({ ...s, media_url: e.target.value || null })); setResolveError(null); }} placeholder="https://..." className={`flex-1 min-w-0 ${inputClass}`} />
+                {designSet.media_url && isPexelsUrl(designSet.media_url) && (
+                  <button type="button" onClick={async () => { const r = await resolvePexelsUrl(); if (r) setDesignSet((s) => ({ ...s, media_url: r })); }} disabled={resolving} className="shrink-0 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-sm font-medium disabled:opacity-50">Resolve</button>
+                )}
+              </div>
+              {resolveError && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{resolveError}</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* Colors */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Colors</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Button and accent colors</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className={labelClass}>Button</label>
+                <div className="flex gap-2">
+                  <input type="color" value={buttonColor.startsWith("#") ? buttonColor : "#059669"} onChange={(e) => setButtonColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                  <input type="text" value={buttonColor} onChange={(e) => setButtonColor(e.target.value)} placeholder="#059669" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Button text</label>
+                <div className="flex gap-2">
+                  <input type="color" value={buttonTextColor.startsWith("#") ? buttonTextColor : "#ffffff"} onChange={(e) => setButtonTextColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                  <input type="text" value={buttonTextColor} onChange={(e) => setButtonTextColor(e.target.value)} placeholder="#ffffff" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Primary accent</label>
+                <div className="flex gap-2">
+                  <input type="color" value={primaryColor.startsWith("#") ? primaryColor : "#059669"} onChange={(e) => setPrimaryColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                  <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} placeholder="#059669" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Splits */}
+        {SPLITS_ENABLED && (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+              <h3 className="font-semibold text-dashboard-text">Payment splits</h3>
+              <p className="text-xs text-dashboard-text-muted mt-0.5">Split donations to connected peers</p>
+            </div>
+            <div className="p-5">
+              <SplitPercentageChart splits={splits} onSplitsChange={setSplits} connectedPeers={connectedPeers} organizationName={organizationName} compact maxRecipients={splitRecipientLimit} currentPlan={currentPlan} />
+            </div>
+          </div>
+        )}
+
+        {/* Display options */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Display</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Where and when to show</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div>
+              <label className={labelClass}>Page section</label>
+              <select value={pageSection} onChange={(e) => setPageSection(e.target.value)} className={inputClass}>
+                <option value="donation">Donation</option>
+                <option value="hero">Hero</option>
+                <option value="about">About</option>
+                <option value="team">Team</option>
+                <option value="story">Story</option>
+              </select>
+            </div>
+            <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+              <input type="checkbox" checked={isEnabled} onChange={(e) => setIsEnabled(e.target.checked)} className="h-4 w-4 rounded-lg border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+              <span className="text-sm font-medium text-dashboard-text">Show on org page</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button type="button" onClick={handleSave} disabled={saving} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {saving ? "Saving..." : "Save"}
+          </button>
+          <button type="button" onClick={onCancel} className="px-5 py-3.5 rounded-xl border border-slate-200 dark:border-slate-600 text-dashboard-text hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      {/* Right: Live preview */}
+      <div className="flex-1 min-w-0">
+        <div className="sticky top-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+            <Palette className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="font-semibold text-dashboard-text">Live preview</span>
+          </div>
+          <div className="p-6 flex justify-center bg-slate-50/50 dark:bg-slate-800/30 min-h-[400px]">
+            {renderCardFullPreview(previewCard, organizationName, slug, baseUrl, campaigns)}
+          </div>
+        </div>
+      </div>
+
+      {pexelsPicker && (
+        <PexelsMediaPicker mode={pexelsPicker} onSelect={(url, type) => { setDesignSet((s) => ({ ...s, media_url: url, media_type: type })); setPexelsPicker(null); }} onClose={() => setPexelsPicker(null)} />
+      )}
+    </div>
   );
 }
 
@@ -1255,7 +1726,7 @@ function CardEditor({
               className="space-y-4"
             >
               <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Payment splits (optional)</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">Split donations to connected peers.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">This form gets its own splits. Configure different splits for different forms.</p>
               {connectedPeers.length === 0 && <p className="text-amber-600 text-sm">No connected peers with Stripe Connect yet.</p>}
               <button type="button" onClick={addSplit} disabled={connectedPeers.length === 0} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50">
                 <Plus className="h-4 w-4" /> Add split

@@ -50,7 +50,7 @@ export default async function WebsiteBuilderPage() {
       <WebsiteBuilderClient
         organizationId={orgId}
         websiteFormName={websiteFormName}
-        formDesignUrl="/dashboard/customization"
+        formDesignUrl="/dashboard/website-form"
       />
     </div>
   );

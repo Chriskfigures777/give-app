@@ -8,7 +8,7 @@ import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DashboardNavBar } from "@/components/dashboard-nav-bar";
 
-const AUTO_COLLAPSE_PATHS = ["/dashboard/customization"];
+const AUTO_COLLAPSE_PATHS = ["/dashboard/website-form", "/dashboard/custom-forms"];
 
 type Props = {
   sidebar: React.ReactNode;

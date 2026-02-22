@@ -363,7 +363,7 @@ export function PageBuilderClient({
           </div>
           {savingCard && <p className="mt-2 text-sm text-slate-500">Saving…</p>}
           <a
-            href="/dashboard/customization"
+            href="/dashboard/website-form"
             className="mt-4 inline-flex items-center gap-1 text-sm text-emerald-600 hover:underline font-medium"
           >
             Create or edit embed cards
