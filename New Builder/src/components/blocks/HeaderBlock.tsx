@@ -83,6 +83,7 @@ export function HeaderBlock({ block, theme, isEdit, onUpdateProp }: Props) {
           <nav className={`flex gap-6 md:gap-8 ${isCentered ? 'flex-wrap justify-center' : ''}`}>
             <a
               href={link1Url}
+              data-link-element="navLink1"
               className="text-sm font-medium opacity-90 hover:opacity-100 transition-opacity"
               style={{ color: isDark ? 'rgba(255,255,255,0.95)' : c.primary }}
             >
@@ -92,6 +93,7 @@ export function HeaderBlock({ block, theme, isEdit, onUpdateProp }: Props) {
             </a>
             <a
               href={link2Url}
+              data-link-element="navLink2"
               className="text-sm font-medium opacity-90 hover:opacity-100 transition-opacity"
               style={{ color: isDark ? 'rgba(255,255,255,0.95)' : c.primary }}
             >
@@ -101,6 +103,7 @@ export function HeaderBlock({ block, theme, isEdit, onUpdateProp }: Props) {
             </a>
             <a
               href={link3Url}
+              data-link-element="navLink3"
               className="text-sm font-medium opacity-90 hover:opacity-100 transition-opacity"
               style={{ color: isDark ? 'rgba(255,255,255,0.95)' : c.primary }}
             >

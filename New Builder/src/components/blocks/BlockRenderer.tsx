@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react';
 import type { BuilderBlock, SiteTheme } from '../../types';
+import { useBuilderStore } from '../../store/useBuilderStore';
 import { HeroBlock } from './HeroBlock';
 import { HeaderBlock } from './HeaderBlock';
 import { SectionBlock } from './SectionBlock';
@@ -71,14 +73,42 @@ export function BlockRenderer({
   onDrop,
   isDropTarget,
 }: BlockRendererProps) {
+  const { selectedSubElement, selectSubElement } = useBuilderStore();
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const Component = BLOCK_MAP[block.kind];
   if (!Component) return null;
 
   const span = block.gridSpan ?? 12;
   const fullBleed = FULL_BLEED_KINDS.has(block.kind);
 
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || !isSelected) return;
+    const prev = wrapper.querySelector('.link-element-selected');
+    if (prev) prev.classList.remove('link-element-selected');
+    if (selectedSubElement) {
+      const el = wrapper.querySelector(`[data-link-element="${selectedSubElement}"]`);
+      if (el) el.classList.add('link-element-selected');
+    }
+    return () => {
+      const prev = wrapper.querySelector('.link-element-selected');
+      if (prev) prev.classList.remove('link-element-selected');
+    };
+  }, [selectedSubElement, isSelected]);
+
+  function findLinkElement(target: HTMLElement): string | null {
+    let el: HTMLElement | null = target;
+    while (el && !el.classList?.contains('block-renderer-wrapper')) {
+      const attr = el.getAttribute('data-link-element');
+      if (attr) return attr;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
   return (
     <div
+      ref={wrapperRef}
       id={`block-${block.id}`}
       className={`block-renderer-wrapper min-h-[24px] transition-all duration-200 ease-out flex items-stretch ${isEdit ? 'cursor-pointer' : ''} ${isSelected ? 'builder-selected rounded-xl' : ''} ${isDropTarget ? 'ring-2 ring-indigo-400 ring-inset rounded-xl' : ''}`}
       style={{
@@ -87,7 +117,9 @@ export function BlockRenderer({
       onClick={(e) => {
         if (isEdit) {
           e.stopPropagation();
+          const linkEl = findLinkElement(e.target as HTMLElement);
           onSelect();
+          selectSubElement(linkEl);
         }
       }}
       onDragOver={onDragOver}

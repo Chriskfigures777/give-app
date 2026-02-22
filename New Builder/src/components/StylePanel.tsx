@@ -2,6 +2,23 @@ import { useBuilderStore } from '../store/useBuilderStore';
 import { COMPONENT_DEFINITIONS } from '../data/components';
 import { ThemeChanger } from './ThemeChanger';
 
+interface LinkPropMapping {
+  label: string;
+  linkTypeKey: string;
+  linkValueKey: string;
+  textKey?: string;
+  pageKey?: string;
+  urlKey?: string;
+}
+
+const SUB_ELEMENT_LINK_MAP: Record<string, LinkPropMapping> = {
+  button1: { label: 'Button', linkTypeKey: 'buttonLinkType', linkValueKey: 'buttonLinkValue', textKey: 'buttonText' },
+  button2: { label: 'Second Button', linkTypeKey: 'button2LinkType', linkValueKey: 'button2LinkValue', textKey: 'button2Text' },
+  navLink1: { label: 'Nav Link 1', linkTypeKey: 'navLink1LinkType', linkValueKey: '', textKey: 'navLink1Text', pageKey: 'navLink1Page', urlKey: 'navLink1Url' },
+  navLink2: { label: 'Nav Link 2', linkTypeKey: 'navLink2LinkType', linkValueKey: '', textKey: 'navLink2Text', pageKey: 'navLink2Page', urlKey: 'navLink2Url' },
+  navLink3: { label: 'Nav Link 3', linkTypeKey: 'navLink3LinkType', linkValueKey: '', textKey: 'navLink3Text', pageKey: 'navLink3Page', urlKey: 'navLink3Url' },
+};
+
 function PropEditor({
   label,
   value,
@@ -44,6 +61,8 @@ function PropEditor({
 export function StylePanel() {
   const {
     selectedBlockId,
+    selectedSubElement,
+    selectSubElement,
     pages,
     currentPageId,
     updateBlock,
@@ -97,6 +116,98 @@ export function StylePanel() {
           </select>
         </div>
       </section>
+
+      {/* Link Settings — shown when a link/button sub-element is selected */}
+      {selectedBlock && selectedSubElement && SUB_ELEMENT_LINK_MAP[selectedSubElement] && (() => {
+        const mapping = SUB_ELEMENT_LINK_MAP[selectedSubElement];
+        const isNavLink = selectedSubElement.startsWith('navLink');
+        const linkType = isNavLink
+          ? String(selectedBlock.props[mapping.linkTypeKey] ?? 'page')
+          : String(selectedBlock.props[mapping.linkTypeKey] ?? 'none');
+        const textVal = mapping.textKey ? String(selectedBlock.props[mapping.textKey] ?? '') : '';
+
+        return (
+          <section className="p-3 border-b-2 border-indigo-200 bg-indigo-50/50">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  Link
+                </span>
+                <span className="text-xs font-semibold text-stone-600">{mapping.label}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => selectSubElement(null)}
+                className="text-[10px] font-medium text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 px-1.5 py-0.5 rounded"
+              >
+                Back to block
+              </button>
+            </div>
+            <div className="space-y-2.5">
+              {mapping.textKey && (
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">Text</label>
+                  <input
+                    type="text"
+                    value={textVal}
+                    onChange={(e) => updateProp(mapping.textKey!, e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border border-stone-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Button text..."
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-xs font-medium text-stone-500 mb-1">Link to</label>
+                <select
+                  value={linkType}
+                  onChange={(e) => updateProp(mapping.linkTypeKey, e.target.value)}
+                  className="w-full px-2 py-1.5 text-sm border border-stone-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  {!isNavLink && <option value="none">No link</option>}
+                  <option value="page">Page (in this site)</option>
+                  <option value="external">External URL</option>
+                </select>
+              </div>
+              {linkType === 'page' && (
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">Page</label>
+                  <select
+                    value={String(isNavLink
+                      ? (selectedBlock.props[mapping.pageKey!] ?? '')
+                      : (selectedBlock.props[mapping.linkValueKey] ?? '')
+                    )}
+                    onChange={(e) => updateProp(isNavLink ? mapping.pageKey! : mapping.linkValueKey, e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border border-stone-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="">Select page</option>
+                    {pages.map((p) => (
+                      <option key={p.id} value={p.slug}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {linkType === 'external' && (
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">URL</label>
+                  <input
+                    type="url"
+                    value={String(isNavLink
+                      ? (selectedBlock.props[mapping.urlKey!] ?? '')
+                      : (selectedBlock.props[mapping.linkValueKey] ?? '')
+                    )}
+                    onChange={(e) => updateProp(isNavLink ? mapping.urlKey! : mapping.linkValueKey, e.target.value)}
+                    placeholder="https://..."
+                    className="w-full px-2 py-1.5 text-sm border border-stone-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Selected block props */}
       {selectedBlock && def && (

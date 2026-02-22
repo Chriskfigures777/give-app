@@ -5,7 +5,7 @@ import { BlockRenderer } from './blocks/BlockRenderer';
 const DRAG_TYPE = 'application/x-builder-block';
 
 export function BuilderCanvas() {
-  const { pages, currentPageId, theme, selectedBlockId, mode, gridColumns, selectBlock, updateBlock, moveBlockToIndex } = useBuilderStore();
+  const { pages, currentPageId, theme, selectedBlockId, mode, gridColumns, selectBlock, selectSubElement, updateBlock, moveBlockToIndex } = useBuilderStore();
   const blocks = pages.find((p) => p.id === currentPageId)?.blocks ?? [];
   const isEdit = mode === 'edit';
   const mainRef = useRef<HTMLElement>(null);
@@ -46,7 +46,7 @@ export function BuilderCanvas() {
     <main
       ref={mainRef}
       className="flex-1 overflow-auto canvas-grid min-h-0 bg-stone-100"
-      onClick={() => isEdit && selectBlock(null)}
+      onClick={() => { if (isEdit) { selectBlock(null); selectSubElement(null); } }}
     >
       <div
         className="w-full min-h-full py-6"

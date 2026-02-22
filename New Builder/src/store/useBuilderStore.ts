@@ -573,7 +573,10 @@ export const useBuilderStore = create<BuilderState>((set) => ({
       };
     }),
 
-  selectBlock: (id) => set({ selectedBlockId: id, selectedSubElement: null }),
+  selectBlock: (id) => set((state) => ({
+    selectedBlockId: id,
+    selectedSubElement: id !== state.selectedBlockId ? null : state.selectedSubElement,
+  })),
 
   selectSubElement: (element) => set({ selectedSubElement: element }),
 
