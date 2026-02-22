@@ -268,7 +268,7 @@ export function OrgSectionCards(props: Props) {
                       basePathOverride={basePath}
                       embedCardId={card.id}
                     />
-                    <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+                    <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={organizationName} />
                   </div>
                 </motion.div>
               );

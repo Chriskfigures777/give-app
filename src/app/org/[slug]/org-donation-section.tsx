@@ -143,7 +143,7 @@ export function OrgDonationSection({
                     initialFrequency={initialFrequency}
                     basePathOverride={`/org/${slug}`}
                   />
-                  <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+                  <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={organizationName} />
                 </motion.div>
               </div>
             </>
@@ -233,7 +233,7 @@ export function OrgDonationSection({
               initialFrequency={initialFrequency}
               basePathOverride={`/org/${slug}`}
             />
-            <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+            <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={organizationName} />
           </div>
         </motion.div>
             )}

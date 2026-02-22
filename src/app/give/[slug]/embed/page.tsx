@@ -390,7 +390,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             <p className="gs-form-secure">{tc.secureText}</p>
           </div>
         </div>
-        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
       </main>
     );
   };
@@ -489,7 +489,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             />
             <p className="gs-form-secure">{tc.secureText}</p>
           </div>
-          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
         </div>
       </main>
     );
@@ -537,7 +537,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           fullWidth
           embedCardId={embedCard?.id}
         />
-        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+        <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
       </main>
     );
   }
@@ -613,7 +613,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
               fullWidth
               embedCardId={embedCard?.id}
             />
-            <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+            <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
           </div>
         </div>
       </main>
@@ -698,7 +698,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             initialFrequency={initialFrequency}
             embedCardId={embedCard?.id}
           />
-          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
         </div>
       </div>
     </main>

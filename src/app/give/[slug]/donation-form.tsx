@@ -13,6 +13,7 @@ import {
   type FeeCoverage,
 } from "@/lib/fee-calculator";
 import { useUser } from "@/lib/use-user";
+import { InlineAuthForm } from "./inline-auth-form";
 
 type Campaign = {
   id: string;
@@ -80,6 +81,7 @@ function getStripePromise(stripeConnectAccountId?: string | null): Promise<Strip
 
 export function DonationForm({
   organizationId,
+  organizationName,
   campaigns,
   endowmentFunds,
   suggestedAmounts,
@@ -153,6 +155,7 @@ export function DonationForm({
   const [redirecting, setRedirecting] = useState(false);
   /** Pairs: 1 = sections 1+2, 2 = sections 3+4, 3 = section 5. Two sections shown at a time. */
   const [expandedPair, setExpandedPair] = useState<1 | 2 | 3>(1);
+  const [showInlineAuth, setShowInlineAuth] = useState(false);
 
   const selectedCampaign = campaigns.find((c) => c.id === campaignId);
   const showAnonymousOption = allowAnonymous && (selectedCampaign?.allow_anonymous !== false);
@@ -179,10 +182,8 @@ export function DonationForm({
       setError("Email is required for tax receipts and donation records.");
       return;
     }
-    // Monthly/yearly require login so donors can manage their recurring gifts
     if (needsLoginForRecurring && slug) {
-      const params = new URLSearchParams({ org: slug, frequency: effectiveFrequency });
-      window.location.href = `/login?${params.toString()}`;
+      setShowInlineAuth(true);
       return;
     }
     setError(null);
@@ -353,13 +354,31 @@ export function DonationForm({
           ...(fullWidth && { width: "100%", minWidth: 0, maxWidth: "none" }),
         }}
       >
-        {error && (
+        {error && !showInlineAuth && (
           <p className="text-sm mb-3" role="alert" style={{ color: "#dc2626" }}>
             {error}
           </p>
         )}
 
+        {showInlineAuth && slug && (paymentFrequency === "monthly" || paymentFrequency === "yearly") && (
+          <InlineAuthForm
+            organizationName={organizationName}
+            slug={slug}
+            frequency={paymentFrequency}
+            onSuccess={() => setShowInlineAuth(false)}
+            onCancel={() => {
+              setShowInlineAuth(false);
+              setPaymentFrequency("one_time");
+              setIsRecurring(false);
+            }}
+            accentColor={accentColor}
+            accentText={accentText}
+            borderRadius={radius}
+          />
+        )}
+
         {/* Two sections at a time: pair 1 = sections 1+2, pair 2 = sections 3+4, pair 3 = section 5 */}
+        {!showInlineAuth && (
         <div className={`space-y-3 ${fullWidth ? "w-full" : ""}`}>
               {/* Pair 1: Sections 1 + 2 */}
               {expandedPair === 1 && (
@@ -509,8 +528,9 @@ export function DonationForm({
                             aria-pressed={selected}
                             onClick={() => {
                               if (opt.value !== "one_time" && !user && slug) {
-                                const params = new URLSearchParams({ org: slug!, frequency: opt.value });
-                                window.location.href = `/login?${params.toString()}`;
+                                setPaymentFrequency(opt.value);
+                                setIsRecurring(true);
+                                setShowInlineAuth(true);
                                 return;
                               }
                               setPaymentFrequency(opt.value);
@@ -756,6 +776,7 @@ export function DonationForm({
                 </div>
               )}
         </div>
+        )}
       </div>
     </div>
   );

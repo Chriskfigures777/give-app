@@ -146,7 +146,7 @@ export default async function GivePage({ params, searchParams }: Props) {
           initialFrequency={initialFrequency}
           donationLinkId={donationLinkId ?? undefined}
         />
-          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} />
+          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
           <div className="mt-4 flex justify-center">
             <GivePageQRCode slug={slug} organizationName={org.name} />
           </div>
