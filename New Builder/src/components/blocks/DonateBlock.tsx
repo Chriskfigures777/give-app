@@ -66,6 +66,7 @@ export function DonateBlock({ block, theme, isEdit, onUpdateProp }: Props) {
         {buttonHref ? (
           <a
             href={buttonHref}
+            data-link-element="button1"
             className={`inline-block rounded-2xl font-semibold text-base md:text-lg shadow-xl transition-all duration-200 ease-out hover:scale-[1.03] hover:shadow-2xl no-underline ${isCompact ? 'px-6 py-3' : 'px-10 py-4'} ${isOutline ? 'border-2 bg-transparent' : ''}`}
             style={
               isOutline ? { borderColor: c.primary, color: c.primary } : { backgroundColor: c.accent, color: '#fff' }
@@ -79,6 +80,7 @@ export function DonateBlock({ block, theme, isEdit, onUpdateProp }: Props) {
           </a>
         ) : (
           <span
+            data-link-element="button1"
             className={`inline-block rounded-2xl font-semibold text-base md:text-lg shadow-xl transition-all duration-200 ease-out hover:scale-[1.03] hover:shadow-2xl ${isCompact ? 'px-6 py-3' : 'px-10 py-4'} ${isOutline ? 'border-2 bg-transparent' : ''}`}
             style={
               isOutline ? { borderColor: c.primary, color: c.primary } : { backgroundColor: c.accent, color: '#fff' }

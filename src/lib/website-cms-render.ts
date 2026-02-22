@@ -350,7 +350,7 @@ export function renderGiveEmbed(orgSlug: string, templateTheme?: string | null):
   const themeParam = templateTheme ? `&theme=${encodeURIComponent(templateTheme)}` : "";
   const embedSrc = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}`;
   const iframeId = `give-embed-${orgSlug}`;
-  return `<div data-give-embed style="width:100%;max-width:600px;margin:0 auto;">
+  return `<div data-give-embed style="width:100%;max-width:960px;margin:0 auto;">
   <iframe
     id="${iframeId}"
     src="${embedSrc}"

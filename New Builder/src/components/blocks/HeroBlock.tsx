@@ -122,6 +122,7 @@ export function HeroBlock({ block, theme, isEdit, onUpdateProp }: Props) {
           {showButton && (buttonHref ? (
             <a
               href={buttonHref}
+              data-link-element="button1"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base md:text-lg shadow-xl transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-2xl no-underline"
               style={{ backgroundColor: c.primary, color: '#fff' }}
             >
@@ -131,7 +132,7 @@ export function HeroBlock({ block, theme, isEdit, onUpdateProp }: Props) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>
           ) : (
-            <span className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base md:text-lg shadow-xl transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: c.primary, color: '#fff' }}>
+            <span data-link-element="button1" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base md:text-lg shadow-xl transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: c.primary, color: '#fff' }}>
               {isEdit && onUpdateProp ? (
                 <EditableText value={buttonText} onSave={(v) => onUpdateProp('buttonText', v)} as="span" className="text-white" placeholder="Button text" />
               ) : buttonText}
@@ -141,6 +142,7 @@ export function HeroBlock({ block, theme, isEdit, onUpdateProp }: Props) {
           {showButton2 && (button2Href ? (
             <a
               href={button2Href}
+              data-link-element="button2"
               className="inline-flex items-center px-8 py-4 rounded-2xl font-semibold text-base border-2 transition-all duration-200 hover:opacity-90 no-underline"
               style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}
             >
@@ -149,7 +151,7 @@ export function HeroBlock({ block, theme, isEdit, onUpdateProp }: Props) {
               ) : button2Text}
             </a>
           ) : (
-            <span className="inline-flex items-center px-8 py-4 rounded-2xl font-semibold text-base border-2 transition-all duration-200 hover:opacity-90" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
+            <span data-link-element="button2" className="inline-flex items-center px-8 py-4 rounded-2xl font-semibold text-base border-2 transition-all duration-200 hover:opacity-90" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
               {isEdit && onUpdateProp ? (
                 <EditableText value={button2Text} onSave={(v) => onUpdateProp('button2Text', v)} as="span" placeholder="Second button" />
               ) : button2Text}
@@ -203,22 +205,22 @@ export function HeroBlock({ block, theme, isEdit, onUpdateProp }: Props) {
             {(showButton || showButton2) && variant === 'split' && (
               <div className="flex flex-wrap gap-4 mt-8">
                 {showButton && (buttonHref ? (
-                  <a href={buttonHref} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold no-underline" style={{ backgroundColor: c.primary, color: '#fff' }}>
+                  <a href={buttonHref} data-link-element="button1" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold no-underline" style={{ backgroundColor: c.primary, color: '#fff' }}>
                     {isEdit && onUpdateProp ? <EditableText value={buttonText} onSave={(v) => onUpdateProp('buttonText', v)} as="span" className="text-white" /> : buttonText}
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                   </a>
                 ) : (
-                  <span className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold" style={{ backgroundColor: c.primary, color: '#fff' }}>
+                  <span data-link-element="button1" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold" style={{ backgroundColor: c.primary, color: '#fff' }}>
                     {isEdit && onUpdateProp ? <EditableText value={buttonText} onSave={(v) => onUpdateProp('buttonText', v)} as="span" className="text-white" /> : buttonText}
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                   </span>
                 ))}
                 {showButton2 && (button2Href ? (
-                  <a href={button2Href} className="inline-flex px-6 py-3.5 rounded-xl font-semibold border-2 no-underline" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
+                  <a href={button2Href} data-link-element="button2" className="inline-flex px-6 py-3.5 rounded-xl font-semibold border-2 no-underline" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
                     {isEdit && onUpdateProp ? <EditableText value={button2Text} onSave={(v) => onUpdateProp('button2Text', v)} as="span" /> : button2Text}
                   </a>
                 ) : (
-                  <span className="inline-flex px-6 py-3.5 rounded-xl font-semibold border-2" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
+                  <span data-link-element="button2" className="inline-flex px-6 py-3.5 rounded-xl font-semibold border-2" style={{ borderColor: isDark ? '#fff' : c.text, color: isDark ? '#fff' : c.text }}>
                     {isEdit && onUpdateProp ? <EditableText value={button2Text} onSave={(v) => onUpdateProp('button2Text', v)} as="span" /> : button2Text}
                   </span>
                 ))}

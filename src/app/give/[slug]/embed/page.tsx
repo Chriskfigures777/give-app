@@ -30,7 +30,7 @@ const DEFAULT_SUGGESTED_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string; seamless?: string; theme?: string }>;
+  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string; seamless?: string; theme?: string; mode?: string }>;
 };
 
 type EmbedCardRow = {
@@ -60,6 +60,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const cardParam = resolved.card;
   const seamlessParam = resolved.seamless;
   const themeParam = resolved.theme;
+  const modeParam = resolved.mode;
   const initialFrequency = (typeof frequencyParam === "string" ? frequencyParam : frequencyParam?.[0]) as "monthly" | "yearly" | undefined;
   const isCompact = compactParam === "1" || compactParam === "true";
   const isFullscreen = fullscreenParam === "1" || fullscreenParam === "true";
@@ -495,7 +496,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     );
   };
 
-  // Seamless mode: transparent background, no borders/padding/shadow — for embedding directly in website templates
+  // Seamless mode: for embedding directly in website templates.
+  // Respects form_display_mode and embed_form_theme from the form builder.
   if (isSeamless) {
     const theme = seamlessTheme ? getSeamlessTheme(seamlessTheme) : null;
     const themeFontUrl = seamlessTheme ? getSeamlessThemeFontUrl(seamlessTheme) : null;
@@ -505,6 +507,267 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     const effectiveBorderRadius = theme?.borderRadius ?? borderRadius;
     const effectiveFont = theme ? theme.bodyFont : fontFamily;
 
+    // Display mode: URL ?mode= param > form builder setting > themed layout default
+    const seamlessDisplayMode: "full" | "compressed" | "full_width" =
+      (["full", "compressed", "full_width"].includes(modeParam ?? "") ? modeParam as "full" | "compressed" | "full_width" : undefined)
+      ?? formCustom?.form_display_mode
+      ?? (useThemedLayout ? "full_width" : "compressed");
+
+    const mediaSide = formCustom?.form_media_side ?? "left";
+
+    // Full-width: give-split layout (image + form side by side) with seamless styling
+    if (seamlessDisplayMode === "full_width") {
+      const headerText = designSetFromCard?.title ?? formCustom?.header_text ?? "Make a Donation";
+      const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
+      const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
+      const isDark = theme?.isDark ?? false;
+      const accentColor = theme?.accentColor ?? formCustom?.button_color ?? "#6366F1";
+      const formBg = isDark ? (theme?.darkBg ?? "#0F0F0F") : "white";
+      const textColor = theme?.textColor ?? (isDark ? "#E5E5E5" : "#333");
+      const headingFont = theme?.headingFont ?? "'Inter',sans-serif";
+      const accentRgb = theme?.accentRgb ?? "99,102,241";
+
+      const splitCSS = `
+        .seamless-give-split {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 8px 40px rgba(0,0,0,${isDark ? "0.3" : "0.12"});
+          max-width: 900px;
+          margin: 0 auto;
+          background: ${formBg};
+          container-type: inline-size;
+        }
+        .seamless-give-split .sgs-img {
+          ${mediaSide === "right" ? "order: 2;" : "order: 1;"}
+          overflow: hidden;
+        }
+        .seamless-give-split .sgs-img img,
+        .seamless-give-split .sgs-img video {
+          width: 100%; height: 100%; object-fit: cover; display: block; min-height: 380px;
+        }
+        .seamless-give-split .sgs-form {
+          ${mediaSide === "right" ? "order: 1;" : "order: 2;"}
+          background: ${formBg};
+          padding: 40px 36px;
+          display: flex; flex-direction: column; justify-content: center;
+        }
+        .seamless-give-split .sgs-form .sgs-eyebrow {
+          font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+          color: ${accentColor}; font-weight: 700; margin-bottom: 14px;
+        }
+        .seamless-give-split .sgs-form h3 {
+          font-family: ${headingFont}; font-size: 24px; color: ${textColor};
+          margin: 0 0 8px 0; line-height: 1.2;
+        }
+        .seamless-give-split .sgs-form .sgs-desc {
+          color: ${isDark ? "rgba(255,255,255,0.55)" : "#6B7280"};
+          font-size: 14px; margin-bottom: 24px; line-height: 1.6;
+        }
+        .seamless-give-split .sgs-secure {
+          color: ${isDark ? "rgba(255,255,255,0.35)" : "#9CA3AF"};
+          font-size: 11px; margin-top: 10px; text-align: center;
+        }
+        ${isDark ? `
+          .seamless-give-split .sgs-form .give-form-tithely,
+          .seamless-give-split .sgs-form [class*="give-form"] {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+          }
+          .seamless-give-split .sgs-form #checkout {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+          }
+          .seamless-give-split .sgs-form .rounded-lg.border,
+          .seamless-give-split .sgs-form .p-4.rounded-lg.border,
+          .seamless-give-split .sgs-form [class*="rounded-lg"][class*="border"] {
+            background: transparent !important; border-color: rgba(255,255,255,0.12) !important;
+          }
+          .seamless-give-split .sgs-form .border-t,
+          .seamless-give-split .sgs-form .border-slate-200 {
+            border-color: rgba(255,255,255,0.12) !important;
+          }
+          .seamless-give-split .sgs-form label,
+          .seamless-give-split .sgs-form .text-slate-700,
+          .seamless-give-split .sgs-form .text-slate-600,
+          .seamless-give-split .sgs-form .font-semibold { color: rgba(255,255,255,0.85) !important; }
+          .seamless-give-split .sgs-form .text-slate-500,
+          .seamless-give-split .sgs-form .text-slate-400 { color: rgba(255,255,255,0.5) !important; }
+          .seamless-give-split .sgs-form .text-slate-900,
+          .seamless-give-split .sgs-form h3 { color: white !important; }
+          .seamless-give-split .sgs-form .text-3xl,
+          .seamless-give-split .sgs-form .tabular-nums { color: rgba(255,255,255,0.7) !important; }
+          .seamless-give-split .sgs-form input[type="text"],
+          .seamless-give-split .sgs-form input[type="email"],
+          .seamless-give-split .sgs-form input[type="number"],
+          .seamless-give-split .sgs-form input[type="tel"],
+          .seamless-give-split .sgs-form select,
+          .seamless-give-split .sgs-form textarea {
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important; color: white !important;
+          }
+          .seamless-give-split .sgs-form input::placeholder,
+          .seamless-give-split .sgs-form textarea::placeholder { color: rgba(255,255,255,0.3) !important; }
+          .seamless-give-split .sgs-form select option { background: ${formBg}; color: white; }
+          .seamless-give-split .sgs-form button[type="button"] {
+            border: 1px solid rgba(${accentRgb},0.4) !important;
+            background: rgba(${accentRgb},0.08) !important; color: white !important;
+          }
+          .seamless-give-split .sgs-form button[type="button"]:hover,
+          .seamless-give-split .sgs-form button[type="button"].ring-2,
+          .seamless-give-split .sgs-form button[type="button"][aria-pressed="true"] {
+            background: ${accentColor} !important;
+            color: ${formBg} !important;
+            border-color: ${accentColor} !important;
+          }
+          .seamless-give-split .sgs-form [class*="py-3"][class*="font-medium"][class*="rounded"],
+          .seamless-give-split .sgs-form button[type="submit"] {
+            background: ${accentColor} !important;
+            color: ${formBg} !important; border: none !important;
+            box-shadow: 0 4px 20px rgba(${accentRgb},0.35);
+          }
+          .seamless-give-split .sgs-form input[type="checkbox"] {
+            border-color: rgba(255,255,255,0.3) !important;
+            background: rgba(255,255,255,0.08) !important;
+          }
+          .seamless-give-split .sgs-form svg { color: rgba(255,255,255,0.6); }
+        ` : ""}
+        @media (max-width: 768px) {
+          .seamless-give-split { grid-template-columns: 1fr; }
+          .seamless-give-split .sgs-img { order: 1; }
+          .seamless-give-split .sgs-form { order: 2; padding: 28px 24px; }
+        }
+        @container (max-width: 600px) {
+          .seamless-give-split { grid-template-columns: 1fr; }
+          .seamless-give-split .sgs-img { order: 1; }
+          .seamless-give-split .sgs-form { order: 2; padding: 28px 24px; }
+        }
+      `;
+
+      return (
+        <main className={`w-full${theme ? " seamless-theme" : ""}`} style={{ background: "transparent", fontFamily: effectiveFont }}>
+          <EmbedResizeObserver />
+          <style dangerouslySetInnerHTML={{ __html: themeCSS + splitCSS }} />
+          {themeFontUrl && <link rel="stylesheet" href={themeFontUrl} />}
+          {!themeFontUrl && googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
+          <div className="seamless-give-split">
+            <div className="sgs-img">
+              {hasVideo ? (
+                <video src={effectiveMediaSet.media_url} autoPlay muted loop playsInline aria-hidden />
+              ) : (
+                <img src={effectiveMediaSet.media_url} alt="Community impact" />
+              )}
+            </div>
+            <div className="sgs-form">
+              <span className="sgs-eyebrow">Give Online</span>
+              <h3>{headerText}</h3>
+              <p className="sgs-desc">{subheaderText}</p>
+              <DonationForm
+                organizationId={org.id}
+                organizationName={org.name}
+                campaigns={campaigns ?? []}
+                endowmentFunds={endowmentFunds ?? []}
+                suggestedAmounts={suggestedAmounts}
+                minimumAmountCents={minCents}
+                showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+                allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+                allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+                buttonColor={effectiveButtonColor}
+                buttonTextColor={effectiveButtonTextColor}
+                borderRadius={effectiveBorderRadius}
+                slug={slug}
+                noCard
+                initialFrequency={initialFrequency}
+                fullWidth
+                embedCardId={embedCard?.id}
+              />
+              <p className="sgs-secure">All transactions are secure and encrypted</p>
+            </div>
+          </div>
+          <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
+        </main>
+      );
+    }
+
+    // Full mode: image/video header above the form
+    if (seamlessDisplayMode === "full") {
+      const headerText = formCustom?.header_text ?? "Make a Donation";
+      const subheaderText = formCustom?.subheader_text ?? `Support ${org.name}`;
+      const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
+      const headingFont = theme?.headingFont ?? fontFamily;
+
+      return (
+        <main
+          className={`w-full${theme ? " seamless-theme" : ""}`}
+          style={{
+            background: "transparent",
+            color: theme?.textColor ?? formCustom?.text_color ?? "inherit",
+            fontFamily: effectiveFont,
+          }}
+        >
+          <EmbedResizeObserver />
+          <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+          {themeFontUrl && <link rel="stylesheet" href={themeFontUrl} />}
+          {!themeFontUrl && googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
+          <div className="w-full max-w-[600px] mx-auto overflow-hidden rounded-xl" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+            <div className="relative w-full h-56 overflow-hidden">
+              {hasVideo ? (
+                <video
+                  src={effectiveMediaSet.media_url}
+                  autoPlay muted loop playsInline
+                  className="absolute inset-0 w-full h-full object-cover block"
+                  aria-hidden
+                />
+              ) : (
+                <img
+                  src={effectiveMediaSet.media_url}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover block"
+                />
+              )}
+              <div
+                className="absolute inset-0 flex flex-col justify-end p-5 text-white"
+                style={{ background: "linear-gradient(transparent 40%, rgba(0,0,0,0.65))" }}
+              >
+                <h2
+                  className="text-2xl font-bold leading-tight mb-1"
+                  style={{ fontFamily: headingFont, fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+                >
+                  {headerText}
+                </h2>
+                <p className="text-sm" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
+                  {subheaderText}
+                </p>
+              </div>
+            </div>
+            <div className="p-6">
+              <DonationForm
+                organizationId={org.id}
+                organizationName={org.name}
+                campaigns={campaigns ?? []}
+                endowmentFunds={endowmentFunds ?? []}
+                suggestedAmounts={suggestedAmounts}
+                minimumAmountCents={minCents}
+                showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
+                allowCustomAmount={formCustom?.allow_custom_amount ?? true}
+                allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
+                buttonColor={effectiveButtonColor}
+                buttonTextColor={effectiveButtonTextColor}
+                borderRadius={effectiveBorderRadius}
+                slug={slug}
+                noCard
+                initialFrequency={initialFrequency}
+                fullWidth
+                embedCardId={embedCard?.id}
+              />
+              <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
+            </div>
+          </div>
+        </main>
+      );
+    }
+
+    // Compressed (default): bare seamless form with theme colors, no images
     return (
       <main
         className={`w-full${theme ? " seamless-theme" : ""}`}

@@ -410,6 +410,7 @@ interface BuilderState {
   pages: BuilderPage[];
   currentPageId: string | null;
   selectedBlockId: string | null;
+  selectedSubElement: string | null;
   theme: SiteTheme;
   themes: SiteTheme[];
   templates: typeof PAGE_TEMPLATES;
@@ -423,6 +424,7 @@ interface BuilderState {
   moveBlock: (id: string, direction: 'up' | 'down') => void;
   moveBlockToIndex: (id: string, toIndex: number) => void;
   selectBlock: (id: string | null) => void;
+  selectSubElement: (element: string | null) => void;
   setTheme: (theme: SiteTheme) => void;
   setThemeColors: (colors: Partial<ThemeColors>) => void;
   setThemeTypography: (typo: Partial<ThemeTypography>) => void;
@@ -442,6 +444,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
   pages: [createDefaultPage(initialPageId, 'Home', 'home', [])],
   currentPageId: initialPageId,
   selectedBlockId: null,
+  selectedSubElement: null,
   theme: {
     id: 'custom',
     name: 'Custom',
@@ -570,7 +573,9 @@ export const useBuilderStore = create<BuilderState>((set) => ({
       };
     }),
 
-  selectBlock: (id) => set({ selectedBlockId: id }),
+  selectBlock: (id) => set({ selectedBlockId: id, selectedSubElement: null }),
+
+  selectSubElement: (element) => set({ selectedSubElement: element }),
 
   setTheme: (theme) => set({ theme }),
 
@@ -586,7 +591,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
 
   setGridColumns: (gridColumns) => set({ gridColumns }),
 
-  setCurrentPage: (pageId) => set({ currentPageId: pageId, selectedBlockId: null }),
+  setCurrentPage: (pageId) => set({ currentPageId: pageId, selectedBlockId: null, selectedSubElement: null }),
 
   addPage: (name = 'New Page', slug) => {
     const id = uuid();
