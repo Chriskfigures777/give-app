@@ -263,7 +263,7 @@ export async function POST(req: NextRequest) {
     const autoReplyEnabled = true;
 
     if (autoReplyEnabled && visitorEmail) {
-      const customMessage: string | null = null;
+      let customMessage: string | null = null;
 
       const displayName = visitorName ?? "there";
 
