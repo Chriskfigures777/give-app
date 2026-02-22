@@ -677,7 +677,7 @@ export function EmbedFormClient({
                           setButtonTextColor(tpl.button_text_color ?? "");
                           setRadiusPx(parseRadiusPx(tpl.button_border_radius));
                           setFontFamilyKey(tpl.font_family ?? "");
-                          setEmbedFormTheme(tpl.embed_form_theme);
+                          setEmbedFormTheme(tpl.embed_form_theme as EmbedFormThemeId);
                           setFormDisplayMode(tpl.form_display_mode);
                           setFormMediaSide(tpl.form_media_side);
                           if (tpl.design_sets?.length) {

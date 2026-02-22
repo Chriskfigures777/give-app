@@ -54,6 +54,25 @@ function rewriteLinks(html: string, basePath: string, previewProjectId?: string 
     const path = slug ? `${basePath}${slug}` : baseNoTrail;
     return `href="${path}${qs}"`;
   });
+  // Convert hash links that exactly match page slugs to proper page URLs.
+  // Home pages often use #about, #ministries etc. for single-page scroll nav,
+  // but on the multi-page site these should navigate to the actual pages.
+  const hashToSlug: Record<string, string> = {
+    "#home": "",
+    "#about": "about",
+    "#events": "events",
+    "#give": "give",
+    "#ministries": "ministries",
+    "#media": "media",
+    "#visit": "visit",
+  };
+  for (const [hash, slug] of Object.entries(hashToSlug)) {
+    const path = slug ? `${basePath}${slug}` : baseNoTrail;
+    const escaped = hash.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`href=["']${escaped}["']`, "gi");
+    out = out.replace(re, `href="${path}${qs}"`);
+  }
+
   const textToSlug: Record<string, string> = {
     Home: "",
     About: "about",

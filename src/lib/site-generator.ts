@@ -83,6 +83,24 @@ export function rewriteLinks(
     return `href="${path}"`;
   });
 
+  const hashToSlug: Record<string, string> = {
+    "#home": "",
+    "#about": "about",
+    "#events": "events",
+    "#give": "give",
+    "#ministries": "ministries",
+    "#media": "media",
+    "#visit": "visit",
+  };
+  for (const [hash, slug] of Object.entries(hashToSlug)) {
+    const path = forStatic
+      ? slug ? `/${slug}` : "/"
+      : slug ? `${basePath}${slug}` : baseNoTrail;
+    const escaped = hash.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`href=["']${escaped}["']`, "gi");
+    out = out.replace(re, `href="${path}"`);
+  }
+
   const textToSlug: Record<string, string> = {
     Home: "",
     About: "about",
@@ -172,7 +190,7 @@ export async function injectCmsContent(
 
   const featuredSermonHtml = renderFeaturedSermon(featuredSermonEnriched);
   if (out.includes("{{cms:featured_sermon}}")) {
-    out = out.replace("{{cms:featured_sermon}}", `<div data-cms-block="featured_sermon">${featuredSermonHtml}</div>`);
+    out = out.replace("{{cms:featured_sermon}}", featuredSermonHtml);
   }
   if (out.includes("<!-- cms:featured_sermon -->")) {
     out = out.replace(
@@ -181,28 +199,25 @@ export async function injectCmsContent(
     );
   }
   if (out.includes("{{cms:podcast}}")) {
-    out = out.replace("{{cms:podcast}}", `<div data-cms-block="podcast">${renderPodcast({ config: podcastConfig, episodes: podcastEpisodes ?? [] })}</div>`);
+    out = out.replace("{{cms:podcast}}", renderPodcast({ config: podcastConfig, episodes: podcastEpisodes ?? [] }));
   }
   if (out.includes("{{cms:worship_recordings}}")) {
-    out = out.replace("{{cms:worship_recordings}}", `<div data-cms-block="worship_recordings">${renderWorshipRecordings(worshipRecordings ?? [])}</div>`);
+    out = out.replace("{{cms:worship_recordings}}", renderWorshipRecordings(worshipRecordings ?? []));
   }
   if (out.includes("{{cms:events_grid}}")) {
-    out = out.replace("{{cms:events_grid}}", `<div data-cms-block="events_grid">${renderEventsGrid(events ?? [], APP_URL)}</div>`);
+    out = out.replace("{{cms:events_grid}}", renderEventsGrid(events ?? [], APP_URL));
   }
   if (out.includes("{{cms:events_list}}")) {
-    out = out.replace("{{cms:events_list}}", `<div data-cms-block="events_list">${renderEventsList(events ?? [], APP_URL)}</div>`);
+    out = out.replace("{{cms:events_list}}", renderEventsList(events ?? [], APP_URL));
   }
   if (out.includes("{{cms:sermon_archive}}")) {
     out = out.replace(
       "{{cms:sermon_archive}}",
-      `<div data-cms-block="sermon_archive">${renderSermonArchive(sermonArchiveEnriched as Parameters<typeof renderSermonArchive>[0])}</div>`
+      renderSermonArchive(sermonArchiveEnriched as Parameters<typeof renderSermonArchive>[0])
     );
   }
   if (out.includes("{{cms:team_members}}")) {
-    out = out.replace(
-      "{{cms:team_members}}",
-      `<div data-cms-block="team_members">${renderTeamMembers(teamMembers ?? [])}</div>`
-    );
+    out = out.replace("{{cms:team_members}}", renderTeamMembers(teamMembers ?? []));
   }
 
   if (out.includes("data-cms-binding")) {
