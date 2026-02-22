@@ -423,6 +423,60 @@ export async function GET(req: NextRequest) {
                 });
               }
             } catch (_) {}
+            Traits.addType('page_select', {
+              createInput: function(trait) {
+                var el = document.createElement('select');
+                el.className = 'gjs-field gjs-select';
+                el.style.cssText = 'width:100%;padding:6px 8px;border:1px solid rgba(0,0,0,0.15);border-radius:4px;';
+                var opt0 = document.createElement('option');
+                opt0.value = '';
+                opt0.textContent = '\u2014 Custom URL \u2014';
+                el.appendChild(opt0);
+                var pm = editor.Pages || {};
+                var allPages = (pm.getAll && pm.getAll()) || [];
+                allPages.forEach(function(p, idx) {
+                  var o = document.createElement('option');
+                  var id = (p.getId && p.getId()) || (p.id !== undefined ? p.id : idx);
+                  var name = (p.getName && p.getName()) || (p.name || ('Page ' + (idx + 1)));
+                  o.value = '#' + id;
+                  o.textContent = name;
+                  el.appendChild(o);
+                });
+                return el;
+              },
+              onEvent: function(component, event) {
+                var val = event.target.value;
+                if (val) component.addAttributes({ href: val });
+              },
+              onUpdate: function(component, el) {
+                if (!el || typeof el.value === 'undefined') return;
+                var href = ((component.getAttributes && component.getAttributes()) || {})['href'] || '';
+                var matched = false;
+                for (var i = 0; i < el.options.length; i++) {
+                  if (el.options[i].value === href) { el.value = href; matched = true; break; }
+                }
+                if (!matched) el.value = '';
+              }
+            });
+            try {
+              DomComponents.addType('link', {
+                extend: 'link',
+                model: {
+                  defaults: {
+                    traits: [
+                      { type: 'page_select', name: 'pageLink', label: 'Link to Page', changeProp: true },
+                      { name: 'href', label: 'Link URL' },
+                      { type: 'select', name: 'target', label: 'Open in', options: [
+                        { value: '', name: 'Same window' },
+                        { value: '_blank', name: 'New window' }
+                      ]},
+                      { name: 'title', label: 'Title' },
+                      { type: 'cms_bind', name: 'data-cms-binding', label: 'Bind to CMS' }
+                    ]
+                  }
+                }
+              });
+            } catch(_) {}
           })();
           editor.on('canvas:frame:load:body', function(ev) {
             var win = ev && ev.window;
@@ -433,13 +487,37 @@ export async function GET(req: NextRequest) {
             if (doc.body) doc.body.setAttribute('data-gjs-pagelinks-bound', '1');
             function preventLinkNav(e) {
               var target = e.target;
+              var linkEl = null;
               while (target && target !== doc.body) {
-                if (target.tagName === 'A') {
-                  e.preventDefault();
-                  return;
-                }
+                if (target.tagName === 'A') { linkEl = target; break; }
                 target = target.parentElement;
               }
+              if (!linkEl) return;
+              e.preventDefault();
+              e.stopPropagation();
+              try {
+                var ed = (editor.getEditor) ? editor.getEditor() : editor;
+                if (!ed || !ed.select) return;
+                var wrapper = (ed.DomComponents && ed.DomComponents.getWrapper) ? ed.DomComponents.getWrapper() : (ed.getWrapper ? ed.getWrapper() : null);
+                if (!wrapper) return;
+                var found = null;
+                if (wrapper.find) {
+                  var links = wrapper.find('a');
+                  for (var i = 0; !found && i < links.length; i++) {
+                    try { if (links[i].getEl && links[i].getEl() === linkEl) found = links[i]; } catch(ex) {}
+                  }
+                }
+                if (!found) {
+                  (function search(m) {
+                    if (found) return;
+                    try { if (m.getEl && m.getEl() === linkEl) { found = m; return; } } catch(ex) {}
+                    var ch = m.components ? m.components() : [];
+                    if (ch.models) ch = ch.models;
+                    if (ch) for (var i = 0; i < ch.length; i++) search(ch[i]);
+                  })(wrapper);
+                }
+                if (found) ed.select(found);
+              } catch(err) {}
             }
             doc.addEventListener('click', preventLinkNav, true);
             doc.addEventListener('dblclick', preventLinkNav, true);
