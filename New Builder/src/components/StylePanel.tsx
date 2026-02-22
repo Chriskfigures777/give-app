@@ -1,5 +1,6 @@
 import { useBuilderStore } from '../store/useBuilderStore';
 import { COMPONENT_DEFINITIONS } from '../data/components';
+import { ThemeChanger } from './ThemeChanger';
 
 function PropEditor({
   label,
@@ -42,10 +43,6 @@ function PropEditor({
 
 export function StylePanel() {
   const {
-    theme,
-    themes,
-    setTheme,
-    setThemeColors,
     selectedBlockId,
     pages,
     currentPageId,
@@ -75,52 +72,8 @@ export function StylePanel() {
 
   return (
     <aside className="w-80 shrink-0 border-l border-stone-200 bg-white flex flex-col overflow-hidden">
-      {/* Theme section */}
-      <section className="p-3 border-b border-stone-200">
-        <h2 className="text-sm font-semibold text-stone-700 uppercase tracking-wider mb-2">
-          Theme
-        </h2>
-        <div className="flex flex-wrap gap-1.5 mb-3 max-h-32 overflow-y-auto">
-          {themes.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTheme(t)}
-              className={`px-2.5 py-1 text-xs font-medium rounded-md border transition ${
-                theme.id === t.id
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'bg-white text-stone-600 border-stone-300 hover:border-indigo-400'
-              }`}
-            >
-              {t.name}
-            </button>
-          ))}
-        </div>
-        <h3 className="text-xs font-medium text-stone-500 mb-2">Colors</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {(['primary', 'secondary', 'accent', 'background', 'surface', 'text'] as const).map(
-            (key) => (
-              <div key={key}>
-                <label className="block text-xs text-stone-500 mb-0.5">{key}</label>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="color"
-                    value={theme.colors[key]}
-                    onChange={(e) => setThemeColors({ [key]: e.target.value })}
-                    className="w-8 h-8 rounded border border-stone-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={theme.colors[key]}
-                    onChange={(e) => setThemeColors({ [key]: e.target.value })}
-                    className="flex-1 min-w-0 px-1.5 py-1 text-xs border border-stone-300 rounded"
-                  />
-                </div>
-              </div>
-            )
-          )}
-        </div>
-      </section>
+      {/* Theme Changer */}
+      <ThemeChanger />
 
       {/* Layout / Grid */}
       <section className="p-3 border-b border-stone-200">
