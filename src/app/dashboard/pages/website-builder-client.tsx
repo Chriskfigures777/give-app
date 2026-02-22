@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RotateCcw, ExternalLink, Upload, Eye, Globe, AlertCircle, X } from "lucide-react";
+import { ArrowLeft, RotateCcw, ExternalLink, Upload, Eye, Globe, AlertCircle, X, Palette } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 type Props = {
@@ -159,6 +159,18 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
         </div>
         {projectState && (
           <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                iframeRef.current?.contentWindow?.postMessage({ type: "toggle-theme-panel" }, "*");
+              }}
+              className="flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 shadow-sm hover:bg-indigo-100 hover:text-indigo-900 transition-colors"
+              title="Change theme colors"
+            >
+              <Palette className="h-4 w-4" />
+              Theme
+            </button>
             {/* Preview button -- always available */}
             {projectState.siteUrl && (
               <button

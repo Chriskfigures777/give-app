@@ -680,48 +680,52 @@ export async function GET(req: NextRequest) {
 
           /* ─── Theme Changer Panel ─── */
           (function addThemeChangerPanel() {
-            var PRESET_THEMES = [
-              { id:'church-grace', name:'Grace', vars:{'--gold':'#C9A84C','--deep':'#1A1A2E','--navy':'#16213E','--cream':'#FAF7F2','--text':'#333344','--muted':'#6B7280'} },
-              { id:'modern-minimal', name:'Modern Minimal', vars:{'--accent':'#0EA5E9','--accent-dark':'#0284C7','--dark':'#0F172A','--light':'#F8FAFC','--text':'#334155','--muted':'#64748B','--border':'#E2E8F0'} },
-              { id:'warm-heritage', name:'Warm Heritage', vars:{'--gold':'#D4AF37','--dark':'#3E2723','--warm':'#5D4037','--cream':'#FFF8DC','--bg':'#FFFBEB','--text':'#3E2723','--muted':'#795548'} },
-              { id:'bold-contemporary', name:'Bold', vars:{'--primary':'#E63946','--primary-dark':'#C62828','--dark':'#0D1821','--light':'#F8F9FA','--text':'#212529','--muted':'#6C757D','--card':'#FFFFFF'} },
-              { id:'serene-light', name:'Serene', vars:{'--accent':'#7C3AED','--accent-light':'#A78BFA','--dark':'#581C87','--bg':'#FAF5FF','--card':'#FFFFFF','--text':'#581C87','--muted':'#7C3AED80'} },
-              { id:'dark-elegant', name:'Dark Elegant', vars:{'--accent':'#FBBF24','--accent-hover':'#F59E0B','--dark':'#0F0F0F','--bg':'#171717','--card':'#1F1F1F','--text':'#E5E5E5','--muted':'#A3A3A3'} },
-              { id:'vibrant-community', name:'Vibrant', vars:{'--accent':'#059669','--accent-light':'#6EE7B7','--accent-hover':'#047857','--dark':'#064E3B','--bg':'#ECFDF5','--card':'#FFFFFF','--text':'#065F46','--muted':'#047857'} },
-              { id:'classic-reformed', name:'Classic', vars:{'--accent':'#B45309','--accent-dark':'#92400E','--accent-light':'#D97706','--dark':'#7C2D12','--bg':'#FFF7ED','--card':'#FFFFFF','--text':'#431407','--muted':'#9A3412'} },
-              { id:'organic-natural', name:'Natural', vars:{'--accent':'#65A30D','--accent-dark':'#4D7C0F','--dark':'#1A2E05','--bg':'#F7FEE7','--card':'#FFFFFF','--text':'#1A2E05','--muted':'#3F6212'} },
-              { id:'urban-modern', name:'Urban', vars:{'--accent':'#6366F1','--accent-light':'#818CF8','--accent-hover':'#4F46E5','--dark':'#18181B','--bg':'#F4F4F5','--card':'#FFFFFF','--text':'#27272A','--muted':'#71717A'} }
+            var PRESETS = [
+              { name:'Grace',    colors:['#C9A84C','#1A1A2E','#16213E','#FAF7F2','#333344','#6B7280'] },
+              { name:'Modern',   colors:['#0EA5E9','#0F172A','#0284C7','#F8FAFC','#334155','#64748B'] },
+              { name:'Heritage', colors:['#D4AF37','#3E2723','#5D4037','#FFFBEB','#3E2723','#795548'] },
+              { name:'Bold',     colors:['#E63946','#0D1821','#C62828','#F8F9FA','#212529','#6C757D'] },
+              { name:'Serene',   colors:['#7C3AED','#581C87','#A78BFA','#FAF5FF','#581C87','#9F7AEA'] },
+              { name:'Dark',     colors:['#FBBF24','#0F0F0F','#F59E0B','#171717','#E5E5E5','#A3A3A3'] },
+              { name:'Vibrant',  colors:['#059669','#064E3B','#047857','#ECFDF5','#065F46','#047857'] },
+              { name:'Classic',  colors:['#B45309','#7C2D12','#92400E','#FFF7ED','#431407','#9A3412'] },
+              { name:'Natural',  colors:['#65A30D','#1A2E05','#4D7C0F','#F7FEE7','#1A2E05','#3F6212'] },
+              { name:'Urban',    colors:['#6366F1','#18181B','#4F46E5','#F4F4F5','#27272A','#71717A'] }
             ];
 
             function hexToHSL(hex) {
               if (!hex || hex.length < 7) return {h:0,s:0,l:0.5};
-              var r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
-              var max = Math.max(r,g,b), min = Math.min(r,g,b), l = (max+min)/2;
-              if (max === min) return {h:0,s:0,l:l};
-              var d = max - min, s = l > 0.5 ? d/(2-max-min) : d/(max+min), h = 0;
-              if (max===r) h = ((g-b)/d + (g<b?6:0))/6;
-              else if (max===g) h = ((b-r)/d+2)/6;
-              else h = ((r-g)/d+4)/6;
+              var r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
+              var mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2;
+              if(mx===mn) return {h:0,s:0,l:l};
+              var d=mx-mn, s=l>0.5?d/(2-mx-mn):d/(mx+mn), h=0;
+              if(mx===r) h=((g-b)/d+(g<b?6:0))/6;
+              else if(mx===g) h=((b-r)/d+2)/6;
+              else h=((r-g)/d+4)/6;
               return {h:h*360,s:s,l:l};
             }
             function hslToHex(h,s,l) {
-              h /= 360;
-              function hue2rgb(p,q,t) { if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p; }
-              if (s===0) { var v=Math.round(l*255); var hx=v.toString(16).padStart(2,'0'); return '#'+hx+hx+hx; }
-              var q = l<0.5?l*(1+s):l+s-l*s, p = 2*l-q;
-              var r = Math.round(hue2rgb(p,q,h+1/3)*255), g = Math.round(hue2rgb(p,q,h)*255), bv = Math.round(hue2rgb(p,q,h-1/3)*255);
-              return '#'+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+bv.toString(16).padStart(2,'0');
+              h/=360;
+              function f(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+              if(s===0){var v=Math.round(l*255),hx=v.toString(16).padStart(2,'0');return '#'+hx+hx+hx;}
+              var q=l<0.5?l*(1+s):l+s-l*s, p=2*l-q;
+              var rv=Math.round(f(p,q,h+1/3)*255), gv=Math.round(f(p,q,h)*255), bv=Math.round(f(p,q,h-1/3)*255);
+              return '#'+rv.toString(16).padStart(2,'0')+gv.toString(16).padStart(2,'0')+bv.toString(16).padStart(2,'0');
             }
-            function isColor(v) { return /^#[0-9a-fA-F]{3,8}$/.test((v||'').trim()); }
+
+            function getEd() {
+              var e = (editor && editor.getEditor) ? editor.getEditor() : editor;
+              return e;
+            }
 
             function getCanvasDoc() {
+              var ed = getEd();
+              if (!ed) return null;
+              try { if (ed.Canvas && ed.Canvas.getDocument) return ed.Canvas.getDocument(); } catch(e) {}
               try {
                 var frames = document.querySelectorAll('iframe');
-                for (var i = 0; i < frames.length; i++) {
-                  try {
-                    var d = frames[i].contentDocument || frames[i].contentWindow.document;
-                    if (d && d.body && d.body.innerHTML.length > 50) return d;
-                  } catch(e) {}
+                for (var i=0;i<frames.length;i++) {
+                  try { var d=frames[i].contentDocument; if(d&&d.body&&d.body.innerHTML.length>100) return d; } catch(e) {}
                 }
               } catch(e) {}
               return null;
@@ -729,223 +733,278 @@ export async function GET(req: NextRequest) {
 
             function extractCSSVars() {
               var vars = {};
-              var doc = getCanvasDoc();
-              if (!doc) return vars;
-              var styles = doc.querySelectorAll('style');
-              for (var i = 0; i < styles.length; i++) {
-                var text = styles[i].textContent || '';
-                var rootMatch = text.match(/:root[^{]*\\{([^}]*)\\}/);
-                if (!rootMatch) continue;
-                var body = rootMatch[1];
-                var re = /--([\w-]+)\s*:\s*([^;]+)/g;
-                var m;
-                while ((m = re.exec(body)) !== null) {
-                  var name = '--' + m[1];
-                  var val = m[2].trim();
-                  if (isColor(val)) vars[name] = val;
+              var ed = getEd();
+              if (!ed) return vars;
+              try {
+                var html = '';
+                var pm = ed.Pages;
+                if (pm && pm.getSelected) {
+                  var page = pm.getSelected();
+                  var wrapper = page && page.getMainComponent ? page.getMainComponent() : null;
+                  if (wrapper) {
+                    function walkForStyle(comp) {
+                      if (!comp) return;
+                      var tag = comp.get ? comp.get('tagName') : '';
+                      if (tag === 'style') {
+                        var kids = comp.components ? comp.components() : [];
+                        if (kids && kids.length) {
+                          kids.forEach(function(k) { html += k.get('content') || ''; });
+                        } else {
+                          html += comp.get('content') || '';
+                        }
+                      }
+                      var children = comp.components ? comp.components() : [];
+                      if (children && children.forEach) children.forEach(walkForStyle);
+                    }
+                    walkForStyle(wrapper);
+                  }
                 }
-              }
+                if (!html) {
+                  try { html = ed.getHtml ? ed.getHtml() : ''; } catch(e) {}
+                }
+                var rootRe = /:root[^{]*\{([^}]+)\}/g;
+                var rootM;
+                while ((rootM = rootRe.exec(html)) !== null) {
+                  var body = rootM[1];
+                  var varRe = /--([\w-]+)\s*:\s*([^;]+)/g;
+                  var vm;
+                  while ((vm = varRe.exec(body)) !== null) {
+                    var val = vm[2].trim();
+                    if (/^#[0-9a-fA-F]{3,8}$/.test(val)) {
+                      vars['--' + vm[1]] = val;
+                    }
+                  }
+                }
+              } catch(e) { console.warn('extractCSSVars error:', e); }
               return vars;
             }
 
-            function setCSSVar(name, val) {
+            function setCSSVarLive(name, val) {
               var doc = getCanvasDoc();
-              if (!doc) return;
-              doc.documentElement.style.setProperty(name, val);
+              if (doc) doc.documentElement.style.setProperty(name, val);
             }
 
-            function persistCSSVarsToComponents(changedVars) {
-              var ed = (editor && editor.getEditor) ? editor.getEditor() : editor;
-              if (!ed) return;
+            function persistToAllPages(newVarMap) {
+              var ed = getEd();
+              if (!ed) return false;
+              var changed = false;
               try {
-                var pm = ed.Pages || ed.PageManager;
-                if (!pm || !pm.getAll) return;
+                var pm = ed.Pages;
+                if (!pm || !pm.getAll) return false;
                 var pages = pm.getAll();
-                for (var pi = 0; pi < pages.length; pi++) {
-                  var page = pages[pi];
-                  var wrapper = page.getMainComponent ? page.getMainComponent() : null;
+                for (var pi=0; pi<pages.length; pi++) {
+                  var wrapper = pages[pi].getMainComponent ? pages[pi].getMainComponent() : null;
                   if (!wrapper) continue;
-                  function walkComponents(comp) {
+                  (function walk(comp) {
                     if (!comp) return;
                     var tag = comp.get ? comp.get('tagName') : '';
-                    if (tag === 'style' || (comp.get && comp.get('type') === 'textnode')) {
-                      var content = comp.get('content') || '';
-                      if (content.indexOf(':root') >= 0) {
-                        var updated = content;
-                        Object.keys(changedVars).forEach(function(varName) {
-                          var escapedName = varName.replace(/[-/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');
-                          var regex = new RegExp('(' + escapedName + '\\\\s*:\\\\s*)([^;]+)', 'g');
-                          updated = updated.replace(regex, '$1' + changedVars[varName]);
+                    if (tag === 'style') {
+                      var kids = comp.components ? comp.components() : [];
+                      if (kids && kids.length) {
+                        kids.forEach(function(textNode) {
+                          var content = textNode.get('content') || '';
+                          if (content.indexOf(':root') < 0) return;
+                          var updated = content;
+                          Object.keys(newVarMap).forEach(function(vn) {
+                            var safe = vn.replace(/[.*+?^$\{|\}()\[\]\\\\]/g, '\\\\$&');
+                            var re = new RegExp('(' + safe + '\\\\s*:\\\\s*)([^;]+)', 'g');
+                            updated = updated.replace(re, '$1' + newVarMap[vn]);
+                          });
+                          if (updated !== content) { textNode.set('content', updated); changed = true; }
                         });
-                        if (updated !== content) comp.set('content', updated);
+                      } else {
+                        var content = comp.get('content') || '';
+                        if (content.indexOf(':root') >= 0) {
+                          var updated = content;
+                          Object.keys(newVarMap).forEach(function(vn) {
+                            var safe = vn.replace(/[.*+?^$\{|\}()\[\]\\\\]/g, '\\\\$&');
+                            var re = new RegExp('(' + safe + '\\\\s*:\\\\s*)([^;]+)', 'g');
+                            updated = updated.replace(re, '$1' + newVarMap[vn]);
+                          });
+                          if (updated !== content) { comp.set('content', updated); changed = true; }
+                        }
                       }
                     }
                     var children = comp.components ? comp.components() : [];
-                    if (children && children.forEach) children.forEach(walkComponents);
-                  }
-                  walkComponents(wrapper);
+                    if (children && children.forEach) children.forEach(walk);
+                  })(wrapper);
                 }
-              } catch(e) { console.warn('Theme persist error:', e); }
+              } catch(e) { console.warn('persistToAllPages error:', e); }
+              return changed;
             }
 
-            var themePanel = document.createElement('div');
-            themePanel.id = 'theme-changer-panel';
-            themePanel.style.cssText = 'position:fixed;top:56px;right:16px;width:320px;background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,0.18);z-index:100000;display:none;max-height:calc(100vh - 80px);overflow-y:auto;font-family:Inter,system-ui,sans-serif;';
-
-            var themeBtn = document.createElement('button');
-            themeBtn.type = 'button';
-            themeBtn.id = 'theme-changer-btn';
-            themeBtn.title = 'Theme Colors';
-            themeBtn.textContent = '\\uD83C\\uDFA8';
-            themeBtn.style.cssText = 'position:fixed;top:8px;right:200px;z-index:100001;width:36px;height:36px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:all .15s;';
-            themeBtn.onmouseover = function() { themeBtn.style.background = '#f1f5f9'; themeBtn.style.transform = 'scale(1.05)'; };
-            themeBtn.onmouseout = function() { themeBtn.style.background = '#fff'; themeBtn.style.transform = 'scale(1)'; };
-            themeBtn.onclick = function() {
-              var show = themePanel.style.display === 'none';
-              themePanel.style.display = show ? 'block' : 'none';
-              if (show) refreshPanel();
-            };
-
+            var tcPanel = document.createElement('div');
+            tcPanel.id = 'tc-panel';
+            tcPanel.style.cssText = 'position:fixed;top:0;left:0;width:340px;height:100%;background:#fff;box-shadow:4px 0 24px rgba(0,0,0,0.12);z-index:99999;display:none;overflow-y:auto;font-family:Inter,system-ui,sans-serif;border-right:1px solid #e2e8f0;';
             var hueShift = 0;
             var baseVars = {};
+            var currentVarNames = [];
 
-            function refreshPanel() {
+            function togglePanel() {
+              var show = tcPanel.style.display === 'none';
+              tcPanel.style.display = show ? 'block' : 'none';
+              if (show) buildPanel();
+            }
+
+            window.addEventListener('message', function(e) {
+              if (e.data && e.data.type === 'toggle-theme-panel') togglePanel();
+            });
+
+            function buildPanel() {
               var vars = extractCSSVars();
               if (Object.keys(vars).length === 0 && Object.keys(baseVars).length > 0) vars = Object.assign({}, baseVars);
               if (Object.keys(baseVars).length === 0) baseVars = Object.assign({}, vars);
-              var varKeys = Object.keys(vars);
+              currentVarNames = Object.keys(vars);
 
-              var html = '<div style="padding:16px 16px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">'
-                + '<div style="font-size:13px;font-weight:700;color:#1e293b;">Theme Colors</div>'
-                + '<button type="button" id="tc-close" style="background:none;border:none;cursor:pointer;font-size:18px;color:#94a3b8;line-height:1;">&times;</button>'
-                + '</div>';
+              var h = '';
+              h += '<div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">';
+              h += '<div style="font-size:15px;font-weight:700;color:#1e293b;">Theme Colors</div>';
+              h += '<button type="button" id="tc-close-btn" style="background:none;border:none;cursor:pointer;font-size:22px;color:#94a3b8;line-height:1;">&times;</button>';
+              h += '</div>';
 
-              html += '<div style="padding:12px 16px;">';
-              html += '<div style="display:flex;border-radius:10px;overflow:hidden;height:44px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">';
-              varKeys.forEach(function(name) {
+              if (currentVarNames.length === 0) {
+                h += '<div style="padding:32px 20px;text-align:center;color:#64748b;font-size:13px;">No CSS color variables detected.<br>Open a project that uses a template first.</div>';
+                tcPanel.innerHTML = h;
+                tcPanel.querySelector('#tc-close-btn').onclick = function() { tcPanel.style.display='none'; };
+                return;
+              }
+
+              h += '<div style="padding:16px 20px 12px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Current Palette</div>';
+              h += '<div style="display:flex;border-radius:12px;overflow:hidden;height:52px;box-shadow:0 2px 6px rgba(0,0,0,0.1);cursor:pointer;">';
+              currentVarNames.forEach(function(name,i) {
                 var c = vars[name];
                 var hsl = hexToHSL(c);
-                var tc = hsl.l > 0.55 ? '#1e293b' : '#fff';
-                var label = name.replace('--','');
-                html += '<button type="button" class="tc-swatch" data-var="' + name + '" style="flex:1;background:' + c + ';border:none;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding:0 2px 4px;transition:transform .15s;position:relative;z-index:1;" title="' + label + ': ' + c + '">'
-                  + '<span style="font-size:8px;font-weight:600;text-transform:uppercase;color:' + tc + ';opacity:0;transition:opacity .15s;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + label + '</span></button>';
+                var tc = hsl.l>0.55?'#1e293b':'#fff';
+                var lbl = name.replace('--','');
+                h += '<div class="tc-sw" data-idx="'+i+'" style="flex:1;background:'+c+';display:flex;align-items:flex-end;justify-content:center;padding:0 2px 6px;transition:transform .15s,filter .15s;cursor:pointer;" title="'+lbl+': '+c+'">';
+                h += '<span style="font-size:7px;font-weight:700;text-transform:uppercase;color:'+tc+';opacity:0;transition:opacity .15s;letter-spacing:.03em;white-space:nowrap;overflow:hidden;">'+lbl+'</span></div>';
               });
-              html += '</div></div>';
+              h += '</div></div>';
 
-              html += '<div id="tc-editor" style="display:none;padding:0 16px 12px;"></div>';
+              h += '<div id="tc-color-edit" style="display:none;padding:0 20px 12px;"></div>';
 
-              html += '<div style="padding:0 16px 12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
-                + '<span style="font-size:11px;font-weight:500;color:#64748b;">Hue shift</span>'
-                + '<span id="tc-hue-val" style="font-size:10px;font-family:monospace;color:#94a3b8;">' + hueShift + '\\u00B0</span></div>'
-                + '<input type="range" id="tc-hue" min="-180" max="180" value="' + hueShift + '" style="width:100%;height:8px;border-radius:4px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;'
-                + 'background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));">'
-                + '</div>';
+              h += '<div style="padding:4px 20px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">';
+              h += '<span style="font-size:11px;font-weight:500;color:#64748b;">Hue Shift</span>';
+              h += '<span id="tc-hv" style="font-size:10px;font-family:monospace;color:#94a3b8;">'+(hueShift>0?'+':'')+hueShift+'&deg;</span></div>';
+              h += '<input type="range" id="tc-hue-range" min="-180" max="180" step="1" value="'+hueShift+'" style="width:100%;height:10px;border-radius:5px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,hsl(0,80%,50%),hsl(60,80%,50%),hsl(120,80%,50%),hsl(180,80%,50%),hsl(240,80%,50%),hsl(300,80%,50%),hsl(360,80%,50%));">';
+              if (hueShift !== 0) h += '<button type="button" id="tc-hue-reset" style="margin-top:4px;font-size:11px;color:#6366f1;background:none;border:none;cursor:pointer;">Reset hue</button>';
+              h += '</div>';
 
-              html += '<div style="padding:0 16px 12px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Preset Themes</div>';
-              html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:200px;overflow-y:auto;">';
-              PRESET_THEMES.forEach(function(t) {
-                var vk = Object.keys(t.vars);
-                html += '<button type="button" class="tc-preset" data-theme="' + t.id + '" style="display:flex;flex-direction:column;align-items:stretch;padding:6px;border-radius:8px;border:1.5px solid #e7e5e4;background:#fff;cursor:pointer;transition:all .15s;">'
-                  + '<div style="display:flex;height:18px;border-radius:4px;overflow:hidden;margin-bottom:4px;">';
-                vk.slice(0,5).forEach(function(k) { html += '<div style="flex:1;background:' + t.vars[k] + ';"></div>'; });
-                html += '</div><span style="font-size:10px;font-weight:500;color:#57534e;text-align:center;line-height:1;">' + t.name + '</span></button>';
+              h += '<div style="padding:0 20px 16px;"><div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Preset Themes</div>';
+              h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+              PRESETS.forEach(function(p,pi) {
+                h += '<button type="button" class="tc-pre" data-pi="'+pi+'" style="display:flex;flex-direction:column;align-items:stretch;padding:8px;border-radius:10px;border:1.5px solid #e7e5e4;background:#fff;cursor:pointer;transition:all .15s;">';
+                h += '<div style="display:flex;height:22px;border-radius:5px;overflow:hidden;margin-bottom:5px;">';
+                p.colors.slice(0,5).forEach(function(c) { h+='<div style="flex:1;background:'+c+';"></div>'; });
+                h += '</div><span style="font-size:10px;font-weight:600;color:#57534e;text-align:center;">'+p.name+'</span></button>';
               });
-              html += '</div></div>';
+              h += '</div></div>';
 
-              html += '<div style="padding:8px 16px 16px;text-align:center;">'
-                + '<button type="button" id="tc-apply" style="padding:8px 20px;font-size:12px;font-weight:600;color:#fff;background:#6366f1;border:none;border-radius:8px;cursor:pointer;transition:background .15s;">Apply to all pages</button></div>';
+              h += '<div style="padding:8px 20px 20px;display:flex;gap:8px;">';
+              h += '<button type="button" id="tc-apply-btn" style="flex:1;padding:10px 16px;font-size:13px;font-weight:600;color:#fff;background:#6366f1;border:none;border-radius:10px;cursor:pointer;transition:all .15s;">Save to All Pages</button>';
+              h += '</div>';
 
-              themePanel.innerHTML = html;
+              tcPanel.innerHTML = h;
 
-              themePanel.querySelector('#tc-close').onclick = function() { themePanel.style.display = 'none'; };
+              var thumbStyle = document.getElementById('tc-thumb-css');
+              if (!thumbStyle) {
+                thumbStyle = document.createElement('style');
+                thumbStyle.id = 'tc-thumb-css';
+                thumbStyle.textContent = '#tc-hue-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}#tc-hue-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab;}';
+                document.head.appendChild(thumbStyle);
+              }
 
-              var swatches = themePanel.querySelectorAll('.tc-swatch');
+              tcPanel.querySelector('#tc-close-btn').onclick = function() { tcPanel.style.display='none'; };
+
+              var swatches = tcPanel.querySelectorAll('.tc-sw');
               swatches.forEach(function(sw) {
-                sw.onmouseover = function() { sw.style.transform = 'scaleY(1.15)'; sw.style.zIndex = '2'; sw.querySelector('span').style.opacity = '1'; };
-                sw.onmouseout = function() { sw.style.transform = 'scaleY(1)'; sw.style.zIndex = '1'; sw.querySelector('span').style.opacity = '0'; };
+                sw.onmouseenter = function() { sw.style.transform='scaleY(1.18)';sw.style.zIndex='2';sw.querySelector('span').style.opacity='1'; };
+                sw.onmouseleave = function() { sw.style.transform='';sw.style.zIndex='';sw.querySelector('span').style.opacity='0'; };
                 sw.onclick = function() {
-                  var varName = sw.getAttribute('data-var');
-                  var current = vars[varName] || '#000000';
-                  var editorDiv = themePanel.querySelector('#tc-editor');
-                  editorDiv.style.display = 'block';
-                  editorDiv.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;font-weight:600;color:#334155;">' + varName.replace('--','') + '</span><span style="font-size:11px;font-family:monospace;color:#64748b;" id="tc-hex-display">' + current + '</span></div>'
-                    + '<div style="display:flex;align-items:center;gap:8px;"><input type="color" id="tc-color-pick" value="' + current + '" style="width:36px;height:36px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;padding:0;background:none;">'
-                    + '<input type="text" id="tc-hex-input" value="' + current + '" style="flex:1;font-size:13px;font-family:monospace;padding:6px 10px;border:1px solid #e2e8f0;border-radius:8px;outline:none;"></div>';
-                  function applyColor(val) {
-                    if (!/^#[0-9a-fA-F]{6}$/.test(val)) return;
-                    vars[varName] = val;
-                    baseVars[varName] = val;
-                    setCSSVar(varName, val);
-                    editorDiv.querySelector('#tc-hex-display').textContent = val;
-                    editorDiv.querySelector('#tc-color-pick').value = val;
-                    editorDiv.querySelector('#tc-hex-input').value = val;
-                    sw.style.background = val;
-                    var hsl = hexToHSL(val);
-                    sw.querySelector('span').style.color = hsl.l > 0.55 ? '#1e293b' : '#fff';
+                  var idx = parseInt(sw.getAttribute('data-idx'));
+                  var varName = currentVarNames[idx];
+                  var cur = vars[varName]||'#000000';
+                  var editDiv = tcPanel.querySelector('#tc-color-edit');
+                  editDiv.style.display = 'block';
+                  editDiv.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:8px 12px;background:#f8fafc;border-radius:8px;"><span style="font-size:12px;font-weight:600;color:#334155;">'+varName.replace('--','')+'</span><span id="tc-cv" style="font-size:11px;font-family:monospace;color:#64748b;">'+cur+'</span></div><div style="display:flex;align-items:center;gap:10px;"><input type="color" id="tc-cp" value="'+cur+'" style="width:40px;height:40px;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;padding:0;background:none;flex-shrink:0;"><input type="text" id="tc-ci" value="'+cur+'" style="flex:1;font-size:13px;font-family:monospace;padding:8px 12px;border:1px solid #e2e8f0;border-radius:10px;outline:none;"></div>';
+                  function setC(v) {
+                    if(!/^#[0-9a-fA-F]{6}$/.test(v)) return;
+                    vars[varName]=v; baseVars[varName]=v;
+                    setCSSVarLive(varName,v);
+                    editDiv.querySelector('#tc-cv').textContent=v;
+                    editDiv.querySelector('#tc-cp').value=v;
+                    editDiv.querySelector('#tc-ci').value=v;
+                    sw.style.background=v;
+                    var hl=hexToHSL(v); sw.querySelector('span').style.color=hl.l>0.55?'#1e293b':'#fff';
                   }
-                  editorDiv.querySelector('#tc-color-pick').oninput = function(e) { applyColor(e.target.value); };
-                  editorDiv.querySelector('#tc-hex-input').onchange = function(e) { applyColor(e.target.value); };
+                  editDiv.querySelector('#tc-cp').oninput=function(e){setC(e.target.value);};
+                  editDiv.querySelector('#tc-ci').onchange=function(e){setC(e.target.value);};
                 };
               });
 
-              var hueInput = themePanel.querySelector('#tc-hue');
-              var hueVal = themePanel.querySelector('#tc-hue-val');
-              if (hueInput) {
-                var thumbCSS = document.createElement('style');
-                thumbCSS.textContent = '#tc-hue::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:grab;}#tc-hue::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #6366f1;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:grab;}';
-                document.head.appendChild(thumbCSS);
-                hueInput.oninput = function() {
-                  hueShift = parseInt(hueInput.value);
-                  hueVal.textContent = (hueShift > 0 ? '+' : '') + hueShift + '\\u00B0';
-                  Object.keys(baseVars).forEach(function(name) {
-                    var hsl = hexToHSL(baseVars[name]);
-                    var shifted = hslToHex((hsl.h + hueShift + 360) % 360, hsl.s, hsl.l);
-                    setCSSVar(name, shifted);
+              var hueRange = tcPanel.querySelector('#tc-hue-range');
+              var hueValSpan = tcPanel.querySelector('#tc-hv');
+              if (hueRange) {
+                hueRange.oninput = function() {
+                  hueShift = parseInt(hueRange.value);
+                  hueValSpan.textContent = (hueShift>0?'+':'')+hueShift+String.fromCharCode(176);
+                  currentVarNames.forEach(function(name) {
+                    var hl = hexToHSL(baseVars[name]);
+                    setCSSVarLive(name, hslToHex((hl.h+hueShift+360)%360, hl.s, hl.l));
                   });
                 };
               }
+              var hueReset = tcPanel.querySelector('#tc-hue-reset');
+              if (hueReset) hueReset.onclick = function() { hueShift=0; buildPanel(); currentVarNames.forEach(function(n){setCSSVarLive(n,baseVars[n]);}); };
 
-              var presetBtns = themePanel.querySelectorAll('.tc-preset');
+              var presetBtns = tcPanel.querySelectorAll('.tc-pre');
               presetBtns.forEach(function(btn) {
-                btn.onmouseover = function() { btn.style.borderColor = '#a5b4fc'; btn.style.boxShadow = '0 2px 8px rgba(99,102,241,.12)'; };
-                btn.onmouseout = function() { btn.style.borderColor = '#e7e5e4'; btn.style.boxShadow = 'none'; };
+                btn.onmouseenter=function(){btn.style.borderColor='#a5b4fc';btn.style.boxShadow='0 2px 8px rgba(99,102,241,.15)';btn.style.transform='translateY(-1px)';};
+                btn.onmouseleave=function(){btn.style.borderColor='#e7e5e4';btn.style.boxShadow='none';btn.style.transform='';};
                 btn.onclick = function() {
-                  var themeId = btn.getAttribute('data-theme');
-                  var theme = PRESET_THEMES.find(function(t) { return t.id === themeId; });
-                  if (!theme) return;
-                  Object.keys(theme.vars).forEach(function(name) { setCSSVar(name, theme.vars[name]); });
-                  baseVars = Object.assign({}, theme.vars);
+                  var pi = parseInt(btn.getAttribute('data-pi'));
+                  var preset = PRESETS[pi];
+                  if (!preset) return;
+                  currentVarNames.forEach(function(name, i) {
+                    var c = preset.colors[i] || preset.colors[preset.colors.length-1];
+                    baseVars[name] = c;
+                    setCSSVarLive(name, c);
+                    vars[name] = c;
+                  });
                   hueShift = 0;
-                  refreshPanel();
+                  buildPanel();
                 };
               });
 
-              var applyBtn = themePanel.querySelector('#tc-apply');
+              var applyBtn = tcPanel.querySelector('#tc-apply-btn');
               if (applyBtn) {
                 applyBtn.onclick = function() {
-                  var currentVars = {};
-                  Object.keys(baseVars).forEach(function(name) {
-                    var hsl = hexToHSL(baseVars[name]);
-                    currentVars[name] = hueShift !== 0 ? hslToHex((hsl.h + hueShift + 360) % 360, hsl.s, hsl.l) : baseVars[name];
+                  var final = {};
+                  currentVarNames.forEach(function(name) {
+                    if (hueShift !== 0) {
+                      var hl = hexToHSL(baseVars[name]);
+                      final[name] = hslToHex((hl.h+hueShift+360)%360, hl.s, hl.l);
+                    } else {
+                      final[name] = baseVars[name];
+                    }
                   });
-                  persistCSSVarsToComponents(currentVars);
-                  baseVars = Object.assign({}, currentVars);
+                  var ok = persistToAllPages(final);
+                  baseVars = Object.assign({}, final);
                   hueShift = 0;
-                  applyBtn.textContent = 'Applied!';
+                  applyBtn.textContent = ok ? 'Saved!' : 'Saved!';
                   applyBtn.style.background = '#16a34a';
-                  setTimeout(function() { applyBtn.textContent = 'Apply to all pages'; applyBtn.style.background = '#6366f1'; }, 1500);
+                  setTimeout(function() { applyBtn.textContent='Save to All Pages'; applyBtn.style.background='#6366f1'; }, 2000);
+                  buildPanel();
                 };
               }
             }
 
-            function injectThemeBtn() {
-              if (document.getElementById('theme-changer-btn')) return;
-              document.body.appendChild(themeBtn);
-              document.body.appendChild(themePanel);
+            function inject() {
+              if (document.getElementById('tc-panel')) return;
+              document.body.appendChild(tcPanel);
             }
-            setTimeout(injectThemeBtn, 1000);
-            setTimeout(injectThemeBtn, 3000);
-            setTimeout(injectThemeBtn, 6000);
+            setTimeout(inject, 1000);
+            setTimeout(inject, 3000);
           })();
         });
         document.getElementById('project-selector').style.display = 'none';
