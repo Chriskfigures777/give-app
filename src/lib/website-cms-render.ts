@@ -301,13 +301,17 @@ function detectTemplateTheme(html: string): string | null {
   return null;
 }
 
-export function injectGiveEmbedFallback(html: string, orgSlug: string): string {
+export function injectGiveEmbedFallback(
+  html: string,
+  orgSlug: string,
+  websiteEmbedCardId?: string | null
+): string {
   if (!orgSlug) return html;
   let out = html;
   const theme = detectTemplateTheme(html);
 
   if (out.includes("{{cms:give_embed}}")) {
-    out = out.replace(/\{\{cms:give_embed\}\}/g, renderGiveEmbed(orgSlug, theme));
+    out = out.replace(/\{\{cms:give_embed\}\}/g, renderGiveEmbed(orgSlug, theme, websiteEmbedCardId));
   }
 
   if (out.includes("data-give-embed")) return out;
@@ -320,7 +324,7 @@ export function injectGiveEmbedFallback(html: string, orgSlug: string): string {
 
   if (!hasStaticForm) return out;
 
-  const embed = renderGiveEmbed(orgSlug, theme);
+  const embed = renderGiveEmbed(orgSlug, theme, websiteEmbedCardId);
 
   let block = findBlockByClass(out, "give-split");
   while (block) {
@@ -346,9 +350,14 @@ export function injectGiveEmbedFallback(html: string, orgSlug: string): string {
 }
 
 /** Generates the seamless iframe embed HTML for the giving form. Uses relative URL. */
-export function renderGiveEmbed(orgSlug: string, templateTheme?: string | null): string {
+export function renderGiveEmbed(
+  orgSlug: string,
+  templateTheme?: string | null,
+  websiteEmbedCardId?: string | null
+): string {
   const themeParam = templateTheme ? `&theme=${encodeURIComponent(templateTheme)}` : "";
-  const embedSrc = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}`;
+  const cardParam = websiteEmbedCardId ? `&card=${encodeURIComponent(websiteEmbedCardId)}` : "";
+  const embedSrc = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}${cardParam}`;
   const iframeId = `give-embed-${orgSlug}`;
   return `<div data-give-embed style="width:100%;max-width:960px;margin:0 auto;">
   <iframe

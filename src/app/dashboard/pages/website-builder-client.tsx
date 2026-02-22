@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RotateCcw, ExternalLink, Upload, Eye, Globe, AlertCircle, X, Palette } from "lucide-react";
+import { ArrowLeft, RotateCcw, Upload, Eye, Globe, AlertCircle, X, Palette, CreditCard } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 type Props = {
   organizationId: string;
+  websiteFormName?: string;
+  formDesignUrl?: string;
 };
 
 type EditorProjectState = {
@@ -17,7 +19,7 @@ type EditorProjectState = {
   customDomain: string | null;
 };
 
-export function WebsiteBuilderClient({ organizationId }: Props) {
+export function WebsiteBuilderClient({ organizationId, websiteFormName = "Main form", formDesignUrl = "/dashboard/customization" }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
@@ -159,6 +161,18 @@ export function WebsiteBuilderClient({ organizationId }: Props) {
         </div>
         {projectState && (
           <div className="flex items-center gap-2">
+            {/* Donation form — which form appears on website */}
+            <Link
+              href={formDesignUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              title="Choose which donation form appears on your website. Opens Form Design."
+            >
+              <CreditCard className="h-4 w-4" />
+              <span className="hidden sm:inline">Form:</span>
+              <span className="font-medium text-slate-800">{websiteFormName}</span>
+            </Link>
             {/* Theme toggle */}
             <button
               type="button"

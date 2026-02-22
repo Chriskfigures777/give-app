@@ -29,6 +29,7 @@ import {
   MessageSquare,
   Paintbrush,
   X,
+  Globe,
 } from "lucide-react";
 import { DonationForm } from "@/app/give/[slug]/donation-form";
 import { FormCardMedia } from "@/components/form-card-media";
@@ -86,6 +87,8 @@ type Props = {
   slug: string;
   baseUrl: string;
   campaigns: Campaign[];
+  /** Which embed card is used for the website. null = main form (this editor) is used. */
+  websiteEmbedCardId?: string | null;
   endowmentFunds: EndowmentFund[];
   suggestedAmounts: number[];
   minimumAmountCents: number;
@@ -184,6 +187,7 @@ export function EmbedFormClient({
   slug,
   baseUrl,
   campaigns,
+  websiteEmbedCardId = null,
   endowmentFunds,
   suggestedAmounts: serverSuggestedAmounts,
   minimumAmountCents,
@@ -651,6 +655,29 @@ export function EmbedFormClient({
           </div>
 
           <div className="overflow-y-auto max-h-[70vh] lg:max-h-[calc(100vh-240px)] editor-panel customization-panel min-w-0">
+            {/* -- Website Form Section (clarifies which form is used on website) -- */}
+            <div className="border-b border-dashboard-border/30">
+              <div className="px-6 py-4">
+                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200/60 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-900/20 p-4">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-800/50">
+                    <Globe className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold text-dashboard-text">Website form</p>
+                    {websiteEmbedCardId == null ? (
+                      <p className="mt-1 text-[12px] text-dashboard-text-muted leading-relaxed">
+                        This form is used on your website. Design and splits you edit here apply to the donation form shown on your website builder pages. The form styling matches your website theme.
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-[12px] text-dashboard-text-muted leading-relaxed">
+                        Your website uses a different form (selected in Embed Cards). Switch to the <strong>Embed Cards</strong> tab to edit it, or change the website form selection there.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* -- Form Templates Section -- */}
             <div className="border-b border-dashboard-border/30">
               <SectionHeader

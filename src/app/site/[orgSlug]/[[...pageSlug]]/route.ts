@@ -407,8 +407,16 @@ export async function GET(
   const orgId = (org as { id: string }).id;
   html = await injectCmsContent(html, orgId, supabase);
 
+  // Fetch website form selection (which embed card to use on website)
+  const { data: formCustom } = await supabase
+    .from("form_customizations")
+    .select("website_embed_card_id")
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  const websiteEmbedCardId = (formCustom as { website_embed_card_id?: string | null } | null)?.website_embed_card_id ?? null;
+
   // Replace static give forms with working embedded donate iframe
-  html = injectGiveEmbedFallback(html, orgSlug);
+  html = injectGiveEmbedFallback(html, orgSlug, websiteEmbedCardId);
 
   // Inject forms script so template <form> elements post to the platform
   html = injectFormsScript(html, orgSlug);

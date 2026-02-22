@@ -118,14 +118,14 @@ export async function POST(req: NextRequest) {
       out.includes("donate-btn") ||
       out.includes("fund-tab");
     if (needsSlug) {
-      const { data: orgForSlug } = await supabase
-        .from("organizations")
-        .select("slug")
-        .eq("id", orgId)
-        .single();
+      const [{ data: orgForSlug }, { data: formCustom }] = await Promise.all([
+        supabase.from("organizations").select("slug").eq("id", orgId).single(),
+        supabase.from("form_customizations").select("website_embed_card_id").eq("organization_id", orgId).maybeSingle(),
+      ]);
       const slug = (orgForSlug as { slug: string } | null)?.slug ?? "";
+      const websiteEmbedCardId = (formCustom as { website_embed_card_id?: string | null } | null)?.website_embed_card_id ?? null;
       if (slug) {
-        out = injectGiveEmbedFallback(out, slug);
+        out = injectGiveEmbedFallback(out, slug, websiteEmbedCardId);
       }
     }
 

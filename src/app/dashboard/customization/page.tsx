@@ -7,7 +7,7 @@ import { EmbedCardsPanel } from "../embed/embed-cards-panel";
 import { CampaignsEditor } from "./campaigns-editor";
 import { DonateButtonFormSelector } from "./donate-button-form-selector";
 import { CustomizationLayout } from "./customization-layout";
-import { Code2, Target, DollarSign } from "lucide-react";
+import { Code2, Target, DollarSign, Globe } from "lucide-react";
 import { SplitSettingsPanel } from "./split-settings-panel";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
 import { getOrgPlan, hasAccessToPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
@@ -38,6 +38,7 @@ type FormCustom = {
   form_media_side?: "left" | "right" | null;
   embed_form_theme?: "default" | "grace" | "dark-elegant" | "bold-contemporary" | null;
   org_page_embed_card_id?: string | null;
+  website_embed_card_id?: string | null;
   org_page_donate_link_slug?: string | null;
   splits?: { percentage: number; accountId: string }[] | null;
 };
@@ -142,6 +143,7 @@ export default async function CustomizationPage() {
           slug={org.slug}
           baseUrl={baseUrl}
           campaigns={campaigns}
+          websiteEmbedCardId={effectiveForm.website_embed_card_id ?? null}
           endowmentFunds={endowmentFunds ?? []}
           suggestedAmounts={suggestedAmounts}
           minimumAmountCents={minCents}
@@ -177,6 +179,7 @@ export default async function CustomizationPage() {
           baseUrl={baseUrl}
           campaigns={campaigns}
           orgPageEmbedCardId={effectiveForm.org_page_embed_card_id ?? null}
+          websiteEmbedCardId={effectiveForm.website_embed_card_id ?? null}
           hasDefaultForm={!!formCustom}
           defaultFormDisplayMode={(effectiveForm.form_display_mode as "full" | "compressed" | "full_width") ?? "full"}
           defaultFormDesignSet={
@@ -199,6 +202,24 @@ export default async function CustomizationPage() {
       }
       settingsPanel={
         <>
+          {/* Website form */}
+          <section className="rounded-3xl border border-slate-200/80 dark:border-slate-700/50 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+            <div className="flex items-center gap-4 px-7 py-5 border-b border-slate-100 dark:border-slate-700/30">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-500/10">
+                <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-800 dark:text-white">Website form</h2>
+                <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Which donation form appears on your website builder pages</p>
+              </div>
+            </div>
+            <div className="p-7">
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Go to the <strong>Embed Cards</strong> tab and click the <strong>Website</strong> button on the form you want to use. The form design matches your website theme. Splits and content are edited in Form Designer or per-card in Embed Cards.
+              </p>
+            </div>
+          </section>
+
           {/* Donate button */}
           <section className="rounded-3xl border border-slate-200/80 dark:border-slate-700/50 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
             <div className="flex items-center gap-4 px-7 py-5 border-b border-slate-100 dark:border-slate-700/30">

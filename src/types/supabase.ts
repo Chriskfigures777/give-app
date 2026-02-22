@@ -1576,6 +1576,7 @@ export type Database = {
           logo_url: string | null
           org_page_donate_link_slug: string | null
           org_page_embed_card_id: string | null
+          website_embed_card_id: string | null
           organization_id: string
           primary_color: string | null
           secondary_color: string | null
@@ -1612,6 +1613,7 @@ export type Database = {
           logo_url?: string | null
           org_page_donate_link_slug?: string | null
           org_page_embed_card_id?: string | null
+          website_embed_card_id?: string | null
           organization_id: string
           primary_color?: string | null
           secondary_color?: string | null
@@ -1648,6 +1650,7 @@ export type Database = {
           logo_url?: string | null
           org_page_donate_link_slug?: string | null
           org_page_embed_card_id?: string | null
+          website_embed_card_id?: string | null
           organization_id?: string
           primary_color?: string | null
           secondary_color?: string | null
@@ -1667,6 +1670,13 @@ export type Database = {
           {
             foreignKeyName: "form_customizations_org_page_embed_card_id_fkey"
             columns: ["org_page_embed_card_id"]
+            isOneToOne: false
+            referencedRelation: "org_embed_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_customizations_website_embed_card_id_fkey"
+            columns: ["website_embed_card_id"]
             isOneToOne: false
             referencedRelation: "org_embed_cards"
             referencedColumns: ["id"]

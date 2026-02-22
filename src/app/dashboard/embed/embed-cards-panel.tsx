@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   X,
   Eye,
+  Globe,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { PexelsMediaPicker } from "@/components/pexels-media-picker";
@@ -323,6 +324,7 @@ type Props = {
   baseUrl: string;
   campaigns: Campaign[];
   orgPageEmbedCardId?: string | null;
+  websiteEmbedCardId?: string | null;
   hasDefaultForm?: boolean;
   defaultFormDisplayMode?: "full" | "compressed" | "full_width";
   defaultFormDesignSet?: DesignSet | null;
@@ -340,6 +342,7 @@ export function EmbedCardsPanel({
   baseUrl,
   campaigns,
   orgPageEmbedCardId = null,
+  websiteEmbedCardId = null,
   hasDefaultForm = false,
   defaultFormDisplayMode = "full",
   defaultFormDesignSet = null,
@@ -359,6 +362,7 @@ export function EmbedCardsPanel({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [pageCardId, setPageCardId] = useState<string | null>(orgPageEmbedCardId ?? null);
+  const [websiteCardId, setWebsiteCardId] = useState<string | null>(websiteEmbedCardId ?? null);
   const [previewCard, setPreviewCard] = useState<EmbedCard | null>(null);
   const router = useRouter();
 
@@ -380,6 +384,9 @@ export function EmbedCardsPanel({
   useEffect(() => {
     setPageCardId(orgPageEmbedCardId ?? null);
   }, [orgPageEmbedCardId]);
+  useEffect(() => {
+    setWebsiteCardId(websiteEmbedCardId ?? null);
+  }, [websiteEmbedCardId]);
 
   const fetchCards = useCallback(async (): Promise<EmbedCard[]> => {
     setLoading(true);
@@ -519,8 +526,28 @@ export function EmbedCardsPanel({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update");
       setPageCardId(cardId);
+      toast.success("Org page form updated");
+      router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to set page card");
+    }
+  };
+
+  const handleSetWebsiteCard = async (cardId: string | null) => {
+    setError(null);
+    try {
+      const res = await fetch("/api/form-customization", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ organizationId, website_embed_card_id: cardId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to update");
+      setWebsiteCardId(cardId);
+      toast.success("Website form updated");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to set website form");
     }
   };
 
@@ -581,7 +608,7 @@ export function EmbedCardsPanel({
         <div>
           <h2 className="text-xl font-bold text-dashboard-text">Embed Cards</h2>
           <p className="text-sm text-dashboard-text-muted mt-1.5 max-w-lg leading-relaxed">
-            Choose and customize donation cards to embed on your website. Click a card to select it, hover to preview, or click the expand icon for a full-size view.
+            Choose and customize donation cards. <strong>Org page</strong> = form on your public org profile. <strong>Website</strong> = form on your website builder pages. Click a card to select it, or use the buttons below to assign where each form appears.
           </p>
         </div>
         <button
@@ -693,10 +720,16 @@ export function EmbedCardsPanel({
                     <button type="button" onClick={(e) => { e.stopPropagation(); handleDelete(card.id, card.name); }} className="p-2 rounded-xl border border-red-200 dark:border-red-800/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
                     {(card.page_section ?? "donation") === "donation" && (
                       pageCardId === card.id ? (
-                        <button type="button" onClick={(e) => { e.stopPropagation(); handleSetPageCard(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium transition-colors"><Check className="h-3 w-3" /> On page</button>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); handleSetPageCard(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium transition-colors"><Check className="h-3 w-3" /> Org page</button>
                       ) : (
-                        <button type="button" onClick={(e) => { e.stopPropagation(); handleSetPageCard(card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors">Use on page</button>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); handleSetPageCard(card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-700/50 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors">Org page</button>
                       )
+                    )}
+                    {/* Website form: Main form (DEFAULT_FORM_ID) is used when websiteCardId is null */}
+                    {((card.id === DEFAULT_FORM_ID && websiteCardId == null) || websiteCardId === card.id) ? (
+                      <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium transition-colors" title={card.id === DEFAULT_FORM_ID ? "Main form is used on website" : "Click to use main form on website instead"}><Globe className="h-3 w-3" /> Website</button>
+                    ) : (
+                      <button type="button" onClick={(e) => { e.stopPropagation(); handleSetWebsiteCard(card.id === DEFAULT_FORM_ID ? null : card.id); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors" title="Use this form on your website"><Globe className="h-3 w-3" /> Website</button>
                     )}
                   </>
                 )}

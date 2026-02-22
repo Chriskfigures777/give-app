@@ -68,6 +68,7 @@ export async function PATCH(req: Request) {
       form_media_side,
       embed_form_theme,
       org_page_embed_card_id,
+      website_embed_card_id,
       org_page_donate_link_slug,
       donation_section_layout,
       splits,
@@ -95,6 +96,7 @@ export async function PATCH(req: Request) {
       form_media_side?: "left" | "right";
       embed_form_theme?: "default" | "grace" | "dark-elegant" | "bold-contemporary";
       org_page_embed_card_id?: string | null;
+      website_embed_card_id?: string | null;
       org_page_donate_link_slug?: string | null;
       donation_section_layout?: "text_left" | "text_right";
       splits?: { percentage: number; accountId?: string; splitBankAccountId?: string }[];
@@ -137,6 +139,7 @@ export async function PATCH(req: Request) {
     if (form_media_side !== undefined) update.form_media_side = form_media_side;
     if (embed_form_theme !== undefined) update.embed_form_theme = embed_form_theme ?? "default";
     if (org_page_embed_card_id !== undefined) update.org_page_embed_card_id = org_page_embed_card_id ?? null;
+    if (website_embed_card_id !== undefined) update.website_embed_card_id = website_embed_card_id ?? null;
     if (org_page_donate_link_slug !== undefined) update.org_page_donate_link_slug = org_page_donate_link_slug ?? null;
     if (donation_section_layout !== undefined) update.donation_section_layout = donation_section_layout;
     if (splits !== undefined) {

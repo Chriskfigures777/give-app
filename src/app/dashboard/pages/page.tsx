@@ -27,9 +27,31 @@ export default async function WebsiteBuilderPage() {
     }
   }
 
+  const { data: formCustom } = await supabase
+    .from("form_customizations")
+    .select("website_embed_card_id")
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  const websiteEmbedCardId = (formCustom as { website_embed_card_id?: string | null } | null)?.website_embed_card_id ?? null;
+
+  let websiteFormName = "Main form";
+  if (websiteEmbedCardId) {
+    const { data: card } = await supabase
+      .from("org_embed_cards")
+      .select("name")
+      .eq("id", websiteEmbedCardId)
+      .eq("organization_id", orgId)
+      .maybeSingle();
+    websiteFormName = (card as { name?: string } | null)?.name ?? "Custom form";
+  }
+
   return (
     <div className="h-full w-full">
-      <WebsiteBuilderClient organizationId={orgId} />
+      <WebsiteBuilderClient
+        organizationId={orgId}
+        websiteFormName={websiteFormName}
+        formDesignUrl="/dashboard/customization"
+      />
     </div>
   );
 }
