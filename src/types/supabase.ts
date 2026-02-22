@@ -1788,6 +1788,7 @@ export type Database = {
       }
       org_embed_cards: {
         Row: {
+          button_border_radius: string | null
           button_color: string | null
           button_text_color: string | null
           campaign_id: string | null
@@ -1808,6 +1809,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          button_border_radius?: string | null
           button_color?: string | null
           button_text_color?: string | null
           campaign_id?: string | null
@@ -1828,6 +1830,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          button_border_radius?: string | null
           button_color?: string | null
           button_text_color?: string | null
           campaign_id?: string | null

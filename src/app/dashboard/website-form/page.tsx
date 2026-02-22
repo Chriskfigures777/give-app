@@ -53,6 +53,7 @@ export default async function WebsiteFormPage() {
           headerImageUrl={data.effectiveForm.header_image_url ?? null}
           initialDesignSet={data.designSet}
           initialSplits={(data.effectiveForm.splits as { percentage: number; accountId: string }[] | undefined) ?? []}
+          initialFormDisplayMode={(data.effectiveForm.form_display_mode as "full" | "compressed" | "full_width") ?? "full_width"}
           connectedPeers={data.peerOrgs}
           splitRecipientLimit={splitRecipientLimit}
           currentPlan={plan}

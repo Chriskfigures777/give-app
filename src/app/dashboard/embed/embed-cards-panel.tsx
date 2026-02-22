@@ -39,6 +39,7 @@ import { GoalDonationCard } from "@/components/goal-donation-card";
 import { GoalCompactDonationCard } from "@/components/goal-compact-donation-card";
 import { MinimalDonationCard } from "@/components/minimal-donation-card";
 import { SplitPercentageChart } from "@/components/split-percentage-chart";
+import { PreviewIframe } from "@/components/preview-iframe";
 
 import type { DesignSet } from "@/lib/stock-media";
 
@@ -192,7 +193,7 @@ function renderCardFullPreview(
   const campaign = card.campaign_id ? campaigns.find((c) => c.id === card.campaign_id) : null;
   const designSet = card.design_set as DesignSet | null | undefined;
 
-  if (card.id === DEFAULT_FORM_ID || card.style === "compressed" || card.style === "full") {
+  if (card.style === "compressed") {
     return (
       <div className={`${ds} mx-auto`}>
         <CompressedDonationCard
@@ -210,6 +211,42 @@ function renderCardFullPreview(
       </div>
     );
   }
+  if (card.style === "full" || card.id === DEFAULT_FORM_ID) {
+    return (
+      <div className="w-full max-w-[480px] mx-auto overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+        <div className="flex flex-col md:flex-row">
+          <div className="relative w-full md:w-1/2 min-h-[140px] md:min-h-[200px] bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 shrink-0">
+            {designSet?.media_url ? (
+              designSet.media_type === "video" ? (
+                <video src={designSet.media_url} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={designSet.media_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              )
+            ) : null}
+          </div>
+          <div className="flex flex-col justify-center p-5 md:p-6 flex-1 min-w-0">
+            <h3 className="text-base font-bold text-dashboard-text">{designSet?.title ?? "Make a Donation"}</h3>
+            <p className="text-sm text-dashboard-text-muted mt-1">{designSet?.subtitle ?? `Support ${organizationName}`}</p>
+            <div className="mt-4 space-y-2">
+              <div className="h-9 rounded-lg bg-slate-100 dark:bg-slate-700" />
+              <div className="h-9 rounded-lg bg-slate-100 dark:bg-slate-700 w-3/4" />
+            </div>
+            <div
+              className="mt-4 h-10 rounded-lg flex items-center justify-center font-semibold text-sm"
+              style={{
+                background: card.button_color ?? "#059669",
+                color: card.button_text_color ?? "#ffffff",
+                borderRadius: card.button_border_radius ?? "8px",
+              }}
+            >
+              Donate
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (card.style === "goal" && campaign) {
     const goalCents = campaign.goal_amount_cents ?? 10000;
     const currentCents = campaign.current_amount_cents ?? 0;
@@ -222,6 +259,7 @@ function renderCardFullPreview(
           goalDescription={card.goal_description ?? undefined}
           buttonColor={card.button_color ?? undefined}
           buttonTextColor={card.button_text_color ?? undefined}
+          borderRadius={card.button_border_radius ?? undefined}
           primaryColor={card.primary_color ?? undefined}
           goalAmountCents={goalCents}
           currentAmountCents={currentCents}
@@ -242,6 +280,7 @@ function renderCardFullPreview(
           goalDescription={card.goal_description ?? undefined}
           buttonColor={card.button_color ?? undefined}
           buttonTextColor={card.button_text_color ?? undefined}
+          borderRadius={card.button_border_radius ?? undefined}
           primaryColor={card.primary_color ?? undefined}
           goalAmountCents={goalCents}
           currentAmountCents={currentCents}
@@ -260,6 +299,7 @@ function renderCardFullPreview(
           designSet={designSet ?? undefined}
           buttonColor={card.button_color ?? undefined}
           buttonTextColor={card.button_text_color ?? undefined}
+          borderRadius={card.button_border_radius ?? undefined}
           basePath={baseUrl}
         />
       </div>
@@ -740,6 +780,7 @@ export function EmbedCardsPanel({
                 currentPlan={currentPlan}
                 onSave={(p) => handleUpdate(editingCard.id, p)}
                 onCancel={closeEditor}
+                onCopyEmbed={() => handleCopyIframe(editingCard.id)}
               />
             ) : (
               <CardEditor
@@ -997,6 +1038,7 @@ function CustomFormEditor({
   currentPlan = "free",
   onSave,
   onCancel,
+  onCopyEmbed,
 }: {
   card: EmbedCard;
   organizationName: string;
@@ -1009,6 +1051,7 @@ function CustomFormEditor({
   currentPlan?: "free" | "growth" | "pro";
   onSave: (payload: Partial<EmbedCard>) => void;
   onCancel: () => void;
+  onCopyEmbed?: () => void;
 }) {
   const [name, setName] = useState(card.name);
   const [style, setStyle] = useState<EmbedCard["style"]>(card.style);
@@ -1022,6 +1065,7 @@ function CustomFormEditor({
   const [buttonColor, setButtonColor] = useState(card.button_color ?? "#059669");
   const [buttonTextColor, setButtonTextColor] = useState(card.button_text_color ?? "#ffffff");
   const [primaryColor, setPrimaryColor] = useState(card.primary_color ?? "#059669");
+  const [buttonBorderRadius, setButtonBorderRadius] = useState(card.button_border_radius ?? "8px");
   const [isEnabled, setIsEnabled] = useState(card.is_enabled);
   const [pageSection, setPageSection] = useState(card.page_section);
   const [splits, setSplits] = useState<{ percentage: number; accountId: string }[]>(
@@ -1031,6 +1075,8 @@ function CustomFormEditor({
   const [resolveError, setResolveError] = useState<string | null>(null);
   const [resolving, setResolving] = useState(false);
   const [pexelsPicker, setPexelsPicker] = useState<"photos" | "videos" | null>(null);
+  const [previewDisplayMode, setPreviewDisplayMode] = useState<"full_width" | "full" | "compressed">("full_width");
+  const [previewTheme, setPreviewTheme] = useState("church-grace");
 
   useEffect(() => {
     setName(card.name);
@@ -1043,10 +1089,11 @@ function CustomFormEditor({
     setButtonColor(card.button_color ?? "#059669");
     setButtonTextColor(card.button_text_color ?? "#ffffff");
     setPrimaryColor(card.primary_color ?? "#059669");
+    setButtonBorderRadius(card.button_border_radius ?? "8px");
     setIsEnabled(card.is_enabled);
     setPageSection(card.page_section);
     setSplits((card.splits as { percentage: number; accountId: string }[] | undefined) ?? []);
-  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.is_enabled, card.page_section, card.splits]);
+  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.is_enabled, card.page_section, card.splits]);
 
   async function resolvePexelsUrl(): Promise<string | null> {
     const url = designSet.media_url?.trim();
@@ -1084,6 +1131,7 @@ function CustomFormEditor({
         design_set: { media_type: designSet.media_type === "video" ? "video" : "image", media_url: mediaUrl, title: designSet.title?.trim() || null, subtitle: designSet.subtitle?.trim() || null },
         button_color: buttonColor.trim() || null,
         button_text_color: buttonTextColor.trim() || null,
+        button_border_radius: buttonBorderRadius.trim() || null,
         primary_color: primaryColor.trim() || null,
         is_enabled: isEnabled,
         page_section: pageSection,
@@ -1103,6 +1151,7 @@ function CustomFormEditor({
     design_set: { ...designSet, media_url: designSet.media_url || null },
     button_color: buttonColor || null,
     button_text_color: buttonTextColor || null,
+    button_border_radius: buttonBorderRadius || null,
     primary_color: primaryColor || null,
     is_enabled: isEnabled,
     page_section: pageSection,
@@ -1193,10 +1242,17 @@ function CustomFormEditor({
         {/* Colors */}
         <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h3 className="font-semibold text-dashboard-text">Colors</h3>
-            <p className="text-xs text-dashboard-text-muted mt-0.5">Button and accent colors</p>
+            <h3 className="font-semibold text-dashboard-text">Colors & shape</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Button, accent, and border radius</p>
           </div>
           <div className="p-5 space-y-4">
+            <div>
+              <label className={labelClass}>Button border radius</label>
+              <div className="flex gap-2 items-center">
+                <input type="text" value={buttonBorderRadius} onChange={(e) => setButtonBorderRadius(e.target.value)} placeholder="8px" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                <span className="text-xs text-dashboard-text-muted shrink-0">e.g. 8px, 12px, 1rem</span>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className={labelClass}>Button</label>
@@ -1260,6 +1316,27 @@ function CustomFormEditor({
           </div>
         </div>
 
+        {/* Embed code */}
+        {onCopyEmbed && (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+              <h3 className="font-semibold text-dashboard-text">Embed code</h3>
+              <p className="text-xs text-dashboard-text-muted mt-0.5">Copy the iframe code to embed this form on your website</p>
+            </div>
+            <div className="p-5">
+              <div className="flex gap-2">
+                <code className="flex-1 block p-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono text-dashboard-text break-all">
+                  {`<iframe src="${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?card=${card.id}" width="100%" height="600" frameborder="0" title="Donate to ${slug}"></iframe>`}
+                </code>
+                <button type="button" onClick={onCopyEmbed} className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-dashboard-text hover:bg-slate-50 dark:hover:bg-slate-800 font-medium">
+                  <Copy className="h-4 w-4" />
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-3">
           <button type="button" onClick={handleSave} disabled={saving} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -1273,13 +1350,51 @@ function CustomFormEditor({
 
       {/* Right: Live preview */}
       <div className="flex-1 min-w-0">
-        <div className="sticky top-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
-          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
-            <Palette className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-semibold text-dashboard-text">Live preview</span>
-          </div>
-          <div className="p-6 flex justify-center bg-slate-50/50 dark:bg-slate-800/30 min-h-[400px]">
-            {renderCardFullPreview(previewCard, organizationName, slug, baseUrl, campaigns)}
+        <div className="sticky top-8 space-y-4">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-dashboard-text mb-2">Display mode</label>
+                <div className="flex gap-2">
+                {(["full_width", "full", "compressed"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setPreviewDisplayMode(mode)}
+                    className={`flex-1 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      previewDisplayMode === mode
+                        ? "bg-emerald-500 text-white"
+                        : "bg-slate-100 dark:bg-slate-800 text-dashboard-text-muted hover:bg-slate-200 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    {mode === "full_width" ? "Full width" : mode === "full" ? "Regular" : "Compact"}
+                  </button>
+                ))}
+                </div>
+              </div>
+              {previewDisplayMode === "compressed" && (
+                <div>
+                  <label className="block text-xs font-medium text-dashboard-text-muted mb-1.5">Theme (compact)</label>
+                  <select value={previewTheme} onChange={(e) => setPreviewTheme(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-dashboard-text text-sm">
+                    <option value="church-grace">Church Grace</option>
+                    <option value="modern-minimal">Modern Minimal</option>
+                    <option value="warm-heritage">Warm Heritage</option>
+                    <option value="bold-contemporary">Bold Contemporary</option>
+                    <option value="dark-elegant">Dark Elegant</option>
+                    <option value="vibrant-community">Vibrant Community</option>
+                  </select>
+                </div>
+              )}
+            </div>
+            <div className="p-2 bg-slate-50/50 dark:bg-slate-800/30 min-h-[420px] overflow-hidden rounded-xl">
+              <PreviewIframe
+                src={`${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?card=${card.id}${previewDisplayMode === "compressed" ? `&seamless=1&theme=${previewTheme}&mode=compressed` : ""}${previewDisplayMode === "full_width" ? "&fullscreen=1" : ""}`}
+                title="Form preview"
+                className="w-full rounded-xl border-0"
+                minHeight={420}
+              />
+            </div>
+            <p className="px-5 py-2 text-xs text-dashboard-text-muted">Live preview — save to update.</p>
           </div>
         </div>
       </div>

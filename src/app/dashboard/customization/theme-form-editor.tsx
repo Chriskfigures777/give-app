@@ -7,16 +7,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Type, Image as ImageIcon, Video, MessageSquare, Save, Loader2, Check, Zap } from "lucide-react";
-import { DonationForm } from "@/app/give/[slug]/donation-form";
-import { DEFAULT_HEADER_IMAGE_URL } from "@/lib/form-defaults";
+import { Type, Image as ImageIcon, Video, MessageSquare, Save, Loader2, Check, Zap, Copy, Layout, Minimize2, Maximize2 } from "lucide-react";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
 import { SplitPercentageChart } from "@/components/split-percentage-chart";
 import { PexelsMediaPicker } from "@/components/pexels-media-picker";
 import { isPexelsUrl } from "@/lib/pexels";
-import { isDirectMediaUrl } from "@/lib/stock-media";
 import type { DesignSet } from "@/lib/stock-media";
-import { getSeamlessTheme } from "@/lib/embed-form-themes";
+import { PreviewIframe } from "@/components/preview-iframe";
 
 const PRESET_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 const SEAMLESS_THEME_IDS_ARR = [
@@ -51,6 +48,7 @@ type Props = {
   headerImageUrl?: string | null;
   initialDesignSet?: DesignSet | null;
   initialSplits?: { percentage: number; accountId: string }[];
+  initialFormDisplayMode?: "full" | "compressed" | "full_width";
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
   splitRecipientLimit?: number;
   currentPlan?: "free" | "growth" | "pro";
@@ -76,6 +74,7 @@ export function ThemeFormEditor({
   headerImageUrl,
   initialDesignSet,
   initialSplits = [],
+  initialFormDisplayMode = "full_width",
   connectedPeers = [],
   splitRecipientLimit = Infinity,
   currentPlan = "free",
@@ -92,6 +91,7 @@ export function ThemeFormEditor({
   const [mediaType, setMediaType] = useState<"image" | "video">(initialDesignSet?.media_type ?? "image");
   const [mediaUrl, setMediaUrl] = useState(initialDesignSet?.media_url ?? headerImageUrl ?? "");
   const [splits, setSplits] = useState<{ percentage: number; accountId: string }[]>(initialSplits);
+  const [formDisplayMode, setFormDisplayMode] = useState<"full" | "compressed" | "full_width">(initialFormDisplayMode);
   const [previewTheme, setPreviewTheme] = useState<string>("church-grace");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -111,12 +111,10 @@ export function ThemeFormEditor({
     setMediaType(initialDesignSet?.media_type ?? "image");
     setMediaUrl(initialDesignSet?.media_url ?? headerImageUrl ?? "");
     setSplits(initialSplits);
-  }, [serverAmounts, serverAllowCustom, initialHeaderText, initialSubheaderText, initialThankYouMessage, initialThankYouVideoUrl, initialThankYouCtaUrl, initialThankYouCtaText, headerImageUrl, initialDesignSet, initialSplits]);
+    setFormDisplayMode(initialFormDisplayMode);
+  }, [serverAmounts, serverAllowCustom, initialHeaderText, initialSubheaderText, initialThankYouMessage, initialThankYouVideoUrl, initialThankYouCtaUrl, initialThankYouCtaText, headerImageUrl, initialDesignSet, initialSplits, initialFormDisplayMode]);
 
   const allowAnonymous = campaigns.some((c) => (c as { allow_anonymous?: boolean | null }).allow_anonymous !== false) || campaigns.length === 0;
-  const theme = getSeamlessTheme(previewTheme);
-  const effectiveMediaUrl = mediaUrl?.trim() || DEFAULT_HEADER_IMAGE_URL;
-  const canPlayVideo = mediaType === "video" && mediaUrl && isDirectMediaUrl(mediaUrl);
 
   function toggleAmount(n: number) {
     setSuggestedAmounts((prev) =>
@@ -181,7 +179,7 @@ export function ThemeFormEditor({
           thank_you_cta_text: thankYouCtaText.trim() || null,
           header_image_url: mediaType === "image" && finalMediaUrl ? finalMediaUrl : null,
           design_sets: [designSet],
-          form_display_mode: "full_width",
+          form_display_mode: formDisplayMode,
           embed_form_theme: "default",
           splits: SPLITS_ENABLED && splits.length > 0 ? splits : undefined,
         }),
@@ -368,6 +366,81 @@ export function ThemeFormEditor({
           </div>
         )}
 
+        {/* Display mode */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Display mode</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">How the form appears when embedded</p>
+          </div>
+          <div className="p-5">
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setFormDisplayMode("full_width")}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                  formDisplayMode === "full_width"
+                    ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20"
+                    : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                }`}
+              >
+                <Maximize2 className={`h-5 w-5 ${formDisplayMode === "full_width" ? "text-emerald-600" : "text-slate-400"}`} />
+                <span className="text-xs font-semibold text-dashboard-text">Full width</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormDisplayMode("full")}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                  formDisplayMode === "full"
+                    ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20"
+                    : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                }`}
+              >
+                <Layout className={`h-5 w-5 ${formDisplayMode === "full" ? "text-emerald-600" : "text-slate-400"}`} />
+                <span className="text-xs font-semibold text-dashboard-text">Regular</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormDisplayMode("compressed")}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                  formDisplayMode === "compressed"
+                    ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20"
+                    : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                }`}
+              >
+                <Minimize2 className={`h-5 w-5 ${formDisplayMode === "compressed" ? "text-emerald-600" : "text-slate-400"}`} />
+                <span className="text-xs font-semibold text-dashboard-text">Compact</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Embed code */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="font-semibold text-dashboard-text">Embed code</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Copy the iframe code to embed this form on your website</p>
+          </div>
+          <div className="p-5">
+            <div className="flex gap-2">
+              <code className="flex-1 block p-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono text-dashboard-text break-all">
+                {`<iframe src="${baseUrl.replace(/\/$/, "")}/give/${slug}/embed" width="100%" height="600" frameborder="0" title="Donate to ${slug}"></iframe>`}
+              </code>
+              <button
+                type="button"
+                onClick={async () => {
+                  const code = `<iframe src="${baseUrl.replace(/\/$/, "")}/give/${slug}/embed" width="100%" height="600" frameborder="0" title="Donate to ${slug}"></iframe>`;
+                  await navigator.clipboard.writeText(code);
+                  toast.success("Embed code copied to clipboard");
+                }}
+                className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-dashboard-text hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
+              >
+                <Copy className="h-4 w-4" />
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={handleSave}
@@ -379,11 +452,11 @@ export function ThemeFormEditor({
         </button>
       </div>
 
-      {/* Right: Preview with theme selector */}
+      {/* Right: Live preview */}
       <div className="flex-1 min-w-0">
-        <div className="sticky top-8">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-dashboard-text mb-2">Preview with theme</label>
+        <div className="sticky top-8 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-dashboard-text mb-2">Theme</label>
             <select
               value={previewTheme}
               onChange={(e) => setPreviewTheme(e.target.value)}
@@ -395,56 +468,19 @@ export function ThemeFormEditor({
                 </option>
               ))}
             </select>
-            <p className="mt-1.5 text-xs text-dashboard-text-muted">
-              Colors and fonts adapt to your website theme. Switch themes in the website builder to see it change.
-            </p>
           </div>
-          <div
-            className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-lg"
-            style={{
-              backgroundColor: theme?.bgColor ?? "#FAFAFA",
-              color: theme?.textColor ?? "#333",
-            }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-              <div className="relative min-h-[200px] md:min-h-[320px]">
-                {canPlayVideo ? (
-                  <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline />
-                ) : mediaType === "video" && mediaUrl && isPexelsUrl(mediaUrl) ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm p-4 text-center">
-                    <Video className="h-10 w-10 mb-2 opacity-50" />
-                    <p>Pexels page URL — click Resolve to load video</p>
-                  </div>
-                ) : (
-                  <img src={effectiveMediaUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                )}
-              </div>
-              <div className="p-6 md:p-8 flex flex-col justify-center">
-                <span className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: theme?.accentColor }}>
-                  Give Online
-                </span>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: theme?.headingFont }}>
-                  {headerText || "Make a Donation"}
-                </h3>
-                <p className="text-sm opacity-80 mb-6">{subheaderText || `Support ${organizationName}`}</p>
-                <DonationForm
-                  organizationId={organizationId}
-                  organizationName={organizationName}
-                  campaigns={campaigns}
-                  endowmentFunds={endowmentFunds}
-                  suggestedAmounts={suggestedAmounts}
-                  minimumAmountCents={minimumAmountCents}
-                  showEndowmentSelection={showEndowmentSelection}
-                  allowCustomAmount={allowCustomAmount}
-                  allowAnonymous={allowAnonymous}
-                  buttonColor={theme?.accentColor}
-                  buttonTextColor={theme?.buttonTextColor}
-                  borderRadius={theme?.borderRadius ?? "8px"}
-                  slug={slug}
-                  noCard
-                  fullWidth
-                />
-              </div>
+          <div>
+            <label className="block text-sm font-medium text-dashboard-text mb-2">Live preview</label>
+            <p className="text-xs text-dashboard-text-muted mb-2">
+              Shows saved form. Save to update preview.
+            </p>
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-lg bg-white min-h-[420px]">
+              <PreviewIframe
+                src={`${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?seamless=1&theme=${previewTheme}&mode=${formDisplayMode}`}
+                title="Form preview"
+                className="w-full border-0"
+                minHeight={420}
+              />
             </div>
           </div>
         </div>

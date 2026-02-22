@@ -42,6 +42,7 @@ type EmbedCardRow = {
   design_set: { media_type?: string; media_url?: string | null; title?: string | null; subtitle?: string | null } | null;
   button_color: string | null;
   button_text_color: string | null;
+  button_border_radius?: string | null;
   primary_color: string | null;
   is_enabled: boolean;
   goal_description?: string | null;
@@ -86,7 +87,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   if (cardId) {
     const { data: cardRow } = await supabase
       .from("org_embed_cards")
-      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, primary_color, is_enabled, goal_description")
+      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, is_enabled, goal_description")
       .eq("id", cardId)
       .eq("organization_id", org.id)
       .eq("is_enabled", true)
@@ -125,7 +126,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const headerFontWeight = getHeaderFontWeight(formCustom?.font_family);
   const googleFontUrl = getGoogleFontUrl(formCustom?.font_family);
   const baseUrl = env.app.domain().replace(/\/$/, "");
-  const borderRadius = formCustom?.button_border_radius ?? "8px";
+  const borderRadius = embedCard?.button_border_radius ?? formCustom?.button_border_radius ?? "8px";
 
   const designSetFromCard = embedCard?.design_set
     ? {
@@ -164,7 +165,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const embedFormTheme = (formCustom?.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary") ?? "default";
   const useThemedLayout = embedFormTheme !== "default";
 
-  const effectiveStyle = embedCard?.style ?? (isCompact ? "compressed" : "full");
+  const effectiveStyle = isCompact ? "compressed" : (embedCard?.style ?? "full");
 
   if (effectiveStyle === "goal" || effectiveStyle === "goal_compact") {
     const campaignId = embedCard?.campaign_id ?? null;

@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     const deletedOnly = req.nextUrl.searchParams.get("deletedOnly") === "true";
     let query = supabase
       .from("org_embed_cards")
-      .select("id, name, style, campaign_id, design_set, button_color, button_text_color, primary_color, is_enabled, page_section, sort_order, goal_description, splits, created_at, updated_at, deleted_at")
+      .select("id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, is_enabled, page_section, sort_order, goal_description, splits, created_at, updated_at, deleted_at")
       .eq("organization_id", organizationId);
     if (deletedOnly) {
       query = query.not("deleted_at", "is", null);
@@ -151,6 +151,7 @@ export async function POST(req: NextRequest) {
       design_set: designSet,
       button_color: (body.button_color as string)?.trim() || null,
       button_text_color: (body.button_text_color as string)?.trim() || null,
+      button_border_radius: (body.button_border_radius as string)?.trim() || null,
       primary_color: (body.primary_color as string)?.trim() || null,
       is_enabled: body.is_enabled !== false,
       page_section: (body.page_section as EmbedCardPageSection) || "donation",

@@ -64,6 +64,7 @@ export async function PATCH(
     }
     if (body.button_color !== undefined) update.button_color = (body.button_color as string)?.trim() || null;
     if (body.button_text_color !== undefined) update.button_text_color = (body.button_text_color as string)?.trim() || null;
+    if (body.button_border_radius !== undefined) update.button_border_radius = (body.button_border_radius as string)?.trim() || null;
     if (body.primary_color !== undefined) update.primary_color = (body.primary_color as string)?.trim() || null;
     if (body.is_enabled !== undefined) update.is_enabled = body.is_enabled;
     if (body.page_section !== undefined) {
