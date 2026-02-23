@@ -17,11 +17,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "organizationId required" }, { status: 400 });
     }
 
+    // Match website/inject-cms: events from past 90 days through future (same as site theme)
+    const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase
       .from("events")
       .select("id, name, description, start_at, image_url, venue_name, eventbrite_event_id, category")
       .eq("organization_id", orgId)
-      .gte("start_at", new Date().toISOString())
+      .gte("start_at", cutoff)
       .order("start_at", { ascending: true });
 
     if (error) {

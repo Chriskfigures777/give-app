@@ -265,81 +265,73 @@ export function CmsClient({ organizationId }: Props) {
   const [sermonArchive, setSermonArchive] = useState<SermonArchiveItem[] | null>(null);
   const [archiveLoading, setArchiveLoading] = useState(false);
 
-  // Track which categories have already been fetched
+  // Track which categories have already been fetched (for lazy-loading full content when switching)
   const fetchedRef = useRef<Set<CategoryId>>(new Set());
 
-  /* ── Streaming load: fetch only the active section, lazily ── */
-
+  /* ── Pre-fetch all content on mount so CMS Content Types show correct counts ──
+   * Events, Featured Sermon, Podcast, Sermon Archive, Worship — same data as website theme.
+   */
   useEffect(() => {
-    if (fetchedRef.current.has(activeCategory)) return; // already loaded
+    const base = { credentials: "include" as RequestCredentials };
+    const org = `organizationId=${organizationId}`;
 
-    fetchedRef.current.add(activeCategory);
+    setEventsLoading(true);
+    fetch(`/api/events?${org}`, base)
+      .then((r) => r.json())
+      .then((data) => setEvents(Array.isArray(data) ? data : []))
+      .catch(() => setEvents([]))
+      .finally(() => setEventsLoading(false));
 
-    if (activeCategory === "events") {
-      setEventsLoading(true);
-      fetch(`/api/events?organizationId=${organizationId}`, { credentials: "include" })
-        .then((r) => r.json())
-        .then((data) => setEvents(Array.isArray(data) ? data : []))
-        .catch(() => setEvents([]))
-        .finally(() => setEventsLoading(false));
-    }
-
-    if (activeCategory === "featured") {
-      setFeaturedLoading(true);
-      fetch(`/api/website-cms/featured-sermon?organizationId=${organizationId}`, { credentials: "include" })
-        .then((r) => r.json())
-        .then((data) =>
-          setFeaturedSermon(
-            data?.id
-              ? data
-              : { title: "Featured Sermon", tag: null, description: null, image_url: null, video_url: null, audio_url: null, duration_minutes: null, speaker_name: null }
-          )
+    setFeaturedLoading(true);
+    fetch(`/api/website-cms/featured-sermon?${org}`, base)
+      .then((r) => r.json())
+      .then((data) =>
+        setFeaturedSermon(
+          data?.id
+            ? data
+            : { title: "Featured Sermon", tag: null, description: null, image_url: null, video_url: null, audio_url: null, duration_minutes: null, speaker_name: null }
         )
-        .catch(() =>
-          setFeaturedSermon({ title: "Featured Sermon", tag: null, description: null, image_url: null, video_url: null, audio_url: null, duration_minutes: null, speaker_name: null })
-        )
-        .finally(() => setFeaturedLoading(false));
-    }
+      )
+      .catch(() =>
+        setFeaturedSermon({ title: "Featured Sermon", tag: null, description: null, image_url: null, video_url: null, audio_url: null, duration_minutes: null, speaker_name: null })
+      )
+      .finally(() => setFeaturedLoading(false));
 
-    if (activeCategory === "podcast") {
-      setPodcastLoading(true);
-      Promise.all([
-        fetch(`/api/website-cms/podcast-config?organizationId=${organizationId}`, { credentials: "include" }).then((r) => r.json()),
-        fetch(`/api/website-cms/podcast-episodes?organizationId=${organizationId}`, { credentials: "include" }).then((r) => r.json()),
-      ])
-        .then(([config, episodes]) => {
-          setPodcastConfig(
-            config?.organization_id
-              ? config
-              : { title: "Grace Daily Podcast", description: null, spotify_url: null, apple_podcasts_url: null, youtube_url: null }
-          );
-          setPodcastEpisodes(Array.isArray(episodes) ? episodes : []);
-        })
-        .catch(() => {
-          setPodcastConfig({ title: "Grace Daily Podcast", description: null, spotify_url: null, apple_podcasts_url: null, youtube_url: null });
-          setPodcastEpisodes([]);
-        })
-        .finally(() => setPodcastLoading(false));
-    }
+    setPodcastLoading(true);
+    Promise.all([
+      fetch(`/api/website-cms/podcast-config?${org}`, base).then((r) => r.json()),
+      fetch(`/api/website-cms/podcast-episodes?${org}`, base).then((r) => r.json()),
+    ])
+      .then(([config, episodes]) => {
+        setPodcastConfig(
+          config?.organization_id
+            ? config
+            : { title: "Grace Daily Podcast", description: null, spotify_url: null, apple_podcasts_url: null, youtube_url: null }
+        );
+        setPodcastEpisodes(Array.isArray(episodes) ? episodes : []);
+      })
+      .catch(() => {
+        setPodcastConfig({ title: "Grace Daily Podcast", description: null, spotify_url: null, apple_podcasts_url: null, youtube_url: null });
+        setPodcastEpisodes([]);
+      })
+      .finally(() => setPodcastLoading(false));
 
-    if (activeCategory === "archive") {
-      setArchiveLoading(true);
-      fetch(`/api/website-cms/sermon-archive?organizationId=${organizationId}`, { credentials: "include" })
-        .then((r) => r.json())
-        .then((data) => setSermonArchive(Array.isArray(data) ? data : []))
-        .catch(() => setSermonArchive([]))
-        .finally(() => setArchiveLoading(false));
-    }
+    setArchiveLoading(true);
+    fetch(`/api/website-cms/sermon-archive?${org}`, base)
+      .then((r) => r.json())
+      .then((data) => setSermonArchive(Array.isArray(data) ? data : []))
+      .catch(() => setSermonArchive([]))
+      .finally(() => setArchiveLoading(false));
 
-    if (activeCategory === "worship") {
-      setWorshipLoading(true);
-      fetch(`/api/website-cms/worship-recordings?organizationId=${organizationId}`, { credentials: "include" })
-        .then((r) => r.json())
-        .then((data) => setWorshipRecordings(Array.isArray(data) ? data : []))
-        .catch(() => setWorshipRecordings([]))
-        .finally(() => setWorshipLoading(false));
-    }
-  }, [activeCategory, organizationId]);
+    setWorshipLoading(true);
+    fetch(`/api/website-cms/worship-recordings?${org}`, base)
+      .then((r) => r.json())
+      .then((data) => setWorshipRecordings(Array.isArray(data) ? data : []))
+      .catch(() => setWorshipRecordings([]))
+      .finally(() => setWorshipLoading(false));
+
+    fetchedRef.current = new Set(["events", "featured", "podcast", "archive", "worship"]);
+  }, [organizationId]);
 
   /* ── CRUD Helpers ── */
 
