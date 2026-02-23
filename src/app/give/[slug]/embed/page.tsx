@@ -44,6 +44,9 @@ type EmbedCardRow = {
   button_text_color: string | null;
   button_border_radius?: string | null;
   primary_color: string | null;
+  background_color?: string | null;
+  text_color?: string | null;
+  embed_form_theme?: string | null;
   is_enabled: boolean;
   goal_description?: string | null;
 };
@@ -67,7 +70,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const isFullscreen = fullscreenParam === "1" || fullscreenParam === "true";
   const isSeamless = seamlessParam === "1" || seamlessParam === "true";
   const seamlessTheme = typeof themeParam === "string" ? themeParam : themeParam?.[0];
-  const cardId = typeof cardParam === "string" ? cardParam : cardParam?.[0];
+  let cardId = typeof cardParam === "string" ? cardParam : cardParam?.[0];
+  if (cardId === "__default__" || !cardId?.trim()) cardId = undefined;
   const supabase = await createClient();
 
   const { data: orgRow } = await supabase
@@ -87,7 +91,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   if (cardId) {
     const { data: cardRow } = await supabase
       .from("org_embed_cards")
-      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, is_enabled, goal_description")
+      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, background_color, text_color, embed_form_theme, is_enabled, goal_description")
       .eq("id", cardId)
       .eq("organization_id", org.id)
       .eq("is_enabled", true)
@@ -127,6 +131,10 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const googleFontUrl = getGoogleFontUrl(formCustom?.font_family);
   const baseUrl = env.app.domain().replace(/\/$/, "");
   const borderRadius = embedCard?.button_border_radius ?? formCustom?.button_border_radius ?? "8px";
+  /** Per-card overrides: when a specific embed card is requested, use its colors/theme if set */
+  const effectiveBackgroundColor = embedCard?.background_color ?? formCustom?.background_color ?? "var(--stripe-light-grey)";
+  const effectiveTextColor = embedCard?.text_color ?? formCustom?.text_color ?? undefined;
+  const embedFormTheme = (embedCard?.embed_form_theme ?? formCustom?.embed_form_theme) as "default" | "grace" | "dark-elegant" | "bold-contemporary" ?? "default";
 
   const designSetFromCard = embedCard?.design_set
     ? {
@@ -162,9 +170,9 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     ? formCustom!.header_image_url!
     : DEFAULT_HEADER_IMAGE_URL;
 
-  const embedFormTheme = (formCustom?.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary") ?? "default";
-  /** When a specific embed card is requested (?card=xxx), use the card's style — don't override with website form's themed layout. */
-  const useThemedLayout = !cardId && embedFormTheme !== "default";
+  /** Use themed layout (grace, dark-elegant, bold-contemporary) when embed_form_theme is set.
+   * Applies to both website form (no card) and custom forms (card param) — each can have its own theme. */
+  const useThemedLayout = embedFormTheme !== "default";
 
   const effectiveStyle = isCompact ? "compressed" : (embedCard?.style ?? "full");
 
@@ -187,7 +195,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         <main
           className="min-h-full p-5 flex flex-col items-center justify-center"
           style={{
-            backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+            backgroundColor: effectiveBackgroundColor,
             fontFamily,
           }}
         >
@@ -218,7 +226,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       <main
         className="min-h-full p-5 flex flex-col items-center justify-center"
         style={{
-          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          backgroundColor: effectiveBackgroundColor,
           fontFamily,
         }}
       >
@@ -246,7 +254,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       <main
         className="min-h-full p-5 flex flex-col items-center justify-center"
         style={{
-          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          backgroundColor: effectiveBackgroundColor,
           fontFamily,
         }}
       >
@@ -271,7 +279,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       <main
         className="min-h-full p-5 flex flex-col items-center justify-center"
         style={{
-          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
+          backgroundColor: effectiveBackgroundColor,
           fontFamily,
         }}
       >
@@ -814,8 +822,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         data-fullscreen
         className="w-full flex flex-col md:flex-row"
         style={{
-          backgroundColor: formCustom?.background_color ?? "var(--stripe-light-grey)",
-          color: formCustom?.text_color ?? "var(--stripe-dark)",
+          backgroundColor: effectiveBackgroundColor,
+          color: effectiveTextColor ?? "var(--stripe-dark)",
           fontFamily,
         }}
       >
@@ -888,8 +896,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     <main
       className="min-h-full flex flex-col items-center justify-center"
       style={{
-        backgroundColor: formCustom?.background_color ?? "transparent",
-        color: formCustom?.text_color ?? "var(--stripe-dark)",
+        backgroundColor: effectiveBackgroundColor || "transparent",
+        color: effectiveTextColor ?? "var(--stripe-dark)",
         fontFamily,
       }}
     >

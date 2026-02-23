@@ -43,6 +43,8 @@ import { PreviewIframe } from "@/components/preview-iframe";
 
 import type { DesignSet } from "@/lib/stock-media";
 
+type EmbedFormThemeId = "default" | "grace" | "dark-elegant" | "bold-contemporary";
+
 type EmbedCard = {
   id: string;
   name: string;
@@ -53,6 +55,9 @@ type EmbedCard = {
   button_text_color: string | null;
   button_border_radius?: string | null;
   primary_color: string | null;
+  background_color?: string | null;
+  text_color?: string | null;
+  embed_form_theme?: EmbedFormThemeId | null;
   is_enabled: boolean;
   page_section: string;
   sort_order: number;
@@ -80,6 +85,11 @@ const PAGE_SECTION_LABELS: Record<string, string> = {
 
 const CREATE_NEW_VALUE = "__create__";
 const DEFAULT_FORM_ID = "__default__";
+
+/** Map embed_form_theme to seamless theme for compact preview. */
+function embedToSeamlessTheme(t: EmbedFormThemeId | null | undefined): string {
+  return t === "grace" ? "church-grace" : t === "dark-elegant" || t === "bold-contemporary" ? t : "church-grace";
+}
 
 /** Render an abstract visual thumbnail for the card grid (not the real component). */
 function renderCardGridThumb(card: EmbedCard) {
@@ -379,6 +389,8 @@ type Props = {
   defaultFormButtonColor?: string | null;
   defaultFormButtonTextColor?: string | null;
   defaultFormBorderRadius?: string | null;
+  defaultFormBackgroundColor?: string | null;
+  defaultFormTextColor?: string | null;
   defaultEmbedFormTheme?: EmbedFormThemeId | null;
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
   splitRecipientLimit?: number;
@@ -400,6 +412,8 @@ export function EmbedCardsPanel({
   defaultFormButtonColor = null,
   defaultFormButtonTextColor = null,
   defaultFormBorderRadius = null,
+  defaultFormBackgroundColor = null,
+  defaultFormTextColor = null,
   defaultEmbedFormTheme = "default",
   connectedPeers = [],
   splitRecipientLimit = Infinity,
@@ -488,13 +502,18 @@ export function EmbedCardsPanel({
     }
   }, [loading, cards, selectedCardId, hasDefaultForm]);
 
-  /** When hideWebsiteButton (Custom forms page), auto-open editor for first form */
+  /** When hideWebsiteButton (Custom forms page), auto-open editor for first form (Main donation form or first custom form) */
   useEffect(() => {
-    if (hideWebsiteButton && !loading && cards.length > 0 && editingId == null && !creating) {
-      setEditingId(cards[0].id);
-      setSelectedCardId(cards[0].id);
+    if (hideWebsiteButton && !loading && editingId == null && !creating) {
+      if (hasDefaultForm) {
+        setEditingId(DEFAULT_FORM_ID);
+        setSelectedCardId(DEFAULT_FORM_ID);
+      } else if (cards.length > 0) {
+        setEditingId(cards[0].id);
+        setSelectedCardId(cards[0].id);
+      }
     }
-  }, [hideWebsiteButton, loading, cards, editingId, creating]);
+  }, [hideWebsiteButton, loading, cards, editingId, creating, hasDefaultForm]);
 
   const modalOpen = creating;
   const closeModal = () => {
@@ -548,6 +567,40 @@ export function EmbedCardsPanel({
     }
   };
 
+  const handleUpdateDefaultForm = async (payload: Partial<EmbedCard>) => {
+    setError(null);
+    try {
+      const body: Record<string, unknown> = { organizationId };
+      if (payload.design_set !== undefined) {
+        const ds = payload.design_set;
+        body.design_sets = [{ media_type: ds?.media_type ?? "image", media_url: ds?.media_url ?? null, title: ds?.title ?? null, subtitle: ds?.subtitle ?? null }];
+      }
+      if (payload.button_color !== undefined) body.button_color = payload.button_color;
+      if (payload.button_text_color !== undefined) body.button_text_color = payload.button_text_color;
+      if (payload.button_border_radius !== undefined) body.button_border_radius = payload.button_border_radius;
+      if (payload.background_color !== undefined) body.background_color = payload.background_color;
+      if (payload.text_color !== undefined) body.text_color = payload.text_color;
+      if (payload.embed_form_theme !== undefined) body.embed_form_theme = payload.embed_form_theme;
+      if (payload.style !== undefined) {
+        body.form_display_mode =
+          payload.style === "compressed" ? "compressed"
+          : payload.style === "full_width" ? "full_width"
+          : "full";
+      }
+      const res = await fetch("/api/form-customization", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to update");
+      toast.success("Form saved");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to update");
+    }
+  };
+
   const handleDelete = async (id: string, cardName?: string) => {
     const name = cardName ?? "this card";
     if (!confirm(`Delete "${name}"? You can restore it later from the list below.`)) return;
@@ -576,7 +629,11 @@ export function EmbedCardsPanel({
       design_set: card.design_set,
       button_color: card.button_color,
       button_text_color: card.button_text_color,
+      button_border_radius: card.button_border_radius,
       primary_color: card.primary_color,
+      background_color: card.background_color,
+      text_color: card.text_color,
+      embed_form_theme: card.embed_form_theme,
       goal_description: card.goal_description,
       is_enabled: false,
       page_section: card.page_section,
@@ -661,6 +718,9 @@ export function EmbedCardsPanel({
         button_text_color: defaultFormButtonTextColor,
         button_border_radius: defaultFormBorderRadius,
         primary_color: null,
+        background_color: defaultFormBackgroundColor,
+        text_color: defaultFormTextColor,
+        embed_form_theme: defaultEmbedFormTheme ?? "default",
         is_enabled: true,
         page_section: "donation",
         sort_order: -1,
@@ -669,7 +729,9 @@ export function EmbedCardsPanel({
 
   const displayCards = defaultCard ? [defaultCard, ...cards] : cards;
   const selectedCard = selectedCardId ? displayCards.find((c) => c.id === selectedCardId) : null;
-  const editingCard = editingId ? cards.find((c) => c.id === editingId) : null;
+  const editingCard = editingId
+    ? (editingId === DEFAULT_FORM_ID ? defaultCard : cards.find((c) => c.id === editingId))
+    : null;
 
   return (
     <section className="dashboard-fade-in min-w-0 overflow-hidden">
@@ -697,7 +759,7 @@ export function EmbedCardsPanel({
       {/* When hideWebsiteButton (Custom forms page): form selector + editor as main content. Else: tabs. */}
       {hideWebsiteButton ? (
         <div className="mb-6 flex flex-wrap items-center gap-4">
-          {cards.length > 0 && (
+          {(hasDefaultForm || cards.length > 0) && (
             <div className="flex items-center gap-2">
               <label htmlFor="form-selector" className="text-sm font-medium text-dashboard-text-muted">Editing:</label>
               <select
@@ -712,6 +774,9 @@ export function EmbedCardsPanel({
                 }}
                 className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-medium text-dashboard-text"
               >
+                {defaultCard && (
+                  <option key={defaultCard.id} value={defaultCard.id}>{defaultCard.name}</option>
+                )}
                 {cards.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -778,7 +843,7 @@ export function EmbedCardsPanel({
                 connectedPeers={connectedPeers}
                 splitRecipientLimit={splitRecipientLimit}
                 currentPlan={currentPlan}
-                onSave={(p) => handleUpdate(editingCard.id, p)}
+                onSave={(p) => (editingCard.id === DEFAULT_FORM_ID ? handleUpdateDefaultForm(p) : handleUpdate(editingCard.id, p))}
                 onCancel={closeEditor}
                 onCopyEmbed={() => handleCopyIframe(editingCard.id)}
               />
@@ -967,12 +1032,14 @@ export function EmbedCardsPanel({
           </div>
         </div>
       )}
+        </>
+      )}
 
-      {/* Recently deleted */}
+      {/* Recently deleted — show on both Custom forms page and embed tabs */}
       {deletedCards.length > 0 && (
         <div className="mt-10 rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/20 p-6">
           <p className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-2">Recently deleted</p>
-          <p className="text-xs text-amber-700 dark:text-amber-300 mb-4">Restore a card you accidentally removed.</p>
+          <p className="text-xs text-amber-700 dark:text-amber-300 mb-4">Forms you deleted can be restored here. Click Restore to add them back to your custom forms.</p>
           <ul className="space-y-2">
             {deletedCards.map((card) => (
               <li key={card.id} className="flex items-center justify-between rounded-xl border border-amber-200 dark:border-amber-800/50 bg-white dark:bg-slate-900 px-4 py-3">
@@ -988,8 +1055,6 @@ export function EmbedCardsPanel({
             ))}
           </ul>
         </div>
-      )}
-        </>
       )}
 
       {/* Fullscreen card preview modal */}
@@ -1066,6 +1131,9 @@ function CustomFormEditor({
   const [buttonTextColor, setButtonTextColor] = useState(card.button_text_color ?? "#ffffff");
   const [primaryColor, setPrimaryColor] = useState(card.primary_color ?? "#059669");
   const [buttonBorderRadius, setButtonBorderRadius] = useState(card.button_border_radius ?? "8px");
+  const [backgroundColor, setBackgroundColor] = useState(card.background_color ?? "");
+  const [textColor, setTextColor] = useState(card.text_color ?? "");
+  const [embedFormTheme, setEmbedFormTheme] = useState<EmbedFormThemeId>((card.embed_form_theme as EmbedFormThemeId) ?? "default");
   const [isEnabled, setIsEnabled] = useState(card.is_enabled);
   const [pageSection, setPageSection] = useState(card.page_section);
   const [splits, setSplits] = useState<{ percentage: number; accountId: string }[]>(
@@ -1075,8 +1143,10 @@ function CustomFormEditor({
   const [resolveError, setResolveError] = useState<string | null>(null);
   const [resolving, setResolving] = useState(false);
   const [pexelsPicker, setPexelsPicker] = useState<"photos" | "videos" | null>(null);
-  const [previewDisplayMode, setPreviewDisplayMode] = useState<"full_width" | "full" | "compressed">("full_width");
-  const [previewTheme, setPreviewTheme] = useState("church-grace");
+  const [previewDisplayMode, setPreviewDisplayMode] = useState<"full_width" | "full" | "compressed">(
+    card.style === "compressed" ? "compressed" : "full_width"
+  );
+  const [previewTheme, setPreviewTheme] = useState(() => embedToSeamlessTheme(card.embed_form_theme as EmbedFormThemeId));
 
   useEffect(() => {
     setName(card.name);
@@ -1090,10 +1160,15 @@ function CustomFormEditor({
     setButtonTextColor(card.button_text_color ?? "#ffffff");
     setPrimaryColor(card.primary_color ?? "#059669");
     setButtonBorderRadius(card.button_border_radius ?? "8px");
+    setBackgroundColor(card.background_color ?? "");
+    setTextColor(card.text_color ?? "");
+    setEmbedFormTheme((card.embed_form_theme as EmbedFormThemeId) ?? "default");
     setIsEnabled(card.is_enabled);
     setPageSection(card.page_section);
     setSplits((card.splits as { percentage: number; accountId: string }[] | undefined) ?? []);
-  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.is_enabled, card.page_section, card.splits]);
+    setPreviewTheme(embedToSeamlessTheme(card.embed_form_theme as EmbedFormThemeId));
+    setPreviewDisplayMode((prev) => (card.style === "compressed" ? "compressed" : prev === "compressed" ? "full_width" : prev));
+  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.background_color, card.text_color, card.embed_form_theme, card.is_enabled, card.page_section, card.splits]);
 
   async function resolvePexelsUrl(): Promise<string | null> {
     const url = designSet.media_url?.trim();
@@ -1133,6 +1208,9 @@ function CustomFormEditor({
         button_text_color: buttonTextColor.trim() || null,
         button_border_radius: buttonBorderRadius.trim() || null,
         primary_color: primaryColor.trim() || null,
+        background_color: backgroundColor.trim() || null,
+        text_color: textColor.trim() || null,
+        embed_form_theme: embedFormTheme,
         is_enabled: isEnabled,
         page_section: pageSection,
         splits: SPLITS_ENABLED && splits.length > 0 ? splits : undefined,
@@ -1153,6 +1231,9 @@ function CustomFormEditor({
     button_text_color: buttonTextColor || null,
     button_border_radius: buttonBorderRadius || null,
     primary_color: primaryColor || null,
+    background_color: backgroundColor.trim() || null,
+    text_color: textColor.trim() || null,
+    embed_form_theme: embedFormTheme,
     is_enabled: isEnabled,
     page_section: pageSection,
     splits,
@@ -1239,13 +1320,38 @@ function CustomFormEditor({
           </div>
         </div>
 
-        {/* Colors */}
+        {/* Colors & appearance */}
         <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h3 className="font-semibold text-dashboard-text">Colors & shape</h3>
-            <p className="text-xs text-dashboard-text-muted mt-0.5">Button, accent, and border radius</p>
+            <h3 className="font-semibold text-dashboard-text">Colors & appearance</h3>
+            <p className="text-xs text-dashboard-text-muted mt-0.5">Background, text, button, and theme</p>
           </div>
           <div className="p-5 space-y-4">
+            <div>
+              <label className={labelClass}>Form theme</label>
+              <select value={embedFormTheme} onChange={(e) => setEmbedFormTheme(e.target.value as EmbedFormThemeId)} className={inputClass}>
+                <option value="default">Default (light gray)</option>
+                <option value="grace">Grace Community (dark navy, gold)</option>
+                <option value="dark-elegant">Dark Elegant (dark, gold accents)</option>
+                <option value="bold-contemporary">Bold Contemporary (light, red accents)</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Background color</label>
+                <div className="flex gap-2">
+                  <input type="color" value={backgroundColor.startsWith("#") ? backgroundColor : "#f8fafc"} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                  <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} placeholder="#f8fafc or leave blank for theme default" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Text color</label>
+                <div className="flex gap-2">
+                  <input type="color" value={textColor.startsWith("#") ? textColor : "#334155"} onChange={(e) => setTextColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                  <input type="text" value={textColor} onChange={(e) => setTextColor(e.target.value)} placeholder="#334155 or leave blank for theme default" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                </div>
+              </div>
+            </div>
             <div>
               <label className={labelClass}>Button border radius</label>
               <div className="flex gap-2 items-center">
@@ -1388,7 +1494,18 @@ function CustomFormEditor({
             </div>
             <div className={`p-2 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden rounded-xl ${previewDisplayMode === "compressed" ? "min-h-[280px]" : "min-h-[420px]"}`}>
               <PreviewIframe
-                src={`${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?card=${card.id}${previewDisplayMode === "compressed" ? `&seamless=1&theme=${previewTheme}&mode=compressed` : ""}${previewDisplayMode === "full_width" ? "&fullscreen=1" : ""}`}
+                src={(() => {
+                  const base = `${baseUrl.replace(/\/$/, "")}/give/${slug}/embed`;
+                  const params = new URLSearchParams();
+                  if (card.id !== DEFAULT_FORM_ID) params.set("card", card.id);
+                  if (previewDisplayMode === "compressed") {
+                    params.set("seamless", "1");
+                    params.set("theme", previewTheme);
+                    params.set("mode", "compressed");
+                  }
+                  if (previewDisplayMode === "full_width") params.set("fullscreen", "1");
+                  return params.toString() ? `${base}?${params}` : base;
+                })()}
                 title="Form preview"
                 className="w-full rounded-xl border-0"
                 minHeight={previewDisplayMode === "compressed" ? 280 : 420}
