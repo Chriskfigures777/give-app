@@ -10,7 +10,6 @@ import {
   Banknote,
   Calendar,
   Users,
-  Palette,
   Settings,
   CreditCard,
   ShieldCheck,
@@ -128,7 +127,6 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
               {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}
               {link("/dashboard/pages", "Website builder", <Layout className={iconClass} />)}
               {link("/dashboard/pages/cms", "Website content", <FileStack className={iconClass} />)}
-              {link("/dashboard/website-form", "Website form", <Palette className={iconClass} />)}
               {link("/dashboard/custom-forms", "Custom forms", <Code2 className={iconClass} />)}
             </>
           )}

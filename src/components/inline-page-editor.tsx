@@ -796,7 +796,7 @@ export function InlinePageEditor({
                 </div>
               )}
               <a
-                href="/dashboard/website-form"
+                href="/dashboard/pages?openForm=1"
                 className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:underline font-medium"
               >
                 Customize form & cards

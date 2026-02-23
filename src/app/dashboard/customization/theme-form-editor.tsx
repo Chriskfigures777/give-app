@@ -52,6 +52,8 @@ type Props = {
   connectedPeers?: { id: string; name: string; slug: string; stripe_connect_account_id: string }[];
   splitRecipientLimit?: number;
   currentPlan?: "free" | "growth" | "pro";
+  /** When true, uses compact styling for the website builder slide-out panel */
+  panelMode?: boolean;
 };
 
 export function ThemeFormEditor({
@@ -78,6 +80,7 @@ export function ThemeFormEditor({
   connectedPeers = [],
   splitRecipientLimit = Infinity,
   currentPlan = "free",
+  panelMode = false,
 }: Props) {
   const router = useRouter();
   const [suggestedAmounts, setSuggestedAmounts] = useState<number[]>(serverAmounts);
@@ -198,32 +201,49 @@ export function ThemeFormEditor({
     }
   }
 
+  const cardClass = panelMode
+    ? "overflow-hidden rounded-xl border border-slate-200/70 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:border-slate-700/60 dark:bg-slate-800/50"
+    : "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden";
+  const headerClass = panelMode
+    ? "relative border-b border-slate-100 bg-gradient-to-r from-emerald-50/60 via-white to-teal-50/40 px-4 py-3 dark:border-slate-700/50 dark:from-emerald-900/10 dark:via-slate-800/50 dark:to-teal-900/10"
+    : "px-5 py-4 border-b border-slate-100 dark:border-slate-700";
+  const bodyClass = panelMode ? "p-4 space-y-4" : "p-5 space-y-5";
+
   return (
-    <div className="flex flex-col lg:flex-row min-w-0 min-h-0 gap-8">
-      {/* Left: Editor */}
-      <div className="w-full lg:w-[400px] shrink-0 space-y-6">
-        {/* Hero callout */}
-        <div className="rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 p-5">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-800/50">
-              <Zap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <p className="font-bold text-dashboard-text">Website form</p>
-              <p className="mt-1 text-[13px] text-dashboard-text-muted leading-relaxed">
-                One form for your website templates. Edit the basics below — name, image or video, amounts, splits. It loads dynamically on your site and matches your theme automatically.
-              </p>
+    <div className={`flex min-w-0 min-h-0 ${panelMode ? "flex-col gap-4" : "flex-col lg:flex-row gap-8"}`}>
+      {/* Editor */}
+      <div className={`w-full shrink-0 ${panelMode ? "space-y-4" : "lg:w-[400px] space-y-6"}`}>
+        {/* Hero callout — compact in panel mode */}
+        {!panelMode && (
+          <div className="rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 p-5">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-800/50">
+                <Zap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <p className="font-bold text-dashboard-text">Website form</p>
+                <p className="mt-1 text-[13px] text-dashboard-text-muted leading-relaxed">
+                  One form for your website templates. Edit the basics below — name, image or video, amounts, splits. It loads dynamically on your site and matches your theme automatically.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        {panelMode && (
+          <div className="flex items-center gap-2 rounded-lg border border-emerald-200/80 bg-emerald-50/50 px-3 py-2 dark:border-emerald-800/40 dark:bg-emerald-900/10">
+            <Zap className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-medium text-emerald-800 dark:text-emerald-300">Form matches your site theme automatically</span>
+          </div>
+        )}
 
         {/* Content */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h3 className="font-semibold text-dashboard-text">Content</h3>
+        <div className={cardClass}>
+          <div className={headerClass}>
+            {panelMode && <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />}
+            <h3 className={`font-semibold text-dashboard-text ${panelMode ? "text-sm" : ""}`}>Content</h3>
             <p className="text-xs text-dashboard-text-muted mt-0.5">Text, image, and amounts</p>
           </div>
-          <div className="p-5 space-y-5">
+          <div className={bodyClass}>
             <div>
               <label className="block text-sm font-medium text-dashboard-text mb-1.5">Header</label>
               <input
@@ -347,12 +367,13 @@ export function ThemeFormEditor({
 
         {/* Splits — website form has its own splits */}
         {SPLITS_ENABLED && (
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-              <h3 className="font-semibold text-dashboard-text">Payment splits</h3>
+          <div className={cardClass}>
+            <div className={headerClass}>
+              {panelMode && <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />}
+              <h3 className={`font-semibold text-dashboard-text ${panelMode ? "text-sm" : ""}`}>Payment splits</h3>
               <p className="text-xs text-dashboard-text-muted mt-0.5">Split donations from this form to connected peers</p>
             </div>
-            <div className="p-5">
+            <div className={panelMode ? "p-4" : "p-5"}>
               <SplitPercentageChart
                 splits={splits}
                 onSplitsChange={setSplits}
@@ -367,12 +388,13 @@ export function ThemeFormEditor({
         )}
 
         {/* Display mode */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h3 className="font-semibold text-dashboard-text">Display mode</h3>
+        <div className={cardClass}>
+          <div className={headerClass}>
+            {panelMode && <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />}
+            <h3 className={`font-semibold text-dashboard-text ${panelMode ? "text-sm" : ""}`}>Display mode</h3>
             <p className="text-xs text-dashboard-text-muted mt-0.5">How the form appears when embedded</p>
           </div>
-          <div className="p-5">
+          <div className={panelMode ? "p-4" : "p-5"}>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
@@ -415,12 +437,13 @@ export function ThemeFormEditor({
         </div>
 
         {/* Embed code */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h3 className="font-semibold text-dashboard-text">Embed code</h3>
+        <div className={cardClass}>
+          <div className={headerClass}>
+            {panelMode && <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />}
+            <h3 className={`font-semibold text-dashboard-text ${panelMode ? "text-sm" : ""}`}>Embed code</h3>
             <p className="text-xs text-dashboard-text-muted mt-0.5">Copy the iframe code to embed this form on your website</p>
           </div>
-          <div className="p-5">
+          <div className={panelMode ? "p-4" : "p-5"}>
             <div className="flex gap-2">
               <code className="flex-1 block p-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono text-dashboard-text break-all">
                 {`<iframe src="${baseUrl.replace(/\/$/, "")}/give/${slug}/embed" width="100%" height="600" frameborder="0" title="Donate to ${slug}"></iframe>`}
@@ -445,14 +468,15 @@ export function ThemeFormEditor({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
+          className={`w-full flex items-center justify-center gap-2 font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 transition-all duration-200 ${panelMode ? "py-3 rounded-xl shadow-sm hover:shadow-md" : "py-3.5 rounded-xl"}`}
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
           {saving ? "Saving..." : saved ? "Saved" : "Save"}
         </button>
       </div>
 
-      {/* Right: Live preview */}
+      {/* Right: Live preview — hidden in panel mode */}
+      {!panelMode && (
       <div className="flex-1 min-w-0">
         <div className="sticky top-8 space-y-4">
           <div>
@@ -485,6 +509,7 @@ export function ThemeFormEditor({
           </div>
         </div>
       </div>
+      )}
 
       {pexelsPicker && (
         <PexelsMediaPicker

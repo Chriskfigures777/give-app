@@ -3,8 +3,15 @@ import { requireAuth } from "@/lib/auth";
 import { getOrgVerification } from "@/lib/verification";
 import { WebsiteBuilderClient } from "./website-builder-client";
 import { VerificationGate } from "@/components/verification-gate";
+import { fetchFormsPageData } from "../forms/forms-data";
+import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
+import { env } from "@/env";
 
-export default async function WebsiteBuilderPage() {
+export default async function WebsiteBuilderPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ openForm?: string }>;
+}) {
   const { profile, supabase } = await requireAuth();
   const isPlatformAdmin = profile?.role === "platform_admin";
   const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
@@ -27,6 +34,11 @@ export default async function WebsiteBuilderPage() {
     }
   }
 
+  const data = await fetchFormsPageData(orgId, supabase);
+  const { plan, planStatus } = await getOrgPlan(orgId, supabase);
+  const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
+  const baseUrl = env.app.domain().replace(/\/$/, "");
+
   const { data: formCustom } = await supabase
     .from("form_customizations")
     .select("website_embed_card_id")
@@ -45,12 +57,19 @@ export default async function WebsiteBuilderPage() {
     websiteFormName = (card as { name?: string } | null)?.name ?? "Custom form";
   }
 
+  const resolved = await searchParams;
+  const openFormInitially = resolved.openForm === "1" || resolved.openForm === "true";
+
   return (
     <div className="h-full w-full">
       <WebsiteBuilderClient
         organizationId={orgId}
         websiteFormName={websiteFormName}
-        formDesignUrl="/dashboard/website-form"
+        formsData={data}
+        baseUrl={baseUrl}
+        splitRecipientLimit={splitRecipientLimit}
+        plan={plan}
+        openFormInitially={openFormInitially}
       />
     </div>
   );
