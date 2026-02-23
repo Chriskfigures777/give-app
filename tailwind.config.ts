@@ -27,6 +27,7 @@ export default {
           border: "hsl(var(--dashboard-border))",
           text: "hsl(var(--dashboard-text))",
           "text-muted": "hsl(var(--dashboard-text-muted))",
+          accent: "hsl(var(--dashboard-accent))",
           input: "hsl(var(--dashboard-input-bg))",
           "input-border": "hsl(var(--dashboard-input-border))",
         },

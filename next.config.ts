@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
   },
   // Externalize Supabase to avoid vendor-chunk path resolution failures in static-paths-worker
   // pdf-lib: required for PDF generation in API routes (receipts, year-end)
-  serverExternalPackages: ["@supabase/supabase-js", "@supabase/ssr", "pdf-lib"],
+  // undici: used by fetch-with-timeout for custom connect timeout; requires node:net
+  serverExternalPackages: ["@supabase/supabase-js", "@supabase/ssr", "pdf-lib", "undici"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },

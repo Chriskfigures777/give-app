@@ -1,17 +1,23 @@
+import { Agent } from "undici";
+
 /**
  * Fetch wrapper with timeout for Supabase Auth/API calls.
  * When Supabase is unreachable (network issues, VPN, etc.), fail fast
  * instead of blocking indefinitely so the app stays responsive.
- * Set to 15s to accommodate cold starts and proxy latency (~10s observed).
+ * - connectTimeout: 25s (undici default is 10s; Supabase via Cloudflare can be slow)
+ * - request timeout: 30s (abort after this)
  */
-const SUPABASE_FETCH_TIMEOUT_MS = 15000;
+const CONNECT_TIMEOUT_MS = 25000;
+const REQUEST_TIMEOUT_MS = 30000;
+
+const dispatcher = new Agent({ connectTimeout: CONNECT_TIMEOUT_MS });
 
 export function createFetchWithTimeout(): typeof fetch {
   return (input: RequestInfo | URL, init?: RequestInit) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
-      SUPABASE_FETCH_TIMEOUT_MS
+      REQUEST_TIMEOUT_MS
     );
 
     const signal =
@@ -19,7 +25,13 @@ export function createFetchWithTimeout(): typeof fetch {
         ? mergeSignals(init.signal, controller.signal)
         : controller.signal;
 
-    return fetch(input, { ...init, signal }).finally(() =>
+    const fetchOptions: RequestInit & { dispatcher?: typeof dispatcher } = {
+      ...init,
+      signal,
+      dispatcher,
+    };
+
+    return fetch(input, fetchOptions).finally(() =>
       clearTimeout(timeoutId)
     );
   };
