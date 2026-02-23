@@ -163,7 +163,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     : DEFAULT_HEADER_IMAGE_URL;
 
   const embedFormTheme = (formCustom?.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary") ?? "default";
-  const useThemedLayout = embedFormTheme !== "default";
+  /** When a specific embed card is requested (?card=xxx), use the card's style — don't override with website form's themed layout. */
+  const useThemedLayout = !cardId && embedFormTheme !== "default";
 
   const effectiveStyle = isCompact ? "compressed" : (embedCard?.style ?? "full");
 
