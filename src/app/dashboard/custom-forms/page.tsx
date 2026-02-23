@@ -4,7 +4,6 @@ import { env } from "@/env";
 import { EmbedCardsPanel } from "../embed/embed-cards-panel";
 import { fetchFormsPageData } from "../forms/forms-data";
 import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
-import type { DesignSet } from "@/lib/stock-media";
 import { Code2 } from "lucide-react";
 
 export default async function CustomFormsPage() {
@@ -41,25 +40,7 @@ export default async function CustomFormsPage() {
           orgPageEmbedCardId={data.effectiveForm.org_page_embed_card_id ?? null}
           websiteEmbedCardId={null}
           hideWebsiteButton
-          hasDefaultForm={!!data.formCustom}
-          defaultFormDisplayMode={(data.effectiveForm.form_display_mode as "full" | "compressed" | "full_width") ?? "full"}
-          defaultFormDesignSet={(() => {
-            const ds = (data.effectiveForm.design_sets as DesignSet[] | undefined)?.[0];
-            if (ds?.media_url || ds?.title || ds?.subtitle) return ds;
-            if (data.effectiveForm.header_image_url || data.effectiveForm.header_text || data.effectiveForm.subheader_text) {
-              return {
-                media_type: "image" as const,
-                media_url: data.effectiveForm.header_image_url ?? null,
-                title: data.effectiveForm.header_text ?? null,
-                subtitle: data.effectiveForm.subheader_text ?? null,
-              } satisfies DesignSet;
-            }
-            return null;
-          })()}
-          defaultFormButtonColor={data.effectiveForm.button_color ?? null}
-          defaultFormButtonTextColor={data.effectiveForm.button_text_color ?? null}
-          defaultFormBorderRadius={data.effectiveForm.button_border_radius ?? null}
-          defaultEmbedFormTheme={(data.effectiveForm.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary") ?? "default"}
+          hasDefaultForm={false}
           connectedPeers={data.peerOrgs}
           splitRecipientLimit={splitRecipientLimit}
           currentPlan={plan}

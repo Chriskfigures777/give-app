@@ -1146,7 +1146,6 @@ function CustomFormEditor({
   const [previewDisplayMode, setPreviewDisplayMode] = useState<"full_width" | "full" | "compressed">(
     card.style === "compressed" ? "compressed" : "full_width"
   );
-  const [previewTheme, setPreviewTheme] = useState(() => embedToSeamlessTheme(card.embed_form_theme as EmbedFormThemeId));
 
   useEffect(() => {
     setName(card.name);
@@ -1166,7 +1165,6 @@ function CustomFormEditor({
     setIsEnabled(card.is_enabled);
     setPageSection(card.page_section);
     setSplits((card.splits as { percentage: number; accountId: string }[] | undefined) ?? []);
-    setPreviewTheme(embedToSeamlessTheme(card.embed_form_theme as EmbedFormThemeId));
     setPreviewDisplayMode((prev) => (card.style === "compressed" ? "compressed" : prev === "compressed" ? "full_width" : prev));
   }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.background_color, card.text_color, card.embed_form_theme, card.is_enabled, card.page_section, card.splits]);
 
@@ -1478,19 +1476,6 @@ function CustomFormEditor({
                 ))}
                 </div>
               </div>
-              {previewDisplayMode === "compressed" && (
-                <div>
-                  <label className="block text-xs font-medium text-dashboard-text-muted mb-1.5">Theme (compact)</label>
-                  <select value={previewTheme} onChange={(e) => setPreviewTheme(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-dashboard-text text-sm">
-                    <option value="church-grace">Church Grace</option>
-                    <option value="modern-minimal">Modern Minimal</option>
-                    <option value="warm-heritage">Warm Heritage</option>
-                    <option value="bold-contemporary">Bold Contemporary</option>
-                    <option value="dark-elegant">Dark Elegant</option>
-                    <option value="vibrant-community">Vibrant Community</option>
-                  </select>
-                </div>
-              )}
             </div>
             <div className={`p-2 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden rounded-xl ${previewDisplayMode === "compressed" ? "min-h-[280px]" : "min-h-[420px]"}`}>
               <PreviewIframe
@@ -1500,7 +1485,7 @@ function CustomFormEditor({
                   if (card.id !== DEFAULT_FORM_ID) params.set("card", card.id);
                   if (previewDisplayMode === "compressed") {
                     params.set("seamless", "1");
-                    params.set("theme", previewTheme);
+                    params.set("theme", embedToSeamlessTheme(embedFormTheme));
                     params.set("mode", "compressed");
                   }
                   if (previewDisplayMode === "full_width") params.set("fullscreen", "1");
