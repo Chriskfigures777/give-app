@@ -580,10 +580,7 @@ export function EmbedCardsPanel({
       if (payload.text_color !== undefined) body.text_color = payload.text_color;
       if (payload.embed_form_theme !== undefined) body.embed_form_theme = payload.embed_form_theme;
       if (payload.style !== undefined) {
-        body.form_display_mode =
-          payload.style === "compressed" ? "compressed"
-          : payload.style === "full_width" ? "full_width"
-          : "full";
+        body.form_display_mode = payload.style === "compressed" ? "compressed" : "full";
       }
       const res = await fetch("/api/form-customization", {
         method: "PATCH",
