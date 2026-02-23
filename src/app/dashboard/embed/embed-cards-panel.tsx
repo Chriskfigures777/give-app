@@ -43,8 +43,6 @@ import { PreviewIframe } from "@/components/preview-iframe";
 
 import type { DesignSet } from "@/lib/stock-media";
 
-type EmbedFormThemeId = "default" | "grace" | "dark-elegant" | "bold-contemporary";
-
 type EmbedCard = {
   id: string;
   name: string;
