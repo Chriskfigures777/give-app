@@ -6,6 +6,7 @@ import { useUser } from "@/lib/use-user";
 import { NavNotificationsDropdown } from "./nav-notifications-dropdown";
 import { NavConnectionRequestsDropdown } from "./nav-connection-requests-dropdown";
 import { DashboardSearch } from "./dashboard-search";
+import { DashboardThemePicker } from "./dashboard-theme-picker";
 
 export function DashboardNavBar() {
   const { user } = useUser();
@@ -44,8 +45,9 @@ export function DashboardNavBar() {
         <DashboardSearch />
       </div>
 
-      {/* Right: action buttons */}
+      {/* Right: theme picker + action buttons */}
       <div className="flex items-center gap-1">
+        <DashboardThemePicker size="sm" placement="top" />
         <div className="relative">
           <button
             type="button"

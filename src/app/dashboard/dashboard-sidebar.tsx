@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { DashboardNav } from "./dashboard-nav";
-import { DashboardThemeToggle } from "@/components/theme-toggle";
+import { DashboardThemePicker } from "@/components/dashboard-theme-picker";
 import { getCachedDashboardAuth } from "@/lib/auth";
 
 export async function DashboardSidebar() {
@@ -40,7 +40,7 @@ export async function DashboardSidebar() {
               </Button>
             </form>
           </div>
-          <DashboardThemeToggle size="sm" />
+          <DashboardThemePicker size="sm" />
         </div>
       </div>
     </>

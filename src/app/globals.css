@@ -379,6 +379,98 @@
   }
 }
 
+/* ── Dashboard multi-theme: light, dark, purple, green, dark-gray, blue ── */
+[data-dashboard-theme="light"] {
+  --dashboard-bg: 220 20% 97%;
+  --dashboard-sidebar: 0 0% 100%;
+  --dashboard-card: 0 0% 100%;
+  --dashboard-card-hover: 220 14% 95%;
+  --dashboard-border: 220 15% 92%;
+  --dashboard-text: 222 47% 11%;
+  --dashboard-text-muted: 215 16% 47%;
+  --dashboard-input-bg: 220 20% 98%;
+  --dashboard-input-border: 220 13% 89%;
+  --dashboard-glass: rgba(255, 255, 255, 0.72);
+  --dashboard-glass-border: rgba(255, 255, 255, 0.5);
+  --accent-gradient: linear-gradient(135deg, #10b981 0%, #0d9488 50%, #06b6d4 100%);
+  --accent-glow: 0 0 24px rgba(16, 185, 129, 0.15);
+}
+[data-dashboard-theme="dark"] {
+  --dashboard-bg: 222 47% 11%;
+  --dashboard-sidebar: 220 40% 13%;
+  --dashboard-card: 217 33% 17%;
+  --dashboard-card-hover: 215 28% 22%;
+  --dashboard-border: 217 30% 24%;
+  --dashboard-text: 210 40% 98%;
+  --dashboard-text-muted: 215 20% 65%;
+  --dashboard-input-bg: 222 40% 13%;
+  --dashboard-input-border: 217 33% 25%;
+  --dashboard-glass: rgba(30, 41, 59, 0.72);
+  --dashboard-glass-border: rgba(51, 65, 85, 0.4);
+  --accent-gradient: linear-gradient(135deg, #10b981 0%, #0d9488 50%, #06b6d4 100%);
+  --accent-glow: 0 0 24px rgba(16, 185, 129, 0.2);
+}
+[data-dashboard-theme="purple"] {
+  --dashboard-bg: 263 45% 11%;
+  --dashboard-sidebar: 263 50% 9%;
+  --dashboard-card: 263 40% 14%;
+  --dashboard-card-hover: 263 35% 18%;
+  --dashboard-border: 263 30% 22%;
+  --dashboard-text: 270 20% 98%;
+  --dashboard-text-muted: 263 15% 65%;
+  --dashboard-input-bg: 263 45% 12%;
+  --dashboard-input-border: 263 30% 24%;
+  --dashboard-glass: rgba(46, 16, 101, 0.72);
+  --dashboard-glass-border: rgba(88, 28, 135, 0.4);
+  --accent-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #6366f1 100%);
+  --accent-glow: 0 0 24px rgba(168, 85, 247, 0.25);
+}
+[data-dashboard-theme="green"] {
+  --dashboard-bg: 152 25% 96%;
+  --dashboard-sidebar: 0 0% 100%;
+  --dashboard-card: 0 0% 100%;
+  --dashboard-card-hover: 152 20% 93%;
+  --dashboard-border: 152 18% 88%;
+  --dashboard-text: 160 40% 12%;
+  --dashboard-text-muted: 152 15% 42%;
+  --dashboard-input-bg: 152 25% 98%;
+  --dashboard-input-border: 152 15% 90%;
+  --dashboard-glass: rgba(240, 253, 244, 0.85);
+  --dashboard-glass-border: rgba(187, 247, 208, 0.5);
+  --accent-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+  --accent-glow: 0 0 24px rgba(16, 185, 129, 0.2);
+}
+[data-dashboard-theme="dark-gray"] {
+  --dashboard-bg: 220 15% 9%;
+  --dashboard-sidebar: 220 18% 7%;
+  --dashboard-card: 220 14% 12%;
+  --dashboard-card-hover: 220 12% 16%;
+  --dashboard-border: 220 12% 20%;
+  --dashboard-text: 220 15% 96%;
+  --dashboard-text-muted: 220 10% 62%;
+  --dashboard-input-bg: 220 15% 11%;
+  --dashboard-input-border: 220 12% 22%;
+  --dashboard-glass: rgba(30, 41, 59, 0.75);
+  --dashboard-glass-border: rgba(51, 65, 85, 0.45);
+  --accent-gradient: linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%);
+  --accent-glow: 0 0 24px rgba(100, 116, 139, 0.2);
+}
+[data-dashboard-theme="blue"] {
+  --dashboard-bg: 217 50% 10%;
+  --dashboard-sidebar: 217 55% 8%;
+  --dashboard-card: 217 45% 13%;
+  --dashboard-card-hover: 217 40% 17%;
+  --dashboard-border: 217 35% 22%;
+  --dashboard-text: 210 40% 98%;
+  --dashboard-text-muted: 217 25% 65%;
+  --dashboard-input-bg: 217 50% 11%;
+  --dashboard-input-border: 217 40% 23%;
+  --dashboard-glass: rgba(30, 58, 138, 0.72);
+  --dashboard-glass-border: rgba(59, 130, 246, 0.15);
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  --accent-glow: 0 0 24px rgba(59, 130, 246, 0.25);
+}
+
 @layer base {
   * {
     @apply border-border;

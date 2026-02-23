@@ -4,22 +4,35 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const STORAGE_KEY = "give-dashboard-theme";
 
-export type DashboardTheme = "dark" | "light";
+export const DASHBOARD_THEMES = [
+  { id: "light", label: "Light", dark: false },
+  { id: "dark", label: "Dark", dark: true },
+  { id: "purple", label: "Purple", dark: true },
+  { id: "green", label: "Green", dark: false },
+  { id: "dark-gray", label: "Dark Gray", dark: true },
+  { id: "blue", label: "Blue", dark: true },
+] as const;
+
+export type DashboardThemeId = (typeof DASHBOARD_THEMES)[number]["id"];
+
+const DARK_THEME_IDS = new Set<string>(
+  DASHBOARD_THEMES.filter((t) => t.dark).map((t) => t.id)
+);
 
 type DashboardThemeContextValue = {
-  theme: DashboardTheme;
-  setTheme: (theme: DashboardTheme) => void;
+  theme: DashboardThemeId;
+  setTheme: (theme: DashboardThemeId) => void;
   toggleTheme: () => void;
 };
 
 const DashboardThemeContext = createContext<DashboardThemeContextValue | null>(null);
 
 /**
- * Dashboard-only theme. Light is default. Applies dark/light to html only when mounted (i.e. on dashboard).
- * Non-dashboard pages stay light.
+ * Dashboard-only theme. Light is default. Applies theme via data-dashboard-theme and dark class.
+ * Supports: light, dark, purple, green, dark-gray, blue.
  */
 export function DashboardThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<DashboardTheme>("light");
+  const [theme, setThemeState] = useState<DashboardThemeId>("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -29,8 +42,9 @@ export function DashboardThemeProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     if (!mounted) return;
     try {
-      const stored = localStorage.getItem(STORAGE_KEY) as DashboardTheme | null;
-      if (stored === "dark" || stored === "light") {
+      const stored = localStorage.getItem(STORAGE_KEY) as DashboardThemeId | null;
+      const valid = DASHBOARD_THEMES.some((t) => t.id === stored);
+      if (stored && valid) {
         setThemeState(stored);
       }
     } catch {
@@ -45,18 +59,22 @@ export function DashboardThemeProvider({ children }: { children: React.ReactNode
     } catch {
       // ignore
     }
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+    const root = document.documentElement;
+    root.setAttribute("data-dashboard-theme", theme);
+    if (DARK_THEME_IDS.has(theme)) {
+      root.classList.add("dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
     }
     return () => {
-      document.documentElement.classList.remove("dark");
+      root.removeAttribute("data-dashboard-theme");
+      root.classList.remove("dark");
     };
   }, [mounted, theme]);
 
-  const setTheme = (theme: DashboardTheme) => setThemeState(theme);
-  const toggleTheme = () => setThemeState((t) => (t === "dark" ? "light" : "dark"));
+  const setTheme = (t: DashboardThemeId) => setThemeState(t);
+  const toggleTheme = () =>
+    setThemeState((t) => (t === "light" ? "dark" : t === "dark" ? "light" : t === "green" ? "dark" : "light"));
 
   return (
     <DashboardThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

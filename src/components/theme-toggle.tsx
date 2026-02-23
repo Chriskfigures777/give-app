@@ -10,7 +10,7 @@ type Props = {
   size?: "sm" | "default";
 };
 
-/** Dashboard-only: toggle between light (default) and dark mode. */
+/** Dashboard-only: toggle between light and dark mode. */
 export function DashboardThemeToggle({ className, size }: Props) {
   const { theme, toggleTheme } = useDashboardTheme();
   const [mounted, setMounted] = useState(false);
@@ -19,7 +19,7 @@ export function DashboardThemeToggle({ className, size }: Props) {
     setMounted(true);
   }, []);
 
-  const isDark = theme === "dark";
+  const isDark = ["dark", "purple", "dark-gray", "blue"].includes(theme);
   const iconSize = size === "sm" ? "h-4 w-4" : "h-5 w-5";
 
   return (
