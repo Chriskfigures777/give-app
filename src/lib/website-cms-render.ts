@@ -304,14 +304,16 @@ function detectTemplateTheme(html: string): string | null {
 export function injectGiveEmbedFallback(
   html: string,
   orgSlug: string,
-  websiteEmbedCardId?: string | null
+  websiteEmbedCardId?: string | null,
+  /** When provided (e.g. for static S3 sites), iframe src uses this base URL so the embed loads from the app. */
+  embedBaseUrl?: string | null
 ): string {
   if (!orgSlug) return html;
   let out = html;
   const theme = detectTemplateTheme(html);
 
   if (out.includes("{{cms:give_embed}}")) {
-    out = out.replace(/\{\{cms:give_embed\}\}/g, renderGiveEmbed(orgSlug, theme, websiteEmbedCardId));
+    out = out.replace(/\{\{cms:give_embed\}\}/g, renderGiveEmbed(orgSlug, theme, websiteEmbedCardId, embedBaseUrl));
   }
 
   if (out.includes("data-give-embed")) return out;
@@ -324,7 +326,7 @@ export function injectGiveEmbedFallback(
 
   if (!hasStaticForm) return out;
 
-  const embed = renderGiveEmbed(orgSlug, theme, websiteEmbedCardId);
+  const embed = renderGiveEmbed(orgSlug, theme, websiteEmbedCardId, embedBaseUrl);
 
   let block = findBlockByClass(out, "give-split");
   while (block) {
@@ -349,15 +351,18 @@ export function injectGiveEmbedFallback(
   return out;
 }
 
-/** Generates the seamless iframe embed HTML for the giving form. Uses relative URL. */
+/** Generates the seamless iframe embed HTML for the giving form. Uses relative URL unless embedBaseUrl is provided (for static sites). */
 export function renderGiveEmbed(
   orgSlug: string,
   templateTheme?: string | null,
-  websiteEmbedCardId?: string | null
+  websiteEmbedCardId?: string | null,
+  /** When provided (e.g. for static S3 sites), iframe src uses this base URL so the embed loads from the app. */
+  embedBaseUrl?: string | null
 ): string {
   const themeParam = templateTheme ? `&theme=${encodeURIComponent(templateTheme)}` : "";
   const cardParam = websiteEmbedCardId ? `&card=${encodeURIComponent(websiteEmbedCardId)}` : "";
-  const embedSrc = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}${cardParam}`;
+  const path = `/give/${encodeURIComponent(orgSlug)}/embed?seamless=1${themeParam}${cardParam}`;
+  const embedSrc = embedBaseUrl ? `${embedBaseUrl.replace(/\/$/, "")}${path}` : path;
   const iframeId = `give-embed-${orgSlug}`;
   return `<div data-give-embed style="width:100%;max-width:960px;margin:0 auto;">
   <iframe

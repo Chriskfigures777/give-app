@@ -15,6 +15,7 @@ import {
   renderEventsGrid,
   renderEventsList,
   renderTeamMembers,
+  injectGiveEmbedFallback,
   resolveCmsBinding,
   APP_URL,
 } from "@/lib/website-cms-render";
@@ -132,13 +133,24 @@ export function rewriteLinks(
 export async function injectCmsContent(
   html: string,
   orgId: string,
+  orgSlug: string,
   supabase: ReturnType<typeof createServiceClient>
 ): Promise<string> {
   const needsCms =
     html.includes("{{cms:") ||
     html.includes("data-cms-binding") ||
     html.includes("<!-- cms:");
-  if (!needsCms) return html;
+  if (!needsCms) {
+    // Still inject give embed for pages with {{cms:give_embed}} or static form blocks
+    const { data: formCustom } = await supabase
+      .from("form_customizations")
+      .select("website_embed_card_id")
+      .eq("organization_id", orgId)
+      .maybeSingle();
+    const websiteEmbedCardId = (formCustom as { website_embed_card_id?: string | null } | null)?.website_embed_card_id ?? null;
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? APP_URL ?? "").replace(/\/$/, "");
+    return injectGiveEmbedFallback(html, orgSlug, websiteEmbedCardId, appUrl);
+  }
 
   const [
     { data: featuredSermon },
@@ -230,6 +242,16 @@ export async function injectCmsContent(
       events: events ?? [],
     });
   }
+
+  // Give embed: replace {{cms:give_embed}} and static form placeholders with working iframe
+  const { data: formCustom } = await supabase
+    .from("form_customizations")
+    .select("website_embed_card_id")
+    .eq("organization_id", orgId)
+    .maybeSingle();
+  const websiteEmbedCardId = (formCustom as { website_embed_card_id?: string | null } | null)?.website_embed_card_id ?? null;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? APP_URL ?? "").replace(/\/$/, "");
+  out = injectGiveEmbedFallback(out, orgSlug, websiteEmbedCardId, appUrl);
 
   return out;
 }
@@ -413,7 +435,7 @@ export async function generateStaticSite(
     html = rewriteLinks(html, "/", true);
 
     // Inject CMS content (with data-cms-block wrappers for real-time targeting)
-    html = await injectCmsContent(html, orgId, supabase);
+    html = await injectCmsContent(html, orgId, orgSlug, supabase);
 
     // Inject real-time script before </body> so CMS stays live after publish
     if (realtimeScript) {
