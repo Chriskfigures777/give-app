@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { createFetchWithTimeout } from "@/lib/supabase/fetch-with-timeout";
+import { createFetchWithTimeout } from "@/lib/supabase/fetch-with-timeout-edge";
 
 function isAppDomain(host: string): boolean {
   if (host.startsWith("localhost")) return true;
