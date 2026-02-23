@@ -138,48 +138,48 @@ export default async function MyDonationsPage() {
     <div className="space-y-6 p-2 sm:p-4">
       {/* Header */}
       <div className="dashboard-fade-in">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">My gifts</h1>
-        <p className="mt-1 text-slate-600">
+        <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">My gifts</h1>
+        <p className="mt-1 text-dashboard-text-muted">
           View your giving history and download tax receipts.
         </p>
       </div>
 
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-500">Total given</p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">
+              <p className="text-sm font-medium text-dashboard-text-muted">Total given</p>
+              <p className="mt-1 text-2xl font-bold text-dashboard-text">
                 ${(totalCents / 100).toLocaleString()}
               </p>
             </div>
-            <div className="rounded-xl bg-emerald-500/10 p-2.5">
-              <Receipt className="h-6 w-6 text-emerald-600" />
+            <div className="rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 p-2.5">
+              <Receipt className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
           </div>
         </div>
-        <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-500">Year to date ({currentYear})</p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">
+              <p className="text-sm font-medium text-dashboard-text-muted">Year to date ({currentYear})</p>
+              <p className="mt-1 text-2xl font-bold text-dashboard-text">
                 ${(ytdCents / 100).toLocaleString()}
               </p>
             </div>
-            <div className="rounded-xl bg-violet-500/10 p-2.5">
-              <Heart className="h-6 w-6 text-violet-600" />
+            <div className="rounded-xl bg-violet-500/10 dark:bg-violet-500/20 p-2.5">
+              <Heart className="h-6 w-6 text-violet-600 dark:text-violet-400" />
             </div>
           </div>
         </div>
-        <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-500">Gifts</p>
-              <p className="mt-1 text-2xl font-bold text-slate-900">{merged.length}</p>
+              <p className="text-sm font-medium text-dashboard-text-muted">Gifts</p>
+              <p className="mt-1 text-2xl font-bold text-dashboard-text">{merged.length}</p>
             </div>
-            <div className="rounded-xl bg-amber-500/10 p-2.5">
-              <Download className="h-6 w-6 text-amber-600" />
+            <div className="rounded-xl bg-amber-500/10 dark:bg-amber-500/20 p-2.5">
+              <Download className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
         </div>
@@ -190,28 +190,28 @@ export default async function MyDonationsPage() {
 
       {/* Recurring subscriptions — manage payments */}
       {activeSubs.length > 0 && (
-        <div className="dashboard-fade-in dashboard-fade-in-delay-4 rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-          <div className="border-b border-slate-200/80 px-5 py-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-emerald-600" />
+        <div className="dashboard-fade-in dashboard-fade-in-delay-4 rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden">
+          <div className="border-b border-dashboard-border px-5 py-4">
+            <h2 className="text-base font-bold text-dashboard-text flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               Recurring payments
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-dashboard-text-muted mt-0.5">
               Manage your monthly or yearly gifts. Update payment method, change amount, or cancel.
             </p>
           </div>
-          <ul className="divide-y divide-slate-200">
+          <ul className="divide-y divide-dashboard-border">
             {activeSubs.map((s) => (
               <li
                 key={s.id}
-                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50/50"
+                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-dashboard-card-hover/50"
               >
                 <div>
-                  <p className="font-medium text-slate-900">
+                  <p className="font-medium text-dashboard-text">
                     ${(Number(s.amount_cents) / 100).toLocaleString()}
                     /{s.interval === "month" ? "month" : "year"} to {s.organizations?.name ?? "Unknown"}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-dashboard-text-muted">
                     {s.created_at
                       ? `Started ${new Date(s.created_at).toLocaleDateString(undefined, { month: "short", year: "numeric" })}`
                       : ""}
@@ -226,23 +226,23 @@ export default async function MyDonationsPage() {
 
       {/* Quick Give — saved organizations */}
       {uniqueSavedOrgs.length > 0 && (
-        <div className={`rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden ${activeSubs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-5" : "dashboard-fade-in dashboard-fade-in-delay-4"}`}>
-          <div className="border-b border-slate-200/80 px-5 py-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Heart className="h-4 w-4 text-emerald-600" />
+        <div className={`rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden ${activeSubs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-5" : "dashboard-fade-in dashboard-fade-in-delay-4"}`}>
+          <div className="border-b border-dashboard-border px-5 py-4">
+            <h2 className="text-base font-bold text-dashboard-text flex items-center gap-2">
+              <Heart className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               Quick give — pay directly
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-dashboard-text-muted mt-0.5">
               Organizations you&apos;ve supported, saved to your profile. Give again in one click.
             </p>
           </div>
-          <ul className="divide-y divide-slate-200">
+          <ul className="divide-y divide-dashboard-border">
             {uniqueSavedOrgs.map((o) => (
               <li
                 key={o.organization_id}
-                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50/50"
+                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-dashboard-card-hover/50"
               >
-                <span className="font-medium text-slate-900">
+                <span className="font-medium text-dashboard-text">
                   {o.organizations?.name ?? "Unknown"}
                 </span>
                 <Link
@@ -258,13 +258,13 @@ export default async function MyDonationsPage() {
       )}
 
       {/* Donation list */}
-      <div className={`rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden ${activeSubs.length > 0 && uniqueSavedOrgs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-6" : activeSubs.length > 0 || uniqueSavedOrgs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-5" : "dashboard-fade-in dashboard-fade-in-delay-4"}`}>
-        <div className="border-b border-slate-200/80 px-5 py-4">
-          <h2 className="text-base font-bold text-slate-900">Giving history</h2>
+      <div className={`rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden ${activeSubs.length > 0 && uniqueSavedOrgs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-6" : activeSubs.length > 0 || uniqueSavedOrgs.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-5" : "dashboard-fade-in dashboard-fade-in-delay-4"}`}>
+        <div className="border-b border-dashboard-border px-5 py-4">
+          <h2 className="text-base font-bold text-dashboard-text">Giving history</h2>
         </div>
         {merged.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
-            <Receipt className="mx-auto h-12 w-12 text-slate-300 mb-3" />
+          <div className="p-8 text-center text-dashboard-text-muted">
+            <Receipt className="mx-auto h-12 w-12 text-dashboard-text-muted/50 mb-3" />
             <p>No gifts yet.</p>
             <p className="text-sm mt-1">Gifts made while logged in will appear here.</p>
             <Link href="/" className="mt-4 inline-block text-emerald-600 hover:underline">
@@ -272,18 +272,18 @@ export default async function MyDonationsPage() {
             </Link>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-200">
+          <ul className="divide-y divide-dashboard-border">
             {merged.map((d) => (
               <li
                 key={d.id}
-                className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-slate-50/50"
+                className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-dashboard-card-hover/50"
               >
                 <div>
-                  <p className="font-medium text-slate-900">
+                  <p className="font-medium text-dashboard-text">
                     ${(Number(d.amount_cents) / 100).toLocaleString()} to{" "}
                     {d.organizations?.name ?? "Unknown"}
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-dashboard-text-muted">
                     {d.donation_campaigns?.name ? `${d.donation_campaigns.name} · ` : ""}
                     {d.created_at
                       ? new Date(d.created_at).toLocaleDateString(undefined, {
@@ -307,7 +307,7 @@ export default async function MyDonationsPage() {
                     href={`/receipts/${d.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-dashboard-border px-3 py-1.5 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover"
                   >
                     <Download className="h-4 w-4" />
                     Receipt

@@ -71,6 +71,7 @@ export async function PATCH(
       venueAddress?: string;
       onlineEvent?: boolean;
       imageUrl?: string;
+      listedOnExplore?: boolean;
     };
 
     try {
@@ -91,6 +92,7 @@ export async function PATCH(
     if (body.venueAddress != null) updates.venue_address = body.venueAddress.trim() || null;
     if (body.onlineEvent != null) updates.online_event = body.onlineEvent;
     if (body.imageUrl != null) updates.image_url = body.imageUrl.trim() || null;
+    if (body.listedOnExplore != null) updates.listed_on_explore = body.listedOnExplore;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)

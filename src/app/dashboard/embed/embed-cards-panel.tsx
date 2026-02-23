@@ -342,7 +342,7 @@ function CardPreviewModal({
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative z-10 w-[90vw] max-w-[480px] max-h-[90vh] overflow-auto rounded-3xl bg-white shadow-2xl shadow-black/20 p-8">
+      <div className="relative z-10 w-[90vw] max-w-[480px] max-h-[90vh] overflow-auto rounded-3xl bg-white dark:bg-slate-900 shadow-2xl shadow-black/20 dark:shadow-black/40 p-8">
         <button
           type="button"
           onClick={onClose}
@@ -352,7 +352,7 @@ function CardPreviewModal({
         </button>
         <div className="mb-4">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Full Preview</p>
-          <h3 className="text-lg font-bold text-slate-900">{card.name}</h3>
+          <h3 className="text-lg font-bold text-dashboard-text">{card.name}</h3>
           <p className="text-sm text-slate-500 mt-1">{STYLE_LABELS[card.style] ?? card.style}</p>
         </div>
         <div className="flex items-center justify-center">
@@ -1386,15 +1386,15 @@ function CustomFormEditor({
                 </div>
               )}
             </div>
-            <div className="p-2 bg-slate-50/50 dark:bg-slate-800/30 min-h-[420px] overflow-hidden rounded-xl">
+            <div className={`p-2 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden rounded-xl ${previewDisplayMode === "compressed" ? "min-h-[280px]" : "min-h-[420px]"}`}>
               <PreviewIframe
                 src={`${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?card=${card.id}${previewDisplayMode === "compressed" ? `&seamless=1&theme=${previewTheme}&mode=compressed` : ""}${previewDisplayMode === "full_width" ? "&fullscreen=1" : ""}`}
                 title="Form preview"
                 className="w-full rounded-xl border-0"
-                minHeight={420}
+                minHeight={previewDisplayMode === "compressed" ? 280 : 420}
               />
             </div>
-            <p className="px-5 py-2 text-xs text-dashboard-text-muted">Live preview — save to update.</p>
+            <p className="px-5 py-2 text-xs text-dashboard-text-muted">Your actual embedded form — save to update.</p>
           </div>
         </div>
       </div>

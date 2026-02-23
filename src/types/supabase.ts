@@ -1381,6 +1381,7 @@ export type Database = {
           eventbrite_org_id: string | null
           id: string
           image_url: string | null
+          listed_on_explore: boolean
           name: string
           online_event: boolean | null
           organization_id: string
@@ -1400,6 +1401,7 @@ export type Database = {
           eventbrite_org_id?: string | null
           id?: string
           image_url?: string | null
+          listed_on_explore?: boolean
           name: string
           online_event?: boolean | null
           organization_id: string
@@ -1419,6 +1421,7 @@ export type Database = {
           eventbrite_org_id?: string | null
           id?: string
           image_url?: string | null
+          listed_on_explore?: boolean
           name?: string
           online_event?: boolean | null
           organization_id?: string

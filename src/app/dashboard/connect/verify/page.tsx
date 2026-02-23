@@ -69,10 +69,10 @@ export default async function ConnectVerifyPage() {
       <VerifyStatusFetcher />
       <div className="dashboard-fade-in flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">
             {needsVerification ? "Complete account verification" : "Payout account"}
           </h1>
-          <p className="mt-1 text-slate-600">
+          <p className="mt-1 text-dashboard-text-muted">
             {needsVerification
               ? "Add your organization details, identity, and banking so you can receive payouts. This stays secure and is required to accept donations."
               : verifiedMessage}
@@ -82,7 +82,7 @@ export default async function ConnectVerifyPage() {
           <RefreshVerifyButton />
           <Link
             href="/dashboard/settings"
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+            className="rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           >
             Back to settings
           </Link>
@@ -104,20 +104,20 @@ export default async function ConnectVerifyPage() {
           <ConnectOnboardingWrapper publishableKey={publishableKey || undefined} />
         </div>
       ) : (
-        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border bg-dashboard-card p-6 shadow-sm">
           <div className="flex items-start gap-4">
-            <div className="rounded-xl bg-emerald-500/10 p-3">
-              <svg className="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 p-3">
+              <svg className="h-6 w-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="flex-1">
-              <h2 className="text-base font-bold text-slate-900">Account verified</h2>
+              <h2 className="text-base font-bold text-dashboard-text">Account verified</h2>
               {accountDisplayName && (
-                <p className="mt-1 text-sm font-medium text-slate-700">{accountDisplayName}</p>
+                <p className="mt-1 text-sm font-medium text-dashboard-text">{accountDisplayName}</p>
               )}
-              <p className="mt-1 text-sm text-slate-600">{verifiedMessage}</p>
-              <p className="mt-3 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-dashboard-text-muted">{verifiedMessage}</p>
+              <p className="mt-3 text-sm text-dashboard-text-muted">
                 Payouts are sent automatically based on your account schedule.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
@@ -129,7 +129,7 @@ export default async function ConnectVerifyPage() {
                 </Link>
                 <Link
                   href="/dashboard/settings"
-                  className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   Back to settings
                 </Link>

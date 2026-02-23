@@ -69,36 +69,36 @@ export default async function DonorsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Donors</h1>
-      <p className="text-muted-foreground">
+    <div className="space-y-6 p-2 sm:p-4">
+      <h1 className="text-2xl font-semibold text-dashboard-text">Donors</h1>
+      <p className="text-dashboard-text-muted">
         People who have given to your organization. Donors are identified by email when available.
       </p>
-      <div className="rounded-lg border border-border overflow-hidden">
+      <div className="rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-muted/50">
+          <thead className="bg-dashboard-card-hover/50">
             <tr>
-              <th className="text-left p-3 font-medium">Donor</th>
-              <th className="text-left p-3 font-medium">Email</th>
-              <th className="text-right p-3 font-medium">Total given</th>
-              <th className="text-right p-3 font-medium">Gifts</th>
-              <th className="text-left p-3 font-medium">Last donation</th>
+              <th className="text-left p-3 font-medium text-dashboard-text-muted">Donor</th>
+              <th className="text-left p-3 font-medium text-dashboard-text-muted">Email</th>
+              <th className="text-right p-3 font-medium text-dashboard-text-muted">Total given</th>
+              <th className="text-right p-3 font-medium text-dashboard-text-muted">Gifts</th>
+              <th className="text-left p-3 font-medium text-dashboard-text-muted">Last donation</th>
             </tr>
           </thead>
           <tbody>
             {donors.map((row) => (
-              <tr key={row.key} className="border-t border-border">
-                <td className="p-3">
+              <tr key={row.key} className="border-t border-dashboard-border transition-colors hover:bg-dashboard-card-hover/50">
+                <td className="p-3 font-medium text-dashboard-text">
                   {row.donorName ?? (row.donorEmail ? "—" : "Anonymous")}
                 </td>
-                <td className="p-3 text-muted-foreground">
+                <td className="p-3 text-dashboard-text-muted">
                   {row.donorEmail ?? "—"}
                 </td>
-                <td className="p-3 text-right font-medium">
+                <td className="p-3 text-right font-medium text-dashboard-text">
                   {formatCurrency(row.totalCents)}
                 </td>
-                <td className="p-3 text-right">{row.donationCount}</td>
-                <td className="p-3 text-muted-foreground">
+                <td className="p-3 text-right text-dashboard-text-muted">{row.donationCount}</td>
+                <td className="p-3 text-dashboard-text-muted">
                   {row.lastDonationAt
                     ? new Date(row.lastDonationAt).toLocaleDateString()
                     : "—"}
@@ -108,7 +108,7 @@ export default async function DonorsPage() {
           </tbody>
         </table>
         {donors.length === 0 && (
-          <p className="p-6 text-muted-foreground text-center">
+          <p className="p-6 text-dashboard-text-muted text-center">
             No donors yet. Share your give link so people can give.
           </p>
         )}

@@ -115,10 +115,11 @@ export async function GET(req: NextRequest) {
         organizations(name, slug)
       `;
 
+      // Only filter by listed_on_explore — show all events (past & future) unless user made them private
       let eventQuery = supabase
         .from("events")
         .select(eventSelect)
-        .gte("end_at", new Date().toISOString())
+        .eq("listed_on_explore", true)
         .order("start_at", { ascending: true })
         .range(offset, offset + limit - 1);
 

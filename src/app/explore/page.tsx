@@ -31,7 +31,7 @@ function ExploreContent() {
       if (type && type !== "all") params.set("type", type);
       if (city) params.set("city", city);
       if (cause) params.set("cause", cause);
-      params.set("limit", "24");
+      params.set("limit", "50");
 
       const res = await fetch(`/api/search?${params}`);
       const data = await res.json();

@@ -160,11 +160,11 @@ export function WebsiteBuilderClient({
 
   return (
     <div className="flex h-screen w-screen flex-col">
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-2">
+      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-dashboard-sidebar px-4 py-2">
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-dashboard-card px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-dashboard-card-hover hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to dashboard
@@ -173,7 +173,7 @@ export function WebsiteBuilderClient({
             type="button"
             onClick={handleBackToProjects}
             disabled={isResetting}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-dashboard-card px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-dashboard-card-hover hover:text-slate-900 dark:hover:text-slate-100 transition-colors disabled:opacity-60"
             title="Back to project list"
           >
             <RotateCcw className="h-4 w-4" />
@@ -221,7 +221,7 @@ export function WebsiteBuilderClient({
               <button
                 type="button"
                 onClick={handlePreview}
-                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-dashboard-card px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-dashboard-card-hover hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
               >
                 <Eye className="h-4 w-4" />
                 Preview
@@ -278,8 +278,8 @@ export function WebsiteBuilderClient({
       </header>
       {/* Website form info banner — clarifies which form appears in templates */}
       {projectState && (
-        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-sm">
-          <div className="flex items-center gap-2 text-slate-600">
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-sm">
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
             <CreditCard className="h-4 w-4 shrink-0 text-emerald-600" />
             <span>
               The donation forms in your website templates use the form below. Edit amounts, splits, and design here.
@@ -302,10 +302,10 @@ export function WebsiteBuilderClient({
       )}
       {/* Publish error banner */}
       {publishError && (
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-red-200 bg-red-50 px-4 py-3 text-sm">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
-            <span className="font-medium text-red-800">{publishError}</span>
+            <AlertCircle className="h-4 w-4 shrink-0 text-red-500 dark:text-red-400" />
+            <span className="font-medium text-red-800 dark:text-red-300">{publishError}</span>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -317,7 +317,7 @@ export function WebsiteBuilderClient({
             <button
               type="button"
               onClick={() => setPublishError(null)}
-              className="rounded-lg p-1 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors"
+              className="rounded-lg p-1 text-red-400 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-300 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -326,8 +326,8 @@ export function WebsiteBuilderClient({
       )}
       {/* Domain-published banner */}
       {showDomainPublished && (
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-sm">
-          <span className="font-medium text-emerald-800">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 text-sm">
+          <span className="font-medium text-emerald-800 dark:text-emerald-300">
             Site published to your domain!
           </span>
           <a
@@ -343,10 +343,10 @@ export function WebsiteBuilderClient({
       )}
       {/* Preview-published banner (no custom domain) */}
       {showPreviewPublished && (
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-blue-200 bg-blue-50 px-4 py-2 text-sm">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 text-sm">
           <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 shrink-0 text-blue-500" />
-            <span className="font-medium text-blue-800">
+            <Eye className="h-4 w-4 shrink-0 text-blue-500 dark:text-blue-400" />
+            <span className="font-medium text-blue-800 dark:text-blue-300">
               Published as preview. Connect a custom domain in Settings to publish to your own URL.
             </span>
           </div>
@@ -362,7 +362,7 @@ export function WebsiteBuilderClient({
             </a>
             <Link
               href="/dashboard/settings"
-              className="rounded-lg border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50 transition-colors"
+              className="rounded-lg border border-blue-300 dark:border-blue-600 bg-white dark:bg-dashboard-card px-3 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-dashboard-card-hover transition-colors"
             >
               Connect domain
             </Link>

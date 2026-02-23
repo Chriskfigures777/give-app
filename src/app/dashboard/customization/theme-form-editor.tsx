@@ -498,7 +498,7 @@ export function ThemeFormEditor({
             <p className="text-xs text-dashboard-text-muted mb-2">
               Shows saved form. Save to update preview.
             </p>
-            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-lg bg-white min-h-[420px]">
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-lg bg-white dark:bg-slate-900 min-h-[420px]">
               <PreviewIframe
                 src={`${baseUrl.replace(/\/$/, "")}/give/${slug}/embed?seamless=1&theme=${previewTheme}&mode=${formDisplayMode}`}
                 title="Form preview"

@@ -99,12 +99,12 @@ export default async function PageBuilderPage() {
 
   return (
     <div className="space-y-10">
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50/50 to-white p-8 shadow-sm">
-        <div className="absolute right-0 top-0 h-32 w-48 bg-gradient-to-bl from-emerald-100/60 to-transparent" aria-hidden />
-        <h1 className="relative text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+      <div className="relative overflow-hidden rounded-2xl border border-dashboard-border bg-dashboard-card p-8 shadow-sm">
+        <div className="absolute right-0 top-0 h-32 w-48 bg-gradient-to-bl from-emerald-100/60 dark:from-emerald-900/20 to-transparent" aria-hidden />
+        <h1 className="relative text-2xl font-bold tracking-tight text-dashboard-text sm:text-3xl">
           Page builder
         </h1>
-        <p className="relative mt-2 max-w-2xl text-slate-600">
+        <p className="relative mt-2 max-w-2xl text-dashboard-text-muted">
           Edit your public page. Your existing page loads automatically—drag blocks to reorder, click to edit. No building from scratch.
         </p>
       </div>

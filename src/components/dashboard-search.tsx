@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Search,
@@ -69,13 +68,14 @@ const DEBOUNCE_MS = 300;
 
 export function DashboardSearch() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [orgs, setOrgs] = useState<OrgResult[]>([]);
   const [events, setEvents] = useState<EventResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -96,6 +96,8 @@ export function DashboardSearch() {
     ...orgs.map((o) => ({ type: "org" as const, data: o })),
     ...events.map((e) => ({ type: "event" as const, data: e })),
   ];
+
+  const showDropdown = focused || query.length > 0;
 
   const runSearch = useCallback(async (term: string) => {
     if (term.length < 2) {
@@ -138,28 +140,25 @@ export function DashboardSearch() {
     setActiveIndex(0);
   }, [query]);
 
-  const openSearch = useCallback(() => {
-    setOpen(true);
+  const clearSearch = useCallback(() => {
     setQuery("");
     setOrgs([]);
     setEvents([]);
     setActiveIndex(0);
-    setTimeout(() => inputRef.current?.focus(), 50);
-  }, []);
-
-  const closeSearch = useCallback(() => {
-    setOpen(false);
-    setQuery("");
+    inputRef.current?.focus();
   }, []);
 
   const selectItem = useCallback(
     (item: (typeof allItems)[number]) => {
-      closeSearch();
+      setQuery("");
+      setOrgs([]);
+      setEvents([]);
+      setFocused(false);
       if (item.type === "page") router.push(item.data.href);
       else if (item.type === "org") router.push(`/org/${item.data.slug}`);
       else router.push(`/events/${item.data.id}`);
     },
-    [closeSearch, router]
+    [router]
   );
 
   useEffect(() => {
@@ -168,17 +167,16 @@ export function DashboardSearch() {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) return;
         e.preventDefault();
-        openSearch();
+        inputRef.current?.focus();
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        if (open) closeSearch();
-        else openSearch();
+        inputRef.current?.focus();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, openSearch, closeSearch]);
+  }, []);
 
   const handleKeyNavigation = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -191,7 +189,8 @@ export function DashboardSearch() {
       e.preventDefault();
       selectItem(allItems[activeIndex]);
     } else if (e.key === "Escape") {
-      closeSearch();
+      setFocused(false);
+      inputRef.current?.blur();
     }
   };
 
@@ -201,77 +200,56 @@ export function DashboardSearch() {
   }, [activeIndex]);
 
   return (
-    <>
-      {/* Trigger button in the nav bar */}
-      <button
-        type="button"
-        onClick={openSearch}
-        className="group flex items-center gap-2.5 rounded-xl border border-dashboard-border/60 bg-dashboard-card/60 px-3.5 py-2 text-sm text-dashboard-text-muted transition-all duration-200 hover:border-emerald-300/60 hover:bg-dashboard-card-hover hover:text-dashboard-text hover:shadow-sm dark:hover:border-emerald-600/40"
-      >
-        <Search className="h-3.5 w-3.5 shrink-0 transition-colors group-hover:text-emerald-500" />
-        <span className="text-xs">Search...</span>
-        <kbd className="ml-3 hidden rounded-md border border-dashboard-border bg-dashboard-card px-1.5 py-0.5 text-[10px] font-medium text-dashboard-text-muted sm:inline-block">
+    <div ref={containerRef} className="relative flex-1 min-w-[200px] max-w-3xl w-full">
+      {/* Always-visible search input */}
+      <div className="flex items-center gap-2 rounded-xl border border-dashboard-border/60 bg-dashboard-card/60 px-3.5 py-2 transition-all duration-200 focus-within:border-emerald-300/60 focus-within:bg-dashboard-card-hover focus-within:shadow-sm dark:focus-within:border-emerald-600/40">
+        <Search className="h-3.5 w-3.5 shrink-0 text-dashboard-text-muted" />
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 150)}
+          onKeyDown={handleKeyNavigation}
+          placeholder="Search pages, organizations, events..."
+          className="flex-1 min-w-0 bg-transparent text-sm text-dashboard-text outline-none placeholder:text-dashboard-text-muted"
+          autoComplete="off"
+          spellCheck={false}
+        />
+        {loading && (
+          <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-dashboard-text-muted" />
+        )}
+        {query && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="rounded-lg p-1 text-dashboard-text-muted transition-colors hover:bg-dashboard-card hover:text-dashboard-text"
+            aria-label="Clear search"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+        <kbd className="hidden rounded-md border border-dashboard-border bg-dashboard-card px-1.5 py-0.5 text-[10px] font-medium text-dashboard-text-muted sm:inline-block">
           /
         </kbd>
-      </button>
+      </div>
 
-      {/* Modal overlay */}
-      {typeof document !== "undefined" &&
-        createPortal(
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="fixed inset-0 z-[9999] flex items-start justify-center pt-[12vh] sm:pt-[16vh]"
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) closeSearch();
-                }}
-              >
-                {/* Backdrop */}
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-
-                {/* Search panel */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.96, y: -8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96, y: -8 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  className="relative w-full max-w-lg mx-4 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl dark:border-slate-700/60 dark:bg-slate-900"
-                >
-                  {/* Search input */}
-                  <div className="flex items-center gap-3 border-b border-slate-100 px-4 dark:border-slate-800">
-                    <Search className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500" />
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      onKeyDown={handleKeyNavigation}
-                      placeholder="Search pages, organizations, events..."
-                      className="flex-1 bg-transparent py-4 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                    {loading && (
-                      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-slate-400" />
-                    )}
-                    <button
-                      type="button"
-                      onClick={closeSearch}
-                      className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  {/* Results */}
-                  <div
-                    ref={listRef}
-                    className="max-h-[min(360px,50vh)] overflow-y-auto overscroll-contain py-2"
-                  >
+      {/* Inline dropdown - appears below search as you type */}
+      <AnimatePresence>
+        {showDropdown && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            onMouseDown={(e) => e.preventDefault()}
+            className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xl dark:border-slate-700/60 dark:bg-slate-900"
+          >
+            <div
+              ref={listRef}
+              className="max-h-[min(360px,50vh)] overflow-y-auto overscroll-contain py-2"
+            >
                     {/* Dashboard pages */}
                     {filteredPages.length > 0 && (
                       <div className="px-2 pb-1">
@@ -438,36 +416,9 @@ export function DashboardSearch() {
                         </div>
                       )}
                   </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5 dark:border-slate-800">
-                    <div className="flex items-center gap-3 text-[10px] text-slate-400 dark:text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <kbd className="rounded border border-slate-200 bg-slate-50 px-1 py-0.5 font-mono dark:border-slate-700 dark:bg-slate-800">
-                          &uarr;&darr;
-                        </kbd>
-                        navigate
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <kbd className="rounded border border-slate-200 bg-slate-50 px-1 py-0.5 font-mono dark:border-slate-700 dark:bg-slate-800">
-                          &crarr;
-                        </kbd>
-                        select
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <kbd className="rounded border border-slate-200 bg-slate-50 px-1 py-0.5 font-mono dark:border-slate-700 dark:bg-slate-800">
-                          esc
-                        </kbd>
-                        close
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
+          </motion.div>
         )}
-    </>
+      </AnimatePresence>
+    </div>
   );
 }

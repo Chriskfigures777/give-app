@@ -16,7 +16,7 @@ export default async function EditEventPage({
 
   const { data: event, error } = await supabase
     .from("events")
-    .select("id, slug, name, description, start_at, end_at, venue_name, venue_address, online_event, image_url")
+    .select("id, slug, name, description, start_at, end_at, venue_name, venue_address, online_event, image_url, listed_on_explore")
     .eq("id", id)
     .eq("organization_id", organizationId)
     .single();
@@ -34,6 +34,7 @@ export default async function EditEventPage({
     venue_address: string | null;
     online_event: boolean;
     image_url: string | null;
+    listed_on_explore: boolean;
   };
 
   const startLocal = new Date(ev.start_at);
@@ -69,7 +70,7 @@ export default async function EditEventPage({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Link
           href="/dashboard/events"
-          className="text-slate-600 hover:text-slate-900 text-sm"
+          className="text-dashboard-text-muted hover:text-dashboard-text text-sm"
         >
           ← Back to events
         </Link>
@@ -82,13 +83,13 @@ export default async function EditEventPage({
           View event →
         </a>
       </div>
-      <h1 className="text-2xl font-semibold">Edit event</h1>
-      <p className="text-sm text-slate-500">
+      <h1 className="text-2xl font-semibold text-dashboard-text">Edit event</h1>
+      <p className="text-sm text-dashboard-text-muted">
         Changes save to this site. Eventbrite is not updated on edit.
       </p>
-      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Event URL</p>
-        <p className="mt-1 text-sm text-slate-900 font-mono break-all">{eventUrl}</p>
+      <div className="rounded-lg border border-dashboard-border bg-dashboard-card-hover/50 px-4 py-3">
+        <p className="text-xs font-medium text-dashboard-text-muted uppercase tracking-wider">Event URL</p>
+        <p className="mt-1 text-sm text-dashboard-text font-mono break-all">{eventUrl}</p>
       </div>
       <EditEventForm
         eventId={ev.id}
@@ -101,6 +102,7 @@ export default async function EditEventPage({
           venueAddress: ev.venue_address ?? "",
           onlineEvent: ev.online_event,
           imageUrl: ev.image_url ?? "",
+          listedOnExplore: ev.listed_on_explore ?? true,
         }}
       />
     </div>

@@ -64,8 +64,8 @@ export default async function EventsPage() {
     <div className="space-y-6 p-2 sm:p-4">
       <div className="dashboard-fade-in flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Events</h1>
-          <p className="mt-1 text-slate-600">Manage your events and sync with Eventbrite.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Events</h1>
+          <p className="mt-1 text-dashboard-text-muted">Manage your events and sync with Eventbrite.</p>
         </div>
         {orgId && (
           <div className="flex gap-2">
@@ -91,9 +91,9 @@ export default async function EventsPage() {
       </div>
 
       {!eventbriteConnected && orgId && (
-        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
+        <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 p-4 text-amber-800 dark:text-amber-200">
           <p className="font-medium">Connect Eventbrite to create events</p>
-          <p className="text-sm mt-1 text-amber-700">
+          <p className="text-sm mt-1 text-amber-700 dark:text-amber-300">
             Events are synced to Eventbrite for ticketing and RSVPs. Click the button above to connect your organization&apos;s Eventbrite account.
           </p>
         </div>
@@ -102,47 +102,47 @@ export default async function EventsPage() {
       {/* Summary cards */}
       {events.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Total events</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{events.length}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Total events</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{events.length}</p>
               </div>
-              <div className="rounded-xl bg-violet-500/10 p-2.5">
-                <Calendar className="h-6 w-6 text-violet-600" />
+              <div className="rounded-xl bg-violet-500/10 dark:bg-violet-500/20 p-2.5">
+                <Calendar className="h-6 w-6 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
           </div>
-          <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Upcoming</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{upcomingCount}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Upcoming</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{upcomingCount}</p>
               </div>
-              <div className="rounded-xl bg-emerald-500/10 p-2.5">
-                <Calendar className="h-6 w-6 text-emerald-600" />
+              <div className="rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 p-2.5">
+                <Calendar className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
             </div>
           </div>
-          <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Past</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{pastCount}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Past</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{pastCount}</p>
               </div>
-              <div className="rounded-xl bg-slate-500/10 p-2.5">
-                <Calendar className="h-6 w-6 text-slate-600" />
+              <div className="rounded-xl bg-slate-500/10 dark:bg-slate-500/20 p-2.5">
+                <Calendar className="h-6 w-6 text-slate-600 dark:text-slate-400" />
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className={`rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm ${events.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-4" : "dashboard-fade-in dashboard-fade-in-delay-1"}`}>
+      <div className={`rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm ${events.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-4" : "dashboard-fade-in dashboard-fade-in-delay-1"}`}>
         {events.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">
-            <Calendar className="mx-auto h-12 w-12 text-slate-300 mb-3" />
-            <p className="font-medium text-slate-700">No events yet.</p>
+          <div className="p-12 text-center text-dashboard-text-muted">
+            <Calendar className="mx-auto h-12 w-12 text-dashboard-text-muted/50 mb-3" />
+            <p className="font-medium text-dashboard-text">No events yet.</p>
             {eventbriteConnected && (
               <Link href="/dashboard/events/new">
                 <Button className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white">
@@ -153,18 +153,18 @@ export default async function EventsPage() {
           </div>
         ) : (
           <>
-            <div className="border-b border-slate-200/80 px-5 py-4">
-              <h2 className="text-base font-bold text-slate-900">Event list</h2>
+            <div className="border-b border-dashboard-border px-5 py-4">
+              <h2 className="text-base font-bold text-dashboard-text">Event list</h2>
             </div>
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-dashboard-border">
             {events.map((e) => (
               <li
                 key={e.id}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 transition-colors hover:bg-slate-50/50"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 transition-colors hover:bg-dashboard-card-hover/50"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{e.name}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="font-medium text-dashboard-text">{e.name}</p>
+                  <p className="text-sm text-dashboard-text-muted">
                     {new Date(e.start_at).toLocaleDateString(undefined, {
                       weekday: "short",
                       month: "short",
@@ -174,7 +174,7 @@ export default async function EventsPage() {
                       minute: "2-digit",
                     })}
                     {e.online_event && (
-                      <span className="ml-2 text-slate-400">· Online</span>
+                      <span className="ml-2 text-dashboard-text-muted">· Online</span>
                     )}
                   </p>
                 </div>

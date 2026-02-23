@@ -53,14 +53,14 @@ export function YearEndDownload({ hasDonations }: Props) {
   const years = Array.from({ length: Math.min(10, currentYear - 2019) }, (_, i) => currentYear - i);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
-      <FileText className="h-5 w-5 text-slate-500" />
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashboard-border bg-dashboard-card p-4 shadow-sm">
+      <FileText className="h-5 w-5 text-dashboard-text-muted" />
       <div className="flex flex-1 flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-slate-700">Year-end tax summary</span>
+        <span className="text-sm font-medium text-dashboard-text">Year-end tax summary</span>
         <select
           value={year}
           onChange={(e) => setYear(parseInt(e.target.value, 10))}
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+          className="rounded-lg border border-dashboard-border bg-dashboard-input px-3 py-1.5 text-sm text-dashboard-text"
         >
           {years.map((y) => (
             <option key={y} value={y}>
@@ -72,19 +72,19 @@ export function YearEndDownload({ hasDonations }: Props) {
           type="button"
           onClick={handleDownload}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-dashboard-text px-4 py-1.5 text-sm font-medium text-dashboard hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? "Generating…" : "Download PDF"}
         </button>
       </div>
       {error && (
         <div className="w-full space-y-2">
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           <a
             href={`/api/receipts/year-end?year=${year}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-slate-600 underline hover:text-slate-900"
+            className="text-sm text-dashboard-text-muted underline hover:text-dashboard-text"
           >
             Try opening in new tab
           </a>

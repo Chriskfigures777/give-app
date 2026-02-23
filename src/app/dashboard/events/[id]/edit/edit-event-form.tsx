@@ -15,6 +15,7 @@ type Props = {
     venueAddress: string;
     onlineEvent: boolean;
     imageUrl: string;
+    listedOnExplore: boolean;
   };
 };
 
@@ -31,6 +32,7 @@ export function EditEventForm({ eventId, initial }: Props) {
   const [venueAddress, setVenueAddress] = useState(initial.venueAddress);
   const [onlineEvent, setOnlineEvent] = useState(initial.onlineEvent);
   const [imageUrl, setImageUrl] = useState(initial.imageUrl);
+  const [listedOnExplore, setListedOnExplore] = useState(initial.listedOnExplore);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +52,7 @@ export function EditEventForm({ eventId, initial }: Props) {
           venueAddress: venueAddress.trim() || undefined,
           onlineEvent,
           imageUrl: imageUrl.trim() || undefined,
+          listedOnExplore,
         }),
       });
 
@@ -167,6 +170,21 @@ export function EditEventForm({ eventId, initial }: Props) {
           onChange={(e) => setImageUrl(e.target.value)}
           className={inputClass}
         />
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={listedOnExplore}
+            onChange={(e) => setListedOnExplore(e.target.checked)}
+            className="rounded border-slate-300"
+          />
+          <span className={labelClass}>Show on Explore page</span>
+        </label>
+        <p className="mt-1 text-xs text-slate-500">
+          When enabled, this event appears on the public Explore page so people can discover and attend it.
+        </p>
       </div>
 
       <div className="flex gap-3">

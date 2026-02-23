@@ -40,8 +40,8 @@ export function DashboardNavBar() {
 
   return (
     <div className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-dashboard-border/60 px-5" style={{ background: "var(--dashboard-glass)", backdropFilter: "blur(16px) saturate(1.8)", WebkitBackdropFilter: "blur(16px) saturate(1.8)" }}>
-      {/* Left: search */}
-      <div className="flex items-center gap-2 min-w-0">
+      {/* Left: search - flex-1 so it grows and stays responsive */}
+      <div className="flex flex-1 items-center gap-2 min-w-0 mr-4">
         <DashboardSearch />
       </div>
 

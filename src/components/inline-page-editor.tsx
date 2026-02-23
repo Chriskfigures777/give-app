@@ -158,7 +158,7 @@ function renderCardThumbnail(
     );
   }
   return (
-    <div className={`${ds} rounded-lg border border-slate-200 bg-slate-50 overflow-hidden p-2`}>
+    <div className={`${ds} rounded-lg border border-dashboard-border bg-dashboard-card-hover/50 overflow-hidden p-2`}>
       <div className="h-8 bg-slate-200 rounded" />
       <div className="h-2 bg-slate-200 rounded w-3/4 mt-2" />
       <div className="h-2 bg-emerald-200 rounded w-1/2 mt-1" />
@@ -366,11 +366,11 @@ export function InlinePageEditor({
         />
       )}
 
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-8 shadow-sm">
+      <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-8 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Public page</h1>
-            <p className="mt-2 text-slate-600">
+            <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Public page</h1>
+            <p className="mt-2 text-dashboard-text-muted">
               {isEditMode
                 ? "Edit your page directly below. Click any section to edit inline."
                 : "Preview your public page. Click Edit to make changes."}
@@ -378,13 +378,13 @@ export function InlinePageEditor({
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {error && (
-              <span className="text-sm text-red-600 font-medium">{error}</span>
+              <span className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</span>
             )}
             {isEditMode ? (
               <button
                 type="button"
                 onClick={() => setIsEditMode(false)}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover"
               >
                 <Eye className="h-4 w-4" />
                 Preview
@@ -393,7 +393,7 @@ export function InlinePageEditor({
               <button
                 type="button"
                 onClick={() => setIsEditMode(true)}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover"
               >
                 <Pencil className="h-4 w-4" />
                 Edit
@@ -434,7 +434,7 @@ export function InlinePageEditor({
             </a>
             <a
               href="/dashboard/settings"
-              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 text-sm"
+              className="inline-flex items-center gap-2 text-dashboard-text-muted hover:text-dashboard-text text-sm"
             >
               Edit public profile &amp; URL
             </a>
@@ -443,7 +443,7 @@ export function InlinePageEditor({
 
         {/* Preview mode: iframe - previewKey forces reload after save */}
         {!isEditMode && (
-          <div className="mt-6 rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+          <div className="mt-6 rounded-xl border border-dashboard-border overflow-hidden bg-dashboard-card-hover/50">
             <iframe
               key={previewKey}
               src={`${orgUrl}${orgUrl.includes("?") ? "&" : "?"}v=${previewKey}`}
@@ -456,13 +456,13 @@ export function InlinePageEditor({
 
         {/* Organization profile image - LinkedIn-style circular avatar (edit mode) */}
         {isEditMode && (
-        <div className="mt-8 pt-8 border-t border-slate-200">
-          <h2 className="text-lg font-semibold text-slate-900">Organization profile image</h2>
-          <p className="mt-1 text-sm text-slate-600">
+        <div className="mt-8 pt-8 border-t border-dashboard-border">
+          <h2 className="text-lg font-semibold text-dashboard-text">Organization profile image</h2>
+          <p className="mt-1 text-sm text-dashboard-text-muted">
             This circular image appears on your org page, in search results, and on explore cards.
           </p>
           <div className="mt-4 flex items-center gap-6">
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 border-dashboard-border bg-dashboard-card-hover">
               <Image
                 src={profileImageUrl}
                 alt="Profile"
@@ -476,7 +476,7 @@ export function InlinePageEditor({
                 type="button"
                 onClick={() => setPexelsPicker({ field: "profile_image_url", mode: "photos" })}
                 onMouseDown={(e) => e.preventDefault()}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                className="rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2"
               >
                 <ImageIcon className="h-4 w-4" />
                 Pexels
@@ -502,8 +502,8 @@ export function InlinePageEditor({
       )}
 
       {isEditMode && (
-      <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white overflow-hidden">
-        <p className="px-6 py-2 bg-slate-100 text-sm font-medium text-slate-600">
+      <div className="rounded-2xl border-2 border-dashed border-dashboard-border bg-dashboard-card overflow-hidden">
+        <p className="px-6 py-2 bg-dashboard-card-hover text-sm font-medium text-dashboard-text-muted">
           Your page — click any section to edit
         </p>
 
@@ -568,7 +568,7 @@ export function InlinePageEditor({
                 aria-label="Close menu"
               />
               <div
-                className="absolute bottom-4 right-4 z-20 flex flex-col gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
+                className="absolute bottom-4 right-4 z-20 flex flex-col gap-1 rounded-xl border border-dashboard-border bg-dashboard-card p-2 shadow-xl"
                 role="dialog"
                 aria-label="Hero media options"
               >
@@ -601,7 +601,7 @@ export function InlinePageEditor({
                   setHeroMediaMenuOpen(false);
                 }}
                 disabled={uploadingFor === "page_hero_image_url"}
-                className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-70"
+                className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover disabled:opacity-70"
               >
                 <Upload className="h-4 w-4" />
                 {uploadingFor === "page_hero_image_url" ? "Uploading…" : "Upload image"}
@@ -615,7 +615,7 @@ export function InlinePageEditor({
         <EditableSection
           label="About"
           onBlur={() => {}}
-          className="bg-white py-16 px-6"
+          className="bg-dashboard-card py-16 px-6"
           reverseLabel="Reverse layout"
           onReverse={() => {
             const next = data.page_about_image_side === "left" ? "right" : "left";
@@ -638,7 +638,7 @@ export function InlinePageEditor({
                     type="button"
                     onClick={() => setPexelsPicker({ field: "page_hero_image_url", mode: "photos" })}
                     onMouseDown={(e) => e.preventDefault()}
-                    className="rounded-lg bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white flex items-center gap-2 shadow-sm"
+                    className="rounded-lg bg-dashboard-card px-3 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2 shadow-sm"
                   >
                     <ImageIcon className="h-4 w-4" />
                     Pexels
@@ -648,7 +648,7 @@ export function InlinePageEditor({
                     onClick={() => triggerUpload("page_hero_image_url")}
                     onMouseDown={(e) => e.preventDefault()}
                     disabled={uploadingFor === "page_hero_image_url"}
-                    className="rounded-lg bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white flex items-center gap-2 shadow-sm disabled:opacity-70"
+                    className="rounded-lg bg-dashboard-card px-3 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2 shadow-sm disabled:opacity-70"
                   >
                     <Upload className="h-4 w-4" />
                     {uploadingFor === "page_hero_image_url" ? "Uploading…" : "Upload"}
@@ -662,27 +662,27 @@ export function InlinePageEditor({
                     value={data.page_summary}
                     onChange={(v) => setData((d) => ({ ...d, page_summary: v }))}
                     onBlur={(v) => { setData((d) => ({ ...d, page_summary: v })); save({ page_summary: v }); }}
-                    className="mt-2 text-lg leading-relaxed text-slate-600 w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px]"
+                    className="mt-2 text-lg leading-relaxed text-dashboard-text-muted w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px] bg-transparent"
                     placeholder="Brief overview of your organization..."
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Our mission</h3>
+                  <h3 className="text-xl font-bold text-dashboard-text">Our mission</h3>
                   <InlineTextarea
                     value={data.page_mission}
                     onChange={(v) => setData((d) => ({ ...d, page_mission: v }))}
                     onBlur={(v) => { setData((d) => ({ ...d, page_mission: v })); save({ page_mission: v }); }}
-                    className="mt-2 text-slate-600 leading-relaxed w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px]"
+                    className="mt-2 text-dashboard-text-muted leading-relaxed w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px] bg-transparent"
                     placeholder="Our mission is to..."
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">What we&apos;re working toward</h3>
+                  <h3 className="text-xl font-bold text-dashboard-text">What we&apos;re working toward</h3>
                   <InlineTextarea
                     value={data.page_goals}
                     onChange={(v) => setData((d) => ({ ...d, page_goals: v }))}
                     onBlur={(v) => { setData((d) => ({ ...d, page_goals: v })); save({ page_goals: v }); }}
-                    className="mt-2 text-slate-600 leading-relaxed w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px]"
+                    className="mt-2 text-dashboard-text-muted leading-relaxed w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[80px] bg-transparent"
                     placeholder="We're raising funds to..."
                   />
                 </div>
@@ -695,7 +695,7 @@ export function InlinePageEditor({
         <EditableSection
           label="Story"
           onBlur={() => {}}
-          className="bg-slate-50 py-16 px-6"
+          className="bg-dashboard-card-hover/50 py-16 px-6"
           reverseLabel="Reverse layout"
           onReverse={() => {
             const next = data.page_story_image_side === "left" ? "right" : "left";
@@ -718,7 +718,7 @@ export function InlinePageEditor({
                     type="button"
                     onClick={() => setPexelsPicker({ field: "page_story_image_url", mode: "photos" })}
                     onMouseDown={(e) => e.preventDefault()}
-                    className="rounded-lg bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white flex items-center gap-2 shadow-sm"
+                    className="rounded-lg bg-dashboard-card px-3 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2 shadow-sm"
                   >
                     <ImageIcon className="h-4 w-4" />
                     Pexels
@@ -728,7 +728,7 @@ export function InlinePageEditor({
                     onClick={() => triggerUpload("page_story_image_url")}
                     onMouseDown={(e) => e.preventDefault()}
                     disabled={uploadingFor === "page_story_image_url"}
-                    className="rounded-lg bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white flex items-center gap-2 shadow-sm disabled:opacity-70"
+                    className="rounded-lg bg-dashboard-card px-3 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2 shadow-sm disabled:opacity-70"
                   >
                     <Upload className="h-4 w-4" />
                     {uploadingFor === "page_story_image_url" ? "Uploading…" : "Upload"}
@@ -737,12 +737,12 @@ export function InlinePageEditor({
               </div>
               <div className={data.page_story_image_side === "right" ? "md:col-start-1 md:row-start-1" : ""}>
                 <span className="text-sm font-semibold uppercase tracking-wider text-emerald-600">Our story</span>
-                <h3 className="mt-2 text-2xl font-bold text-slate-900">Our story</h3>
+                <h3 className="mt-2 text-2xl font-bold text-dashboard-text">Our story</h3>
                 <InlineTextarea
                   value={data.page_story}
                   onChange={(v) => setData((d) => ({ ...d, page_story: v }))}
                   onBlur={(v) => { setData((d) => ({ ...d, page_story: v })); save({ page_story: v }); }}
-                  className="mt-4 text-lg leading-relaxed text-slate-600 w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[120px]"
+                  className="mt-4 text-lg leading-relaxed text-dashboard-text-muted w-full resize-none border-none focus:ring-2 focus:ring-emerald-500 rounded p-2 min-h-[120px] bg-transparent"
                   placeholder="Share your organization's story..."
                 />
               </div>
@@ -754,15 +754,15 @@ export function InlinePageEditor({
         <EditableSection
           label="Team"
           onBlur={() => {}}
-          className="bg-slate-50 py-16 px-6 border-t border-slate-200"
+          className="bg-dashboard-card-hover/50 py-16 px-6 border-t border-dashboard-border"
         >
           {teamMembers.length > 0 ? (
             <OrgTeamSection members={teamMembers} organizationName={data.name} />
           ) : (
             <div className="mx-auto max-w-7xl px-6 text-center">
               <span className="text-sm font-semibold uppercase tracking-wider text-emerald-600">Our team</span>
-              <h2 className="mt-2 text-2xl font-bold text-slate-900">Meet the team</h2>
-              <p className="mt-4 text-slate-500 italic">Content not available. Add team members below to display them here.</p>
+              <h2 className="mt-2 text-2xl font-bold text-dashboard-text">Meet the team</h2>
+              <p className="mt-4 text-dashboard-text-muted italic">Content not available. Add team members below to display them here.</p>
             </div>
           )}
         </EditableSection>
@@ -771,13 +771,13 @@ export function InlinePageEditor({
         <EditableSection
           label="Donation"
           onBlur={() => {}}
-          className="bg-white py-16 px-6 border-t border-slate-200"
+          className="bg-dashboard-card py-16 px-6 border-t border-dashboard-border"
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-6 space-y-4">
               {donationCards.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Donation card</label>
+                  <label className="block text-sm font-medium text-dashboard-text mb-2">Donation card</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {donationCards.map((card) => (
                       <FormTemplateBox
@@ -805,7 +805,7 @@ export function InlinePageEditor({
                 </svg>
               </a>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white" style={{ minHeight: "400px" }}>
+            <div className="overflow-hidden rounded-2xl border border-dashboard-border bg-dashboard-card" style={{ minHeight: "400px" }}>
               <iframe
                 src={
                   data.org_page_embed_card_id && data.org_page_embed_card_id !== DEFAULT_FORM_ID
@@ -821,16 +821,16 @@ export function InlinePageEditor({
       </div>
       )}
 
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Edit team members</h2>
-        <p className="mt-1 text-sm text-slate-600 mb-4">
+      <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-dashboard-text">Edit team members</h2>
+        <p className="mt-1 text-sm text-dashboard-text-muted mb-4">
           Add and edit team members.
         </p>
         <TeamEditorClient organizationId={profile.id} />
       </div>
 
       {saving && (
-        <p className="text-sm text-slate-500">Saving…</p>
+        <p className="text-sm text-dashboard-text-muted">Saving…</p>
       )}
     </div>
   );
@@ -864,7 +864,7 @@ function EditableSection({
             e.preventDefault();
             onReverse();
           }}
-          className="absolute right-4 top-4 z-20 flex items-center gap-1.5 rounded-lg bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm border border-slate-200 hover:bg-white hover:border-slate-300"
+          className="absolute right-4 top-4 z-20 flex items-center gap-1.5 rounded-lg bg-dashboard-card px-3 py-2 text-xs font-medium text-dashboard-text shadow-sm border border-dashboard-border hover:bg-dashboard-card-hover"
           title={reverseLabel}
         >
           <ArrowLeftRight className="h-4 w-4" />

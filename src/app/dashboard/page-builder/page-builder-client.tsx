@@ -345,7 +345,7 @@ export function PageBuilderClient({
     <div className="space-y-4">
       {donationCards.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900 mb-2">Donation form for your page</h2>
+          <h2 className="text-base font-semibold text-dashboard-text mb-2">Donation form for your page</h2>
           <p className="text-sm text-slate-600 mb-4">
             Choose which embedded form appears in the donation section on your public page.
           </p>

@@ -99,7 +99,7 @@ export function DashboardLayoutClient({
 
   if (isFullScreenBuilder) {
     return (
-      <div className="fixed inset-0 h-screen w-screen overflow-y-auto overflow-x-hidden bg-white">
+      <div className="fixed inset-0 h-screen w-screen overflow-y-auto overflow-x-hidden bg-dashboard">
         {children}
       </div>
     );

@@ -1038,11 +1038,12 @@ export async function GET(req: NextRequest) {
             var first = Array.isArray(pages) ? pages[0] : null;
             var comp = first && (first.component || first.html);
             if (typeof comp === 'string' && comp.length > 100) {
-              var idx = comp.indexOf('<body');
-              var start = idx >= 0 ? comp.indexOf('>', idx) + 1 : 0;
-              var end = comp.indexOf('</body>', start);
-              var body = end >= 0 ? comp.slice(start, end) : comp.slice(start, start + 600);
-              var snip = (body || comp).substring(0, 600);
+              // Full HTML document (template with head + styles): use entire doc so CMS blocks (sermon-featured, ev-grid, etc.) get proper CSS
+              if (comp.indexOf('<!DOCTYPE') >= 0 || comp.indexOf('<html') >= 0) {
+                return comp.length > 50000 ? comp.substring(0, 50000) : comp;
+              }
+              // Fragment only: wrap with minimal styling
+              var snip = comp.substring(0, 600);
               return '<!DOCTYPE html><html><head><meta charset="utf-8"><style>*{margin:0;padding:0}body{font-family:Inter,sans-serif;background:#f8fafc;padding:12px;font-size:11px;color:#334155;overflow:hidden}</style></head><body>' + snip + '</body></html>';
             }
           } catch (_) {}

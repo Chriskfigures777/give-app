@@ -23,12 +23,12 @@ export default async function NewEventPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/dashboard/events"
-          className="text-slate-600 hover:text-slate-900 text-sm"
+          className="text-dashboard-text-muted hover:text-dashboard-text text-sm"
         >
           ← Back to events
         </Link>
       </div>
-      <h1 className="text-2xl font-semibold">Create event</h1>
+      <h1 className="text-2xl font-semibold text-dashboard-text">Create event</h1>
       <CreateEventForm organizationId={organizationId} organizationName={org.name} />
     </div>
   );

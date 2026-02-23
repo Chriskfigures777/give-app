@@ -109,7 +109,7 @@ const PLAN_DATA = [
 function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planStatus: PlanStatus; isActive: boolean }) {
   if (plan === "free") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-700 px-3 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Active
       </span>
@@ -117,7 +117,7 @@ function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planSt
   }
   if (planStatus === "trialing") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-900/30 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
         <Clock className="h-3.5 w-3.5" />
         Trial active
       </span>
@@ -125,7 +125,7 @@ function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planSt
   }
   if (planStatus === "active") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Active
       </span>
@@ -133,7 +133,7 @@ function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planSt
   }
   if (planStatus === "past_due") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 dark:bg-red-900/30 px-3 py-1 text-xs font-semibold text-red-700 dark:text-red-300">
         <AlertCircle className="h-3.5 w-3.5" />
         Past due
       </span>
@@ -141,7 +141,7 @@ function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planSt
   }
   if (planStatus === "canceled") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-700 px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
         <XCircle className="h-3.5 w-3.5" />
         Canceled
       </span>
@@ -207,31 +207,31 @@ export function BillingPageClient({
     <div className="mx-auto max-w-5xl space-y-8 px-2 py-4 sm:px-4 sm:py-6">
       {/* Header */}
       <div className="dashboard-fade-in">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-dashboard-text sm:text-3xl">
           Plan & Billing
         </h1>
-        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1.5 text-sm text-dashboard-text-muted">
           Manage your platform subscription. Growth ($29) and Pro ($49) include a 14-day free trial. Team members: +$10/mo each.
         </p>
       </div>
 
       {/* Success banner */}
       {successPlan && !dismissed && (
-        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 p-5">
           <button
             type="button"
             onClick={() => setDismissed(true)}
-            className="absolute right-4 top-4 text-emerald-400 hover:text-emerald-600"
+            className="absolute right-4 top-4 text-emerald-400 dark:text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-300"
           >
             <X className="h-4 w-4" />
           </button>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500 dark:text-emerald-400" />
             <div>
-              <p className="font-semibold text-emerald-800">
+              <p className="font-semibold text-emerald-800 dark:text-emerald-200">
                 You&apos;re on the {successPlan === "growth" ? "Growth" : "Pro"} plan!
               </p>
-              <p className="mt-0.5 text-sm text-emerald-600">
+              <p className="mt-0.5 text-sm text-emerald-600 dark:text-emerald-300">
                 Your 14-day free trial has started. You won&apos;t be charged until the trial ends.
                 Access all{" "}
                 {successPlan === "growth" ? "Growth" : "Pro"} features now.
@@ -243,23 +243,23 @@ export function BillingPageClient({
 
       {/* Canceled banner */}
       {canceled && !dismissed && (
-        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 p-5">
           <button
             type="button"
             onClick={() => setDismissed(true)}
-            className="absolute right-4 top-4 text-amber-400 hover:text-amber-600"
+            className="absolute right-4 top-4 text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300"
           >
             <X className="h-4 w-4" />
           </button>
-          <p className="text-sm font-medium text-amber-800">
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
             Checkout was canceled. Your plan has not changed.
           </p>
         </div>
       )}
 
       {!hasOrg && (
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
-          <p className="text-slate-600">
+        <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-6 text-center">
+          <p className="text-dashboard-text-muted">
             You need to create an organization before subscribing to a plan.
           </p>
           <Link
@@ -339,7 +339,7 @@ export function BillingPageClient({
       )}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
@@ -385,7 +385,7 @@ export function BillingPageClient({
                     {plan.name}
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-extrabold text-slate-900">{plan.price}</span>
+                    <span className="text-4xl font-extrabold text-dashboard-text">{plan.price}</span>
                     <span className="text-sm text-slate-400">{plan.period}</span>
                   </div>
 

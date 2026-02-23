@@ -86,8 +86,8 @@ export default async function GiversPage() {
     <div className="space-y-6 p-2 sm:p-4">
       <div className="dashboard-fade-in flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Givers</h1>
-          <p className="mt-1 text-slate-600">
+          <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Givers</h1>
+          <p className="mt-1 text-dashboard-text-muted">
             People who have given to your organization. Givers are identified by email when available.
           </p>
         </div>
@@ -99,72 +99,72 @@ export default async function GiversPage() {
       {/* Summary cards */}
       {givers.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Total givers</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{givers.length}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Total givers</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{givers.length}</p>
               </div>
-              <div className="rounded-xl bg-violet-500/10 p-2.5">
-                <Users className="h-6 w-6 text-violet-600" />
+              <div className="rounded-xl bg-violet-500/10 dark:bg-violet-500/20 p-2.5">
+                <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
           </div>
-          <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Total received</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{formatCurrency(totalCents)}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Total received</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{formatCurrency(totalCents)}</p>
               </div>
-              <div className="rounded-xl bg-emerald-500/10 p-2.5">
-                <Heart className="h-6 w-6 text-emerald-600" />
+              <div className="rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 p-2.5">
+                <Heart className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
             </div>
           </div>
-          <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <div className="dashboard-fade-in dashboard-fade-in-delay-3 rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">Total gifts</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{totalGifts}</p>
+                <p className="text-sm font-medium text-dashboard-text-muted">Total gifts</p>
+                <p className="mt-1 text-2xl font-bold text-dashboard-text">{totalGifts}</p>
               </div>
-              <div className="rounded-xl bg-amber-500/10 p-2.5">
-                <UserCircle className="h-6 w-6 text-amber-600" />
+              <div className="rounded-xl bg-amber-500/10 dark:bg-amber-500/20 p-2.5">
+                <UserCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className={`rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm ${givers.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-4" : "dashboard-fade-in dashboard-fade-in-delay-1"}`}>
-        <div className="border-b border-slate-200/80 px-5 py-4">
-          <h2 className="text-base font-bold text-slate-900">Giver list</h2>
+      <div className={`rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm ${givers.length > 0 ? "dashboard-fade-in dashboard-fade-in-delay-4" : "dashboard-fade-in dashboard-fade-in-delay-1"}`}>
+        <div className="border-b border-dashboard-border px-5 py-4">
+          <h2 className="text-base font-bold text-dashboard-text">Giver list</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50/80">
+            <thead className="bg-dashboard-card-hover/50">
               <tr>
-                <th className="text-left p-3 font-semibold text-slate-700">Giver</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Email</th>
-                <th className="text-right p-3 font-semibold text-slate-700">Total given</th>
-                <th className="text-right p-3 font-semibold text-slate-700">Gifts</th>
-                <th className="text-left p-3 font-semibold text-slate-700">Last donation</th>
-                <th className="text-center p-3 font-semibold text-slate-700">Action</th>
+                <th className="text-left p-3 font-semibold text-dashboard-text-muted">Giver</th>
+                <th className="text-left p-3 font-semibold text-dashboard-text-muted">Email</th>
+                <th className="text-right p-3 font-semibold text-dashboard-text-muted">Total given</th>
+                <th className="text-right p-3 font-semibold text-dashboard-text-muted">Gifts</th>
+                <th className="text-left p-3 font-semibold text-dashboard-text-muted">Last donation</th>
+                <th className="text-center p-3 font-semibold text-dashboard-text-muted">Action</th>
               </tr>
             </thead>
             <tbody>
               {givers.map((row) => (
-                <tr key={row.key} className="border-t border-slate-100 transition-colors hover:bg-slate-50/50">
-                  <td className="p-3 font-medium text-slate-900">
+                <tr key={row.key} className="border-t border-dashboard-border transition-colors hover:bg-dashboard-card-hover/50">
+                  <td className="p-3 font-medium text-dashboard-text">
                     {row.donorName ?? (row.donorEmail ? "—" : "Anonymous")}
                   </td>
-                  <td className="p-3 text-slate-500">
+                  <td className="p-3 text-dashboard-text-muted">
                     {row.donorEmail ?? "—"}
                   </td>
-                  <td className="p-3 text-right font-medium text-slate-900">
+                  <td className="p-3 text-right font-medium text-dashboard-text">
                     {formatCurrency(row.totalCents)}
                   </td>
-                  <td className="p-3 text-right text-slate-600">{row.donationCount}</td>
-                  <td className="p-3 text-slate-500">
+                  <td className="p-3 text-right text-dashboard-text-muted">{row.donationCount}</td>
+                  <td className="p-3 text-dashboard-text-muted">
                     {row.lastDonationAt
                       ? new Date(row.lastDonationAt).toLocaleDateString()
                       : "—"}
@@ -173,7 +173,7 @@ export default async function GiversPage() {
                     {row.donorEmail ? (
                       <AddMissionaryButton giverEmail={row.donorEmail} giverName={row.donorName} />
                     ) : (
-                      <span className="text-xs text-slate-400">—</span>
+                      <span className="text-xs text-dashboard-text-muted">—</span>
                     )}
                   </td>
                 </tr>

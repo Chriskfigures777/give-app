@@ -264,7 +264,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     );
   }
 
-  if (effectiveStyle === "compressed") {
+  // When seamless=1&mode=compressed, use seamless block (actual DonationForm). Otherwise compressed = CTA card.
+  if (effectiveStyle === "compressed" && !isSeamless) {
     return (
       <main
         className="min-h-full p-5 flex flex-col items-center justify-center"

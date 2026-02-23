@@ -1,9 +1,10 @@
 /**
- * Fetch wrapper with shorter timeout for Supabase Auth/API calls.
+ * Fetch wrapper with timeout for Supabase Auth/API calls.
  * When Supabase is unreachable (network issues, VPN, etc.), fail fast
- * instead of blocking for 10+ seconds so the app stays responsive.
+ * instead of blocking indefinitely so the app stays responsive.
+ * Set to 15s to accommodate cold starts and proxy latency (~10s observed).
  */
-const SUPABASE_FETCH_TIMEOUT_MS = 5000;
+const SUPABASE_FETCH_TIMEOUT_MS = 15000;
 
 export function createFetchWithTimeout(): typeof fetch {
   return (input: RequestInfo | URL, init?: RequestInit) => {
