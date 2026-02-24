@@ -83,8 +83,19 @@ export function DashboardThemeProvider({ children }: { children: React.ReactNode
   );
 }
 
+const DEFAULT_THEME_CTX: DashboardThemeContextValue = {
+  theme: "light",
+  setTheme: () => {},
+  toggleTheme: () => {},
+};
+
 export function useDashboardTheme() {
   const ctx = useContext(DashboardThemeContext);
-  if (!ctx) throw new Error("useDashboardTheme must be used within DashboardThemeProvider");
+  if (!ctx) {
+    if (typeof window === "undefined") {
+      return DEFAULT_THEME_CTX;
+    }
+    throw new Error("useDashboardTheme must be used within DashboardThemeProvider");
+  }
   return ctx;
 }
