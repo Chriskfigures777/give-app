@@ -109,6 +109,9 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
   try {
     switch (stripeEvent.type) {
       case "payment_intent.succeeded": {
+        // Make.com-style split flow: payment_intent.succeeded → get amount, latest_charge →
+        // resolve splits from PI metadata or invoices→products→metadata.splits →
+        // POST /v1/transfers with source_transaction, transfer_group. Only when charge is on PLATFORM.
         const pi = stripeEvent.data.object as Stripe.PaymentIntent;
         const metadata = pi.metadata ?? {};
         const chargeId =
@@ -117,6 +120,8 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             : (pi.latest_charge as Stripe.Charge)?.id ?? null;
 
         let splits: { percentage: number; accountId: string }[] = [];
+
+        // Step 1: PaymentIntent metadata.splits (JSON: [{percentage, accountId}, ...])
         const rawSplits = metadata.splits;
         if (typeof rawSplits === "string" && rawSplits) {
           try {
@@ -125,10 +130,9 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             /* ignore */
           }
         }
-        if (splits.length === 0) {
-          console.log("[splits] No splits in metadata, checking product metadata fallback");
-        }
 
+        // Step 2: GET /v1/invoices (search) → loop lines.data[] → price.product →
+        // GET /v1/products/{product_id} → metadata.splits (JSON [{percentage, accountId}, ...])
         if (splits.length === 0) {
           try {
             const searchResult = await stripe.invoices.search(
@@ -136,42 +140,86 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
               connectAccountId ? { stripeAccount: connectAccountId } : undefined
             );
             for (const inv of searchResult.data) {
-            const lines = inv.lines?.data ?? [];
-            for (const line of lines) {
-              const lineItem = line as {
-                price?: { product?: string | Stripe.Product };
-                pricing?: { price_details?: { product?: string } };
-              };
-              const productId =
-                typeof lineItem.price?.product === "string"
-                  ? lineItem.price.product
-                  : (lineItem.price?.product as Stripe.Product)?.id ??
-                    (typeof lineItem.pricing?.price_details?.product === "string"
-                      ? lineItem.pricing.price_details.product
-                      : null);
-              if (!productId) continue;
-              const product = await stripe.products.retrieve(
-                productId,
-                connectAccountId ? { stripeAccount: connectAccountId } : undefined
-              );
-              const productSplits = product.metadata?.splits;
-              if (typeof productSplits === "string" && productSplits) {
-                try {
-                  splits = JSON.parse(productSplits) as { percentage: number; accountId: string }[];
-                  break;
-                } catch {
-                  /* ignore */
+              const lines = inv.lines?.data ?? [];
+              for (const line of lines) {
+                const lineItem = line as {
+                  price?: { product?: string | Stripe.Product };
+                  pricing?: { price_details?: { product?: string } };
+                };
+                const productId =
+                  typeof lineItem.price?.product === "string"
+                    ? lineItem.price.product
+                    : (lineItem.price?.product as Stripe.Product)?.id ??
+                      (typeof lineItem.pricing?.price_details?.product === "string"
+                        ? lineItem.pricing.price_details.product
+                        : null);
+                if (!productId) continue;
+                const product = await stripe.products.retrieve(
+                  productId,
+                  connectAccountId ? { stripeAccount: connectAccountId } : undefined
+                );
+                const productSplits = product.metadata?.splits;
+                if (typeof productSplits === "string" && productSplits) {
+                  try {
+                    splits = JSON.parse(productSplits) as { percentage: number; accountId: string }[];
+                    console.log("[splits] Resolved from product metadata", { productId, count: splits.length });
+                    break;
+                  } catch {
+                    /* ignore */
+                  }
                 }
               }
+              if (splits.length > 0) break;
             }
-            if (splits.length > 0) break;
-          }
           } catch (invErr) {
             console.warn("Invoice search skipped:", invErr instanceof Error ? invErr.message : invErr);
           }
         }
 
-        if (splits.length > 0 && chargeId) {
+        // Step 3: DB fallback for direct PaymentIntents (no invoice) — form_customizations or embed card
+        const organizationIdForFallback = metadata.organization_id as string | undefined;
+        if (
+          splits.length === 0 &&
+          !connectAccountId &&
+          organizationIdForFallback &&
+          chargeId
+        ) {
+          const embedCardId = (metadata.embed_card_id as string)?.trim() || null;
+          if (embedCardId) {
+            const { data: cardRow } = await supabase
+              .from("org_embed_cards")
+              .select("id, splits, organization_id")
+              .eq("id", embedCardId)
+              .eq("organization_id", organizationIdForFallback)
+              .maybeSingle();
+            const card = cardRow as { splits?: { percentage: number; accountId?: string }[] } | null;
+            if (card?.splits?.length) {
+              splits = card.splits.filter((s) => s.accountId) as { percentage: number; accountId: string }[];
+              console.log("[splits] Resolved from embed card", { embedCardId, count: splits.length });
+            }
+          }
+          if (splits.length === 0) {
+            const { data: formRow } = await supabase
+              .from("form_customizations")
+              .select("splits")
+              .eq("organization_id", organizationIdForFallback)
+              .maybeSingle();
+            const form = formRow as { splits?: { percentage: number; accountId?: string }[] } | null;
+            if (form?.splits?.length) {
+              splits = form.splits.filter((s) => s.accountId) as { percentage: number; accountId: string }[];
+              console.log("[splits] Resolved from form_customizations", { count: splits.length });
+            }
+          }
+        }
+
+        // CRITICAL: Only run when charge is on PLATFORM. Connect charges → "No such charge" on transfer.
+        if (splits.length > 0 && chargeId && connectAccountId) {
+          console.warn("[splits] Skipping: charge on Connect account, cannot transfer from platform", {
+            piId: pi.id,
+            connectAccountId,
+          });
+        }
+        if (splits.length > 0 && chargeId && !connectAccountId) {
           console.log("[splits] Processing split transfer", {
             piId: pi.id,
             splitsCount: splits.length,
@@ -202,7 +250,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
               break;
             }
 
-            // Charge landed on PLATFORM. Transfer from platform to form owner + peers.
+            // amount = (percentage × intent.amount) / 100. Subtract platform fee for net.
             const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
             const netAmount = Math.max(0, pi.amount - applicationFeeCents);
             const stripeSplits = splits.filter((s) => s.accountId);
@@ -210,6 +258,12 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             const formOwnerPct = Math.max(0, 100 - peerPctSum);
 
             const transferPromises: Promise<unknown>[] = [];
+
+            // POST /v1/transfers: amount, currency, destination, source_transaction: latest_charge, transfer_group: pi_id
+            const transferParams = {
+              source_transaction: chargeId,
+              transfer_group: pi.id,
+            };
 
             if (formOwnerPct >= 0.01) {
               const amt = Math.round((formOwnerPct / 100) * netAmount);
@@ -219,7 +273,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
                     amount: amt,
                     currency: (pi.currency as "usd") ?? "usd",
                     destination: formOwnerConnectId,
-                    transfer_group: pi.id,
+                    ...transferParams,
                     description: `Split share for donation ${pi.id}`,
                   })
                 );
@@ -234,7 +288,7 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
                     amount: amt,
                     currency: (pi.currency as "usd") ?? "usd",
                     destination: entry.accountId,
-                    transfer_group: pi.id,
+                    ...transferParams,
                     description: `Split share for donation ${pi.id}`,
                   })
                 );

@@ -118,41 +118,40 @@ export async function createPaymentIntentForDonation(params: CreatePaymentIntent
   }
 
   if (SPLITS_ENABLED && splits && splits.length > 0 && org.stripe_connect_account_id) {
-    // Charge on form owner's Connect account. application_fee = platform fee only.
-    // Peer shares stay on Connect account; webhook transfers Connect → Connect.
+    // Charge on PLATFORM so we can transfer to multiple Connect accounts.
+    // Stripe does not allow direct transfers between Connect accounts.
+    // Webhook transfers from platform → form owner + peers; platform keeps application_fee only.
     const stripeSplits = splits.filter((s) => s.accountId);
     const platformFeeCents = Math.round(totalCents * PLATFORM_FEE_RATE);
     const applicationFeeCents = platformFeeCents;
 
-    const paymentIntent = await stripe.paymentIntents.create(
-      {
-        amount: totalCents,
-        currency: CURRENCY,
-        application_fee_amount: applicationFeeCents,
-        receipt_email: email || undefined,
-        metadata: {
-          organization_id: organizationId,
-          campaign_id: campaignId ?? "",
-          donor_email: email,
-          donor_name: isAnonymous ? "Anonymous" : (donorName?.trim() ?? ""),
-          user_id: userId ?? "",
-          donation_amount_cents: String(amountCents),
-          splits: JSON.stringify(stripeSplits),
-          split_mode: "stripe_connect",
-          donation_link_id: donationLinkId ?? "",
-          embed_card_id: embedCardId ?? "",
-          fund_request_id: fundRequestId ?? "",
-          application_fee_cents: String(applicationFeeCents),
-        },
-        automatic_payment_methods: { enabled: true },
+    // No application_fee_amount - charge on platform; webhook transfers out and keeps platform fee.
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalCents,
+      currency: CURRENCY,
+      receipt_email: email || undefined,
+      metadata: {
+        organization_id: organizationId,
+        campaign_id: campaignId ?? "",
+        donor_email: email,
+        donor_name: isAnonymous ? "Anonymous" : (donorName?.trim() ?? ""),
+        user_id: userId ?? "",
+        donation_amount_cents: String(amountCents),
+        splits: JSON.stringify(stripeSplits),
+        split_mode: "stripe_connect",
+        donation_link_id: donationLinkId ?? "",
+        embed_card_id: embedCardId ?? "",
+        fund_request_id: fundRequestId ?? "",
+        application_fee_cents: String(applicationFeeCents),
       },
-      { stripeAccount: org.stripe_connect_account_id }
-    );
+      automatic_payment_methods: { enabled: true },
+    });
 
+    // Return null so donation form uses platform Stripe (charge is on platform)
     return {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
-      stripeConnectAccountId: org.stripe_connect_account_id,
+      stripeConnectAccountId: null,
     };
   }
 
@@ -178,6 +177,7 @@ export async function createPaymentIntentForDonation(params: CreatePaymentIntent
         donation_amount_cents: String(amountCents),
         fee_coverage: feeCoverage,
         fund_request_id: fundRequestId ?? "",
+        embed_card_id: embedCardId ?? "",
       },
       automatic_payment_methods: { enabled: true },
     },

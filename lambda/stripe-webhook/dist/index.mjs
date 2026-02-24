@@ -31466,6 +31466,7 @@ async function handler(event) {
                 if (typeof productSplits === "string" && productSplits) {
                   try {
                     splits = JSON.parse(productSplits);
+                    console.log("[splits] Resolved from product metadata", { productId, count: splits.length });
                     break;
                   } catch {
                   }
@@ -31477,40 +31478,100 @@ async function handler(event) {
             console.warn("Invoice search skipped:", invErr instanceof Error ? invErr.message : invErr);
           }
         }
-        if (splits.length > 0 && chargeId) {
+        const organizationIdForFallback = metadata.organization_id;
+        if (splits.length === 0 && !connectAccountId && organizationIdForFallback && chargeId) {
+          const embedCardId = metadata.embed_card_id?.trim() || null;
+          if (embedCardId) {
+            const { data: cardRow } = await supabase.from("org_embed_cards").select("id, splits, organization_id").eq("id", embedCardId).eq("organization_id", organizationIdForFallback).maybeSingle();
+            const card = cardRow;
+            if (card?.splits?.length) {
+              splits = card.splits.filter((s) => s.accountId);
+              console.log("[splits] Resolved from embed card", { embedCardId, count: splits.length });
+            }
+          }
+          if (splits.length === 0) {
+            const { data: formRow } = await supabase.from("form_customizations").select("splits").eq("organization_id", organizationIdForFallback).maybeSingle();
+            const form = formRow;
+            if (form?.splits?.length) {
+              splits = form.splits.filter((s) => s.accountId);
+              console.log("[splits] Resolved from form_customizations", { count: splits.length });
+            }
+          }
+        }
+        if (splits.length > 0 && chargeId && connectAccountId) {
+          console.warn("[splits] Skipping: charge on Connect account, cannot transfer from platform", {
+            piId: pi.id,
+            connectAccountId
+          });
+        }
+        if (splits.length > 0 && chargeId && !connectAccountId) {
+          console.log("[splits] Processing split transfer", {
+            piId: pi.id,
+            splitsCount: splits.length,
+            splits: splits.map((s) => ({ pct: s.percentage, accountId: s.accountId ? `${s.accountId.slice(0, 12)}...` : null }))
+          });
           const { data: existingSplit } = await supabase.from("split_transfers").select("id").eq("stripe_payment_intent_id", pi.id).maybeSingle();
           if (!existingSplit) {
             const organizationId2 = metadata.organization_id;
-            if (!organizationId2) break;
+            if (!organizationId2) {
+              console.warn("[splits] Skipping: missing organization_id in metadata");
+              break;
+            }
             const { data: orgRow } = await supabase.from("organizations").select("stripe_connect_account_id").eq("id", organizationId2).single();
             const formOwnerConnectId = connectAccountId ?? orgRow?.stripe_connect_account_id;
-            if (!formOwnerConnectId) break;
+            if (!formOwnerConnectId) {
+              console.warn("[splits] Skipping: org has no stripe_connect_account_id", { organizationId: organizationId2 });
+              break;
+            }
+            const applicationFeeCents2 = parseInt(metadata.application_fee_cents ?? "0", 10);
+            const netAmount = Math.max(0, pi.amount - applicationFeeCents2);
             const stripeSplits = splits.filter((s) => s.accountId);
+            const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
+            const formOwnerPct = Math.max(0, 100 - peerPctSum);
             const transferPromises = [];
-            for (const entry of stripeSplits) {
-              const amount = Math.round(entry.percentage / 100 * pi.amount);
-              if (amount >= 1) {
+            const transferParams = {
+              source_transaction: chargeId,
+              transfer_group: pi.id
+            };
+            if (formOwnerPct >= 0.01) {
+              const amt = Math.round(formOwnerPct / 100 * netAmount);
+              if (amt >= 1) {
                 transferPromises.push(
-                  stripe.transfers.create(
-                    {
-                      amount,
-                      currency: pi.currency ?? "usd",
-                      destination: entry.accountId,
-                      transfer_group: pi.id
-                    },
-                    { stripeAccount: formOwnerConnectId }
-                  )
+                  stripe.transfers.create({
+                    amount: amt,
+                    currency: pi.currency ?? "usd",
+                    destination: formOwnerConnectId,
+                    ...transferParams,
+                    description: `Split share for donation ${pi.id}`
+                  })
+                );
+              }
+            }
+            for (const entry of stripeSplits) {
+              const amt = Math.round(entry.percentage / 100 * netAmount);
+              if (amt >= 1 && entry.accountId) {
+                transferPromises.push(
+                  stripe.transfers.create({
+                    amount: amt,
+                    currency: pi.currency ?? "usd",
+                    destination: entry.accountId,
+                    ...transferParams,
+                    description: `Split share for donation ${pi.id}`
+                  })
                 );
               }
             }
             if (transferPromises.length > 0) {
               try {
                 await Promise.all(transferPromises);
+                console.log("[splits] Transfers completed", { piId: pi.id, count: transferPromises.length });
               } catch (transferErr) {
                 console.error("[webhook] Split transfer failed:", transferErr);
                 throw transferErr;
               }
               await supabase.from("split_transfers").insert({ stripe_payment_intent_id: pi.id });
+            } else {
+              console.warn("[splits] No transfer promises (amounts may be < 1 cent)", { piId: pi.id });
             }
           }
           const splitOrgId = metadata.organization_id;
