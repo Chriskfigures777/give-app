@@ -69,17 +69,28 @@ export async function GET(req: NextRequest) {
 
     const includeDeleted = req.nextUrl.searchParams.get("includeDeleted") === "true";
     const deletedOnly = req.nextUrl.searchParams.get("deletedOnly") === "true";
+    const baseSelect = "id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, is_enabled, page_section, sort_order, goal_description, splits, created_at, updated_at, deleted_at";
+    const extendedSelect = baseSelect + ", background_color, text_color, embed_form_theme, form_border_color, form_border_width, form_border_style, form_border_opacity";
+
     let query = supabase
       .from("org_embed_cards")
-      .select("id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, is_enabled, page_section, sort_order, goal_description, splits, created_at, updated_at, deleted_at")
+      .select(extendedSelect)
       .eq("organization_id", organizationId);
     if (deletedOnly) {
       query = query.not("deleted_at", "is", null);
     } else if (!includeDeleted) {
       query = query.is("deleted_at", null);
     }
-    const { data, error } = await query.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
+    let result = await query.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
 
+    if (result.error && result.error.message?.includes("column") && result.error.message?.includes("does not exist")) {
+      query = supabase.from("org_embed_cards").select(baseSelect).eq("organization_id", organizationId);
+      if (deletedOnly) query = query.not("deleted_at", "is", null);
+      else if (!includeDeleted) query = query.is("deleted_at", null);
+      result = await query.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
+    }
+
+    const { data, error } = result;
     if (error) {
       console.error("embed-cards GET error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -153,6 +164,13 @@ export async function POST(req: NextRequest) {
       button_text_color: (body.button_text_color as string)?.trim() || null,
       button_border_radius: (body.button_border_radius as string)?.trim() || null,
       primary_color: (body.primary_color as string)?.trim() || null,
+      background_color: (body.background_color as string)?.trim() || null,
+      text_color: (body.text_color as string)?.trim() || null,
+      embed_form_theme: (body.embed_form_theme as string)?.trim() || "default",
+      form_border_color: (body.form_border_color as string)?.trim() || null,
+      form_border_width: (body.form_border_width as string)?.trim() || null,
+      form_border_style: (body.form_border_style as string)?.trim() || null,
+      form_border_opacity: (body.form_border_opacity as string)?.trim() || null,
       is_enabled: body.is_enabled !== false,
       page_section: (body.page_section as EmbedCardPageSection) || "donation",
       sort_order: typeof body.sort_order === "number" ? body.sort_order : 0,

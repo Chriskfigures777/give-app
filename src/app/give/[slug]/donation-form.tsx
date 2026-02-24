@@ -59,6 +59,16 @@ type Props = {
   fundRequestId?: string;
   /** When set, use embed card or form splits (charge lands on platform, webhook splits). */
   embedCardId?: string;
+  /** Background color for the form container (.give-form-tithely) — where Amount & Fund, Payment frequency, etc. */
+  formBackgroundColor?: string | null;
+  /** Border color for form section boxes (Amount & Fund, Payment frequency, etc.) */
+  formBorderColor?: string | null;
+  /** Border width (e.g. "1px", "2px", "0" for none) */
+  formBorderWidth?: string | null;
+  /** Border style (e.g. "solid", "dashed", "dotted") */
+  formBorderStyle?: string | null;
+  /** Border opacity 0-1 (e.g. "1" = fully opaque, "0.5" = 50% transparent) */
+  formBorderOpacity?: string | null;
 };
 
 const stripePromiseCache = new Map<string, Promise<Stripe | null>>();
@@ -100,6 +110,11 @@ export function DonationForm({
   donationLinkId,
   fundRequestId,
   embedCardId,
+  formBackgroundColor,
+  formBorderColor,
+  formBorderWidth,
+  formBorderStyle,
+  formBorderOpacity,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -309,16 +324,29 @@ export function DonationForm({
 
   const accentColor = buttonColor || "#374151";
   const accentText = buttonTextColor || "#fff";
-  const formBg = "#f8f9fa";
+  const formBg = formBackgroundColor ?? "#f8f9fa";
   const inputBg = "#fff";
-  const inputBorder = "#e5e7eb";
+  const inputBorderColor = formBorderColor ?? "#e5e7eb";
+  const inputBorderOpacity = Math.min(1, Math.max(0, parseFloat(formBorderOpacity ?? "1") || 1));
+  const inputBorder = (() => {
+    if (inputBorderOpacity >= 1) return inputBorderColor;
+    const hex = inputBorderColor.replace("#", "").trim();
+    if (hex.length !== 6 || !/^[0-9a-fA-F]{6}$/.test(hex)) return inputBorderColor;
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    return `rgba(${r},${g},${b},${inputBorderOpacity})`;
+  })();
+  const inputBorderWidth = formBorderWidth ?? "1px";
+  const inputBorderStyle = formBorderStyle ?? "solid";
   const sectionHeading = "text-sm font-semibold text-slate-700 mb-3";
+  const borderShorthand = `${inputBorderWidth} ${inputBorderStyle} ${inputBorder}`;
   const inputStyle: React.CSSProperties = {
     display: "block",
     width: "100%",
     fontSize: "15px",
     padding: "12px 14px",
-    border: `1px solid ${inputBorder}`,
+    border: borderShorthand,
     borderRadius: radius,
     background: inputBg,
     color: "var(--stripe-dark)",
@@ -326,12 +354,12 @@ export function DonationForm({
   const formStyle = noCard
     ? undefined
     : {
-        border: "1px solid var(--stripe-light-grey)",
+        border: borderShorthand,
         borderRadius: radius,
         padding: "24px",
         margin: "20px 0",
         boxShadow: "var(--stripe-form-shadow)",
-        background: "#fff",
+        background: formBackgroundColor ?? "#fff",
       };
 
   return (
@@ -340,7 +368,7 @@ export function DonationForm({
       className={fullWidth ? "!w-full !min-w-0 !max-w-none" : ""}
       style={{
         ...formStyle,
-        background: formStyle ? "#fff" : undefined,
+        background: formStyle ? (formBackgroundColor ?? "#fff") : (formBackgroundColor ?? undefined),
         ...(fullWidth && { width: "100%", minWidth: 0, maxWidth: "none" }),
       }}
     >
@@ -350,7 +378,7 @@ export function DonationForm({
           background: formBg,
           borderRadius: radius,
           padding: "24px",
-          border: `1px solid ${inputBorder}`,
+          border: borderShorthand,
           ...(fullWidth && { width: "100%", minWidth: 0, maxWidth: "none" }),
         }}
       >
@@ -385,7 +413,7 @@ export function DonationForm({
                 <>
                   <div
                     className="p-4 rounded-lg border"
-                    style={{ borderColor: inputBorder }}
+                    style={{ borderColor: inputBorder, borderWidth: inputBorderWidth, borderStyle: inputBorderStyle }}
                   >
                     <h3 className={sectionHeading}>Amount & Fund</h3>
                     <div className="mb-5 text-center">
@@ -511,7 +539,7 @@ export function DonationForm({
                   </div>
                   <div
                     className="p-4 rounded-lg border"
-                    style={{ borderColor: inputBorder }}
+                    style={{ borderColor: inputBorder, borderWidth: inputBorderWidth, borderStyle: inputBorderStyle }}
                   >
                     <h3 className={sectionHeading}>Payment frequency</h3>
                     <div className="flex flex-wrap gap-2">
@@ -583,7 +611,7 @@ export function DonationForm({
                   </button>
                   <div
                     className="p-4 rounded-lg border"
-                    style={{ borderColor: inputBorder }}
+                    style={{ borderColor: inputBorder, borderWidth: inputBorderWidth, borderStyle: inputBorderStyle }}
                   >
                     <h3 className={sectionHeading}>Contact details</h3>
                   {showAnonymousOption && (
@@ -639,7 +667,7 @@ export function DonationForm({
                   </div>
                   <div
                     className="p-4 rounded-lg border"
-                    style={{ borderColor: inputBorder }}
+                    style={{ borderColor: inputBorder, borderWidth: inputBorderWidth, borderStyle: inputBorderStyle }}
                   >
                     <h3 className={sectionHeading}>
                     Transaction fee
@@ -711,7 +739,7 @@ export function DonationForm({
               {expandedPair === 3 && (
                 <div
                   className="p-4 rounded-lg border"
-                  style={{ borderColor: inputBorder }}
+                  style={{ borderColor: inputBorder, borderWidth: inputBorderWidth, borderStyle: inputBorderStyle }}
                   role="region"
                   aria-label="Payment summary"
                 >

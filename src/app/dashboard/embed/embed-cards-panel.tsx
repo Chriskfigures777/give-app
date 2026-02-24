@@ -56,6 +56,10 @@ type EmbedCard = {
   background_color?: string | null;
   text_color?: string | null;
   embed_form_theme?: EmbedFormThemeId | null;
+  form_border_color?: string | null;
+  form_border_width?: string | null;
+  form_border_style?: string | null;
+  form_border_opacity?: string | null;
   is_enabled: boolean;
   page_section: string;
   sort_order: number;
@@ -629,6 +633,10 @@ export function EmbedCardsPanel({
       background_color: card.background_color,
       text_color: card.text_color,
       embed_form_theme: card.embed_form_theme,
+      form_border_color: card.form_border_color,
+      form_border_width: card.form_border_width,
+      form_border_style: card.form_border_style,
+      form_border_opacity: card.form_border_opacity,
       goal_description: card.goal_description,
       is_enabled: false,
       page_section: card.page_section,
@@ -1129,6 +1137,10 @@ function CustomFormEditor({
   const [backgroundColor, setBackgroundColor] = useState(card.background_color ?? "");
   const [textColor, setTextColor] = useState(card.text_color ?? "");
   const [embedFormTheme, setEmbedFormTheme] = useState<EmbedFormThemeId>((card.embed_form_theme as EmbedFormThemeId) ?? "default");
+  const [formBorderColor, setFormBorderColor] = useState(card.form_border_color ?? "#e5e7eb");
+  const [formBorderWidth, setFormBorderWidth] = useState(card.form_border_width ?? "1px");
+  const [formBorderStyle, setFormBorderStyle] = useState(card.form_border_style ?? "solid");
+  const [formBorderOpacity, setFormBorderOpacity] = useState(card.form_border_opacity ?? "1");
   const [isEnabled, setIsEnabled] = useState(card.is_enabled);
   const [pageSection, setPageSection] = useState(card.page_section);
   const [splits, setSplits] = useState<{ percentage: number; accountId: string }[]>(
@@ -1157,11 +1169,15 @@ function CustomFormEditor({
     setBackgroundColor(card.background_color ?? "");
     setTextColor(card.text_color ?? "");
     setEmbedFormTheme((card.embed_form_theme as EmbedFormThemeId) ?? "default");
+    setFormBorderColor(card.form_border_color ?? "#e5e7eb");
+    setFormBorderWidth(card.form_border_width ?? "1px");
+    setFormBorderStyle(card.form_border_style ?? "solid");
+    setFormBorderOpacity(card.form_border_opacity ?? "1");
     setIsEnabled(card.is_enabled);
     setPageSection(card.page_section);
     setSplits((card.splits as { percentage: number; accountId: string }[] | undefined) ?? []);
     setPreviewDisplayMode((prev) => (card.style === "compressed" ? "compressed" : prev === "compressed" ? "full_width" : prev));
-  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.background_color, card.text_color, card.embed_form_theme, card.is_enabled, card.page_section, card.splits]);
+  }, [card.id, card.name, card.style, card.campaign_id, card.goal_description, card.design_set, card.button_color, card.button_text_color, card.primary_color, card.button_border_radius, card.background_color, card.text_color, card.embed_form_theme, card.form_border_color, card.form_border_width, card.form_border_style, card.form_border_opacity, card.is_enabled, card.page_section, card.splits]);
 
   async function resolvePexelsUrl(): Promise<string | null> {
     const url = designSet.media_url?.trim();
@@ -1204,6 +1220,10 @@ function CustomFormEditor({
         background_color: backgroundColor.trim() || null,
         text_color: textColor.trim() || null,
         embed_form_theme: embedFormTheme,
+        form_border_color: formBorderColor.trim() || null,
+        form_border_width: formBorderWidth.trim() || null,
+        form_border_style: formBorderStyle.trim() || null,
+        form_border_opacity: formBorderOpacity.trim() || null,
         is_enabled: isEnabled,
         page_section: pageSection,
         splits: SPLITS_ENABLED && splits.length > 0 ? splits : undefined,
@@ -1248,6 +1268,11 @@ function CustomFormEditor({
     if (designSet.title) params.set("design_title", designSet.title);
     if (designSet.subtitle) params.set("design_subtitle", designSet.subtitle);
     if (designSet.media_url) params.set("design_media_url", designSet.media_url);
+    if (designSet.media_type) params.set("design_media_type", designSet.media_type);
+    if (formBorderColor) params.set("form_border_color", formBorderColor);
+    if (formBorderWidth) params.set("form_border_width", formBorderWidth);
+    if (formBorderStyle) params.set("form_border_style", formBorderStyle);
+    if (formBorderOpacity && formBorderOpacity !== "1") params.set("form_border_opacity", formBorderOpacity);
     if (previewDisplayMode === "compressed") {
       params.set("seamless", "1");
       params.set("theme", embedToSeamlessTheme(embedFormTheme));
@@ -1255,7 +1280,7 @@ function CustomFormEditor({
     }
     if (previewDisplayMode === "full_width") params.set("fullscreen", "1");
     return `${base}?${params}`;
-  }, [baseUrl, slug, card.id, buttonColor, buttonTextColor, backgroundColor, textColor, embedFormTheme, buttonBorderRadius, designSet.title, designSet.subtitle, designSet.media_url, previewDisplayMode]);
+  }, [baseUrl, slug, card.id, buttonColor, buttonTextColor, backgroundColor, textColor, embedFormTheme, buttonBorderRadius, designSet.title, designSet.subtitle, designSet.media_url, designSet.media_type, formBorderColor, formBorderWidth, formBorderStyle, formBorderOpacity, previewDisplayMode]);
 
   return (
     <div className="flex flex-col lg:flex-row min-w-0 min-h-0 gap-8">
@@ -1373,6 +1398,44 @@ function CustomFormEditor({
               <div className="flex gap-2 items-center">
                 <input type="text" value={buttonBorderRadius} onChange={(e) => setButtonBorderRadius(e.target.value)} placeholder="8px" className={`flex-1 font-mono text-sm ${inputClass}`} />
                 <span className="text-xs text-dashboard-text-muted shrink-0">e.g. 8px, 12px, 1rem</span>
+              </div>
+            </div>
+            <div className="border-t border-slate-200 dark:border-slate-600 pt-4 space-y-4">
+              <p className="text-sm font-medium text-dashboard-text">Form section borders</p>
+              <p className="text-xs text-dashboard-text-muted -mt-2">Borders around Amount &amp; Fund, Payment frequency, etc.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Border color</label>
+                  <div className="flex gap-2">
+                    <input type="color" value={formBorderColor.startsWith("#") ? formBorderColor : "#e5e7eb"} onChange={(e) => setFormBorderColor(e.target.value)} className="h-10 w-10 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-600 shrink-0" />
+                    <input type="text" value={formBorderColor} onChange={(e) => setFormBorderColor(e.target.value)} placeholder="#e5e7eb" className={`flex-1 font-mono text-sm ${inputClass}`} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Border width</label>
+                  <select value={formBorderWidth} onChange={(e) => setFormBorderWidth(e.target.value)} className={inputClass}>
+                    <option value="0">None</option>
+                    <option value="1px">1px</option>
+                    <option value="2px">2px</option>
+                    <option value="3px">3px</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Border style</label>
+                  <select value={formBorderStyle} onChange={(e) => setFormBorderStyle(e.target.value)} className={inputClass}>
+                    <option value="solid">Solid</option>
+                    <option value="dashed">Dashed</option>
+                    <option value="dotted">Dotted</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Border transparency</label>
+                  <div className="flex gap-2 items-center">
+                    <input type="range" min="0" max="100" value={Math.round(parseFloat(formBorderOpacity || "1") * 100)} onChange={(e) => setFormBorderOpacity((parseInt(e.target.value, 10) / 100).toString())} className="flex-1 h-2 rounded-lg appearance-none cursor-pointer bg-slate-200 dark:bg-slate-600" />
+                    <span className="text-xs text-dashboard-text-muted shrink-0 w-10">{Math.round(parseFloat(formBorderOpacity || "1") * 100)}%</span>
+                  </div>
+                  <p className="text-xs text-dashboard-text-muted mt-1">100% = fully opaque, 0% = fully transparent</p>
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

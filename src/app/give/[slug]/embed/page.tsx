@@ -36,7 +36,8 @@ type Props = {
     preview?: string;
     button_color?: string; button_text_color?: string; background_color?: string; text_color?: string;
     embed_form_theme?: string; button_border_radius?: string;
-    design_title?: string; design_subtitle?: string; design_media_url?: string;
+    design_title?: string; design_subtitle?: string; design_media_url?: string; design_media_type?: string;
+    form_border_color?: string; form_border_width?: string; form_border_style?: string; form_border_opacity?: string;
   }>;
 };
 
@@ -54,6 +55,10 @@ type EmbedCardRow = {
   background_color?: string | null;
   text_color?: string | null;
   embed_form_theme?: string | null;
+  form_border_color?: string | null;
+  form_border_width?: string | null;
+  form_border_style?: string | null;
+  form_border_opacity?: string | null;
   is_enabled: boolean;
   goal_description?: string | null;
 };
@@ -90,6 +95,11 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     design_title: resolved.design_title,
     design_subtitle: resolved.design_subtitle,
     design_media_url: resolved.design_media_url,
+    design_media_type: resolved.design_media_type,
+    form_border_color: resolved.form_border_color,
+    form_border_width: resolved.form_border_width,
+    form_border_style: resolved.form_border_style,
+    form_border_opacity: resolved.form_border_opacity,
   } : null;
   const supabase = await createClient();
 
@@ -110,7 +120,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   if (cardId) {
     const { data: cardRow } = await supabase
       .from("org_embed_cards")
-      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, background_color, text_color, embed_form_theme, is_enabled, goal_description")
+      .select("id, organization_id, name, style, campaign_id, design_set, button_color, button_text_color, button_border_radius, primary_color, background_color, text_color, embed_form_theme, form_border_color, form_border_width, form_border_style, form_border_opacity, is_enabled, goal_description")
       .eq("id", cardId)
       .eq("organization_id", org.id)
       .eq("is_enabled", true)
@@ -163,6 +173,10 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   }
   const effectiveButtonColor = previewOverrides?.button_color ?? embedCard?.button_color ?? formCustom?.button_color;
   const effectiveButtonTextColor = previewOverrides?.button_text_color ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
+  const effectiveFormBorderColor = previewOverrides?.form_border_color ?? embedCard?.form_border_color ?? undefined;
+  const effectiveFormBorderWidth = previewOverrides?.form_border_width ?? embedCard?.form_border_width ?? undefined;
+  const effectiveFormBorderStyle = previewOverrides?.form_border_style ?? embedCard?.form_border_style ?? undefined;
+  const effectiveFormBorderOpacity = previewOverrides?.form_border_opacity ?? embedCard?.form_border_opacity ?? undefined;
 
   let designSetFromCard = embedCard?.design_set
     ? {
@@ -174,7 +188,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     : null;
   if (previewOverrides && (previewOverrides.design_title || previewOverrides.design_subtitle || previewOverrides.design_media_url)) {
     designSetFromCard = {
-      media_type: "image",
+      media_type: (previewOverrides.design_media_type === "video" ? "video" : "image") as "image" | "video",
       media_url: previewOverrides.design_media_url ?? designSetFromCard?.media_url ?? null,
       title: previewOverrides.design_title ?? designSetFromCard?.title ?? null,
       subtitle: previewOverrides.design_subtitle ?? designSetFromCard?.subtitle ?? null,
@@ -187,7 +201,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const effectiveMediaSet = ((): DesignSet & { media_url: string } => {
     const cardSet = cardDesignSets[0];
     const formSet = designSets[0];
-    if (cardSet?.media_url && isDirectMediaUrl(cardSet.media_url))
+    if (cardSet?.media_url && (isDirectMediaUrl(cardSet.media_url) || previewOverrides?.design_media_url))
       return { ...cardSet, media_url: cardSet.media_url };
     if (formSet?.media_url && isDirectMediaUrl(formSet.media_url))
       return { ...formSet, media_url: formSet.media_url };
@@ -374,16 +388,17 @@ buttonColor={effectiveButtonColor}
     const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
 
     const tc = themeMap[embedFormTheme] ?? themeMap.grace;
+    const themedBg = previewOverrides?.background_color ?? tc.bgColor;
 
     return (
       <main
         className={`${tc.wrapperClass} min-h-full p-5 flex flex-col items-center justify-center`}
-        style={{ backgroundColor: tc.bgColor, fontFamily: "'Inter', sans-serif", containerType: "inline-size" } as React.CSSProperties}
+        style={{ backgroundColor: "transparent", fontFamily: "'Inter', sans-serif", containerType: "inline-size" } as React.CSSProperties}
       >
         <EmbedResizeObserver />
         <link rel="stylesheet" href={tc.fontUrl} />
         <style dangerouslySetInnerHTML={{ __html: tc.css }} />
-        <div className="give-split w-full max-w-[900px]">
+        <div className="give-split w-full max-w-[900px]" style={{ backgroundColor: themedBg }}>
           <div className="gs-img">
             {hasVideo ? (
               <video
@@ -427,6 +442,11 @@ buttonColor={effectiveButtonColor}
               initialFrequency={initialFrequency}
               fullWidth
               embedCardId={embedCard?.id}
+              formBackgroundColor={effectiveBackgroundColor}
+              formBorderColor={effectiveFormBorderColor}
+              formBorderWidth={effectiveFormBorderWidth}
+              formBorderStyle={effectiveFormBorderStyle}
+              formBorderOpacity={effectiveFormBorderOpacity}
             />
             <p className="gs-form-secure">{tc.secureText}</p>
           </div>
@@ -444,6 +464,7 @@ buttonColor={effectiveButtonColor}
     const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
 
     const tc = themeMap[embedFormTheme] ?? themeMap.grace;
+    const themedFullscreenBg = previewOverrides?.background_color ?? tc.bgColor;
 
     const mediaContent = hasVideo ? (
       <video
@@ -467,7 +488,7 @@ buttonColor={effectiveButtonColor}
       <main
         data-fullscreen
         className={`${tc.wrapperClass} w-full flex flex-col md:flex-row`}
-        style={{ fontFamily: "'Inter', sans-serif" }}
+        style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "transparent" }}
       >
         <EmbedResizeObserver />
         <link rel="stylesheet" href={tc.fontUrl} />
@@ -499,9 +520,10 @@ buttonColor={effectiveButtonColor}
           )}
         </div>
 
-        {/* Right panel — form with theme styling */}
+        {/* Right panel — form section (same background as form for seamless look) */}
         <div
           className={`${tc.formPanelClass} flex flex-col w-full md:w-1/2 lg:w-[45%] min-w-0 flex-1 overflow-visible`}
+          style={{ backgroundColor: themedFullscreenBg }}
         >
           <div className="w-full min-w-0 flex flex-col justify-center py-5 px-4 sm:px-6 md:py-8 md:px-8 lg:px-10">
             <span className="sec-eye">
@@ -527,6 +549,11 @@ buttonColor={effectiveButtonColor}
               initialFrequency={initialFrequency}
               fullWidth
               embedCardId={embedCard?.id}
+              formBackgroundColor={themedFullscreenBg}
+              formBorderColor={effectiveFormBorderColor}
+              formBorderWidth={effectiveFormBorderWidth}
+              formBorderStyle={effectiveFormBorderStyle}
+              formBorderOpacity={effectiveFormBorderOpacity}
             />
             <p className="gs-form-secure">{tc.secureText}</p>
           </div>
@@ -542,14 +569,16 @@ buttonColor={effectiveButtonColor}
     const theme = seamlessTheme ? getSeamlessTheme(seamlessTheme) : null;
     const themeFontUrl = seamlessTheme ? getSeamlessThemeFontUrl(seamlessTheme) : null;
     const themeCSS = seamlessTheme ? buildSeamlessThemeCSS(seamlessTheme) : SEAMLESS_BASE_CSS;
-    const seamlessButtonColor = theme?.accentColor ?? previewOverrides?.button_color ?? embedCard?.button_color ?? formCustom?.button_color;
-    const seamlessButtonTextColor = theme?.buttonTextColor ?? previewOverrides?.button_text_color ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
-    const effectiveBorderRadius = theme?.borderRadius ?? borderRadius;
+    /** Custom form (embed card) colors take precedence over theme defaults — use card/preview first */
+    const seamlessButtonColor = previewOverrides?.button_color ?? embedCard?.button_color ?? theme?.accentColor ?? formCustom?.button_color;
+    const seamlessButtonTextColor = previewOverrides?.button_text_color ?? embedCard?.button_text_color ?? theme?.buttonTextColor ?? formCustom?.button_text_color;
+    const effectiveBorderRadius = previewOverrides?.button_border_radius ?? embedCard?.button_border_radius ?? theme?.borderRadius ?? borderRadius;
     const effectiveFont = theme ? theme.bodyFont : fontFamily;
 
-    // Display mode: URL ?mode= param > form builder setting > themed layout default
+    // Display mode: URL ?mode= > custom form card style > website form setting > themed default
     const seamlessDisplayMode: "full" | "compressed" | "full_width" =
       (["full", "compressed", "full_width"].includes(modeParam ?? "") ? modeParam as "full" | "compressed" | "full_width" : undefined)
+      ?? (embedCard?.style === "compressed" ? "compressed" : embedCard ? "full_width" : undefined)
       ?? formCustom?.form_display_mode
       ?? (useThemedLayout ? "full_width" : "compressed");
 
@@ -561,9 +590,9 @@ buttonColor={effectiveButtonColor}
       const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
       const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
       const isDark = theme?.isDark ?? false;
-      const accentColor = theme?.accentColor ?? previewOverrides?.button_color ?? formCustom?.button_color ?? "#6366F1";
-      const formBg = isDark ? (theme?.darkBg ?? "#0F0F0F") : "white";
-      const textColor = theme?.textColor ?? (isDark ? "#E5E5E5" : "#333");
+      const accentColor = previewOverrides?.button_color ?? embedCard?.button_color ?? theme?.accentColor ?? formCustom?.button_color ?? "#6366F1";
+      const formBg = previewOverrides?.background_color ?? embedCard?.background_color ?? (isDark ? (theme?.darkBg ?? "#0F0F0F") : "white");
+      const textColor = previewOverrides?.text_color ?? embedCard?.text_color ?? theme?.textColor ?? (isDark ? "#E5E5E5" : "#333");
       const headingFont = theme?.headingFont ?? "'Inter',sans-serif";
       const accentRgb = theme?.accentRgb ?? "99,102,241";
 
@@ -613,10 +642,10 @@ buttonColor={effectiveButtonColor}
         ${isDark ? `
           .seamless-give-split .sgs-form .give-form-tithely,
           .seamless-give-split .sgs-form [class*="give-form"] {
-            background: transparent !important; border: none !important; box-shadow: none !important;
+            background: ${formBg} !important; border: none !important; box-shadow: none !important;
           }
           .seamless-give-split .sgs-form #checkout {
-            background: transparent !important; border: none !important; box-shadow: none !important;
+            background: ${formBg} !important; border: none !important; box-shadow: none !important;
           }
           .seamless-give-split .sgs-form .rounded-lg.border,
           .seamless-give-split .sgs-form .p-4.rounded-lg.border,
@@ -720,6 +749,11 @@ buttonColor={effectiveButtonColor}
                 initialFrequency={initialFrequency}
                 fullWidth
                 embedCardId={embedCard?.id}
+                formBackgroundColor={formBg}
+                formBorderColor={effectiveFormBorderColor}
+                formBorderWidth={effectiveFormBorderWidth}
+                formBorderStyle={effectiveFormBorderStyle}
+                formBorderOpacity={effectiveFormBorderOpacity}
               />
               <p className="sgs-secure">All transactions are secure and encrypted</p>
             </div>
@@ -729,27 +763,45 @@ buttonColor={effectiveButtonColor}
       );
     }
 
-    // Full mode: image/video header above the form
+    // Full mode: form container (where text/buttons are) gets background_color
     if (seamlessDisplayMode === "full") {
-      const headerText = formCustom?.header_text ?? "Make a Donation";
-      const subheaderText = formCustom?.subheader_text ?? `Support ${org.name}`;
+      const headerText = designSetFromCard?.title ?? formCustom?.header_text ?? "Make a Donation";
+      const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
       const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
       const headingFont = theme?.headingFont ?? fontFamily;
+      const fullModeFormContainerBg = previewOverrides?.background_color ?? embedCard?.background_color ?? (theme?.bgColor ?? "#ffffff");
+      const fullModeTextColor = previewOverrides?.text_color ?? embedCard?.text_color ?? theme?.textColor ?? formCustom?.text_color ?? "inherit";
+      const fullModeHasCustomColors = (embedCard || previewOverrides) && (previewOverrides?.button_color ?? embedCard?.button_color);
+      const fullModeColorOverrides = fullModeHasCustomColors ? `
+        .seamless-theme button[type="button"]:hover,
+        .seamless-theme button[type="button"].ring-2,
+        .seamless-theme button[type="button"][aria-pressed="true"] {
+          background: ${seamlessButtonColor} !important;
+          color: ${seamlessButtonTextColor} !important;
+          border-color: ${seamlessButtonColor} !important;
+        }
+        .seamless-theme [class*="py-3"][class*="font-medium"][class*="rounded"],
+        .seamless-theme button[type="submit"] {
+          background: ${seamlessButtonColor} !important;
+          color: ${seamlessButtonTextColor} !important;
+          border-color: ${seamlessButtonColor} !important;
+        }
+      ` : "";
 
       return (
         <main
           className={`w-full${theme ? " seamless-theme" : ""}`}
           style={{
             background: "transparent",
-            color: theme?.textColor ?? formCustom?.text_color ?? "inherit",
+            color: fullModeTextColor,
             fontFamily: effectiveFont,
           }}
         >
           <EmbedResizeObserver />
-          <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+          <style dangerouslySetInnerHTML={{ __html: themeCSS + fullModeColorOverrides }} />
           {themeFontUrl && <link rel="stylesheet" href={themeFontUrl} />}
           {!themeFontUrl && googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
-          <div className="w-full max-w-[600px] mx-auto overflow-hidden rounded-xl" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+          <div className="w-full max-w-[600px] mx-auto overflow-hidden rounded-xl" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)", background: fullModeFormContainerBg }}>
             <div className="relative w-full h-56 overflow-hidden">
               {hasVideo ? (
                 <video
@@ -799,6 +851,11 @@ buttonColor={effectiveButtonColor}
                 initialFrequency={initialFrequency}
                 fullWidth
                 embedCardId={embedCard?.id}
+                formBackgroundColor={fullModeFormContainerBg}
+                formBorderColor={effectiveFormBorderColor}
+                formBorderWidth={effectiveFormBorderWidth}
+                formBorderStyle={effectiveFormBorderStyle}
+                formBorderOpacity={effectiveFormBorderOpacity}
               />
               <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
             </div>
@@ -807,20 +864,40 @@ buttonColor={effectiveButtonColor}
       );
     }
 
-    // Compressed (default): bare seamless form with theme colors, no images
+    // Compressed (default): form container (where text/buttons are) gets background_color; outer stays transparent
+    const formContainerBg = previewOverrides?.background_color ?? embedCard?.background_color ?? (theme?.bgColor ?? "#ffffff");
+    const seamlessTextColor = previewOverrides?.text_color ?? embedCard?.text_color ?? theme?.textColor ?? formCustom?.text_color ?? "inherit";
+    /** When custom form has its own button colors, override theme CSS so card colors apply */
+    const hasCustomFormColors = (embedCard || previewOverrides) && (previewOverrides?.button_color ?? embedCard?.button_color);
+    const customColorOverrides = hasCustomFormColors ? `
+      .seamless-theme button[type="button"]:hover,
+      .seamless-theme button[type="button"].ring-2,
+      .seamless-theme button[type="button"][aria-pressed="true"] {
+        background: ${seamlessButtonColor} !important;
+        color: ${seamlessButtonTextColor} !important;
+        border-color: ${seamlessButtonColor} !important;
+      }
+      .seamless-theme [class*="py-3"][class*="font-medium"][class*="rounded"],
+      .seamless-theme button[type="submit"] {
+        background: ${seamlessButtonColor} !important;
+        color: ${seamlessButtonTextColor} !important;
+        border-color: ${seamlessButtonColor} !important;
+      }
+    ` : "";
     return (
       <main
         className={`w-full${theme ? " seamless-theme" : ""}`}
         style={{
           background: "transparent",
-          color: theme?.textColor ?? formCustom?.text_color ?? "inherit",
+          color: seamlessTextColor,
           fontFamily: effectiveFont,
         }}
       >
         <EmbedResizeObserver />
-        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+        <style dangerouslySetInnerHTML={{ __html: themeCSS + customColorOverrides }} />
         {themeFontUrl && <link rel="stylesheet" href={themeFontUrl} />}
         {!themeFontUrl && googleFontUrl && <link rel="stylesheet" href={googleFontUrl} />}
+        <div className="w-full max-w-[480px] mx-auto p-6" style={{ background: formContainerBg, borderRadius: effectiveBorderRadius }}>
         <DonationForm
           organizationId={org.id}
           organizationName={org.name}
@@ -839,8 +916,14 @@ buttonColor={effectiveButtonColor}
           initialFrequency={initialFrequency}
           fullWidth
           embedCardId={embedCard?.id}
+          formBackgroundColor={formContainerBg}
+          formBorderColor={effectiveFormBorderColor}
+          formBorderWidth={effectiveFormBorderWidth}
+          formBorderStyle={effectiveFormBorderStyle}
+          formBorderOpacity={effectiveFormBorderOpacity}
         />
         <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
+        </div>
       </main>
     );
   }
@@ -858,7 +941,7 @@ buttonColor={effectiveButtonColor}
         data-fullscreen
         className="w-full flex flex-col md:flex-row"
         style={{
-          backgroundColor: effectiveBackgroundColor,
+          backgroundColor: "transparent",
           color: effectiveTextColor ?? "var(--stripe-dark)",
           fontFamily,
         }}
@@ -891,10 +974,10 @@ buttonColor={effectiveButtonColor}
           />
         </div>
 
-        {/* Right side — form */}
+        {/* Right side — form section (same background as form for seamless look) */}
         <div
           className="flex flex-col w-full md:w-1/2 lg:w-[45%] min-w-0 flex-1 overflow-visible"
-          style={{ fontFamily, backgroundColor: "#f8f9fa" }}
+          style={{ fontFamily, backgroundColor: effectiveBackgroundColor }}
         >
           <div className="w-full min-w-0 flex flex-col justify-center py-5 px-4 sm:px-6 md:py-8 md:px-8 lg:px-10">
             <DonationForm
@@ -915,6 +998,11 @@ buttonColor={effectiveButtonColor}
               initialFrequency={initialFrequency}
               fullWidth
               embedCardId={embedCard?.id}
+              formBackgroundColor={effectiveBackgroundColor}
+              formBorderColor={effectiveFormBorderColor}
+              formBorderWidth={effectiveFormBorderWidth}
+              formBorderStyle={effectiveFormBorderStyle}
+              formBorderOpacity={effectiveFormBorderOpacity}
             />
             <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
           </div>
@@ -932,7 +1020,7 @@ buttonColor={effectiveButtonColor}
     <main
       className="min-h-full flex flex-col items-center justify-center"
       style={{
-        backgroundColor: effectiveBackgroundColor || "transparent",
+        backgroundColor: "transparent",
         color: effectiveTextColor ?? "var(--stripe-dark)",
         fontFamily,
       }}
@@ -943,6 +1031,7 @@ buttonColor={effectiveButtonColor}
       )}
       <div
         className="w-full max-w-[480px] overflow-hidden"
+        style={{ backgroundColor: effectiveBackgroundColor }}
       >
         {cardDesignSets.length > 0 ? (
           cardDesignSets.map((set, i) => (
@@ -1000,6 +1089,11 @@ buttonColor={effectiveButtonColor}
             noCard
             initialFrequency={initialFrequency}
             embedCardId={embedCard?.id}
+            formBackgroundColor={effectiveBackgroundColor}
+            formBorderColor={effectiveFormBorderColor}
+            formBorderWidth={effectiveFormBorderWidth}
+            formBorderStyle={effectiveFormBorderStyle}
+            formBorderOpacity={effectiveFormBorderOpacity}
           />
           <GiveSignInPrompt slug={slug} initialFrequency={initialFrequency} organizationName={org.name} />
         </div>

@@ -66,6 +66,18 @@ export async function PATCH(
     if (body.button_text_color !== undefined) update.button_text_color = (body.button_text_color as string)?.trim() || null;
     if (body.button_border_radius !== undefined) update.button_border_radius = (body.button_border_radius as string)?.trim() || null;
     if (body.primary_color !== undefined) update.primary_color = (body.primary_color as string)?.trim() || null;
+    if (body.background_color !== undefined) update.background_color = (body.background_color as string)?.trim() || null;
+    if (body.text_color !== undefined) update.text_color = (body.text_color as string)?.trim() || null;
+    if (body.embed_form_theme !== undefined) {
+      const valid = ["default", "grace", "dark-elegant", "bold-contemporary"];
+      if (valid.includes((body.embed_form_theme as string)?.trim() || "")) {
+        update.embed_form_theme = (body.embed_form_theme as string)?.trim() || "default";
+      }
+    }
+    if (body.form_border_color !== undefined) update.form_border_color = (body.form_border_color as string)?.trim() || null;
+    if (body.form_border_width !== undefined) update.form_border_width = (body.form_border_width as string)?.trim() || null;
+    if (body.form_border_style !== undefined) update.form_border_style = (body.form_border_style as string)?.trim() || null;
+    if (body.form_border_opacity !== undefined) update.form_border_opacity = (body.form_border_opacity as string)?.trim() || null;
     if (body.is_enabled !== undefined) update.is_enabled = body.is_enabled;
     if (body.page_section !== undefined) {
       const validSections: EmbedCardPageSection[] = ["donation", "hero", "about", "team", "story"];
