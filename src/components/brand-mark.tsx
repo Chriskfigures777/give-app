@@ -1,66 +1,83 @@
 interface BrandMarkProps {
   className?: string;
   id?: string;
+  fullLogo?: boolean;
+  iconOnly?: boolean;
+  variant?: "light" | "dark" | "dashboard" | "feed";
 }
 
-export function BrandMark({ className = "", id = "brand" }: BrandMarkProps) {
-  const gradId = `bm-g-${id}`;
-  const shineId = `bm-s-${id}`;
+function getTextClasses(variant: BrandMarkProps["variant"]) {
+  switch (variant) {
+    case "dark":
+      return "text-white";
+    case "dashboard":
+      return "text-dashboard-text";
+    case "feed":
+      return "text-[color:var(--feed-text)]";
+    default:
+      return "text-slate-900";
+  }
+}
+
+function getMarkColor(variant: BrandMarkProps["variant"]) {
+  switch (variant) {
+    case "dark":
+      return "#34d399";
+    default:
+      return "#10b981";
+  }
+}
+
+/**
+ * Mountain Curve — Three Dots (8h-8 Asymmetric)
+ * Middle dot at peak, left peak tall, right peak low.
+ */
+function MountainCurveMark({ color, className }: { color: string; className?: string }) {
+  return (
+    <svg viewBox="0 0 48 20" fill="none" className={className} aria-hidden="true">
+      <circle cx="6" cy="14" r="4" fill={color} />
+      <circle cx="24" cy="4" r="4" fill={color} />
+      <circle cx="42" cy="14" r="4" fill={color} />
+      <path d="M10 14 Q17 0 24 4 Q31 8 38 14" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+export function BrandMark({ className = "", id = "brand", fullLogo = false, iconOnly = false, variant = "light" }: BrandMarkProps) {
+  const textClass = getTextClasses(variant);
+  const markColor = getMarkColor(variant);
+
+  if (iconOnly) {
+    return (
+      <span className={`inline-flex shrink-0 ${className}`} aria-label="The Exchange">
+        <MountainCurveMark color={markColor} className="h-6 w-6 shrink-0" />
+      </span>
+    );
+  }
+
+  if (fullLogo) {
+    return (
+      <span
+        className={`inline-flex items-center gap-2.5 ${className}`}
+        aria-label="The Exchange"
+      >
+        <MountainCurveMark color={markColor} className="h-6 w-6 shrink-0" />
+        <span className={`text-xl font-extrabold tracking-tight ${textClass}`} style={{ fontFamily: "var(--font-barlow), Barlow, sans-serif" }}>
+          Exchange
+        </span>
+      </span>
+    );
+  }
 
   return (
-    <svg
-      viewBox="0 0 36 36"
-      fill="none"
-      className={className}
-      aria-hidden="true"
+    <span
+      className={`inline-flex items-center gap-2.5 brand-mark-compact ${className}`}
+      aria-label="The Exchange"
     >
-      <defs>
-        <linearGradient
-          id={gradId}
-          x1="0"
-          y1="0"
-          x2="36"
-          y2="36"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#10b981" />
-          <stop offset="0.5" stopColor="#059669" />
-          <stop offset="1" stopColor="#0d9488" />
-        </linearGradient>
-        <linearGradient
-          id={shineId}
-          x1="18"
-          y1="36"
-          x2="18"
-          y2="0"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="white" stopOpacity="0" />
-          <stop offset="1" stopColor="white" stopOpacity="0.18" />
-        </linearGradient>
-      </defs>
-      {/* Gradient background */}
-      <rect width="36" height="36" rx="10" fill={`url(#${gradId})`} />
-      {/* Glass shine overlay */}
-      <rect width="36" height="36" rx="10" fill={`url(#${shineId})`} />
-      {/* Left wing - sweeping upward from center base */}
-      <path
-        d="M18 27 C14 24 10 20 9 16 C8 12 9 10 12 10"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Right wing - mirror of left */}
-      <path
-        d="M18 27 C22 24 26 20 27 16 C28 12 27 10 24 10"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Spark - aspiration point between wing tips */}
-      <circle cx="18" cy="8" r="1.5" fill="white" />
-    </svg>
+      <MountainCurveMark color={markColor} className="h-5 w-5 shrink-0" />
+      <span className={`text-base font-extrabold tracking-tight brand-mark-exchange ${textClass}`} style={{ fontFamily: "var(--font-barlow), Barlow, sans-serif" }}>
+        Exchange
+      </span>
+    </span>
   );
 }
