@@ -160,6 +160,50 @@ export async function GET(req: NextRequest) {
         return project;
       }
 
+      // Walk a GrapeJS component tree (stored JSON) and patch mistyped elements.
+      // GrapeJS saves the type field and reuses it on load — isComponent never reruns.
+      function fixComponentTypes(node) {
+        if (!node || typeof node !== 'object') return node;
+        if (Array.isArray(node)) return node.map(fixComponentTypes);
+        var obj = Object.assign({}, node);
+        var tag = (obj.tagName || '').toLowerCase();
+        // <button> — always force to button-el and name to Button unconditionally
+        if (tag === 'button') {
+          obj.type = 'button-el';
+          obj.name = 'Button';
+        }
+        // <a> stored as text — fix to link type; keep user-set names unless they look like defaults
+        if (tag === 'a' && obj.type === 'text') {
+          obj.type = 'link';
+          var autoNames = ['Text', 'text', 'div', 'a', 'link', 'Link', ''];
+          if (!obj.name || autoNames.indexOf(obj.name) >= 0) obj.name = 'Link';
+        }
+        // Recurse into components array
+        if (obj.components) obj.components = fixComponentTypes(obj.components);
+        return obj;
+      }
+
+      function fixProjectTypes(proj) {
+        if (!proj || !proj.pages) return proj;
+        return Object.assign({}, proj, {
+          pages: proj.pages.map(function(p) {
+            var page = Object.assign({}, p);
+            // GrapeJS Studio SDK stores content in frames[].component
+            if (page.frames && Array.isArray(page.frames)) {
+              page.frames = page.frames.map(function(f) {
+                if (!f || !f.component || typeof f.component === 'string') return f;
+                return Object.assign({}, f, { component: fixComponentTypes(f.component) });
+              });
+            }
+            // Classic GrapeJS also uses page.component directly
+            if (page.component && typeof page.component !== 'string') {
+              page.component = fixComponentTypes(page.component);
+            }
+            return page;
+          })
+        });
+      }
+
       function buildOpts(initialProject, projectId) {
         var storageConfig = {
           type: 'self',
@@ -200,13 +244,14 @@ export async function GET(req: NextRequest) {
           autosaveChanges: 100,
           autosaveIntervalMs: 10000,
           onLoad: async function() {
-            if (!projectId) return { project: await injectCmsIntoProject(initialProject) };
+            if (!projectId) return { project: await injectCmsIntoProject(fixProjectTypes(initialProject)) };
             var r = await fetch('/api/website-builder/project?organizationId=' + encodeURIComponent(organizationId) + '&id=' + encodeURIComponent(projectId), { credentials: 'include' });
             var text = await r.text();
             var data;
             try { data = JSON.parse(text); } catch (_) { data = {}; }
             if (!r.ok) throw new Error(data.error || 'Load failed (status ' + r.status + ')');
             var proj = data.project || { pages: [{ name: 'Home', component: '<h1>Home</h1>' }] };
+            proj = fixProjectTypes(proj);
             return { project: await injectCmsIntoProject(proj) };
           }
         };
@@ -292,6 +337,7 @@ export async function GET(req: NextRequest) {
         opts.plugins.push(function(editor) {
           var ed = (editor && editor.getEditor) ? editor.getEditor() : editor;
           editorInstance = editor;
+          var lastClickedLink = null;
           (function addCmsBindingPlugin() {
             if (!ed) return;
             var Traits = ed.Traits || ed.TraitManager;
@@ -413,7 +459,7 @@ export async function GET(req: NextRequest) {
                 });
               } catch (_) {}
             }
-            var typesToExtend = ['text', 'image', 'link', 'default', '1', 'cell', 'row', 'column', 'section', 'span', 'label', 'button', 'wrapper', 'component'];
+            var typesToExtend = ['text', 'image', 'link', 'default', '1', 'cell', 'row', 'column', 'section', 'span', 'label', 'button', 'button-el', 'wrapper', 'component'];
             typesToExtend.forEach(addCmsTraitToType);
             try {
               var allTypes = DomComponents.getTypes && DomComponents.getTypes();
@@ -438,7 +484,7 @@ export async function GET(req: NextRequest) {
                   var o = document.createElement('option');
                   var id = (p.getId && p.getId()) || (p.id !== undefined ? p.id : idx);
                   var name = (p.getName && p.getName()) || (p.name || ('Page ' + (idx + 1)));
-                  o.value = '#' + id;
+                  o.value = 'page://' + id;
                   o.textContent = name;
                   el.appendChild(o);
                 });
@@ -453,16 +499,24 @@ export async function GET(req: NextRequest) {
                 var href = ((component.getAttributes && component.getAttributes()) || {})['href'] || '';
                 var matched = false;
                 for (var i = 0; i < el.options.length; i++) {
-                  if (el.options[i].value === href) { el.value = href; matched = true; break; }
+                  // Match page:// format directly, or legacy #id format mapped to page://
+                  var ov = el.options[i].value;
+                  if (ov === href || (href.indexOf('#') === 0 && ov === 'page://' + href.slice(1))) {
+                    el.value = ov; matched = true; break;
+                  }
                 }
                 if (!matched) el.value = '';
               }
             });
             try {
               DomComponents.addType('link', {
+                isComponent: function(el) {
+                  if (el && el.tagName && el.tagName.toUpperCase() === 'A') return { type: 'link' };
+                },
                 extend: 'link',
                 model: {
                   defaults: {
+                    name: 'Link',
                     traits: [
                       { type: 'page_select', name: 'pageLink', label: 'Link to Page', changeProp: true },
                       { name: 'href', label: 'Link URL' },
@@ -471,6 +525,35 @@ export async function GET(req: NextRequest) {
                         { value: '_blank', name: 'New window' }
                       ]},
                       { name: 'title', label: 'Title' },
+                      { type: 'cms_bind', name: 'data-cms-binding', label: 'Bind to CMS' }
+                    ]
+                  }
+                }
+              });
+            } catch(_) {}
+            // Register <button> elements as a proper "Button" component type
+            try {
+              DomComponents.addType('button-el', {
+                isComponent: function(el) {
+                  if (el && el.tagName && el.tagName.toUpperCase() === 'BUTTON') return { type: 'button-el' };
+                },
+                // Extend 'text' so the button label is double-click editable in the canvas
+                extend: 'text',
+                model: {
+                  defaults: {
+                    tagName: 'button',
+                    name: 'Button',
+                    editable: true,
+                    traits: [
+                      { name: 'type', label: 'Button Type', type: 'select', options: [
+                        { value: 'button', name: 'Button' },
+                        { value: 'submit', name: 'Submit' },
+                        { value: 'reset',  name: 'Reset'  }
+                      ]},
+                      { name: 'id',       label: 'ID'       },
+                      { name: 'name',     label: 'Name'     },
+                      { name: 'value',    label: 'Value'    },
+                      { name: 'disabled', label: 'Disabled', type: 'checkbox' },
                       { type: 'cms_bind', name: 'data-cms-binding', label: 'Bind to CMS' }
                     ]
                   }
@@ -493,8 +576,9 @@ export async function GET(req: NextRequest) {
                 target = target.parentElement;
               }
               if (!linkEl) return;
+              lastClickedLink = linkEl;
               e.preventDefault();
-              e.stopPropagation();
+              if (doc.__showLinkOverlay) doc.__showLinkOverlay(linkEl);
               try {
                 var ed = (editor.getEditor) ? editor.getEditor() : editor;
                 if (!ed || !ed.select) return;
@@ -516,9 +600,31 @@ export async function GET(req: NextRequest) {
                     if (ch) for (var i = 0; i < ch.length; i++) search(ch[i]);
                   })(wrapper);
                 }
-                if (found) ed.select(found);
+                if (found) {
+                  var tag = (found.get && found.get('tagName')) || (found.tagName || '').toLowerCase();
+                  var attrs = found.getAttributes ? found.getAttributes() : (found.attributes || {});
+                  var isLink = tag === 'a' || attrs.href !== undefined;
+                  if (!isLink && found.parent) {
+                    var p = found.parent();
+                    if (p) {
+                      var pTag = (p.get && p.get('tagName')) || (p.tagName || '').toLowerCase();
+                      var pAttrs = p.getAttributes ? p.getAttributes() : (p.attributes || {});
+                      if (pTag === 'a' || pAttrs.href !== undefined) found = p;
+                    }
+                  }
+                  ed.select(found);
+                }
               } catch(err) {}
             }
+            // mousedown fires BEFORE GrapeJS component:selected, so lastClickedLink is ready in time
+            doc.addEventListener('mousedown', function(mde) {
+              var t = mde.target;
+              lastClickedLink = null;
+              while (t && t !== doc.body) {
+                if (t.tagName === 'A') { lastClickedLink = t; break; }
+                t = t.parentElement;
+              }
+            }, true);
             doc.addEventListener('click', preventLinkNav, true);
             doc.addEventListener('dblclick', preventLinkNav, true);
             doc.body.setAttribute('data-gjs-pagelinks-bound', '1');
@@ -532,6 +638,102 @@ export async function GET(req: NextRequest) {
               '[data-gjs-type="wrapper"]{background:transparent !important;}'
             ].join('');
             (doc.head || doc.documentElement).appendChild(style);
+            // ── Floating link editor overlay (in-canvas popup) ──
+            if (!doc.getElementById('gjs-lo')) {
+              var lo = doc.createElement('div');
+              lo.id = 'gjs-lo';
+              lo.style.cssText = 'position:fixed;z-index:999999;background:#1e293b;border-radius:10px;padding:14px 16px;box-shadow:0 8px 32px rgba(0,0,0,0.45);display:none;font-family:Inter,system-ui,sans-serif;width:300px;border:1px solid #334155;';
+              doc.body.appendChild(lo);
+              var loLink = null;
+              doc.__showLinkOverlay = function(linkEl) {
+                loLink = linkEl;
+                var href = linkEl.getAttribute('href') || '';
+                var tgt  = linkEl.getAttribute('target') || '';
+                var pages = [];
+                try { var pm2 = (editor.Pages||{}); pages = (pm2.getAll && pm2.getAll()) || []; } catch(_pe) {}
+                // Detect if the current href is a GrapeJS Studio internal page link (page://page-id)
+                var isPageLink = href.indexOf('page://') === 0;
+                var pageOpts = pages.map(function(pg,i) {
+                  var id = (pg.getId && pg.getId()) || i;
+                  var nm = ((pg.getName && pg.getName()) || ('Page '+(i+1))).replace(/[<>]/g,'');
+                  var v = 'page://'+id;
+                  if (href === v) isPageLink = true;
+                  return { v: v, nm: nm, sel: href === v };
+                });
+                // Build dropdown: pages first, then External URL option
+                var pgOptHtml = pageOpts.map(function(o) {
+                  return '<option value="'+o.v+'"'+(o.sel?' selected':'')+'>'+o.nm+'</option>';
+                }).join('') + '<option value="__ext__"'+(!isPageLink && href ? ' selected' : '')+'>External URL\u2026</option>';
+                var showUrlField = !isPageLink; // show if not a page link
+                lo.innerHTML =
+                  '<div style="color:#3b82f6;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;">Link Settings</div>'+
+                  '<div style="margin-bottom:10px;">'+
+                  '<div style="color:#94a3b8;font-size:10px;font-weight:600;margin-bottom:4px;">Link destination</div>'+
+                  '<select id="gjs-lo-pg" style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:8px 10px;font-size:13px;outline:none;cursor:pointer;">'+pgOptHtml+'</select></div>'+
+                  '<div id="gjs-lo-urlwrap" style="margin-bottom:10px;'+(showUrlField?'':'display:none;')+'">'+
+                  '<div style="color:#94a3b8;font-size:10px;font-weight:600;margin-bottom:4px;">URL</div>'+
+                  '<input id="gjs-lo-url" type="text" value="'+(showUrlField?href:'').replace(/"/g,'&quot;')+'" placeholder="https://example.com" style="width:100%;background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;" /></div>'+
+                  '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+                  '<label style="color:#94a3b8;font-size:11px;display:flex;align-items:center;gap:6px;cursor:pointer;">'+
+                  '<input id="gjs-lo-blank" type="checkbox"'+(tgt==='_blank'?' checked':'')+' style="cursor:pointer;accent-color:#3b82f6;width:13px;height:13px;"> New tab</label>'+
+                  '<div style="display:flex;gap:6px;">'+
+                  '<button id="gjs-lo-ok" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;">Apply</button>'+
+                  '<button id="gjs-lo-x" style="background:transparent;color:#64748b;border:1px solid #334155;border-radius:6px;padding:7px 10px;font-size:14px;cursor:pointer;line-height:1;">&times;</button>'+
+                  '</div></div>';
+                var rect = linkEl.getBoundingClientRect();
+                var cw = doc.documentElement.clientWidth || 600;
+                var ch = doc.documentElement.clientHeight || 600;
+                var top = rect.bottom + 8;
+                var left = Math.max(4, Math.min(rect.left, cw - 308));
+                if (top + 200 > ch) top = Math.max(4, rect.top - 208);
+                lo.style.top = top + 'px'; lo.style.left = left + 'px'; lo.style.display = 'block';
+                var pgSel   = lo.querySelector('#gjs-lo-pg');
+                var urlWrap = lo.querySelector('#gjs-lo-urlwrap');
+                var urlIn   = lo.querySelector('#gjs-lo-url');
+                var blCb    = lo.querySelector('#gjs-lo-blank');
+                // Show/hide URL field based on dropdown selection
+                pgSel.onchange = function() {
+                  if (pgSel.value === '__ext__') {
+                    urlWrap.style.display = 'block';
+                    setTimeout(function(){if(urlIn){urlIn.focus();urlIn.select();}},20);
+                  } else {
+                    urlWrap.style.display = 'none';
+                    applyLo();
+                  }
+                };
+                function applyLo() {
+                  if (!loLink) return;
+                  var newHref = pgSel.value === '__ext__' ? (urlIn.value.trim()||'#') : (pgSel.value || '#');
+                  var newTgt  = blCb.checked ? '_blank' : '';
+                  loLink.setAttribute('href', newHref);
+                  if (newTgt) loLink.setAttribute('target', newTgt); else loLink.removeAttribute('target');
+                  try {
+                    var ed2 = (editor.getEditor) ? editor.getEditor() : editor;
+                    var sel = ed2 && ed2.getSelected && ed2.getSelected();
+                    if (sel) {
+                      var stag = (sel.get && sel.get('tagName')) || '';
+                      if (stag === 'a') {
+                        sel.addAttributes({href: newHref, target: newTgt});
+                      } else {
+                        var sel2 = sel.getEl && sel.getEl();
+                        if (sel2 && sel.set) sel.set('content', sel2.innerHTML);
+                      }
+                    }
+                  } catch(_ae) {}
+                }
+                if (urlIn) urlIn.onkeydown = function(ke) {
+                  if (ke.key === 'Enter') { applyLo(); lo.style.display = 'none'; }
+                  if (ke.key === 'Escape') lo.style.display = 'none';
+                };
+                blCb.onchange = applyLo;
+                lo.querySelector('#gjs-lo-ok').onclick = function() { applyLo(); lo.style.display = 'none'; };
+                lo.querySelector('#gjs-lo-x').onclick  = function() { lo.style.display = 'none'; };
+                if (showUrlField) setTimeout(function(){if(urlIn){urlIn.focus();urlIn.select();}},30);
+              };
+              doc.addEventListener('mousedown', function(mde) {
+                if (lo.style.display !== 'none' && !lo.contains(mde.target)) lo.style.display = 'none';
+              }, false);
+            }
           });
           function hasCmsBinding(comp) {
             if (!comp) return false;
@@ -676,6 +878,121 @@ export async function GET(req: NextRequest) {
             setTimeout(injectPanel, 500);
             setTimeout(injectPanel, 1500);
             setTimeout(injectPanel, 3500);
+          })();
+
+          /* ─── Link Editor Panel ─── */
+          (function addLinkEditorPanel() {
+            var linkPanel = document.createElement('div');
+            linkPanel.className = 'gjs-link-editor-panel';
+            linkPanel.style.cssText = 'padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.08);background:linear-gradient(180deg,rgba(59,130,246,0.05) 0%,transparent 100%);display:none;';
+            var currentComp = null;
+            var currentLinkEl = null;
+
+            function applyLinkAttr(attr, val) {
+              if (!currentLinkEl) return;
+              // Standalone link component — update via model
+              if (currentComp) {
+                var tag = (currentComp.get && currentComp.get('tagName')) || '';
+                if (tag === 'a' && currentComp.addAttributes) {
+                  var a = {}; a[attr] = val;
+                  currentComp.addAttributes(a);
+                  return;
+                }
+              }
+              // Link is inside a text/container component — update DOM then sync innerHTML to model
+              currentLinkEl.setAttribute(attr, val);
+              if (currentComp) {
+                try {
+                  var compEl = currentComp.getEl && currentComp.getEl();
+                  if (compEl && currentComp.set) currentComp.set('content', compEl.innerHTML);
+                } catch(e) {}
+              }
+            }
+
+            function buildLinkPanel(comp, linkEl) {
+              currentComp = comp;
+              currentLinkEl = linkEl;
+              var href = linkEl.getAttribute('href') || '';
+              var target = linkEl.getAttribute('target') || '';
+              var pm = editor.Pages || {};
+              var allPages = (pm.getAll && pm.getAll()) || [];
+              var pageOpts = '<option value="">\u2014 Custom URL \u2014</option>' +
+                allPages.map(function(p, idx) {
+                  var id = (p.getId && p.getId()) || (p.id !== undefined ? p.id : idx);
+                  var name = (p.getName && p.getName()) || ('Page ' + (idx + 1));
+                  var val = '#' + id;
+                  return '<option value="' + val + '"' + (href === val ? ' selected' : '') + '>' + name.replace(/</g,'&lt;') + '</option>';
+                }).join('');
+              linkPanel.innerHTML =
+                '<div style="font-size:11px;font-weight:700;color:#3b82f6;letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase;">Link Settings</div>' +
+                '<div style="margin-bottom:8px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Link to Page</div>' +
+                '<select class="lep-page gjs-field" style="width:100%;padding:6px 8px;border:1px solid rgba(0,0,0,0.15);border-radius:4px;font-size:12px;">' + pageOpts + '</select></div>' +
+                '<div style="margin-bottom:8px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Custom URL</div>' +
+                '<input class="lep-url gjs-field" type="text" value="' + href.replace(/"/g,'&quot;') + '" placeholder="https://..." style="width:100%;padding:6px 8px;border:1px solid rgba(0,0,0,0.15);border-radius:4px;font-size:12px;box-sizing:border-box;" /></div>' +
+                '<div><div style="font-size:11px;color:#888;margin-bottom:3px;">Open in</div>' +
+                '<select class="lep-target gjs-field" style="width:100%;padding:6px 8px;border:1px solid rgba(0,0,0,0.15);border-radius:4px;font-size:12px;">' +
+                '<option value=""' + (!target || target === '_self' ? ' selected' : '') + '>Same window</option>' +
+                '<option value="_blank"' + (target === '_blank' ? ' selected' : '') + '>New window</option>' +
+                '</select></div>';
+
+              var pageSelect = linkPanel.querySelector('.lep-page');
+              var urlInput   = linkPanel.querySelector('.lep-url');
+              var tgtSelect  = linkPanel.querySelector('.lep-target');
+
+              pageSelect.onchange = function() {
+                if (pageSelect.value) { applyLinkAttr('href', pageSelect.value); urlInput.value = pageSelect.value; }
+              };
+              urlInput.onchange = function() {
+                applyLinkAttr('href', urlInput.value);
+                pageSelect.value = '';
+              };
+              tgtSelect.onchange = function() { applyLinkAttr('target', tgtSelect.value); };
+            }
+
+            editor.on('component:selected', function(ev) {
+              var comp = ev && ev.component;
+              if (!comp) { linkPanel.style.display = 'none'; return; }
+              // GrapeJS fires component:selected synchronously on mousedown — defer so
+              // our mousedown listener (which sets lastClickedLink) has already run.
+              setTimeout(function() {
+                if (!lastClickedLink) { linkPanel.style.display = 'none'; return; }
+                var compEl = comp.getEl && comp.getEl();
+                if (!compEl) { linkPanel.style.display = 'none'; return; }
+                if (compEl === lastClickedLink || compEl.contains(lastClickedLink)) {
+                  buildLinkPanel(comp, lastClickedLink);
+                  linkPanel.style.display = 'block';
+                } else {
+                  linkPanel.style.display = 'none';
+                  lastClickedLink = null;
+                }
+              }, 0);
+            });
+            editor.on('component:deselect', function() {
+              linkPanel.style.display = 'none';
+              lastClickedLink = null;
+              currentComp = null;
+              currentLinkEl = null;
+            });
+
+            function injectLinkPanel() {
+              if (document.querySelector('.gjs-link-editor-panel')) return;
+              var pn = editor.Panels;
+              var target = null;
+              if (pn && pn.getPanel) {
+                var vp = pn.getPanel('views') || pn.getPanel('options') || pn.getPanel('views-container');
+                if (vp && vp.view && vp.view.el) target = vp.view.el;
+              }
+              if (!target) target = document.querySelector('.gjs-pn-views, .gjs-pn-views-container, [class*="pn-views"], [class*="views-container"], .gjs-pn-options');
+              if (!target && document.getElementById('studio')) {
+                var studio = document.getElementById('studio');
+                var ra = studio.querySelector('[class*="right"],[class*="Right"],[class*="panel"],[class*="Panel"],[class*="sidebar"],[class*="Sidebar"],[class*="properties"],[class*="Properties"]');
+                target = ra || studio.querySelector('div > div') || studio;
+              }
+              if (target) { linkPanel.style.display = 'none'; target.insertBefore(linkPanel, target.firstChild); }
+            }
+            setTimeout(injectLinkPanel, 500);
+            setTimeout(injectLinkPanel, 1500);
+            setTimeout(injectLinkPanel, 3500);
           })();
 
           /* ─── Theme Changer Panel ─── */
