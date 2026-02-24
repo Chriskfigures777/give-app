@@ -62,7 +62,7 @@ async function getCustomDomainRewrite(req: NextRequest): Promise<NextResponse | 
   return NextResponse.rewrite(url);
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const siteRewrite = getSiteRewrite(req);
   if (siteRewrite) return siteRewrite;
 

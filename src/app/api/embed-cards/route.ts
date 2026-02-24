@@ -84,10 +84,15 @@ export async function GET(req: NextRequest) {
     let result = await query.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
 
     if (result.error && result.error.message?.includes("column") && result.error.message?.includes("does not exist")) {
-      query = supabase.from("org_embed_cards").select(baseSelect).eq("organization_id", organizationId);
-      if (deletedOnly) query = query.not("deleted_at", "is", null);
-      else if (!includeDeleted) query = query.is("deleted_at", null);
-      result = await query.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
+      let fallbackQuery = supabase.from("org_embed_cards").select(baseSelect).eq("organization_id", organizationId);
+      if (deletedOnly) fallbackQuery = fallbackQuery.not("deleted_at", "is", null);
+      else if (!includeDeleted) fallbackQuery = fallbackQuery.is("deleted_at", null);
+      const fallbackResult = await fallbackQuery.order(deletedOnly ? "deleted_at" : "sort_order", { ascending: deletedOnly ? false : true }).limit(100);
+      if (fallbackResult.error) {
+        console.error("embed-cards GET error:", fallbackResult.error);
+        return NextResponse.json({ error: fallbackResult.error.message }, { status: 500 });
+      }
+      return NextResponse.json(fallbackResult.data ?? []);
     }
 
     const { data, error } = result;
