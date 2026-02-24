@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -1234,6 +1234,29 @@ function CustomFormEditor({
   const inputClass = "w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-dashboard-text text-sm";
   const labelClass = "block text-sm font-medium text-dashboard-text mb-1.5";
 
+  const previewSrc = useMemo(() => {
+    const base = `${baseUrl.replace(/\/$/, "")}/give/${slug}/embed`;
+    const params = new URLSearchParams();
+    if (card.id !== DEFAULT_FORM_ID) params.set("card", card.id);
+    params.set("preview", "1");
+    if (buttonColor) params.set("button_color", buttonColor);
+    if (buttonTextColor) params.set("button_text_color", buttonTextColor);
+    if (backgroundColor.trim()) params.set("background_color", backgroundColor.trim());
+    if (textColor.trim()) params.set("text_color", textColor.trim());
+    if (embedFormTheme) params.set("embed_form_theme", embedFormTheme);
+    if (buttonBorderRadius) params.set("button_border_radius", buttonBorderRadius);
+    if (designSet.title) params.set("design_title", designSet.title);
+    if (designSet.subtitle) params.set("design_subtitle", designSet.subtitle);
+    if (designSet.media_url) params.set("design_media_url", designSet.media_url);
+    if (previewDisplayMode === "compressed") {
+      params.set("seamless", "1");
+      params.set("theme", embedToSeamlessTheme(embedFormTheme));
+      params.set("mode", "compressed");
+    }
+    if (previewDisplayMode === "full_width") params.set("fullscreen", "1");
+    return `${base}?${params}`;
+  }, [baseUrl, slug, card.id, buttonColor, buttonTextColor, backgroundColor, textColor, embedFormTheme, buttonBorderRadius, designSet.title, designSet.subtitle, designSet.media_url, previewDisplayMode]);
+
   return (
     <div className="flex flex-col lg:flex-row min-w-0 min-h-0 gap-8">
       {/* Left: Editor panels */}
@@ -1474,24 +1497,13 @@ function CustomFormEditor({
             </div>
             <div className={`p-2 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden rounded-xl ${previewDisplayMode === "compressed" ? "min-h-[280px]" : "min-h-[420px]"}`}>
               <PreviewIframe
-                src={(() => {
-                  const base = `${baseUrl.replace(/\/$/, "")}/give/${slug}/embed`;
-                  const params = new URLSearchParams();
-                  if (card.id !== DEFAULT_FORM_ID) params.set("card", card.id);
-                  if (previewDisplayMode === "compressed") {
-                    params.set("seamless", "1");
-                    params.set("theme", embedToSeamlessTheme(embedFormTheme));
-                    params.set("mode", "compressed");
-                  }
-                  if (previewDisplayMode === "full_width") params.set("fullscreen", "1");
-                  return params.toString() ? `${base}?${params}` : base;
-                })()}
+                src={previewSrc}
                 title="Form preview"
                 className="w-full rounded-xl border-0"
                 minHeight={previewDisplayMode === "compressed" ? 280 : 420}
               />
             </div>
-            <p className="px-5 py-2 text-xs text-dashboard-text-muted">Your actual embedded form — save to update.</p>
+            <p className="px-5 py-2 text-xs text-dashboard-text-muted">Live preview — changes update as you edit. Save to persist.</p>
           </div>
         </div>
       </div>

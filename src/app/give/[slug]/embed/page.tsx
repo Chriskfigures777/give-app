@@ -30,7 +30,14 @@ const DEFAULT_SUGGESTED_AMOUNTS = [10, 12, 25, 50, 100, 250, 500, 1000];
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ frequency?: string; compact?: string; fullscreen?: string; card?: string; seamless?: string; theme?: string; mode?: string }>;
+  searchParams: Promise<{
+    frequency?: string; compact?: string; fullscreen?: string; card?: string;
+    seamless?: string; theme?: string; mode?: string;
+    preview?: string;
+    button_color?: string; button_text_color?: string; background_color?: string; text_color?: string;
+    embed_form_theme?: string; button_border_radius?: string;
+    design_title?: string; design_subtitle?: string; design_media_url?: string;
+  }>;
 };
 
 type EmbedCardRow = {
@@ -72,6 +79,18 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const seamlessTheme = typeof themeParam === "string" ? themeParam : themeParam?.[0];
   let cardId = typeof cardParam === "string" ? cardParam : cardParam?.[0];
   if (cardId === "__default__" || !cardId?.trim()) cardId = undefined;
+  const isPreview = resolved.preview === "1" || resolved.preview === "true";
+  const previewOverrides = isPreview ? {
+    button_color: resolved.button_color,
+    button_text_color: resolved.button_text_color,
+    background_color: resolved.background_color,
+    text_color: resolved.text_color,
+    embed_form_theme: resolved.embed_form_theme,
+    button_border_radius: resolved.button_border_radius,
+    design_title: resolved.design_title,
+    design_subtitle: resolved.design_subtitle,
+    design_media_url: resolved.design_media_url,
+  } : null;
   const supabase = await createClient();
 
   const { data: orgRow } = await supabase
@@ -130,13 +149,22 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
   const headerFontWeight = getHeaderFontWeight(formCustom?.font_family);
   const googleFontUrl = getGoogleFontUrl(formCustom?.font_family);
   const baseUrl = env.app.domain().replace(/\/$/, "");
-  const borderRadius = embedCard?.button_border_radius ?? formCustom?.button_border_radius ?? "8px";
+  let borderRadius = embedCard?.button_border_radius ?? formCustom?.button_border_radius ?? "8px";
   /** Per-card overrides: when a specific embed card is requested, use its colors/theme if set */
-  const effectiveBackgroundColor = embedCard?.background_color ?? formCustom?.background_color ?? "var(--stripe-light-grey)";
-  const effectiveTextColor = embedCard?.text_color ?? formCustom?.text_color ?? undefined;
-  const embedFormTheme = (embedCard?.embed_form_theme ?? formCustom?.embed_form_theme) as "default" | "grace" | "dark-elegant" | "bold-contemporary" ?? "default";
+  let effectiveBackgroundColor = embedCard?.background_color ?? formCustom?.background_color ?? "var(--stripe-light-grey)";
+  let effectiveTextColor = embedCard?.text_color ?? formCustom?.text_color ?? undefined;
+  let embedFormTheme = (embedCard?.embed_form_theme ?? formCustom?.embed_form_theme) as "default" | "grace" | "dark-elegant" | "bold-contemporary" ?? "default";
+  /** Live preview overrides: when preview=1, URL params override for real-time editor preview */
+  if (previewOverrides) {
+    if (previewOverrides.button_border_radius) borderRadius = previewOverrides.button_border_radius;
+    if (previewOverrides.background_color) effectiveBackgroundColor = previewOverrides.background_color;
+    if (previewOverrides.text_color) effectiveTextColor = previewOverrides.text_color;
+    if (previewOverrides.embed_form_theme) embedFormTheme = previewOverrides.embed_form_theme as "default" | "grace" | "dark-elegant" | "bold-contemporary";
+  }
+  const effectiveButtonColor = previewOverrides?.button_color ?? embedCard?.button_color ?? formCustom?.button_color;
+  const effectiveButtonTextColor = previewOverrides?.button_text_color ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
 
-  const designSetFromCard = embedCard?.design_set
+  let designSetFromCard = embedCard?.design_set
     ? {
         media_type: (embedCard.design_set.media_type ?? "image") as "image" | "video",
         media_url: embedCard.design_set.media_url ?? null,
@@ -144,6 +172,14 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
         subtitle: embedCard.design_set.subtitle ?? null,
       }
     : null;
+  if (previewOverrides && (previewOverrides.design_title || previewOverrides.design_subtitle || previewOverrides.design_media_url)) {
+    designSetFromCard = {
+      media_type: "image",
+      media_url: previewOverrides.design_media_url ?? designSetFromCard?.media_url ?? null,
+      title: previewOverrides.design_title ?? designSetFromCard?.title ?? null,
+      subtitle: previewOverrides.design_subtitle ?? designSetFromCard?.subtitle ?? null,
+    };
+  }
 
   const cardDesignSets = designSetFromCard ? [designSetFromCard] : designSets;
 
@@ -208,8 +244,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             title={designSetFromCard?.title ?? formCustom?.header_text}
             subtitle={designSetFromCard?.subtitle ?? formCustom?.subheader_text}
             goalDescription={embedCard?.goal_description}
-            buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-            buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+            buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
             primaryColor={embedCard?.primary_color ?? formCustom?.primary_color}
             borderRadius={borderRadius}
             goalAmountCents={goalAmountCents}
@@ -236,8 +272,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           slug={slug}
           title={designSetFromCard?.title ?? formCustom?.header_text ?? campaign.name}
           goalDescription={embedCard?.goal_description}
-          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
           primaryColor={embedCard?.primary_color ?? formCustom?.primary_color}
           borderRadius={borderRadius}
           goalAmountCents={goalAmountCents}
@@ -264,8 +300,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           slug={slug}
           designSet={designSetFromCard ?? undefined}
           headerImageUrl={safeFallbackImageUrl}
-          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
           borderRadius={borderRadius}
           basePath={baseUrl}
         />
@@ -291,8 +327,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           headerText={designSetFromCard?.title ?? formCustom?.header_text}
           subheaderText={designSetFromCard?.subtitle ?? formCustom?.subheader_text}
           designSets={cardDesignSets}
-          buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-          buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
           borderRadius={borderRadius}
           basePath={baseUrl}
         />
@@ -383,8 +419,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
               showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
               allowCustomAmount={formCustom?.allow_custom_amount ?? true}
               allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
               borderRadius={borderRadius}
               slug={slug}
               noCard
@@ -483,8 +519,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
               showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
               allowCustomAmount={formCustom?.allow_custom_amount ?? true}
               allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
               borderRadius={borderRadius}
               slug={slug}
               noCard
@@ -506,8 +542,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
     const theme = seamlessTheme ? getSeamlessTheme(seamlessTheme) : null;
     const themeFontUrl = seamlessTheme ? getSeamlessThemeFontUrl(seamlessTheme) : null;
     const themeCSS = seamlessTheme ? buildSeamlessThemeCSS(seamlessTheme) : SEAMLESS_BASE_CSS;
-    const effectiveButtonColor = theme?.accentColor ?? embedCard?.button_color ?? formCustom?.button_color;
-    const effectiveButtonTextColor = theme?.buttonTextColor ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
+    const seamlessButtonColor = theme?.accentColor ?? previewOverrides?.button_color ?? embedCard?.button_color ?? formCustom?.button_color;
+    const seamlessButtonTextColor = theme?.buttonTextColor ?? previewOverrides?.button_text_color ?? embedCard?.button_text_color ?? formCustom?.button_text_color;
     const effectiveBorderRadius = theme?.borderRadius ?? borderRadius;
     const effectiveFont = theme ? theme.bodyFont : fontFamily;
 
@@ -525,7 +561,7 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
       const subheaderText = designSetFromCard?.subtitle ?? formCustom?.subheader_text ?? `Support ${org.name}`;
       const hasVideo = effectiveMediaSet.media_type === "video" && effectiveMediaSet.media_url;
       const isDark = theme?.isDark ?? false;
-      const accentColor = theme?.accentColor ?? formCustom?.button_color ?? "#6366F1";
+      const accentColor = theme?.accentColor ?? previewOverrides?.button_color ?? formCustom?.button_color ?? "#6366F1";
       const formBg = isDark ? (theme?.darkBg ?? "#0F0F0F") : "white";
       const textColor = theme?.textColor ?? (isDark ? "#E5E5E5" : "#333");
       const headingFont = theme?.headingFont ?? "'Inter',sans-serif";
@@ -676,8 +712,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
                 showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
                 allowCustomAmount={formCustom?.allow_custom_amount ?? true}
                 allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-                buttonColor={effectiveButtonColor}
-                buttonTextColor={effectiveButtonTextColor}
+                buttonColor={seamlessButtonColor}
+                buttonTextColor={seamlessButtonTextColor}
                 borderRadius={effectiveBorderRadius}
                 slug={slug}
                 noCard
@@ -755,8 +791,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
                 showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
                 allowCustomAmount={formCustom?.allow_custom_amount ?? true}
                 allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-                buttonColor={effectiveButtonColor}
-                buttonTextColor={effectiveButtonTextColor}
+                buttonColor={seamlessButtonColor}
+                buttonTextColor={seamlessButtonTextColor}
                 borderRadius={effectiveBorderRadius}
                 slug={slug}
                 noCard
@@ -795,8 +831,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
           showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
           allowCustomAmount={formCustom?.allow_custom_amount ?? true}
           allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-          buttonColor={effectiveButtonColor}
-          buttonTextColor={effectiveButtonTextColor}
+          buttonColor={seamlessButtonColor}
+          buttonTextColor={seamlessButtonTextColor}
           borderRadius={effectiveBorderRadius}
           slug={slug}
           noCard
@@ -871,8 +907,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
               showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
               allowCustomAmount={formCustom?.allow_custom_amount ?? true}
               allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-              buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-              buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
               borderRadius={borderRadius}
               slug={slug}
               noCard
@@ -957,8 +993,8 @@ export default async function GiveEmbedPage({ params, searchParams }: Props) {
             showEndowmentSelection={formCustom?.show_endowment_selection ?? false}
             allowCustomAmount={formCustom?.allow_custom_amount ?? true}
             allowAnonymous={campaigns.some((c) => c.allow_anonymous !== false) || campaigns.length === 0}
-            buttonColor={embedCard?.button_color ?? formCustom?.button_color}
-            buttonTextColor={embedCard?.button_text_color ?? formCustom?.button_text_color}
+            buttonColor={effectiveButtonColor}
+            buttonTextColor={effectiveButtonTextColor}
             borderRadius={borderRadius}
             slug={slug}
             noCard
