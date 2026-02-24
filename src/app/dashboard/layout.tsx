@@ -47,14 +47,15 @@ export default async function DashboardLayout({
           className="group flex items-center gap-3 rounded-xl py-2 px-2 -ml-1 transition-all duration-200 hover:bg-dashboard-card-hover/50"
         >
           <BrandMark
-            className="h-9 w-9 shrink-0 drop-shadow-[0_6px_10px_rgba(16,185,129,0.2)] transition-transform duration-200 group-hover:scale-105"
+            iconOnly
+            className="drop-shadow-[0_6px_10px_rgba(16,185,129,0.2)] transition-transform duration-200 group-hover:scale-105"
             id="dash"
           />
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-dashboard-text-muted">Dashboard</span>
+          <span className="block text-[10px] font-extrabold uppercase tracking-[0.12em] text-dashboard-text-muted">Dashboard</span>
         </Link>
         <Link
           href="/feed"
-          className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-medium text-dashboard-text-muted hover:bg-dashboard-card-hover/50 hover:text-dashboard-text transition-all duration-200 -ml-1"
+          className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-extrabold text-dashboard-text-muted hover:bg-dashboard-card-hover/50 hover:text-dashboard-text transition-all duration-200 -ml-1"
         >
           <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />

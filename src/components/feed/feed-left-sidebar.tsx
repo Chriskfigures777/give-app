@@ -163,7 +163,7 @@ export function FeedLeftSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-extrabold transition-all duration-200 group relative"
                   style={
                     isActive
                       ? {
@@ -309,14 +309,14 @@ export function FeedLeftSidebar() {
 
         {/* Branding */}
         <div className="flex items-center gap-2 px-2 pb-2">
-          <span style={{ opacity: 0.3 }}>
-            <BrandMark className="h-3.5 w-3.5" id="feed-sidebar-brand" />
+          <span style={{ opacity: 0.6 }}>
+            <BrandMark variant="feed" className="[&_.brand-mark-exchange]:!text-[10px] [&_svg]:!h-4 [&_svg]:!w-4" id="feed-sidebar-brand" />
           </span>
           <span
             className="text-[9px] font-medium"
             style={{ color: "var(--feed-text-dim)" }}
           >
-            &copy; {new Date().getFullYear()} Give
+            &copy; {new Date().getFullYear()} The Exchange
           </span>
         </div>
       </div>

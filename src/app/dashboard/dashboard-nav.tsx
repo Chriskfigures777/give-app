@@ -63,7 +63,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       <li className="shrink-0">
         <Link
           href={href}
-          className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
+          className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
             active
               ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
               : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
@@ -80,7 +80,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
 
   const NavSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div className="mb-5 last:mb-0">
-      <p className="mb-1.5 px-3.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-dashboard-text-muted/70">
+      <p className="mb-1.5 px-3.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-dashboard-text-muted/70">
         {title}
       </p>
       <ul className="flex flex-col gap-0.5">{children}</ul>
@@ -104,7 +104,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
               <li className="shrink-0">
                 <Link
                   href="/dashboard/connections"
-                  className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
+                  className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
                     pathname.startsWith("/dashboard/connections")
                       ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
                       : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
@@ -141,7 +141,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
             <li className="shrink-0">
               <Link
                 href="/dashboard/connect/verify"
-                className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
+                className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
                   pathname.startsWith("/dashboard/connect")
                     ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
                     : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
@@ -156,7 +156,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
                 <li className="shrink-0">
                   <Link
                     href="/dashboard/connect/manage"
-                    className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
+                    className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
                       pathname === "/dashboard/connect/manage"
                         ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
                         : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"

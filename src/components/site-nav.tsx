@@ -182,7 +182,9 @@ export function SiteNav() {
           className="group flex items-center rounded-xl transition-all duration-200 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
         >
           <BrandMark
-            className="h-9 w-9 transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]"
+            fullLogo
+            variant="light"
+            className="transition-transform duration-200 group-hover:scale-[1.02] drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]"
             id="nav"
           />
         </Link>
@@ -220,7 +222,7 @@ export function SiteNav() {
                       key={link.href}
                       type="button"
                       onClick={openPricingModal}
-                      className={`nav-underline shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                      className={`nav-underline shrink-0 rounded-xl px-4 py-2 text-sm font-extrabold transition-all duration-200 ${
                         isActive
                           ? "text-emerald-700"
                           : "text-slate-600 hover:text-slate-900"
@@ -234,7 +236,7 @@ export function SiteNav() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`nav-underline shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    className={`nav-underline shrink-0 rounded-xl px-4 py-2 text-sm font-extrabold transition-all duration-200 ${
                       isActive
                         ? "text-emerald-700"
                         : "text-slate-600 hover:text-slate-900"
@@ -416,7 +418,7 @@ export function SiteNav() {
                               role="menuitem"
                             >
                               <item.icon className="h-4 w-4 text-slate-400 transition-colors group-hover/item:text-emerald-500" />
-                              <span className="flex-1 font-medium">{item.label}</span>
+                              <span className="flex-1 font-extrabold">{item.label}</span>
                               <ChevronRight className="h-3.5 w-3.5 text-slate-300 opacity-0 transition-all duration-150 group-hover/item:opacity-100 group-hover/item:translate-x-0.5" />
                             </Link>
                           </motion.div>
@@ -432,7 +434,7 @@ export function SiteNav() {
                         <form action="/api/auth/signout" method="POST">
                           <button
                             type="submit"
-                            className="group/item flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-slate-600 transition-all duration-150 hover:bg-rose-50/60 hover:text-rose-700"
+                            className="group/item flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-extrabold text-slate-600 transition-all duration-150 hover:bg-rose-50/60 hover:text-rose-700"
                             role="menuitem"
                           >
                             <LogOut className="h-4 w-4 text-slate-400 transition-colors group-hover/item:text-rose-500" />
@@ -449,13 +451,13 @@ export function SiteNav() {
             <div className="flex items-center gap-3">
               <Link
                 href={orgSlugForLogin ? `/login?org=${encodeURIComponent(orgSlugForLogin)}` : "/login"}
-                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-300 hover:text-slate-900"
+                className="rounded-xl px-4 py-2 text-sm font-extrabold text-slate-600 transition-all duration-300 hover:text-slate-900"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="glow-btn relative rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all duration-300"
+                className="glow-btn relative rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-2.5 text-sm font-extrabold text-white shadow-lg shadow-emerald-500/20 transition-all duration-300"
               >
                 Sign up
               </Link>
@@ -628,7 +630,7 @@ export function SiteNav() {
                             className="group/item flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 transition-all duration-150 hover:bg-slate-50/80 hover:text-slate-900"
                           >
                             <item.icon className="h-4 w-4 text-slate-400 transition-colors group-hover/item:text-emerald-500" />
-                            <span className="flex-1 font-medium">{item.label}</span>
+                            <span className="flex-1 font-extrabold">{item.label}</span>
                             <ChevronRight className="h-3.5 w-3.5 text-slate-300 opacity-0 transition-all duration-150 group-hover/item:opacity-100" />
                           </Link>
                         </motion.div>
@@ -644,7 +646,7 @@ export function SiteNav() {
                       <form action="/api/auth/signout" method="POST">
                         <button
                           type="submit"
-                          className="group/item flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-slate-600 transition-all duration-150 hover:bg-rose-50/60 hover:text-rose-700"
+                          className="group/item flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-extrabold text-slate-600 transition-all duration-150 hover:bg-rose-50/60 hover:text-rose-700"
                         >
                           <LogOut className="h-4 w-4 text-slate-400 transition-colors group-hover/item:text-rose-500" />
                           <span>Sign out</span>
@@ -659,13 +661,13 @@ export function SiteNav() {
             <>
               <Link
                 href={orgSlugForLogin ? `/login?org=${encodeURIComponent(orgSlugForLogin)}` : "/login"}
-                className="rounded-xl px-3 py-2 text-sm font-medium text-slate-500"
+                className="rounded-xl px-3 py-2 text-sm font-extrabold text-slate-500"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20"
+                className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-extrabold text-white shadow-lg shadow-emerald-500/20"
               >
                 Sign up
               </Link>
@@ -749,7 +751,7 @@ export function SiteNav() {
                   <Link
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150 ${
+                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-extrabold transition-all duration-150 ${
                       item.active
                         ? "bg-emerald-50/80 text-emerald-700"
                         : "text-slate-600 hover:bg-slate-50/80 hover:text-slate-900"
@@ -776,7 +778,7 @@ export function SiteNav() {
                           setMobileOpen(false);
                           openPricingModal();
                         }}
-                        className={`rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150 block w-full text-left ${
+                        className={`rounded-xl px-4 py-3 text-sm font-extrabold transition-all duration-150 block w-full text-left ${
                           pathname === link.href
                             ? "bg-emerald-50/80 text-emerald-700"
                             : "text-slate-600 hover:bg-slate-50/80 hover:text-slate-900"
@@ -788,7 +790,7 @@ export function SiteNav() {
                       <Link
                         href={link.href}
                         onClick={() => setMobileOpen(false)}
-                        className={`rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150 block ${
+                        className={`rounded-xl px-4 py-3 text-sm font-extrabold transition-all duration-150 block ${
                           pathname === link.href
                             ? "bg-emerald-50/80 text-emerald-700"
                             : "text-slate-600 hover:bg-slate-50/80 hover:text-slate-900"
@@ -808,7 +810,7 @@ export function SiteNav() {
                     transition={{ delay: 0.15 }}
                     className="my-2 border-t border-slate-200/60 pt-2"
                   >
-                    <p className="px-4 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+                    <p className="px-4 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
                       Your account
                     </p>
                   </motion.div>
@@ -822,7 +824,7 @@ export function SiteNav() {
                       <Link
                         href={item.href}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 transition-all duration-150"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-extrabold text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 transition-all duration-150"
                       >
                         <item.icon className="h-4 w-4 text-slate-400" />
                         {item.label}
@@ -837,7 +839,7 @@ export function SiteNav() {
                     <form action="/api/auth/signout" method="POST">
                       <button
                         type="submit"
-                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-slate-600 hover:bg-rose-50/60 hover:text-rose-700 transition-all duration-150"
+                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-extrabold text-slate-600 hover:bg-rose-50/60 hover:text-rose-700 transition-all duration-150"
                       >
                         <LogOut className="h-4 w-4 text-slate-400" />
                         Sign out

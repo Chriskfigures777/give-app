@@ -57,7 +57,7 @@ function FooterColumn({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-white/40">
+      <h3 className="text-xs font-extrabold uppercase tracking-wider text-white/40">
         {title}
       </h3>
       <div className="flex flex-col gap-3">{children}</div>
@@ -71,7 +71,7 @@ function FooterLink({ href, label, isForm }: FooterLinkItem) {
       <form action="/api/auth/signout" method="POST" className="inline">
         <button
           type="submit"
-          className="text-sm text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 font-inherit"
+          className="text-sm font-extrabold text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 font-inherit"
         >
           {label}
         </button>
@@ -81,7 +81,7 @@ function FooterLink({ href, label, isForm }: FooterLinkItem) {
   return (
     <Link
       href={href}
-      className="text-sm text-white/60 hover:text-white transition-colors"
+      className="text-sm font-extrabold text-white/60 hover:text-white transition-colors"
     >
       {label}
     </Link>
@@ -122,7 +122,9 @@ export function SiteFooter() {
               className="inline-flex items-center"
             >
               <BrandMark
-                className="h-9 w-9 drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]"
+                fullLogo
+                variant="dark"
+                className="drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]"
                 id="footer"
               />
             </Link>
@@ -182,7 +184,7 @@ export function SiteFooter() {
 
           {/* Newsletter */}
           <div className="flex flex-col gap-4 max-w-xs">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/40">
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-white/40">
               Stay updated
             </h3>
             {newsletterSubmitted ? (
@@ -217,7 +219,7 @@ export function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-center gap-4 border-t border-white/[0.06] pt-8 sm:flex-row sm:justify-between">
           <p className="text-sm text-white/40">
-            &copy; {new Date().getFullYear()} Give. All rights reserved.
+            &copy; {new Date().getFullYear()} The Exchange. All rights reserved.
           </p>
           <a
             href="mailto:support@give.com"
