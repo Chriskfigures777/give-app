@@ -50,7 +50,7 @@ export function FeedLeftSidebar() {
   return (
     <aside className="hidden w-[240px] shrink-0 xl:block">
       {/* Sticky container */}
-      <div className="sticky top-6 space-y-3">
+      <div className="sticky top-[4.5rem] space-y-3">
 
         {/* ── User card with gradient border ── */}
         <div

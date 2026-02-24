@@ -29,7 +29,7 @@ export function FeedRightPanel() {
   return (
     <aside className="hidden w-[296px] shrink-0 lg:block">
       {/* Sticky container */}
-      <div className="sticky top-6 space-y-3 max-h-[calc(100vh-3rem)]">
+      <div className="sticky top-[4.5rem] space-y-3 max-h-[calc(100vh-4.5rem)]">
 
         {/* ── Tab bar ── */}
         <div

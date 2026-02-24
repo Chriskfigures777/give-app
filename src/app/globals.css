@@ -1434,112 +1434,112 @@
    FEED THEME SYSTEM — 5 Themes, 2026 Design Language
    ═══════════════════════════════════════════════════ */
 
-/* Default: Aurora (dark emerald — brand) */
+/* Default: Aurora (soft emerald night — brand) */
 [data-feed-theme] {
-  --feed-bg: #060d1a;
-  --feed-surface: rgba(10, 22, 40, 0.98);
-  --feed-card: rgba(13, 25, 47, 0.9);
-  --feed-card-hover: rgba(18, 33, 60, 0.95);
-  --feed-border: rgba(16, 185, 129, 0.12);
-  --feed-border-strong: rgba(16, 185, 129, 0.32);
-  --feed-text: #e2faf1;
-  --feed-text-muted: rgba(166, 230, 201, 0.65);
-  --feed-text-dim: rgba(120, 180, 155, 0.42);
+  --feed-bg: #0d1f30;
+  --feed-surface: rgba(14, 28, 44, 0.98);
+  --feed-card: rgba(18, 34, 54, 0.88);
+  --feed-card-hover: rgba(22, 40, 64, 0.92);
+  --feed-border: rgba(16, 185, 129, 0.14);
+  --feed-border-strong: rgba(16, 185, 129, 0.36);
+  --feed-text: #dff7ee;
+  --feed-text-muted: rgba(166, 225, 200, 0.7);
+  --feed-text-dim: rgba(130, 190, 165, 0.5);
   --feed-accent: #10b981;
   --feed-accent-2: #06b6d4;
   --feed-accent-3: #8b5cf6;
-  --feed-orb-1: rgba(16, 185, 129, 0.08);
-  --feed-orb-2: rgba(6, 182, 212, 0.06);
-  --feed-orb-3: rgba(139, 92, 246, 0.04);
-  --feed-glass: rgba(13, 25, 47, 0.7);
-  --feed-glass-border: rgba(16, 185, 129, 0.15);
-  --feed-sidebar: rgba(8, 18, 35, 0.98);
-  --feed-input-bg: rgba(6, 15, 30, 0.8);
-  --feed-input-border: rgba(16, 185, 129, 0.2);
-  --feed-glow: 0 0 40px rgba(16, 185, 129, 0.12);
-  --feed-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
-  --feed-card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.22);
+  --feed-orb-1: rgba(16, 185, 129, 0.13);
+  --feed-orb-2: rgba(6, 182, 212, 0.09);
+  --feed-orb-3: rgba(139, 92, 246, 0.07);
+  --feed-glass: rgba(18, 34, 54, 0.68);
+  --feed-glass-border: rgba(16, 185, 129, 0.18);
+  --feed-sidebar: rgba(12, 24, 40, 0.98);
+  --feed-input-bg: rgba(14, 28, 46, 0.75);
+  --feed-input-border: rgba(16, 185, 129, 0.22);
+  --feed-glow: 0 0 40px rgba(16, 185, 129, 0.15);
+  --feed-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.18);
+  --feed-card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(16, 185, 129, 0.24);
   --feed-gradient: linear-gradient(135deg, #10b981 0%, #0d9488 50%, #06b6d4 100%);
-  --feed-badge-bg: rgba(16, 185, 129, 0.15);
+  --feed-badge-bg: rgba(16, 185, 129, 0.16);
   --feed-badge-text: #34d399;
-  --feed-nav-active-bg: rgba(16, 185, 129, 0.18);
+  --feed-nav-active-bg: rgba(16, 185, 129, 0.2);
   --feed-nav-active-text: #34d399;
-  --feed-scrollbar: rgba(16, 185, 129, 0.22);
-  --feed-composer-bg: rgba(10, 22, 40, 0.85);
-  --feed-skeleton: rgba(16, 185, 129, 0.06);
-  --feed-skeleton-shine: rgba(16, 185, 129, 0.12);
+  --feed-scrollbar: rgba(16, 185, 129, 0.25);
+  --feed-composer-bg: rgba(16, 32, 50, 0.82);
+  --feed-skeleton: rgba(16, 185, 129, 0.07);
+  --feed-skeleton-shine: rgba(16, 185, 129, 0.14);
 }
 
 [data-feed-theme="aurora"] { /* inherits base */ }
 
 [data-feed-theme="midnight"] {
-  --feed-bg: #0d1117;
-  --feed-surface: rgba(13, 17, 23, 0.99);
-  --feed-card: rgba(21, 27, 35, 0.95);
-  --feed-card-hover: rgba(30, 38, 50, 0.98);
-  --feed-border: rgba(99, 110, 123, 0.18);
-  --feed-border-strong: rgba(88, 166, 255, 0.35);
+  --feed-bg: #111e2e;
+  --feed-surface: rgba(16, 26, 42, 0.99);
+  --feed-card: rgba(20, 32, 50, 0.9);
+  --feed-card-hover: rgba(26, 40, 60, 0.94);
+  --feed-border: rgba(99, 130, 160, 0.18);
+  --feed-border-strong: rgba(88, 166, 255, 0.38);
   --feed-text: #e6edf3;
-  --feed-text-muted: rgba(139, 148, 158, 0.85);
-  --feed-text-dim: rgba(99, 110, 123, 0.6);
+  --feed-text-muted: rgba(160, 185, 210, 0.8);
+  --feed-text-dim: rgba(110, 140, 170, 0.6);
   --feed-accent: #58a6ff;
   --feed-accent-2: #bc8cff;
   --feed-accent-3: #79c0ff;
-  --feed-orb-1: rgba(88, 166, 255, 0.06);
-  --feed-orb-2: rgba(188, 140, 255, 0.04);
-  --feed-orb-3: rgba(121, 192, 255, 0.03);
-  --feed-glass: rgba(21, 27, 35, 0.75);
-  --feed-glass-border: rgba(88, 166, 255, 0.12);
-  --feed-sidebar: rgba(10, 14, 19, 0.99);
-  --feed-input-bg: rgba(13, 17, 23, 0.9);
-  --feed-input-border: rgba(88, 166, 255, 0.2);
-  --feed-glow: 0 0 40px rgba(88, 166, 255, 0.08);
-  --feed-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
-  --feed-card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(88, 166, 255, 0.22);
+  --feed-orb-1: rgba(88, 166, 255, 0.11);
+  --feed-orb-2: rgba(188, 140, 255, 0.08);
+  --feed-orb-3: rgba(121, 192, 255, 0.06);
+  --feed-glass: rgba(20, 32, 50, 0.7);
+  --feed-glass-border: rgba(88, 166, 255, 0.16);
+  --feed-sidebar: rgba(14, 22, 36, 0.99);
+  --feed-input-bg: rgba(16, 26, 42, 0.82);
+  --feed-input-border: rgba(88, 166, 255, 0.22);
+  --feed-glow: 0 0 40px rgba(88, 166, 255, 0.12);
+  --feed-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.24), 0 1px 4px rgba(0, 0, 0, 0.18);
+  --feed-card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(88, 166, 255, 0.24);
   --feed-gradient: linear-gradient(135deg, #58a6ff 0%, #388bfd 50%, #bc8cff 100%);
-  --feed-badge-bg: rgba(88, 166, 255, 0.12);
+  --feed-badge-bg: rgba(88, 166, 255, 0.14);
   --feed-badge-text: #79c0ff;
-  --feed-nav-active-bg: rgba(88, 166, 255, 0.15);
+  --feed-nav-active-bg: rgba(88, 166, 255, 0.18);
   --feed-nav-active-text: #79c0ff;
-  --feed-scrollbar: rgba(88, 166, 255, 0.22);
-  --feed-composer-bg: rgba(17, 23, 31, 0.9);
-  --feed-skeleton: rgba(88, 166, 255, 0.05);
-  --feed-skeleton-shine: rgba(88, 166, 255, 0.1);
+  --feed-scrollbar: rgba(88, 166, 255, 0.25);
+  --feed-composer-bg: rgba(18, 28, 44, 0.86);
+  --feed-skeleton: rgba(88, 166, 255, 0.07);
+  --feed-skeleton-shine: rgba(88, 166, 255, 0.13);
 }
 
 [data-feed-theme="cosmic"] {
-  --feed-bg: #0f0a1e;
-  --feed-surface: rgba(15, 10, 30, 0.99);
-  --feed-card: rgba(25, 16, 48, 0.95);
-  --feed-card-hover: rgba(35, 24, 65, 0.98);
-  --feed-border: rgba(139, 92, 246, 0.18);
-  --feed-border-strong: rgba(167, 139, 250, 0.42);
-  --feed-text: #f3f0ff;
-  --feed-text-muted: rgba(196, 181, 253, 0.7);
-  --feed-text-dim: rgba(139, 92, 246, 0.5);
+  --feed-bg: #16102a;
+  --feed-surface: rgba(20, 14, 38, 0.99);
+  --feed-card: rgba(26, 18, 50, 0.9);
+  --feed-card-hover: rgba(34, 24, 64, 0.94);
+  --feed-border: rgba(139, 92, 246, 0.2);
+  --feed-border-strong: rgba(167, 139, 250, 0.44);
+  --feed-text: #f0ecff;
+  --feed-text-muted: rgba(210, 195, 255, 0.72);
+  --feed-text-dim: rgba(160, 130, 230, 0.55);
   --feed-accent: #a78bfa;
   --feed-accent-2: #f472b6;
   --feed-accent-3: #818cf8;
-  --feed-orb-1: rgba(139, 92, 246, 0.12);
-  --feed-orb-2: rgba(244, 114, 182, 0.07);
-  --feed-orb-3: rgba(129, 140, 248, 0.05);
-  --feed-glass: rgba(25, 16, 48, 0.75);
-  --feed-glass-border: rgba(139, 92, 246, 0.2);
-  --feed-sidebar: rgba(10, 6, 20, 0.99);
-  --feed-input-bg: rgba(15, 10, 30, 0.9);
-  --feed-input-border: rgba(139, 92, 246, 0.25);
-  --feed-glow: 0 0 40px rgba(139, 92, 246, 0.12);
-  --feed-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
-  --feed-card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(167, 139, 250, 0.28);
+  --feed-orb-1: rgba(139, 92, 246, 0.16);
+  --feed-orb-2: rgba(244, 114, 182, 0.1);
+  --feed-orb-3: rgba(129, 140, 248, 0.08);
+  --feed-glass: rgba(26, 18, 50, 0.7);
+  --feed-glass-border: rgba(139, 92, 246, 0.22);
+  --feed-sidebar: rgba(16, 10, 32, 0.99);
+  --feed-input-bg: rgba(20, 14, 40, 0.82);
+  --feed-input-border: rgba(139, 92, 246, 0.28);
+  --feed-glow: 0 0 40px rgba(139, 92, 246, 0.16);
+  --feed-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.24), 0 1px 4px rgba(0, 0, 0, 0.18);
+  --feed-card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(167, 139, 250, 0.3);
   --feed-gradient: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #f472b6 100%);
-  --feed-badge-bg: rgba(139, 92, 246, 0.15);
+  --feed-badge-bg: rgba(139, 92, 246, 0.18);
   --feed-badge-text: #c4b5fd;
-  --feed-nav-active-bg: rgba(139, 92, 246, 0.2);
+  --feed-nav-active-bg: rgba(139, 92, 246, 0.22);
   --feed-nav-active-text: #c4b5fd;
-  --feed-scrollbar: rgba(139, 92, 246, 0.28);
-  --feed-composer-bg: rgba(20, 13, 40, 0.9);
-  --feed-skeleton: rgba(139, 92, 246, 0.06);
-  --feed-skeleton-shine: rgba(139, 92, 246, 0.12);
+  --feed-scrollbar: rgba(139, 92, 246, 0.3);
+  --feed-composer-bg: rgba(22, 16, 44, 0.86);
+  --feed-skeleton: rgba(139, 92, 246, 0.08);
+  --feed-skeleton-shine: rgba(139, 92, 246, 0.15);
 }
 
 [data-feed-theme="pearl"] {
@@ -1578,38 +1578,38 @@
 }
 
 [data-feed-theme="solar"] {
-  --feed-bg: #0c0a06;
-  --feed-surface: rgba(12, 10, 6, 0.99);
-  --feed-card: rgba(24, 20, 10, 0.95);
-  --feed-card-hover: rgba(35, 29, 14, 0.98);
-  --feed-border: rgba(245, 158, 11, 0.15);
-  --feed-border-strong: rgba(251, 191, 36, 0.42);
-  --feed-text: #fefce8;
-  --feed-text-muted: rgba(253, 230, 138, 0.65);
-  --feed-text-dim: rgba(180, 140, 50, 0.5);
+  --feed-bg: #1c1608;
+  --feed-surface: rgba(26, 20, 10, 0.99);
+  --feed-card: rgba(32, 25, 11, 0.9);
+  --feed-card-hover: rgba(40, 32, 14, 0.94);
+  --feed-border: rgba(245, 158, 11, 0.18);
+  --feed-border-strong: rgba(251, 191, 36, 0.44);
+  --feed-text: #fef9e7;
+  --feed-text-muted: rgba(255, 230, 150, 0.72);
+  --feed-text-dim: rgba(210, 170, 80, 0.55);
   --feed-accent: #f59e0b;
   --feed-accent-2: #ef4444;
   --feed-accent-3: #f97316;
-  --feed-orb-1: rgba(245, 158, 11, 0.1);
-  --feed-orb-2: rgba(239, 68, 68, 0.06);
-  --feed-orb-3: rgba(249, 115, 22, 0.04);
-  --feed-glass: rgba(24, 20, 10, 0.75);
-  --feed-glass-border: rgba(245, 158, 11, 0.18);
-  --feed-sidebar: rgba(8, 7, 3, 0.99);
-  --feed-input-bg: rgba(12, 10, 6, 0.9);
-  --feed-input-border: rgba(245, 158, 11, 0.22);
-  --feed-glow: 0 0 40px rgba(245, 158, 11, 0.1);
-  --feed-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
-  --feed-card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(251, 191, 36, 0.28);
+  --feed-orb-1: rgba(245, 158, 11, 0.14);
+  --feed-orb-2: rgba(239, 68, 68, 0.09);
+  --feed-orb-3: rgba(249, 115, 22, 0.07);
+  --feed-glass: rgba(32, 25, 11, 0.7);
+  --feed-glass-border: rgba(245, 158, 11, 0.22);
+  --feed-sidebar: rgba(20, 15, 6, 0.99);
+  --feed-input-bg: rgba(26, 20, 8, 0.8);
+  --feed-input-border: rgba(245, 158, 11, 0.25);
+  --feed-glow: 0 0 40px rgba(245, 158, 11, 0.14);
+  --feed-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.16);
+  --feed-card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(251, 191, 36, 0.3);
   --feed-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #ef4444 100%);
-  --feed-badge-bg: rgba(245, 158, 11, 0.15);
+  --feed-badge-bg: rgba(245, 158, 11, 0.18);
   --feed-badge-text: #fbbf24;
-  --feed-nav-active-bg: rgba(245, 158, 11, 0.15);
+  --feed-nav-active-bg: rgba(245, 158, 11, 0.18);
   --feed-nav-active-text: #fbbf24;
-  --feed-scrollbar: rgba(245, 158, 11, 0.25);
-  --feed-composer-bg: rgba(20, 16, 8, 0.9);
-  --feed-skeleton: rgba(245, 158, 11, 0.06);
-  --feed-skeleton-shine: rgba(245, 158, 11, 0.12);
+  --feed-scrollbar: rgba(245, 158, 11, 0.28);
+  --feed-composer-bg: rgba(28, 22, 10, 0.86);
+  --feed-skeleton: rgba(245, 158, 11, 0.08);
+  --feed-skeleton-shine: rgba(245, 158, 11, 0.15);
 }
 
 /* ── Feed theme utility classes ── */
