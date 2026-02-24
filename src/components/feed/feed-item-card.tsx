@@ -265,16 +265,14 @@ export function FeedItemCard({
   /* ── Engagement action bar ── */
   const actionBar = (
     <div
-      className="flex items-center border-t border-slate-100/60 px-4 py-1.5"
+      className="flex items-center border-t border-slate-100 px-4 py-2"
       onClick={(e) => e.stopPropagation()}
     >
       <button
         type="button"
         onClick={handleSupportClick}
-        className={`group/btn inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
-          userSupported
-            ? "bg-rose-50/80 text-rose-600"
-            : "text-slate-500 hover:bg-slate-50/80 hover:text-rose-500"
+        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+          userSupported ? "text-rose-600" : "text-slate-500 hover:text-rose-500"
         } ${supportAnimating ? "feed-glow-pulse" : ""}`}
       >
         <Heart
@@ -289,10 +287,8 @@ export function FeedItemCard({
       <button
         type="button"
         onClick={handleCommentClick}
-        className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-200 ${
-          commentsOpen
-            ? "bg-blue-50/80 text-blue-600"
-            : "text-slate-500 hover:bg-slate-50/80 hover:text-blue-500"
+        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+          commentsOpen ? "text-blue-600" : "text-slate-500 hover:text-blue-500"
         }`}
       >
         <MessageCircle className="h-[17px] w-[17px]" />
@@ -301,7 +297,7 @@ export function FeedItemCard({
       <button
         type="button"
         onClick={handleShareClick}
-        className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[13px] font-medium text-slate-500 transition-all duration-200 hover:bg-slate-50/80 hover:text-emerald-600"
+        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-700"
       >
         <Share2 className="h-[17px] w-[17px]" />
         <span>Share</span>
@@ -311,20 +307,20 @@ export function FeedItemCard({
 
   /* ── Comments section ── */
   const commentSection = commentsOpen && (
-    <div className="border-t border-slate-100/60 bg-slate-50/30 px-5 py-4">
+    <div className="border-t border-slate-100 bg-slate-50/50 px-4 py-4">
       <form onSubmit={handleCommentSubmit} className="mb-4">
         <div className="flex gap-2.5">
           <input
             value={commentInput}
             onChange={(e) => setCommentInput(e.target.value)}
             placeholder="Write a comment..."
-            className="flex-1 rounded-xl border border-slate-200/60 bg-white px-4 py-2.5 text-sm placeholder:text-slate-400 transition-all focus:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+            className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             maxLength={2000}
           />
           <button
             type="submit"
             disabled={!commentInput.trim() || commentSubmitting}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-sm transition-all duration-200 hover:shadow-md disabled:opacity-40"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white disabled:opacity-40"
           >
             <Send className="h-4 w-4" />
           </button>
@@ -346,7 +342,7 @@ export function FeedItemCard({
         <ul className="space-y-3">
           {comments.map((c) => (
             <li key={c.id} className="flex gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 text-[11px] font-bold text-emerald-700">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[11px] font-bold text-emerald-700">
                 {c.author_name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
@@ -378,21 +374,21 @@ export function FeedItemCard({
     nameOverride?: string,
     subtitle?: React.ReactNode
   ) => (
-    <div className="flex items-start gap-3.5 px-5 pt-5">
-      <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-emerald-200 to-teal-200 p-[2px] transition-transform duration-200 hover:scale-105 block shadow-sm">
+    <div className="flex items-start gap-3 px-4 pt-4">
+      <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full bg-slate-100">
         <div className="h-full w-full overflow-hidden rounded-full bg-white">
           <Image
             src={imageUrl}
             alt={item.organization_name}
             fill
             className="object-cover"
-            sizes="44px"
+            sizes="48px"
           />
         </div>
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-[15px] font-semibold text-slate-900 hover:text-emerald-700 transition-colors">
+          <span className="truncate text-sm font-semibold text-slate-900 hover:text-emerald-700">
             {nameOverride ?? item.organization_name}
           </span>
           <span className="shrink-0 text-[12px] text-slate-400 tabular-nums">
@@ -415,16 +411,14 @@ export function FeedItemCard({
       cardContent = (
         <>
           {contentHeader(undefined, "received a donation")}
-          <div className="px-5 py-3">
-            <div className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-cyan-50/30 px-4 py-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-sm">
-                <Sparkles className="h-5 w-5 text-white" />
+          <div className="px-4 pb-4">
+            <div className="flex items-center gap-3 rounded-lg bg-slate-50 px-4 py-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold tracking-tight feed-gradient-text">
-                  {formatAmount(amountCents)}
-                </p>
-                <p className="text-[13px] text-slate-500">donated</p>
+                <p className="text-xl font-bold text-slate-900">{formatAmount(amountCents)}</p>
+                <p className="text-xs text-slate-500">donated</p>
               </div>
             </div>
           </div>
@@ -443,35 +437,22 @@ export function FeedItemCard({
       cardContent = (
         <>
           {contentHeader(undefined, `Campaign: ${campaignName}`)}
-          <div className="px-5 py-3">
-            <div className="rounded-xl bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-cyan-50/30 p-4">
+          <div className="px-4 pb-4">
+            <div className="rounded-lg bg-slate-50 p-4">
               <div className="flex items-baseline justify-between">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  <span className="text-xl font-bold feed-gradient-text">
-                    {Math.round(goalPct)}%
-                  </span>
+                  <TrendingUp className="h-4 w-4 text-slate-600" />
+                  <span className="text-xl font-bold text-slate-900">{Math.round(goalPct)}%</span>
                 </div>
-                <span className="text-sm font-medium text-slate-500">
-                  of {formatAmount(goalAmountCents)}
-                </span>
+                <span className="text-sm text-slate-500">of {formatAmount(goalAmountCents)}</span>
               </div>
-              <div className="relative mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200/60">
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 transition-all duration-700 ease-out"
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-700"
                   style={{ width: `${clampedPct}%` }}
                 />
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-white/0 via-white/30 to-white/0"
-                  style={{
-                    width: `${clampedPct}%`,
-                    animation: "feed-progress-shimmer 2s ease-in-out infinite",
-                  }}
-                />
               </div>
-              <p className="mt-2 text-[13px] text-slate-500">
-                Help them reach their goal
-              </p>
+              <p className="mt-2 text-xs text-slate-500">Help them reach their goal</p>
             </div>
           </div>
         </>
@@ -485,19 +466,16 @@ export function FeedItemCard({
       const location = [city, state].filter(Boolean).join(", ");
       cardContent = (
         <>
-          {contentHeader(undefined, location || "Just joined the community")}
-          <div className="px-5 py-3">
-            <div className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-50/80 via-purple-50/50 to-fuchsia-50/30 px-4 py-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-500 shadow-sm">
-                <Sparkles className="h-5 w-5 text-white" />
+          {contentHeader(undefined, location || "Just joined")}
+          <div className="px-4 pb-4">
+            <div className="flex items-center gap-3 rounded-lg bg-slate-50 px-4 py-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-500">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
               <div>
-                <p className="text-[15px] font-semibold text-slate-900">
-                  {item.organization_name} just joined the platform
-                </p>
-                <span className="mt-0.5 inline-flex items-center gap-1 text-sm font-medium text-violet-600 hover:text-violet-700">
-                  Visit their page
-                  <ExternalLink className="h-3 w-3" />
+                <p className="text-sm font-medium text-slate-900">{item.organization_name} joined</p>
+                <span className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-violet-600">
+                  Visit <ExternalLink className="h-3 w-3" />
                 </span>
               </div>
             </div>
@@ -532,8 +510,8 @@ export function FeedItemCard({
       let mediaBlock: React.ReactNode = null;
       if (resolvedMediaType === "image" && postMediaUrl) {
         mediaBlock = (
-          <div className="mt-1 px-5 pb-1">
-            <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-100">
+          <div className="mt-1 px-4 pb-1">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100">
               <Image
                 src={postMediaUrl}
                 alt=""
@@ -547,8 +525,8 @@ export function FeedItemCard({
         );
       } else if (resolvedMediaType === "video" && postMediaUrl) {
         mediaBlock = (
-          <div className="mt-1 px-5 pb-1">
-            <div className="aspect-video w-full overflow-hidden rounded-xl bg-slate-100">
+          <div className="mt-1 px-4 pb-1">
+            <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-100">
               <video
                 src={postMediaUrl}
                 controls
@@ -568,13 +546,13 @@ export function FeedItemCard({
           }
         })();
         mediaBlock = (
-          <div className="mt-1 px-5 pb-1">
+          <div className="mt-1 px-4 pb-1">
             <a
               href={postLinkUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="group/link block overflow-hidden rounded-xl border border-slate-200/80 bg-slate-50/50 transition-all duration-200 hover:border-slate-300 hover:shadow-sm"
+              className="block overflow-hidden rounded-lg border border-slate-200 bg-slate-50 transition-colors hover:border-slate-300"
             >
               {linkThumbnailUrl && (
                 <div className="relative aspect-video w-full overflow-hidden bg-slate-200">
@@ -582,7 +560,7 @@ export function FeedItemCard({
                     src={linkThumbnailUrl}
                     alt=""
                     fill
-                    className="object-cover transition-transform duration-300 group-hover/link:scale-[1.02]"
+                    className="object-cover"
                     sizes="(max-width: 680px) 100vw, 600px"
                     unoptimized
                   />
@@ -590,7 +568,7 @@ export function FeedItemCard({
               )}
               <div className="p-3.5">
                 {linkTitle && (
-                  <p className="font-semibold text-slate-900 group-hover/link:text-emerald-700 transition-colors">
+                  <p className="font-semibold text-slate-900">
                     {linkTitle}
                   </p>
                 )}
@@ -613,8 +591,8 @@ export function FeedItemCard({
         <>
           {contentHeader(authorName)}
           {content && (
-            <div className="px-5 pt-2 pb-1">
-              <p className="text-[15px] leading-relaxed text-slate-700 whitespace-pre-wrap">
+            <div className="px-4 pt-2 pb-1">
+              <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
                 {content}
               </p>
             </div>
@@ -637,8 +615,8 @@ export function FeedItemCard({
             </span>
           ))}
           {comment && (
-            <div className="px-5 pt-2 pb-1">
-              <p className="text-[15px] italic leading-relaxed text-slate-600">
+            <div className="px-4 pt-2 pb-1">
+              <p className="text-sm italic leading-relaxed text-slate-600">
                 &ldquo;{comment}&rdquo;
               </p>
             </div>
@@ -652,8 +630,8 @@ export function FeedItemCard({
       cardContent = (
         <>
           {contentHeader()}
-          <div className="px-5 pt-2 pb-1">
-            <p className="text-[15px] text-slate-600">Activity update</p>
+          <div className="px-4 pt-2 pb-1">
+            <p className="text-sm text-slate-600">Activity update</p>
           </div>
         </>
       );
@@ -661,16 +639,13 @@ export function FeedItemCard({
 
   return (
     <>
-      <div className="group/card relative overflow-hidden rounded-2xl border border-slate-200/40 bg-white/90 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300 hover:border-slate-200/70 hover:shadow-[0_4px_20px_rgba(0,0,0,0.06),0_8px_40px_rgba(0,0,0,0.03)]">
-        {/* Subtle top accent line */}
+      <div className="group/card relative overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-slate-300">
+        {/* Accent line */}
         {item.item_type === "donation" && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-50" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500" />
         )}
         {item.item_type === "new_org" && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 opacity-50" />
-        )}
-        {item.item_type === "post" && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 opacity-0 transition-opacity duration-300 group-hover/card:opacity-30" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-500" />
         )}
 
         {/* More options menu */}
@@ -740,12 +715,10 @@ export function FeedItemCard({
 
         {/* Engagement counts badge row */}
         {(supportCount > 0 || commentCount > 0) && (
-          <div className="flex items-center gap-4 px-5 py-2 text-[12px] text-slate-400">
+          <div className="flex items-center gap-4 px-4 py-2 text-xs text-slate-400">
             {supportCount > 0 && (
-              <span className="flex items-center gap-1.5">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-rose-400 to-pink-500">
-                  <Heart className="h-2.5 w-2.5 fill-white text-white" />
-                </span>
+              <span className="flex items-center gap-1">
+                <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
                 {supportCount}
               </span>
             )}
