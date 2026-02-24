@@ -19,6 +19,7 @@
     "deploy:feed-webhook": "cd lambda/feed-webhook && pnpm run deploy && cd ../.. && node scripts/deploy-feed-webhook.mjs",
     "deploy:feed-webhook-url": "node scripts/create-feed-webhook-url.mjs",
     "test:webhook": "node --env-file=.env.local scripts/test-webhook.mjs",
+    "test:splits-webhook": "node --env-file=.env.local scripts/test-splits-webhook.mjs",
     "test:internal-splits": "node --env-file=.env.local scripts/test-internal-splits.mjs",
     "donate:100": "node --env-file=.env.local scripts/donate-100-and-split.mjs",
     "test:webhook:load": "node --env-file=.env.local scripts/test-webhook-load.mjs",

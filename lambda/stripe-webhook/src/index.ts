@@ -125,6 +125,9 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             /* ignore */
           }
         }
+        if (splits.length === 0) {
+          console.log("[splits] No splits in metadata, checking product metadata fallback");
+        }
 
         if (splits.length === 0) {
           try {
@@ -169,6 +172,11 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
         }
 
         if (splits.length > 0 && chargeId) {
+          console.log("[splits] Processing split transfer", {
+            piId: pi.id,
+            splitsCount: splits.length,
+            splits: splits.map((s) => ({ pct: s.percentage, accountId: s.accountId ? `${s.accountId.slice(0, 12)}...` : null })),
+          });
           const { data: existingSplit } = await supabase
             .from("split_transfers")
             .select("id")
@@ -176,7 +184,10 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             .maybeSingle();
           if (!existingSplit) {
             const organizationId = metadata.organization_id as string | undefined;
-            if (!organizationId) break;
+            if (!organizationId) {
+              console.warn("[splits] Skipping: missing organization_id in metadata");
+              break;
+            }
 
             const { data: orgRow } = await supabase
               .from("organizations")
@@ -186,24 +197,46 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             const formOwnerConnectId =
               connectAccountId ??
               (orgRow as { stripe_connect_account_id: string | null } | null)?.stripe_connect_account_id;
-            if (!formOwnerConnectId) break;
+            if (!formOwnerConnectId) {
+              console.warn("[splits] Skipping: org has no stripe_connect_account_id", { organizationId });
+              break;
+            }
 
-            // Transfer peer shares from form owner's Connect account to peer Connect accounts
+            // Charge landed on PLATFORM. Transfer from platform to form owner + peers.
+            const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
+            const netAmount = Math.max(0, pi.amount - applicationFeeCents);
             const stripeSplits = splits.filter((s) => s.accountId);
+            const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
+            const formOwnerPct = Math.max(0, 100 - peerPctSum);
+
             const transferPromises: Promise<unknown>[] = [];
-            for (const entry of stripeSplits) {
-              const amount = Math.round((entry.percentage / 100) * pi.amount);
-              if (amount >= 1) {
+
+            if (formOwnerPct >= 0.01) {
+              const amt = Math.round((formOwnerPct / 100) * netAmount);
+              if (amt >= 1) {
                 transferPromises.push(
-                  stripe.transfers.create(
-                    {
-                      amount,
-                      currency: (pi.currency as "usd") ?? "usd",
-                      destination: entry.accountId,
-                      transfer_group: pi.id,
-                    },
-                    { stripeAccount: formOwnerConnectId }
-                  )
+                  stripe.transfers.create({
+                    amount: amt,
+                    currency: (pi.currency as "usd") ?? "usd",
+                    destination: formOwnerConnectId,
+                    transfer_group: pi.id,
+                    description: `Split share for donation ${pi.id}`,
+                  })
+                );
+              }
+            }
+
+            for (const entry of stripeSplits) {
+              const amt = Math.round((entry.percentage / 100) * netAmount);
+              if (amt >= 1 && entry.accountId) {
+                transferPromises.push(
+                  stripe.transfers.create({
+                    amount: amt,
+                    currency: (pi.currency as "usd") ?? "usd",
+                    destination: entry.accountId,
+                    transfer_group: pi.id,
+                    description: `Split share for donation ${pi.id}`,
+                  })
                 );
               }
             }
@@ -211,11 +244,14 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             if (transferPromises.length > 0) {
               try {
                 await Promise.all(transferPromises);
+                console.log("[splits] Transfers completed", { piId: pi.id, count: transferPromises.length });
               } catch (transferErr) {
                 console.error("[webhook] Split transfer failed:", transferErr);
                 throw transferErr;
               }
               await supabase.from("split_transfers").insert({ stripe_payment_intent_id: pi.id });
+            } else {
+              console.warn("[splits] No transfer promises (amounts may be < 1 cent)", { piId: pi.id });
             }
           }
 
