@@ -50,7 +50,7 @@ export function BrandMark({ className = "", id = "brand", fullLogo = false, icon
   if (iconOnly) {
     return (
       <span className={`inline-flex shrink-0 ${className}`} aria-label="The Exchange">
-        <MountainCurveMark color={markColor} className="h-7 w-7 shrink-0" />
+        <MountainCurveMark color={markColor} className="h-8 w-8 shrink-0" />
       </span>
     );
   }
@@ -61,7 +61,7 @@ export function BrandMark({ className = "", id = "brand", fullLogo = false, icon
         className={`inline-flex items-center gap-2.5 ${className}`}
         aria-label="The Exchange"
       >
-        <MountainCurveMark color={markColor} className="h-7 w-7 shrink-0" />
+        <MountainCurveMark color={markColor} className="h-8 w-8 shrink-0" />
         <span className={`text-xl font-extrabold tracking-tight ${textClass}`} style={{ fontFamily: "var(--font-barlow), Barlow, sans-serif" }}>
           Exchange
         </span>
@@ -74,7 +74,7 @@ export function BrandMark({ className = "", id = "brand", fullLogo = false, icon
       className={`inline-flex items-center gap-2.5 brand-mark-compact ${className}`}
       aria-label="The Exchange"
     >
-      <MountainCurveMark color={markColor} className="h-6 w-6 shrink-0" />
+      <MountainCurveMark color={markColor} className="h-7 w-7 shrink-0" />
       <span className={`text-base font-extrabold tracking-tight brand-mark-exchange ${textClass}`} style={{ fontFamily: "var(--font-barlow), Barlow, sans-serif" }}>
         Exchange
       </span>
