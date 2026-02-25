@@ -35,10 +35,10 @@ function getMarkColor(variant: BrandMarkProps["variant"]) {
 function MountainCurveMark({ color, className }: { color: string; className?: string }) {
   return (
     <svg viewBox="0 0 48 24" fill="none" className={className} aria-hidden="true">
+      <path d="M3 16 Q12 -4 24 4 Q36 12 45 16" stroke={color} strokeWidth="2.5" strokeLinecap="butt" fill="none" />
       <circle cx="6" cy="16" r="5.5" fill={color} />
       <circle cx="24" cy="4" r="5.5" fill={color} />
       <circle cx="42" cy="16" r="5.5" fill={color} />
-      <path d="M12 16 Q18 0 24 4 Q30 8 36 16" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
