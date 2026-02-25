@@ -41,7 +41,9 @@ export function EventbriteWidget({ eventId }: Props) {
         iframeContainerId: containerId,
         iframeContainerHeight: getWidgetHeight(),
         onOrderComplete: () => {
-          console.log("Order complete!");
+          if (process.env.NODE_ENV === "development") {
+            console.log("Order complete!");
+          }
         },
       });
     } catch (err) {

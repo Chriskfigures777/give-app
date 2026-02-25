@@ -16,11 +16,15 @@ import { stripe } from "@/lib/stripe/client";
  */
 export async function POST(req: Request) {
   const syncSecret = process.env.CONNECT_SYNC_SECRET?.trim();
-  if (syncSecret) {
-    const headerSecret = req.headers.get("X-Sync-Secret");
-    if (headerSecret !== syncSecret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!syncSecret) {
+    return NextResponse.json(
+      { error: "CONNECT_SYNC_SECRET not configured" },
+      { status: 503 }
+    );
+  }
+  const headerSecret = req.headers.get("X-Sync-Secret");
+  if (headerSecret !== syncSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -107,7 +111,9 @@ export async function POST(req: Request) {
       hasRequirements,
     });
   } catch (e) {
-    console.error("sync-verification error", e);
+    if (process.env.NODE_ENV === "development") {
+      console.error("sync-verification error", e);
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Sync failed" },
       { status: 500 }

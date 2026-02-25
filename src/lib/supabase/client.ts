@@ -20,7 +20,23 @@ function getBrowserEnv() {
   return { url, anonKey };
 }
 
+/** Custom fetch that logs Supabase auth failures for easier debugging (dev only). */
+function createFetchWithLogging() {
+  return async (input: RequestInfo | URL, init?: RequestInit) => {
+    try {
+      return await fetch(input, init);
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Supabase] Auth fetch failed:", err instanceof Error ? err.message : String(err));
+      }
+      throw err;
+    }
+  };
+}
+
 export function createClient() {
   const { url, anonKey } = getBrowserEnv();
-  return createBrowserClient<Database>(url, anonKey);
+  return createBrowserClient<Database>(url, anonKey, {
+    global: { fetch: createFetchWithLogging() },
+  });
 }

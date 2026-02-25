@@ -180,7 +180,9 @@ export async function POST(req: NextRequest) {
             await updateDomainMap(domainMap);
           }
 
-          console.log(`Published ${pages.length} pages to S3 for ${orgSlug}`);
+          if (process.env.NODE_ENV === "development") {
+            console.log(`Published ${pages.length} pages to S3 for ${orgSlug}`);
+          }
         }
       } catch (e) {
         s3Error = e instanceof Error ? e.message : String(e);

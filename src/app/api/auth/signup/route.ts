@@ -2,21 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 
-// #region agent log
-const LOG = (msg: string, d?: object, hypothesisId?: string) => {
-  const payload = { location: "api/auth/signup", message: msg, data: d || {}, timestamp: Date.now(), ...(hypothesisId && { hypothesisId }) };
-  fetch("http://127.0.0.1:7242/ingest/3b544e7e-0f2a-4ba5-b9af-ad2e0e08f1b5", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }).catch(() => {});
-  console.error("[signup]", msg, d ?? "");
+const LOG = (msg: string, d?: object, _hypothesisId?: string) => {
+  if (process.env.NODE_ENV === "development") {
+    console.error("[signup]", msg, d ?? "");
+  }
 };
-// #endregion
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    // #region agent log
-    LOG("signup route hit", {}, "H1");
-    // #endregion
+    LOG("signup route hit", {});
     const body = await req.json();
     const {
       email,

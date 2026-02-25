@@ -37,12 +37,6 @@ export async function POST(req: NextRequest) {
 
   const supabase = createServiceClient();
 
-  console.log(JSON.stringify({
-    type: event.type,
-    id: event.id,
-    account: (event as { account?: string }).account ?? null,
-  }));
-
   switch (event.type) {
     // ── Platform plan subscription events ──────────────────────────────────
     case "checkout.session.completed": {
@@ -80,7 +74,6 @@ export async function POST(req: NextRequest) {
           })
           .eq("id", orgId);
 
-        console.log(`[billing] Org ${orgId} upgraded to ${plan} (sub: ${subscription.id})`);
         break;
       }
 
@@ -153,7 +146,6 @@ export async function POST(req: NextRequest) {
           })
           .eq("id", meta.org_id);
 
-        console.log(`[billing] Org ${meta.org_id} plan → ${newPlan} (${newStatus})`);
         break;
       }
 
@@ -191,8 +183,8 @@ export async function POST(req: NextRequest) {
       }
 
       if (SPLITS_ENABLED && splits.length > 0 && chargeId && splitMode === "stripe_connect") {
-        // Charge landed on form owner's Connect account. application_fee = platform fee only.
-        // Transfer peer shares from form owner's Connect account to peer Connect accounts.
+        // Charge landed on PLATFORM. Stripe does not allow direct transfers between Connect accounts.
+        // Transfer from platform to form owner + peers; platform keeps application_fee only.
         const { data: existingSplit } = await supabase
           .from("split_transfers")
           .select("id")
@@ -212,22 +204,49 @@ export async function POST(req: NextRequest) {
           ?.stripe_connect_account_id;
         if (!formOwnerConnectId) break;
 
+        const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
+        const netAmount = Math.max(0, pi.amount - applicationFeeCents);
         const stripeSplits = splits.filter((s) => s.accountId);
+        const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
+        const formOwnerPct = Math.max(0, 100 - peerPctSum);
+
         const transferPromises: Promise<unknown>[] = [];
 
-        for (const entry of stripeSplits) {
-          const amount = Math.round((entry.percentage! / 100) * pi.amount);
-          if (amount >= 1) {
+        // source_transaction links transfer to the charge so it succeeds even when funds
+        // are still pending. Without it, transfers fail with "Insufficient funds".
+        const transferParams = {
+          source_transaction: chargeId,
+          transfer_group: pi.id,
+        };
+
+        // Form owner's share (no stripeAccount = transfer from platform)
+        if (formOwnerPct >= 0.01) {
+          const amt = Math.round((formOwnerPct / 100) * netAmount);
+          if (amt >= 1) {
             transferPromises.push(
-              stripe.transfers.create(
-                {
-                  amount,
-                  currency: (pi.currency as "usd") ?? "usd",
-                  destination: entry.accountId!,
-                  transfer_group: pi.id,
-                },
-                { stripeAccount: formOwnerConnectId }
-              )
+              stripe.transfers.create({
+                amount: amt,
+                currency: (pi.currency as "usd") ?? "usd",
+                destination: formOwnerConnectId,
+                ...transferParams,
+                description: `Split share for donation ${pi.id}`,
+              })
+            );
+          }
+        }
+
+        // Peer shares
+        for (const entry of stripeSplits) {
+          const amt = Math.round((entry.percentage! / 100) * netAmount);
+          if (amt >= 1 && entry.accountId) {
+            transferPromises.push(
+              stripe.transfers.create({
+                amount: amt,
+                currency: (pi.currency as "usd") ?? "usd",
+                destination: entry.accountId,
+                ...transferParams,
+                description: `Split share for donation ${pi.id}`,
+              })
             );
           }
         }

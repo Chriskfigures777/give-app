@@ -56,7 +56,9 @@ export function triggerRepublish(organizationId: string): void {
       await uploadSiteToS3(slug, s3Pages);
       await invalidateCloudFrontCache(slug);
 
-      console.log(`Auto-republished ${pages.length} pages to S3 for ${slug}`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Auto-republished ${pages.length} pages to S3 for ${slug}`);
+      }
     } catch (e) {
       console.error("Auto-republish error:", e);
     }

@@ -36,15 +36,25 @@ export type SearchResponse = {
 
 const DEFAULT_LIMIT = 24;
 const MAX_LIMIT = 50;
+const MAX_SEARCH_LENGTH = 200;
+
+/** Sanitize search input for PostgREST filter safety — limit length, strip control chars. */
+function sanitizeSearchInput(s: string | null | undefined): string {
+  if (!s || typeof s !== "string") return "";
+  return s
+    .replace(/[\x00-\x1f\x7f]/g, "")
+    .slice(0, MAX_SEARCH_LENGTH)
+    .trim();
+}
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const q = searchParams.get("q")?.trim() ?? "";
+    const q = sanitizeSearchInput(searchParams.get("q"));
     const type = searchParams.get("type") ?? "all"; // church | nonprofit | missionary | event | all
-    const city = searchParams.get("city")?.trim();
-    const state = searchParams.get("state")?.trim();
-    const cause = searchParams.get("cause")?.trim();
+    const city = sanitizeSearchInput(searchParams.get("city"));
+    const state = sanitizeSearchInput(searchParams.get("state"));
+    const cause = sanitizeSearchInput(searchParams.get("cause"));
     const limit = Math.min(
       parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT,
       MAX_LIMIT
@@ -85,7 +95,9 @@ export async function GET(req: NextRequest) {
       const { data: orgData, error: orgError } = await orgQuery;
 
       if (orgError) {
-        console.error("Search orgs error:", orgError);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Search orgs error:", orgError);
+        }
         return NextResponse.json(
           { error: "Failed to search organizations" },
           { status: 500 }
@@ -131,7 +143,9 @@ export async function GET(req: NextRequest) {
       const { data: eventData, error: eventError } = await eventQuery;
 
       if (eventError) {
-        console.error("Search events error:", eventError);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Search events error:", eventError);
+        }
       } else {
         events = (eventData ?? []).map((row: Record<string, unknown>) => ({
           id: row.id as string,
@@ -154,7 +168,9 @@ export async function GET(req: NextRequest) {
       total,
     } satisfies SearchResponse);
   } catch (e) {
-    console.error("Search API error:", e);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Search API error:", e);
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Search failed" },
       { status: 500 }
