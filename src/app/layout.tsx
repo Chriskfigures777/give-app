@@ -16,6 +16,7 @@ const barlow = Barlow({
 export const metadata: Metadata = {
   title: "Give — Donations for Churches & Nonprofits",
   description: "Give and manage donations for your community.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({
