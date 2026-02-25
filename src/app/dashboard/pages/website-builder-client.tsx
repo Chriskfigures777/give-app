@@ -407,7 +407,7 @@ export function WebsiteBuilderClient({
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50/30 dark:bg-slate-900/50 p-4 space-y-6">
+            <div className="min-h-0 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] bg-slate-50/30 dark:bg-slate-900/50 p-4 space-y-6">
               <ThemeFormEditor
                 organizationId={formsData.org.id}
                 organizationName={formsData.org.name}
