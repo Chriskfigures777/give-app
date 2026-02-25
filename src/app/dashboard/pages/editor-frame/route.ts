@@ -14,6 +14,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    const url = new URL(req.url);
+    const initialProjectId = url.searchParams.get("project")?.trim() || null;
+
     const organizationId = orgId;
     const licenseKey = process.env.NEXT_PUBLIC_GRAPEJS_LICENSE_KEY ?? "";
 
@@ -108,6 +111,7 @@ export async function GET(req: NextRequest) {
       var organizationId = ${JSON.stringify(organizationId)};
       var licenseKey = ${JSON.stringify(licenseKey)};
       var orgName = ${JSON.stringify(orgName)};
+      var initialProjectId = ${JSON.stringify(initialProjectId)};
       var orgStatus = { siteUrl: null, publishedUrl: null, publishedProjectId: null, hasCustomDomain: false, customDomain: null };
       var listPagesComponent = window.GrapesJsStudioSdkPlugins?.listPagesComponent || window.StudioSdkPlugins?.listPagesComponent;
       var swiperComponent = window.GrapesJsStudioSdkPlugins?.swiperComponent || window.StudioSdkPlugins?.swiperComponent;
@@ -1533,6 +1537,18 @@ export async function GET(req: NextRequest) {
           orgStatus.hasCustomDomain = statusData.hasCustomDomain || false;
           orgStatus.customDomain = statusData.customDomain || null;
         } catch (_) {}
+
+        // If project ID in URL (e.g. from refresh), load it directly so user stays on builder
+        if (initialProjectId) {
+          try {
+            var r = await fetch('/api/website-builder/project?organizationId=' + encodeURIComponent(organizationId) + '&id=' + encodeURIComponent(initialProjectId), { credentials: 'include' });
+            var data = await r.json();
+            if (r.ok && data.project) {
+              await initEditor(data.project, initialProjectId);
+              return;
+            }
+          } catch (e) { console.warn('Load project from URL:', e); }
+        }
 
         // Show org name in project list heading so users know which account they're editing
         if (orgName) {

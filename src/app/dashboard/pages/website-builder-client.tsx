@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCcw, Upload, Eye, Globe, AlertCircle, X, Palette, CreditCard, DollarSign, Target } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { ThemeFormEditor } from "../customization/theme-form-editor";
@@ -16,6 +17,7 @@ type Props = {
   splitRecipientLimit: number;
   plan?: "free" | "growth" | "pro";
   openFormInitially?: boolean;
+  initialProjectId?: string | null;
 };
 
 type EditorProjectState = {
@@ -35,7 +37,9 @@ export function WebsiteBuilderClient({
   splitRecipientLimit,
   plan = "free",
   openFormInitially = false,
+  initialProjectId = null,
 }: Props) {
+  const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
@@ -44,7 +48,11 @@ export function WebsiteBuilderClient({
   const [justPublishedUrl, setJustPublishedUrl] = useState<string | null>(null);
   const [publishMode, setPublishMode] = useState<"domain" | "preview" | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
-  const iframeSrc = `/dashboard/pages/editor-frame`;
+  const baseIframeSrc = "/dashboard/pages/editor-frame";
+  const iframeSrc =
+    projectState?.projectId || initialProjectId
+      ? `${baseIframeSrc}?project=${encodeURIComponent(projectState?.projectId ?? initialProjectId ?? "")}`
+      : baseIframeSrc;
 
   useEffect(() => {
     if (openFormInitially) setFormPanelOpen(true);
@@ -53,8 +61,9 @@ export function WebsiteBuilderClient({
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
       if (e.data?.type === "editor-project-loaded") {
+        const projectId = e.data.projectId;
         setProjectState({
-          projectId: e.data.projectId,
+          projectId,
           siteUrl: e.data.siteUrl ?? null,
           publishedUrl: e.data.publishedUrl ?? null,
           isPublished: e.data.isPublished ?? false,
@@ -63,6 +72,7 @@ export function WebsiteBuilderClient({
         });
         setJustPublishedUrl(null);
         setPublishMode(null);
+        router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
       } else if (e.data?.type === "editor-project-unloaded") {
         setProjectState(null);
         setJustPublishedUrl(null);
@@ -87,9 +97,10 @@ export function WebsiteBuilderClient({
     if (isResetting) return;
     setIsResetting(true);
     setProjectState(null);
+    router.replace("/dashboard/pages", { scroll: false });
     try {
       if (iframeRef.current) {
-        iframeRef.current.src = iframeSrc;
+        iframeRef.current.src = baseIframeSrc;
       }
     } finally {
       setIsResetting(false);

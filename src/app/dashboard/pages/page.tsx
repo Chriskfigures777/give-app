@@ -10,7 +10,7 @@ import { env } from "@/env";
 export default async function WebsiteBuilderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ openForm?: string }>;
+  searchParams: Promise<{ openForm?: string; project?: string }>;
 }) {
   const { profile, supabase } = await requireAuth();
   const isPlatformAdmin = profile?.role === "platform_admin";
@@ -59,6 +59,7 @@ export default async function WebsiteBuilderPage({
 
   const resolved = await searchParams;
   const openFormInitially = resolved.openForm === "1" || resolved.openForm === "true";
+  const initialProjectId = resolved.project && resolved.project.trim() ? resolved.project.trim() : null;
 
   return (
     <div className="h-full w-full">
@@ -70,6 +71,7 @@ export default async function WebsiteBuilderPage({
         splitRecipientLimit={splitRecipientLimit}
         plan={plan}
         openFormInitially={openFormInitially}
+        initialProjectId={initialProjectId}
       />
     </div>
   );
