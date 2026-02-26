@@ -31,6 +31,9 @@ export const env = {
     connectClientId: () => getEnv("STRIPE_CONNECT_CLIENT_ID"),
   },
   app: {
-    domain: () => process.env.DOMAIN || "http://localhost:3000",
+    domain: () =>
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.DOMAIN ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
   },
 } as const;

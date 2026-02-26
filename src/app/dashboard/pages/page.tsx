@@ -6,7 +6,7 @@ import { WebsiteBuilderClient } from "./website-builder-client";
 import { VerificationGate } from "@/components/verification-gate";
 import { fetchFormsPageData } from "../forms/forms-data";
 import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
-import { env } from "@/env";
+import { getBaseUrlForDashboard } from "@/lib/request-origin";
 
 export default async function WebsiteBuilderPage({
   searchParams,
@@ -38,7 +38,7 @@ export default async function WebsiteBuilderPage({
   const data = await fetchFormsPageData(orgId, supabase);
   const { plan, planStatus } = await getOrgPlan(orgId, supabase);
   const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
-  const baseUrl = env.app.domain().replace(/\/$/, "");
+  const baseUrl = await getBaseUrlForDashboard();
 
   const { data: formCustom } = await supabase
     .from("form_customizations")

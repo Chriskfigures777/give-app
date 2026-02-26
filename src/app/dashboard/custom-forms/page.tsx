@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { env } from "@/env";
+import { getBaseUrlForDashboard } from "@/lib/request-origin";
 import { EmbedCardsPanel } from "../embed/embed-cards-panel";
 import { fetchFormsPageData } from "../forms/forms-data";
 import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
@@ -17,7 +17,7 @@ export default async function CustomFormsPage() {
 
   const { plan, planStatus } = await getOrgPlan(orgId, supabase);
   const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
-  const baseUrl = env.app.domain().replace(/\/$/, "");
+  const baseUrl = await getBaseUrlForDashboard();
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 py-8">
