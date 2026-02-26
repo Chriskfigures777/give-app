@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, RotateCcw, Upload, Eye, Globe, AlertCircle, X, Palette, CreditCard, DollarSign, Target } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { ThemeFormEditor } from "../customization/theme-form-editor";
@@ -40,9 +40,14 @@ export function WebsiteBuilderClient({
   initialProjectId = null,
 }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [projectState, setProjectState] = useState<EditorProjectState | null>(null);
+
+  // Sync project from URL on mount/refresh so we stay on the builder when user refreshes
+  const urlProjectId = searchParams?.get("project")?.trim() || null;
+  const effectiveProjectId = projectState?.projectId ?? urlProjectId ?? initialProjectId;
   const [formPanelOpen, setFormPanelOpen] = useState(openFormInitially);
   const [isPublishing, setIsPublishing] = useState(false);
   const [justPublishedUrl, setJustPublishedUrl] = useState<string | null>(null);
@@ -50,8 +55,8 @@ export function WebsiteBuilderClient({
   const [publishError, setPublishError] = useState<string | null>(null);
   const baseIframeSrc = "/dashboard/pages/editor-frame";
   const iframeSrc =
-    projectState?.projectId || initialProjectId
-      ? `${baseIframeSrc}?project=${encodeURIComponent(projectState?.projectId ?? initialProjectId ?? "")}`
+    effectiveProjectId
+      ? `${baseIframeSrc}?project=${encodeURIComponent(effectiveProjectId)}`
       : baseIframeSrc;
 
   useEffect(() => {
@@ -60,7 +65,13 @@ export function WebsiteBuilderClient({
 
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
-      if (e.data?.type === "editor-project-loaded") {
+      if (e.data?.type === "editor-project-selected") {
+        // Update URL immediately when user clicks a project (before editor loads) so refresh keeps them on the builder
+        const projectId = e.data.projectId;
+        if (projectId) {
+          router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
+        }
+      } else if (e.data?.type === "editor-project-loaded") {
         const projectId = e.data.projectId;
         setProjectState({
           projectId,
@@ -77,6 +88,7 @@ export function WebsiteBuilderClient({
         setProjectState(null);
         setJustPublishedUrl(null);
         setPublishMode(null);
+        router.replace("/dashboard/pages", { scroll: false });
       } else if (e.data?.type === "site-published") {
         if (e.data.published && e.data.publishedUrl) {
           setJustPublishedUrl(e.data.publishedUrl);

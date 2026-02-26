@@ -1386,6 +1386,10 @@ export async function GET(req: NextRequest) {
             if (ev.target.classList.contains('project-delete-btn') || ev.target.classList.contains('project-publish-btn') || ev.target.classList.contains('project-preview-btn')) return;
             card.style.pointerEvents = 'none';
             card.querySelector('div:last-child').innerHTML = '<span style="color:hsl(215,16%,47%);">Opening...</span>';
+            // Update parent URL immediately so refresh keeps user on this project
+            if (window.parent !== window) {
+              window.parent.postMessage({ type: 'editor-project-selected', projectId: p.id }, '*');
+            }
             fetch('/api/website-builder/project?organizationId=' + encodeURIComponent(organizationId) + '&id=' + encodeURIComponent(p.id), { credentials: 'include' })
               .then(function(r) { return r.json(); })
               .then(async function(data) {
@@ -1502,6 +1506,9 @@ export async function GET(req: NextRequest) {
                   });
                   var saveData = await saveRes.json();
                   if (!saveRes.ok) throw new Error(saveData.error || 'Save failed');
+                  if (window.parent !== window && saveData.id) {
+                    window.parent.postMessage({ type: 'editor-project-selected', projectId: saveData.id }, '*');
+                  }
                   await initEditor(td.project, saveData.id);
                 } catch (err) {
                   console.error(err);

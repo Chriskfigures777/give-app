@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { requireAuth } from "@/lib/auth";
 import { getOrgVerification } from "@/lib/verification";
 import { WebsiteBuilderClient } from "./website-builder-client";
@@ -63,16 +64,18 @@ export default async function WebsiteBuilderPage({
 
   return (
     <div className="h-full w-full">
-      <WebsiteBuilderClient
-        organizationId={orgId}
-        websiteFormName={websiteFormName}
-        formsData={data}
-        baseUrl={baseUrl}
-        splitRecipientLimit={splitRecipientLimit}
-        plan={plan}
-        openFormInitially={openFormInitially}
-        initialProjectId={initialProjectId}
-      />
+      <Suspense fallback={<div className="flex h-full w-full items-center justify-center text-slate-500">Loading website builder…</div>}>
+        <WebsiteBuilderClient
+          organizationId={orgId}
+          websiteFormName={websiteFormName}
+          formsData={data}
+          baseUrl={baseUrl}
+          splitRecipientLimit={splitRecipientLimit}
+          plan={plan}
+          openFormInitially={openFormInitially}
+          initialProjectId={initialProjectId}
+        />
+      </Suspense>
     </div>
   );
 }
