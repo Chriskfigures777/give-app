@@ -77,6 +77,7 @@ type SplitProposal = {
 type Props = {
   threadId: string;
   otherName: string;
+  otherAvatarUrl?: string | null;
   orgId: string | null;
   otherOrgId: string | null;
   isOrgOwner: boolean;
@@ -121,6 +122,7 @@ function SkeletonMessages() {
 export function ChatThreadClient({
   threadId,
   otherName,
+  otherAvatarUrl,
   orgId,
   otherOrgId,
   isOrgOwner,
@@ -425,9 +427,14 @@ export function ChatThreadClient({
         {/* Header */}
         <header className="mb-6 flex items-center gap-4">
           <div className="h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-emerald-400/20 to-teal-400/20 dark:from-emerald-500/20 dark:to-teal-500/20 ring-1 ring-black/[0.04] dark:ring-white/[0.06] flex items-center justify-center shrink-0">
-            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-              {getInitials(otherName)}
-            </span>
+            {otherAvatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={otherAvatarUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                {getInitials(otherName)}
+              </span>
+            )}
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-dashboard-text">

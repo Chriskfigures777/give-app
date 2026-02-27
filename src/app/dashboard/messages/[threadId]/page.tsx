@@ -42,9 +42,12 @@ export default async function ChatThreadPage({ params }: Props) {
   const otherType = otherIsA ? conn.side_a_type : conn.side_b_type;
 
   let otherName = "Unknown";
+  let otherAvatarUrl: string | null = null;
   if (otherType === "organization") {
-    const { data: o } = await supabase.from("organizations").select("name").eq("id", otherId).single();
-    otherName = (o as { name: string } | null)?.name ?? "Organization";
+    const { data: o } = await supabase.from("organizations").select("name, logo_url, profile_image_url").eq("id", otherId).single();
+    const oRow = o as { name: string; logo_url: string | null; profile_image_url: string | null } | null;
+    otherName = oRow?.name ?? "Organization";
+    otherAvatarUrl = oRow?.profile_image_url ?? oRow?.logo_url ?? null;
   } else {
     const { data: p } = await supabase.from("user_profiles").select("full_name, email").eq("id", otherId).single();
     const pRow = p as { full_name: string | null; email: string | null } | null;
@@ -62,6 +65,7 @@ export default async function ChatThreadPage({ params }: Props) {
     <ChatThreadClient
       threadId={threadId}
       otherName={otherName}
+      otherAvatarUrl={otherAvatarUrl}
       orgId={orgId ?? null}
       otherOrgId={otherOrgId}
       isOrgOwner={!!isOrgOwner}
