@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Clock, Github } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
 import { OrgHero } from "./org-hero";
 import { OrgPageBlocks } from "./org-page-blocks";
@@ -78,7 +80,48 @@ export default async function OrgPage({ params }: Props) {
     website_url: string | null;
   } | null;
 
-  if (!org?.stripe_connect_account_id) notFound();
+  if (!org) notFound();
+
+  if (!org.stripe_connect_account_id) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md text-center">
+          <div className="mx-auto mb-5 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50">
+            <Clock className="h-8 w-8 text-amber-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900">{org.name}</h1>
+          <p className="mt-3 text-base text-slate-600">
+            This organization hasn&apos;t finished setting up their page yet. They need to complete
+            verification before their public page goes live.
+          </p>
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
+              What&apos;s needed
+            </p>
+            {[
+              { label: "Connect a Stripe account", done: false },
+              { label: "Complete identity verification", done: false },
+              { label: "Publish public page", done: false },
+            ].map((step) => (
+              <div key={step.label} className="flex items-center gap-3 text-sm text-slate-600">
+                <div className="h-4 w-4 shrink-0 rounded-full border-2 border-slate-300" />
+                {step.label}
+              </div>
+            ))}
+          </div>
+          <Link
+            href="https://github.com/Chriskfigures777/give-app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+          >
+            <Github className="h-4 w-4" />
+            View on GitHub
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const [
     { data: formCustomRow },
