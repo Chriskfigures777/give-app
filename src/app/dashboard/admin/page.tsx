@@ -1,31 +1,23 @@
-import { requirePlatformAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { FUND_REQUESTS_ENABLED, SPLITS_ENABLED } from "@/lib/feature-flags";
 import { EndowmentFundsAdmin } from "./endowment-funds-admin";
-import { AdminLayout } from "./admin-layout";
-import { SurveyResponsesTab } from "./survey-responses-tab";
-import type { SurveyResponse } from "../survey-results/page";
 
 export default async function DashboardAdminPage() {
-  await requirePlatformAdmin();
   const supabase = await createClient();
 
   const [
     { data: endowmentFunds },
     { count: orgCount },
+    { count: userCount },
     { data: donationStats },
-    { data: surveyResponses },
   ] = await Promise.all([
     supabase
       .from("endowment_funds")
       .select("id, name, description, stripe_connect_account_id, created_at")
       .order("name"),
     supabase.from("organizations").select("id", { count: "exact", head: true }),
+    supabase.from("user_profiles").select("id", { count: "exact", head: true }),
     supabase.from("donations").select("amount_cents, status").eq("status", "succeeded"),
-    supabase
-      .from("church_market_survey_responses")
-      .select("*")
-      .order("created_at", { ascending: false }),
   ]);
 
   type DonationStat = { amount_cents: number | null; status: string };
@@ -35,15 +27,19 @@ export default async function DashboardAdminPage() {
       0
     ) ?? 0;
 
-  const overviewPanel = (
-    <div className="space-y-10">
+  return (
+    <div className="space-y-8">
       {/* Platform analytics */}
       <section className="rounded-2xl border border-dashboard-border bg-dashboard-card p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-dashboard-text">Platform analytics</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card-hover/50 p-4">
             <p className="text-sm font-medium text-dashboard-text-muted">Organizations</p>
             <p className="mt-1 text-2xl font-bold text-dashboard-text">{orgCount ?? 0}</p>
+          </div>
+          <div className="rounded-xl border border-dashboard-border bg-dashboard-card-hover/50 p-4">
+            <p className="text-sm font-medium text-dashboard-text-muted">Total users</p>
+            <p className="mt-1 text-2xl font-bold text-dashboard-text">{userCount ?? 0}</p>
           </div>
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card-hover/50 p-4">
             <p className="text-sm font-medium text-dashboard-text-muted">Total donations</p>
@@ -116,32 +112,6 @@ export default async function DashboardAdminPage() {
         </p>
         <EndowmentFundsAdmin initialFunds={endowmentFunds ?? []} />
       </section>
-    </div>
-  );
-
-  const surveyPanel = (
-    <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800/30">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-        What people are saying
-      </h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-        Full survey responses with each question and answer.
-      </p>
-      <div className="mt-6">
-        <SurveyResponsesTab responses={(surveyResponses as SurveyResponse[]) ?? []} />
-      </div>
-    </section>
-  );
-
-  return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-2xl font-semibold text-dashboard-text">Platform Admin</h1>
-        <p className="text-dashboard-text-muted mt-1">
-          Manage endowment funds, organizations, and platform settings.
-        </p>
-      </div>
-      <AdminLayout overviewPanel={overviewPanel} surveyPanel={surveyPanel} />
     </div>
   );
 }
