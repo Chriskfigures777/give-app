@@ -127,6 +127,15 @@ export function getEffectiveSplitRecipientLimit(plan: OrgPlanLegacy, planStatus:
   return PLAN_META[normalized].splitRecipientLimit;
 }
 
+/** Returns the missionary limit for a given plan, considering subscription status. */
+export function getEffectiveMissionaryLimit(plan: OrgPlanLegacy, planStatus: PlanStatus): number {
+  const normalized = normalizePlan(plan);
+  if (normalized === "free" || !isPlanStatusActive(planStatus)) {
+    return PLAN_META.free.missionaryLimit;
+  }
+  return PLAN_META[normalized].missionaryLimit;
+}
+
 /** Returns the Stripe price ID for a plan from environment variables. */
 export function getStripePriceId(plan: "growth" | "pro"): string {
   const key =
@@ -150,19 +159,35 @@ export function getTeamMemberAddonPriceId(): string {
   return key;
 }
 
+/** Compute days remaining until trial end. Returns null if not trialing or no end date. */
+export function getTrialDaysRemaining(trialEndsAt: string | null | undefined): number | null {
+  if (!trialEndsAt) return null;
+  const end = new Date(trialEndsAt);
+  const now = new Date();
+  if (end <= now) return 0;
+  const ms = end.getTime() - now.getTime();
+  return Math.ceil(ms / (24 * 60 * 60 * 1000));
+}
+
 /** Fetch the org's current plan from Supabase. Returns 'free' if not found. */
 export async function getOrgPlan(
   orgId: string,
   supabase: import("@supabase/supabase-js").SupabaseClient
-): Promise<{ plan: OrgPlan; planStatus: PlanStatus; stripeCustomerId: string | null; subscriptionId: string | null }> {
+): Promise<{
+  plan: OrgPlan;
+  planStatus: PlanStatus;
+  stripeCustomerId: string | null;
+  subscriptionId: string | null;
+  trialDaysRemaining: number | null;
+}> {
   const { data } = await supabase
     .from("organizations")
-    .select("plan, plan_status, stripe_billing_customer_id, stripe_plan_subscription_id")
+    .select("plan, plan_status, stripe_billing_customer_id, stripe_plan_subscription_id, plan_trial_ends_at")
     .eq("id", orgId)
     .single();
 
   if (!data) {
-    return { plan: "free", planStatus: null, stripeCustomerId: null, subscriptionId: null };
+    return { plan: "free", planStatus: null, stripeCustomerId: null, subscriptionId: null, trialDaysRemaining: null };
   }
 
   const row = data as {
@@ -170,12 +195,18 @@ export async function getOrgPlan(
     plan_status: string | null;
     stripe_billing_customer_id: string | null;
     stripe_plan_subscription_id: string | null;
+    plan_trial_ends_at: string | null;
   };
+
+  const planStatus = (row.plan_status as PlanStatus) ?? null;
+  const trialDaysRemaining =
+    planStatus === "trialing" ? getTrialDaysRemaining(row.plan_trial_ends_at) : null;
 
   return {
     plan: normalizePlan(row.plan),
-    planStatus: (row.plan_status as PlanStatus) ?? null,
+    planStatus,
     stripeCustomerId: row.stripe_billing_customer_id,
     subscriptionId: row.stripe_plan_subscription_id,
+    trialDaysRemaining,
   };
 }

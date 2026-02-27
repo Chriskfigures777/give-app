@@ -82,8 +82,18 @@ export async function POST(req: NextRequest) {
     LOG("signUp start", {}, "H1");
     // #endregion
 
-    const emailRedirectTo =
+    let emailRedirectTo =
       typeof body.emailRedirectTo === "string" ? body.emailRedirectTo : undefined;
+    // Fallback: use app URL so email links never point to localhost in production
+    if (!emailRedirectTo) {
+      const appUrl =
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.DOMAIN ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      if (appUrl) {
+        emailRedirectTo = `${appUrl.replace(/\/$/, "")}/auth/callback`;
+      }
+    }
 
     const signUpOpts = {
       email,
@@ -154,6 +164,15 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // When email confirmation is enabled, Supabase returns success with empty identities if user already exists
+    const identities = data?.user?.identities ?? [];
+    if (identities.length === 0 && !data?.session) {
+      return NextResponse.json(
+        { error: "An account with this email already exists. Please sign in instead." },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({

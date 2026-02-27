@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { TypeformForm, type TypeformStepConfig } from "@/components/typeform-form";
+import { devLog } from "@/lib/secure-log";
 
 const ACCOUNT_TYPES = [
   { value: "giver", label: "Giver", description: "I want to give to nonprofits and churches. Track my giving and support causes I care about.", emoji: "heart" },
@@ -140,14 +141,14 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
     setMessage(null);
     setLoading(true);
     const role = accountType === "organization" ? "organization_admin" : (data.plansToBeMissionary === "yes" ? "missionary" : "donor");
-    const emailRedirectTo = orgSlug
-      ? `${typeof window !== "undefined" ? window.location.origin : ""}/login?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}`
+    // Use production app URL for email links (not localhost) so confirmation/reset emails work in production
+    const baseUrl =
+      (typeof window !== "undefined" && process.env.NEXT_PUBLIC_APP_URL) ||
+      (typeof window !== "undefined" ? window.location.origin : "");
+    const emailRedirectTo = baseUrl
+      ? `${String(baseUrl).replace(/\/$/, "")}/auth/callback${orgSlug ? `?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}` : ""}`
       : undefined;
 
-    // #region agent log
-    const log = (msg: string, d?: object) => fetch("http://127.0.0.1:7242/ingest/3b544e7e-0f2a-4ba5-b9af-ad2e0e08f1b5", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ location: "signup-form.tsx", message: msg, data: d || {}, timestamp: Date.now() }) }).catch(() => {});
-    log("signup fetch start");
-    // #endregion
     let res: Response;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -177,17 +178,13 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
       clearTimeout(timeoutId);
     } catch (fetchErr) {
       clearTimeout(timeoutId);
-      // #region agent log
-      log("signup fetch threw", { err: String(fetchErr) });
-      // #endregion
+      devLog("signup fetch threw", { err: String(fetchErr) });
       setLoading(false);
       const msg = fetchErr instanceof Error ? fetchErr.message : "Request failed";
       setError(msg === "The operation was aborted." ? "Request timed out. Please check your connection and try again." : msg);
       return;
     }
-    // #region agent log
-    log("signup fetch done", { ok: res.ok, status: res.status });
-    // #endregion
+    devLog("signup fetch done", { ok: res.ok, status: res.status });
     const json = await res.json().catch(() => ({}));
     setLoading(false);
 

@@ -2,16 +2,46 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus, Mail, Loader2, CheckCircle2 } from "lucide-react";
+import { UserPlus, Mail, Loader2, CheckCircle2, MailPlus } from "lucide-react";
 import { toast } from "sonner";
+
+type Mode = "invite" | "add";
 
 export function CreateMissionaryForm() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [mode, setMode] = useState<Mode>("invite");
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleInvite(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/missionaries/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmedEmail }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error ?? "Failed to send invite");
+      }
+      toast.success(data.message ?? `Invite sent to ${trimmedEmail}`);
+      setEmail("");
+      setExpanded(false);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     const trimmedEmail = email.trim();
     if (!trimmedEmail) return;
@@ -38,6 +68,8 @@ export function CreateMissionaryForm() {
     }
   }
 
+  const handleSubmit = mode === "invite" ? handleInvite : handleAdd;
+
   if (!expanded) {
     return (
       <button
@@ -45,8 +77,8 @@ export function CreateMissionaryForm() {
         onClick={() => setExpanded(true)}
         className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
       >
-        <UserPlus className="h-4 w-4" />
-        Add missionary
+        <MailPlus className="h-4 w-4" />
+        Invite missionary
       </button>
     );
   }
@@ -59,12 +91,37 @@ export function CreateMissionaryForm() {
         </div>
         <div>
           <h3 className="text-base font-bold text-slate-900 dark:text-dashboard-text">
-            Add a missionary
+            Invite a missionary
           </h3>
           <p className="mt-0.5 text-sm text-slate-600 dark:text-dashboard-text-muted">
-            Enter the email of someone who has a Give account. They&apos;ll be connected to your organization and receive an embed code to collect support.
+            Send an invite to someone who doesn&apos;t have a Give account. They&apos;ll receive an email to sign up and will be linked to your organization with their own embed code.
           </p>
         </div>
+      </div>
+
+      <div className="flex gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => setMode("invite")}
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+            mode === "invite"
+              ? "bg-emerald-600 text-white"
+              : "bg-white/60 text-slate-600 hover:bg-white/80 dark:bg-slate-800/40 dark:text-slate-400 dark:hover:bg-slate-800/60"
+          }`}
+        >
+          Invite (no account)
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("add")}
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+            mode === "add"
+              ? "bg-emerald-600 text-white"
+              : "bg-white/60 text-slate-600 hover:bg-white/80 dark:bg-slate-800/40 dark:text-slate-400 dark:hover:bg-slate-800/60"
+          }`}
+        >
+          Add (has account)
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -97,12 +154,12 @@ export function CreateMissionaryForm() {
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Adding…
+                {mode === "invite" ? "Sending…" : "Adding…"}
               </>
             ) : (
               <>
                 <CheckCircle2 className="h-4 w-4" />
-                Add missionary
+                {mode === "invite" ? "Send invite" : "Add missionary"}
               </>
             )}
           </button>

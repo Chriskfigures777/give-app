@@ -95,6 +95,15 @@ export function LoginForm({
         loading={loading}
       />
 
+      <p className="mt-4 text-center text-sm">
+        <Link
+          href="/forgot-password"
+          className="font-medium text-emerald-600 hover:text-emerald-700"
+        >
+          Forgot password?
+        </Link>
+      </p>
+
       <div className="mt-8 space-y-3">
         <p className="text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
