@@ -95,14 +95,15 @@ if (!clientSecret) {
 console.log("PaymentIntent created:", paymentIntentId);
 
 // 2. Confirm with Stripe test payment method (pm_card_visa = 4242...)
-await stripe.paymentIntents.confirm(
-  paymentIntentId,
-  {
-    payment_method: "pm_card_visa",
-    return_url: `${BASE_URL}/give/gomake`,
-  },
-  stripeConnectAccountId ? { stripeAccount: stripeConnectAccountId } : {}
-);
+const confirmParams = {
+  payment_method: "pm_card_visa",
+  return_url: `${BASE_URL}/give/gomake`,
+};
+if (stripeConnectAccountId) {
+  await stripe.paymentIntents.confirm(paymentIntentId, confirmParams, { stripeAccount: stripeConnectAccountId });
+} else {
+  await stripe.paymentIntents.confirm(paymentIntentId, confirmParams);
+}
 
 console.log("Payment confirmed. Waiting for webhook...");
 
@@ -121,16 +122,25 @@ for (let i = 0; i < 20; i++) {
   if (i === 19) console.log("Donation not yet in DB (webhook may be delayed)");
 }
 
-// 4. Check internal_split_payouts
+// 4. Check split_transfers (Stripe Connect splits) and internal_split_payouts (bank splits)
+const { data: splitTransfers } = await supabase
+  .from("split_transfers")
+  .select("id")
+  .eq("stripe_payment_intent_id", paymentIntentId);
+
 const { data: payouts } = await supabase
   .from("internal_split_payouts")
   .select("id")
   .eq("stripe_payment_intent_id", paymentIntentId);
 
-console.log(
-  payouts?.length
-    ? `\n✓ Internal split payouts created: ${payouts.length}`
-    : "\nNote: internal_split_payouts may be empty if payouts failed (e.g. funds not yet available). Check Stripe Dashboard → Connect → GOMAke account → Payouts."
-);
+if (splitTransfers?.length) {
+  console.log(`\n✓ Stripe Connect split_transfers created: ${splitTransfers.length}`);
+}
+if (payouts?.length) {
+  console.log(`✓ Internal split payouts created: ${payouts.length}`);
+}
+if (!splitTransfers?.length && !payouts?.length) {
+  console.log("\nNote: No split_transfers or internal_split_payouts. Check Stripe Dashboard and Lambda/CloudWatch logs.");
+}
 
-console.log("\nDone. Check Stripe Dashboard for payouts to both bank accounts.");
+console.log("\nDone. Check Stripe Dashboard for transfers.");

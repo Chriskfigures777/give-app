@@ -31,6 +31,7 @@ type Props = {
   hasOrg: boolean;
   successPlan?: OrgPlan;
   canceled?: boolean;
+  trialDaysRemaining?: number | null;
 };
 
 const PLAN_DATA = [
@@ -106,7 +107,17 @@ const PLAN_DATA = [
   },
 ];
 
-function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planStatus: PlanStatus; isActive: boolean }) {
+function PlanStatusBadge({
+  plan,
+  planStatus,
+  isActive,
+  trialDaysRemaining,
+}: {
+  plan: OrgPlan;
+  planStatus: PlanStatus;
+  isActive: boolean;
+  trialDaysRemaining?: number | null;
+}) {
   if (plan === "free") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-dashboard-card-hover px-3 py-1 text-xs font-semibold text-dashboard-text-muted">
@@ -116,10 +127,18 @@ function PlanStatusBadge({ plan, planStatus, isActive }: { plan: OrgPlan; planSt
     );
   }
   if (planStatus === "trialing") {
+    const daysText =
+      trialDaysRemaining != null
+        ? trialDaysRemaining === 0
+          ? "Trial ends today"
+          : trialDaysRemaining === 1
+            ? "1 day left"
+            : `${trialDaysRemaining} days left`
+        : "Trial active";
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-900/30 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
         <Clock className="h-3.5 w-3.5" />
-        Trial active
+        {daysText}
       </span>
     );
   }
@@ -158,6 +177,7 @@ export function BillingPageClient({
   hasOrg,
   successPlan,
   canceled,
+  trialDaysRemaining,
 }: Props) {
   const [loading, setLoading] = useState<OrgPlan | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -232,8 +252,11 @@ export function BillingPageClient({
                 You&apos;re on the {successPlan === "growth" ? "Growth" : "Pro"} plan!
               </p>
               <p className="mt-0.5 text-sm text-emerald-600 dark:text-emerald-300">
-                Your 14-day free trial has started. You won&apos;t be charged until the trial ends.
-                Access all{" "}
+                Your 14-day free trial has started.
+                {trialDaysRemaining != null && trialDaysRemaining >= 0
+                  ? ` You have ${trialDaysRemaining === 0 ? "today" : trialDaysRemaining === 1 ? "1 day" : `${trialDaysRemaining} days`} left in your trial.`
+                  : " You won't be charged until the trial ends."}
+                {" "}Access all{" "}
                 {successPlan === "growth" ? "Growth" : "Pro"} features now.
               </p>
             </div>
@@ -289,7 +312,12 @@ export function BillingPageClient({
                     <p className="text-xs text-dashboard-text-muted">{planLabel}</p>
                   </div>
                 </div>
-                <PlanStatusBadge plan={currentPlan} planStatus={planStatus} isActive={isActive} />
+                <PlanStatusBadge
+                  plan={currentPlan}
+                  planStatus={planStatus}
+                  isActive={isActive}
+                  trialDaysRemaining={trialDaysRemaining}
+                />
               </div>
             </div>
 
@@ -309,7 +337,13 @@ export function BillingPageClient({
                 <div className="space-y-3">
                   <p className="text-sm text-dashboard-text-muted">
                     {planStatus === "trialing"
-                      ? "Your trial is active. You won't be billed until the trial ends."
+                      ? trialDaysRemaining != null
+                        ? trialDaysRemaining === 0
+                          ? "Your trial ends today. You'll be billed when it expires."
+                          : trialDaysRemaining === 1
+                            ? "1 day left in your trial. You won't be billed until the trial ends."
+                            : `${trialDaysRemaining} days left in your trial. You won't be billed until the trial ends.`
+                        : "Your trial is active. You won't be billed until the trial ends."
                       : planStatus === "past_due"
                       ? "Your payment is past due. Update your payment method to keep access."
                       : planStatus === "canceled"

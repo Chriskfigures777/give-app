@@ -63,6 +63,15 @@ async function getCustomDomainRewrite(req: NextRequest): Promise<NextResponse | 
 }
 
 export async function proxy(req: NextRequest) {
+  // Supabase sometimes redirects to /?code=xxx when redirectTo is rejected or missing.
+  // Forward to /auth/callback so we can exchange the code.
+  const url = req.nextUrl;
+  if (url.pathname === "/" && url.searchParams.has("code")) {
+    const callbackUrl = new URL("/auth/callback", req.url);
+    url.searchParams.forEach((v, k) => callbackUrl.searchParams.set(k, v));
+    return NextResponse.redirect(callbackUrl);
+  }
+
   const siteRewrite = getSiteRewrite(req);
   if (siteRewrite) return siteRewrite;
 

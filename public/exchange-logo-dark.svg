@@ -1,0 +1,25 @@
+<svg width="280" height="64" viewBox="0 0 280 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bold X with angled ends for dark background -->
+  <g transform="translate(16 8)">
+    <path d="M4 10 L10 4 L44 38 L38 44 Z" fill="#10B981"/>
+    <path d="M44 4 L38 10 L4 44 L10 38 Z" fill="#10B981"/>
+  </g>
+
+  <text x="72" y="22"
+        font-family="'Barlow', system-ui, sans-serif"
+        font-size="12"
+        font-weight="600"
+        letter-spacing="2px"
+        fill="#FFFFFF">
+    The
+  </text>
+
+  <text x="72" y="48"
+        font-family="'Barlow', system-ui, sans-serif"
+        font-size="32"
+        font-weight="800"
+        letter-spacing="-0.5px"
+        fill="#FFFFFF">
+    Exchange
+  </text>
+</svg>

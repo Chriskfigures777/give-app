@@ -31352,6 +31352,11 @@ async function sendPayoutEmail(params) {
 
 // src/index.ts
 var ENDOWMENT_SHARE_OF_PLATFORM_FEE = 0.3;
+var STRIPE_FEE_RATE = 0.029;
+var STRIPE_FEE_FIXED_CENTS = 30;
+function calculateStripeFeeCents(chargeCents) {
+  return Math.ceil(chargeCents * STRIPE_FEE_RATE) + STRIPE_FEE_FIXED_CENTS;
+}
 var webhookSecrets = [
   process.env.STRIPE_WEBHOOK_SECRET,
   process.env.STRIPE_WEBHOOK_SECRET_1,
@@ -31524,7 +31529,8 @@ async function handler(event) {
               break;
             }
             const applicationFeeCents2 = parseInt(metadata.application_fee_cents ?? "0", 10);
-            const netAmount = Math.max(0, pi.amount - applicationFeeCents2);
+            const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+            const netAmount = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents2);
             const stripeSplits = splits.filter((s) => s.accountId);
             const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
             const formOwnerPct = Math.max(0, 100 - peerPctSum);
@@ -31709,12 +31715,13 @@ async function handler(event) {
           const fund = fundRow;
           if (fund?.stripe_connect_account_id) {
             const endowmentCents = Math.round(applicationFeeCents * ENDOWMENT_SHARE_OF_PLATFORM_FEE);
-            if (endowmentCents >= 1) {
+            if (endowmentCents >= 1 && chargeId) {
               try {
                 await stripe.transfers.create({
                   amount: endowmentCents,
                   currency: pi.currency ?? "usd",
                   destination: fund.stripe_connect_account_id,
+                  source_transaction: chargeId,
                   description: `Endowment share for donation ${pi.id}`,
                   metadata: { payment_intent_id: pi.id, endowment_fund_id: endowmentFundId }
                 });
@@ -31735,8 +31742,10 @@ async function handler(event) {
               const { data: existingPayout } = await supabase.from("internal_split_payouts").select("id").eq("stripe_payment_intent_id", pi.id).maybeSingle();
               if (!existingPayout) {
                 try {
+                  const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+                  const amountToSplit = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents);
                   for (const split of internalSplits) {
-                    const amountCents = Math.round(split.percentage / 100 * donationAmountCents);
+                    const amountCents = Math.round(split.percentage / 100 * amountToSplit);
                     if (amountCents < 1) continue;
                     await stripe.payouts.create(
                       {

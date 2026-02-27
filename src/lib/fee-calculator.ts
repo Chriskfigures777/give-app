@@ -10,6 +10,14 @@ export const STRIPE_FEE_RATE = 0.029; // 2.9%
 export const STRIPE_FEE_FIXED_CENTS = 30; // $0.30
 export const PLATFORM_FEE_RATE = 0.01; // 1%
 
+/**
+ * Calculate Stripe processing fee (2.9% + 30¢) for a charge amount in cents.
+ * Used when computing net amount available for transfers (charge - Stripe fee - platform fee).
+ */
+export function calculateStripeFeeCents(chargeCents: number): number {
+  return Math.ceil(chargeCents * STRIPE_FEE_RATE) + STRIPE_FEE_FIXED_CENTS;
+}
+
 export type FeeCoverage = "org_pays" | "donor_stripe" | "donor_platform" | "donor_both";
 
 /**

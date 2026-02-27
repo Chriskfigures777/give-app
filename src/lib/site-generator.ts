@@ -83,6 +83,14 @@ export function rewriteLinks(
     const path = slug ? `${basePath}${slug}` : baseNoTrail;
     return `href="${path}"`;
   });
+  out = out.replace(/href=["']#(page-[a-z0-9-]+)["']/gi, (_, pageId) => {
+    const slug = PAGE_ID_TO_SLUG[pageId] ?? pageId.replace(/^page-/, "");
+    if (forStatic) {
+      return slug ? `href="/${slug}"` : `href="/"`;
+    }
+    const path = slug ? `${basePath}${slug}` : baseNoTrail;
+    return `href="${path}"`;
+  });
 
   const hashToSlug: Record<string, string> = {
     "#home": "",

@@ -41,7 +41,7 @@ export default async function LoginPage({ searchParams }: Props) {
       <div className="auth-gradient hidden w-1/2 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <BrandMark className="h-10 w-10 drop-shadow-[0_8px_12px_rgba(16,185,129,0.3)]" id="login-desktop" />
+            <BrandMark fullLogo variant="dark" className="drop-shadow-[0_8px_12px_rgba(16,185,129,0.3)]" id="login-desktop" />
           </Link>
         </div>
 
@@ -73,7 +73,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
         <div className="relative z-10">
           <p className="text-sm text-white/40">
-            &copy; {new Date().getFullYear()} Give. All rights reserved.
+            &copy; {new Date().getFullYear()} The Exchange. All rights reserved.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default async function LoginPage({ searchParams }: Props) {
         {/* Mobile logo */}
         <div className="mb-8 lg:hidden">
           <Link href="/" className="inline-flex items-center gap-2.5">
-            <BrandMark className="h-10 w-10 drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]" id="login-mobile" />
+            <BrandMark fullLogo variant="light" className="drop-shadow-[0_8px_12px_rgba(16,185,129,0.25)]" id="login-mobile" />
           </Link>
         </div>
 

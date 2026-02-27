@@ -72,7 +72,8 @@ export async function POST(req: NextRequest) {
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
       process.env.DOMAIN ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+      (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "");
     const redirectTo = appUrl
       ? `${appUrl.replace(/\/$/, "")}/auth/callback?invite_org=${encodeURIComponent(orgSlug)}&next=/dashboard/missionary`
       : undefined;

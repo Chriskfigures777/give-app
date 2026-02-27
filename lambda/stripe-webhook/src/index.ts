@@ -7,6 +7,13 @@ import { sendDonationEmails, sendOrgDonationEmail, sendPayoutEmail } from "./ema
 /** 30% of platform fee goes to endowment fund. */
 const ENDOWMENT_SHARE_OF_PLATFORM_FEE = 0.3;
 
+/** Stripe fee: 2.9% + 30¢. Used to compute net amount for transfers. */
+const STRIPE_FEE_RATE = 0.029;
+const STRIPE_FEE_FIXED_CENTS = 30;
+function calculateStripeFeeCents(chargeCents: number): number {
+  return Math.ceil(chargeCents * STRIPE_FEE_RATE) + STRIPE_FEE_FIXED_CENTS;
+}
+
 /** Webhook secrets – try each until one verifies (supports Connect + account webhooks on same URL). */
 const webhookSecrets = [
   process.env.STRIPE_WEBHOOK_SECRET,
@@ -250,9 +257,10 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
               break;
             }
 
-            // amount = (percentage × intent.amount) / 100. Subtract platform fee for net.
+            // amount = charge - Stripe fee - platform fee (so transfer doesn't exceed available balance)
             const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
-            const netAmount = Math.max(0, pi.amount - applicationFeeCents);
+            const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+            const netAmount = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents);
             const stripeSplits = splits.filter((s) => s.accountId);
             const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
             const formOwnerPct = Math.max(0, 100 - peerPctSum);
@@ -498,12 +506,13 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
           const fund = fundRow as { id: string; stripe_connect_account_id: string | null } | null;
           if (fund?.stripe_connect_account_id) {
             const endowmentCents = Math.round(applicationFeeCents * ENDOWMENT_SHARE_OF_PLATFORM_FEE);
-            if (endowmentCents >= 1) {
+            if (endowmentCents >= 1 && chargeId) {
               try {
                 await stripe.transfers.create({
                   amount: endowmentCents,
                   currency: pi.currency ?? "usd",
                   destination: fund.stripe_connect_account_id,
+                  source_transaction: chargeId,
                   description: `Endowment share for donation ${pi.id}`,
                   metadata: { payment_intent_id: pi.id, endowment_fund_id: endowmentFundId },
                 });
@@ -538,8 +547,10 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
                 .maybeSingle();
               if (!existingPayout) {
                 try {
+                  const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+                  const amountToSplit = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents);
                   for (const split of internalSplits) {
-                    const amountCents = Math.round((split.percentage / 100) * donationAmountCents);
+                    const amountCents = Math.round((split.percentage / 100) * amountToSplit);
                     if (amountCents < 1) continue;
                     await stripe.payouts.create(
                       {

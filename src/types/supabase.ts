@@ -1791,6 +1791,7 @@ export type Database = {
       }
       org_embed_cards: {
         Row: {
+          background_color: string | null
           button_border_radius: string | null
           button_color: string | null
           button_text_color: string | null
@@ -1798,6 +1799,7 @@ export type Database = {
           created_at: string | null
           deleted_at: string | null
           design_set: Json | null
+          embed_form_theme: string | null
           goal_description: string | null
           id: string
           is_enabled: boolean | null
@@ -1805,6 +1807,7 @@ export type Database = {
           organization_id: string
           page_section: string | null
           primary_color: string | null
+          text_color: string | null
           sort_order: number | null
           split_mode: string | null
           splits: Json | null
@@ -1812,6 +1815,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          background_color?: string | null
           button_border_radius?: string | null
           button_color?: string | null
           button_text_color?: string | null
@@ -1819,6 +1823,7 @@ export type Database = {
           created_at?: string | null
           deleted_at?: string | null
           design_set?: Json | null
+          embed_form_theme?: string | null
           goal_description?: string | null
           id?: string
           is_enabled?: boolean | null
@@ -1826,6 +1831,7 @@ export type Database = {
           organization_id: string
           page_section?: string | null
           primary_color?: string | null
+          text_color?: string | null
           sort_order?: number | null
           split_mode?: string | null
           splits?: Json | null
@@ -1833,6 +1839,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          background_color?: string | null
           button_border_radius?: string | null
           button_color?: string | null
           button_text_color?: string | null
@@ -1840,6 +1847,7 @@ export type Database = {
           created_at?: string | null
           deleted_at?: string | null
           design_set?: Json | null
+          embed_form_theme?: string | null
           goal_description?: string | null
           id?: string
           is_enabled?: boolean | null
@@ -1847,6 +1855,7 @@ export type Database = {
           organization_id?: string
           page_section?: string | null
           primary_color?: string | null
+          text_color?: string | null
           sort_order?: number | null
           split_mode?: string | null
           splits?: Json | null

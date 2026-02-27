@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "brevo": {
+      "command": "npx",
+      "args": ["-y", "@houtini/brevo-mcp"],
+      "env": {
+        "BREVO_API_KEY": "xkeysib-your-api-key-here"
+      }
+    }
+  }
+}

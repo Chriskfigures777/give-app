@@ -84,12 +84,14 @@ export async function POST(req: NextRequest) {
 
     let emailRedirectTo =
       typeof body.emailRedirectTo === "string" ? body.emailRedirectTo : undefined;
-    // Fallback: use app URL so email links never point to localhost in production
+    // Fallback: use app URL so email links go to /auth/callback, not root.
+    // In local dev with no env vars, use localhost so links work.
     if (!emailRedirectTo) {
       const appUrl =
         process.env.NEXT_PUBLIC_APP_URL ||
         process.env.DOMAIN ||
-        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+        (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "");
       if (appUrl) {
         emailRedirectTo = `${appUrl.replace(/\/$/, "")}/auth/callback`;
       }

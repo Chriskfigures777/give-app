@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe/client";
 import { createServiceClient } from "@/lib/supabase/server";
 import { ENDOWMENT_SHARE_OF_PLATFORM_FEE } from "@/lib/stripe/constants";
 import { SPLITS_ENABLED } from "@/lib/feature-flags";
+import { calculateStripeFeeCents } from "@/lib/fee-calculator";
 
 type SplitEntry = { percentage: number; accountId?: string };
 import { sendDonationReceived, sendReceiptAttached, sendOrgDonationReceived, sendPayoutProcessed } from "@/lib/email/send-transactional";
@@ -205,7 +206,8 @@ export async function POST(req: NextRequest) {
         if (!formOwnerConnectId) break;
 
         const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
-        const netAmount = Math.max(0, pi.amount - applicationFeeCents);
+        const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+        const netAmount = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents);
         const stripeSplits = splits.filter((s) => s.accountId);
         const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
         const formOwnerPct = Math.max(0, 100 - peerPctSum);
@@ -370,7 +372,8 @@ export async function POST(req: NextRequest) {
           ?.internal_splits;
 
         if (Array.isArray(internalSplits) && internalSplits.length > 0) {
-          const amountToSplit = Math.max(0, pi.amount - applicationFeeCents);
+          const stripeFeeCents = calculateStripeFeeCents(pi.amount);
+          const amountToSplit = Math.max(0, pi.amount - stripeFeeCents - applicationFeeCents);
           if (amountToSplit >= 1) {
             // @ts-ignore - internal_split_payouts may not be in generated types
             const { data: existingPayout } = await supabase
@@ -532,12 +535,13 @@ export async function POST(req: NextRequest) {
           const endowmentCents = Math.round(
             applicationFeeCents * ENDOWMENT_SHARE_OF_PLATFORM_FEE
           );
-          if (endowmentCents >= 1) {
+          if (endowmentCents >= 1 && chargeId) {
             try {
               await stripe.transfers.create({
                 amount: endowmentCents,
                 currency: pi.currency ?? "usd",
                 destination: fund.stripe_connect_account_id,
+                source_transaction: chargeId,
                 description: `Endowment share for donation ${pi.id}`,
                 metadata: { payment_intent_id: pi.id, endowment_fund_id: endowmentFundId },
               });

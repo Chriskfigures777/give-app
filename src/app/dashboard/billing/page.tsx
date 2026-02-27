@@ -17,12 +17,15 @@ export default async function BillingPage({
   let stripeCustomerId: string | null = null;
   let subscriptionId: string | null = null;
 
+  let trialDaysRemaining: number | null = null;
+
   if (orgId) {
     const result = await getOrgPlan(orgId, supabase);
     plan = result.plan;
     planStatus = result.planStatus;
     stripeCustomerId = result.stripeCustomerId;
     subscriptionId = result.subscriptionId;
+    trialDaysRemaining = result.trialDaysRemaining;
   }
 
   const isActive = isPlanStatusActive(planStatus);
@@ -38,6 +41,7 @@ export default async function BillingPage({
       hasOrg={!!orgId}
       successPlan={successPlan}
       canceled={canceled}
+      trialDaysRemaining={trialDaysRemaining}
     />
   );
 }

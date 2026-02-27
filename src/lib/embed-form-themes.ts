@@ -120,16 +120,14 @@ export const SEAMLESS_BASE_CSS = `
     color: inherit;
   }
 
-  /* Kill outer form wrapper borders/background */
+  /* Outer form wrapper — background from formBackgroundColor for seamless section color */
   #checkout, [id="checkout"] {
-    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
   }
 
-  /* Kill inner .give-form-tithely wrapper — has inline bg:#f8f9fa + border */
+  /* .give-form-tithely — background comes from formBackgroundColor prop; remove border/chrome */
   .give-form-tithely {
-    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 8px 0 !important;

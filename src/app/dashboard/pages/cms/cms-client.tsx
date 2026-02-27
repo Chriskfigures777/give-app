@@ -650,15 +650,27 @@ export function CmsClient({ organizationId }: Props) {
                               )}
                             </div>
                             <div className="p-4">
-                              <h3 className="font-semibold text-dashboard-text line-clamp-2 leading-snug">{e.name}</h3>
-                              <div className="mt-2 flex items-center gap-3 text-xs text-dashboard-text-muted">
+                              <h3 className="font-semibold text-dashboard-text leading-snug">{e.name}</h3>
+                              {e.description && (
+                                <p className="mt-2 line-clamp-3 text-sm text-dashboard-text-muted">{e.description}</p>
+                              )}
+                              <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-dashboard-text-muted">
                                 <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
+                                  <Clock className="h-3 w-3 shrink-0" />
                                   {time}
                                 </span>
                                 {e.venue_name && (
-                                  <span className="truncate">{e.venue_name}</span>
+                                  <span className="break-words">{e.venue_name}</span>
                                 )}
+                              </div>
+                              <div className="mt-3 pt-3 border-t border-dashboard-border">
+                                <Link
+                                  href={`/dashboard/events/${e.id}/edit`}
+                                  className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  Edit event details
+                                </Link>
                               </div>
                             </div>
                           </div>

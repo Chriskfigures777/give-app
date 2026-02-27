@@ -27,6 +27,12 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Generated exports
+brevo-export/
+
+# Lambda build artifacts
+lambda/*/dist/
+
 # Vercel
 .vercel
 

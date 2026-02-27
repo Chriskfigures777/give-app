@@ -39,6 +39,8 @@ export type FormCustom = {
   button_color?: string | null;
   button_text_color?: string | null;
   button_border_radius?: string | null;
+  background_color?: string | null;
+  text_color?: string | null;
   header_image_url?: string | null;
   font_family?: string | null;
   design_sets?: DesignSet[] | null;

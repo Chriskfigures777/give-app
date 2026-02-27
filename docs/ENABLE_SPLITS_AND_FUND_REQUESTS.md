@@ -42,7 +42,7 @@ To enable Dwolla bank splits, also set `BANK_ACCOUNT_SPLITS_ENABLED = true`. Aft
 - **Form customization:** Org can set splits on the default form/embed.
 - **Donation links:** Org can create shareable links (e.g. `/give/{slug}?link={link-slug}`) that split donations across multiple orgs.
 - **Webhook:** Stripe webhook splits the charge when `metadata.splits` is present; creates multiple Stripe transfers to connected accounts.
-- **Payment flow:** When splits are used, the charge lands on the platform (no `transfer_data`); the webhook splits it.
+- **Payment flow:** When splits are used, the charge lands on the platform; the webhook transfers from platform to form owner + peers. (Stripe does not allow direct transfers between Connect accounts.)
 
 ### BANK_ACCOUNT_SPLITS_ENABLED (Dwolla Bank Splits)
 
