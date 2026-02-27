@@ -15,13 +15,17 @@ export async function POST(req: NextRequest) {
 
     const supabase = await createClient();
 
-    // Use production app URL for reset link (not localhost)
+    // Always pass redirectTo so Supabase doesn't fall back to Site URL (root).
+    // In local dev with no env vars, use localhost so links work.
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
       process.env.DOMAIN ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+      (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "");
+    // Use /auth/recovery (client page) so we can read tokens from the URL hash.
+    // The hash (#access_token=...&type=recovery) is never sent to the server.
     const redirectTo = appUrl
-      ? `${appUrl.replace(/\/$/, "")}/auth/callback?next=/update-password`
+      ? `${appUrl.replace(/\/$/, "")}/auth/recovery?next=/update-password`
       : undefined;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {

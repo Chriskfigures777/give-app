@@ -26,23 +26,28 @@ For local development, these default to `http://localhost:3000`. To test product
 
 ### Redirect URLs
 
+**Important:** If these are not in the allow list, Supabase will redirect to the Site URL root (`/?code=xxx`) instead of `/auth/callback?code=xxx`. The app will still work (middleware forwards `/?code=` to `/auth/callback`), but add these for correct behavior:
+
 Add these to **Redirect URLs** (one per line):
 
 ```
 https://your-domain.com/**
 https://your-domain.com/auth/callback
+https://your-domain.com/auth/recovery
 https://your-domain.com/login
 https://your-domain.com/update-password
 ```
 
-For local development, also add:
+For local development, add:
 
 ```
 http://localhost:3000/**
 http://localhost:3000/auth/callback
+http://localhost:3000/auth/recovery
+http://localhost:3000/
 ```
 
-The `/**` pattern allows any path under your domain. The auth callback route (`/auth/callback`) handles email confirmation and password reset links.
+The `/**` pattern allows any path under your domain. The auth callback route (`/auth/callback`) handles email confirmation (code in query). The auth recovery page (`/auth/recovery`) handles password reset links where Supabase puts tokens in the URL hash fragment (not sent to the server).
 
 ## 3. Email Templates
 
@@ -65,5 +70,5 @@ Template variables Supabase provides:
 | Flow | Redirect URL | Handler |
 |------|--------------|---------|
 | Signup confirmation | `/auth/callback?org=...` | Exchanges code, redirects to give page or dashboard |
-| Password reset | `/auth/callback?next=/update-password` | Exchanges code, redirects to update-password page |
+| Password reset | `/auth/recovery?next=/update-password` | Client page reads hash tokens, sets session, redirects to update-password |
 | Magic link | `/auth/callback` | Exchanges code, redirects to dashboard |
