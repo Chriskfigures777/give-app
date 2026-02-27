@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { TypeformForm } from "@/components/typeform-form";
 
 const STEPS = [
@@ -14,6 +15,10 @@ const STEPS = [
   },
 ];
 
+function getRedirectUrl(): string {
+  return `${window.location.origin}/auth/recovery?next=/update-password`;
+}
+
 export function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,16 +30,21 @@ export function ForgotPasswordForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
+      const email = data.email?.trim();
+      if (!email) {
+        setError("Email is required");
+        setLoading(false);
+        return;
+      }
+
+      const supabase = createClient();
+      const redirectTo = getRedirectUrl() || undefined;
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo,
       });
 
-      const json = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError(json.error || "Request failed");
+      if (err) {
+        setError(err.message);
         setLoading(false);
         return;
       }
