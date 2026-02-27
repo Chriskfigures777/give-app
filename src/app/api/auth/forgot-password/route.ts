@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Use /auth/recovery (client page) so we can read tokens from the URL hash.
     // The hash (#access_token=...&type=recovery) is never sent to the server.
     const redirectTo = appUrl
-      ? `${appUrl.replace(/\/$/, "")}/auth/recovery?next=/update-password`
+      ? `${appUrl.replace(/\/$/, "")}/auth/callback?next=/update-password`
       : undefined;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {

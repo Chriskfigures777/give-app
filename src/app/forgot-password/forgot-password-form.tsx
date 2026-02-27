@@ -16,7 +16,7 @@ const STEPS = [
 ];
 
 function getRedirectUrl(): string {
-  return `${window.location.origin}/auth/recovery?next=/update-password`;
+  return `${window.location.origin}/auth/callback?next=/update-password`;
 }
 
 export function ForgotPasswordForm() {
