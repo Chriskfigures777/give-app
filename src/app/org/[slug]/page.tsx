@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { Clock, Github } from "lucide-react";
+import { Clock } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
 import { OrgHero } from "./org-hero";
 import { OrgPageBlocks } from "./org-page-blocks";
@@ -109,15 +108,6 @@ export default async function OrgPage({ params }: Props) {
               </div>
             ))}
           </div>
-          <Link
-            href="https://github.com/Chriskfigures777/give-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-          >
-            <Github className="h-4 w-4" />
-            View on GitHub
-          </Link>
         </div>
       </div>
     );
