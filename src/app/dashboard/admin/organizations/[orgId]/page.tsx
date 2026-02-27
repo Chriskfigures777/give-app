@@ -23,7 +23,7 @@ export default async function AdminOrgDetailPage({
 
   if (!org) notFound();
 
-  const o = org as Record<string, unknown>;
+  const o = org as unknown as Record<string, unknown>;
 
   // Fetch owner profile
   const { data: owner } = o.owner_user_id
