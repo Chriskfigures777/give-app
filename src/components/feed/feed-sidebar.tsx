@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users, TrendingUp, ArrowRight, Sparkles } from "lucide-react";
+import { UserTypeBadge } from "@/components/user-type-badge";
 
 type SidebarOrg = {
   id: string;
@@ -11,6 +12,13 @@ type SidebarOrg = {
   slug: string;
   logo_url?: string | null;
   profile_image_url?: string | null;
+};
+
+type SidebarMember = {
+  id: string;
+  name: string;
+  role: string;
+  avatar_url?: string | null;
 };
 
 const PLACEHOLDER_LOGO =
@@ -65,6 +73,7 @@ function OrgRow({ org, actionLabel }: { org: SidebarOrg; actionLabel: string }) 
 
 export function FeedSidebar() {
   const [connections, setConnections] = useState<SidebarOrg[]>([]);
+  const [memberConnections, setMemberConnections] = useState<SidebarMember[]>([]);
   const [savedOrgs, setSavedOrgs] = useState<SidebarOrg[]>([]);
   const [discoverOrgs, setDiscoverOrgs] = useState<SidebarOrg[]>([]);
   const [myOrgSlug, setMyOrgSlug] = useState<string | null>(null);
@@ -107,6 +116,21 @@ export function FeedSidebar() {
               logo_url: c.otherLogoUrl ?? undefined,
             })
           );
+
+        // Individual member connections (users, not orgs)
+        const connMembers: SidebarMember[] = (connData.connections ?? [])
+          .filter(
+            (c: { otherType: string; otherOrgSlug: string | null }) =>
+              c.otherType === "user" && !c.otherOrgSlug
+          )
+          .map(
+            (c: { otherId: string; otherName: string; otherRole?: string }) => ({
+              id: c.otherId,
+              name: c.otherName,
+              role: c.otherRole ?? "member",
+            })
+          );
+        setMemberConnections(connMembers);
 
         const saved: SidebarOrg[] = (savedData.organizations ?? []).map(
           (o: {
@@ -179,37 +203,55 @@ export function FeedSidebar() {
   const yourOrgs = myOrgSlug
     ? rawOrgs.filter((o) => o.slug !== myOrgSlug)
     : rawOrgs;
-  const showDiscover = yourOrgs.length < 3 && discoverOrgs.length > 0;
+  const totalPeers = yourOrgs.length + memberConnections.length;
+  const showDiscover = totalPeers < 3 && discoverOrgs.length > 0;
 
   return (
     <div className="space-y-0">
-      {/* Your Peers */}
+      {/* Your Peers (orgs + members) */}
       <div className="p-4 pb-3">
         <div className="mb-3 flex items-center gap-2">
           <Users className="h-4 w-4 text-emerald-600" strokeWidth={2} />
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Your Peers
+            Your Network
           </h3>
-          {yourOrgs.length > 0 && (
+          {totalPeers > 0 && (
             <span className="ml-auto rounded bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-              {yourOrgs.length}
+              {totalPeers}
             </span>
           )}
         </div>
-        {yourOrgs.length === 0 ? (
+        {totalPeers === 0 ? (
           <div className="rounded-lg bg-slate-50 p-4 text-center">
-            <p className="text-sm text-slate-500">No peers yet.</p>
+            <p className="text-sm text-slate-500">No connections yet.</p>
             <Link
-              href="/explore"
+              href="/dashboard/connections"
               className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700"
             >
-              Discover <ArrowRight className="h-3.5 w-3.5" />
+              Find people <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         ) : (
           <div className="space-y-0.5">
-            {yourOrgs.slice(0, 8).map((org) => (
+            {yourOrgs.slice(0, 6).map((org) => (
               <OrgRow key={org.slug} org={org} actionLabel="Visit" />
+            ))}
+            {memberConnections.slice(0, 4).map((member) => (
+              <Link
+                key={member.id}
+                href={`/u/${member.id}`}
+                className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-600">
+                  {member.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-slate-900">{member.name}</p>
+                  <div className="mt-0.5">
+                    <UserTypeBadge type={member.role} size="xs" />
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         )}

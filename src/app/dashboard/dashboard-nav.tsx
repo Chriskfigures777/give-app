@@ -22,6 +22,7 @@ import {
   Share2,
   Receipt,
   Code2,
+  UserCircle,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -94,6 +95,22 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
         {link("/dashboard/my-donations", "My gifts", <Heart className={iconClass} />)}
         {(isMissionary || profileRole === "missionary" || plansToBeMissionary) &&
           link("/dashboard/missionary", "My embed", <Share2 className={iconClass} />)}
+        {/* Connections for all users — org owners see theirs, individual members see theirs */}
+        {!orgId && !isPlatformAdmin && (
+          <li className="shrink-0">
+            <Link
+              href="/dashboard/connections"
+              className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
+                pathname.startsWith("/dashboard/connections")
+                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
+                  : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
+              }`}
+            >
+              <Handshake className={iconClass} />
+              <span>Community</span>
+            </Link>
+          </li>
+        )}
       </NavSection>
 
       {(isPlatformAdmin || orgId) && (
@@ -134,6 +151,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       )}
 
       <NavSection title="Account">
+        {link("/dashboard/account", "My Profile", <UserCircle className={iconClass} />)}
         {link("/dashboard/settings", "Settings", <Settings className={iconClass} />)}
         {!isPlatformAdmin && orgId && link("/dashboard/billing", "Plan & Billing", <Receipt className={iconClass} />)}
         {!isPlatformAdmin && orgId && (

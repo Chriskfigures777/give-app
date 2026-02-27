@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
 import { createNotification, getOrgOwnerUserId } from "@/lib/notifications";
 
@@ -33,13 +32,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/** POST: Create a peer request (org-to-org only) */
+/** POST: Create a peer request (org-to-org, user-to-user, or user-to-org) */
 export async function POST(req: NextRequest) {
   try {
-    const { supabase, profile } = await requireAuth();
+    const { supabase, profile, user } = await requireAuth();
     const body = await req.json();
-    const { recipientId, message } = body as {
+    const { recipientId, recipientType: bodyRecipientType, message } = body as {
       recipientId: string;
+      recipientType?: string;
       message?: string;
     };
 
@@ -48,18 +48,29 @@ export async function POST(req: NextRequest) {
     }
 
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
-    if (!orgId) {
-      return NextResponse.json({ error: "You need an organization to connect. Create or join an organization first." }, { status: 400 });
+
+    // Determine requester identity: prefer org, fall back to user
+    let requesterId: string;
+    let requesterType: string;
+
+    if (orgId) {
+      requesterId = orgId;
+      requesterType = "organization";
+    } else {
+      requesterId = user.id;
+      requesterType = "user";
     }
 
-    if (recipientId === orgId) {
-      return NextResponse.json({ error: "You cannot send a connection request to your own organization." }, { status: 400 });
+    // Determine recipient type: if not provided, infer from whether recipientId looks like an org
+    // The client always sends recipientType now
+    const recipientType = bodyRecipientType ?? "organization";
+
+    // Prevent self-connection
+    if (requesterId === recipientId && requesterType === recipientType) {
+      return NextResponse.json({ error: "Cannot send a connection request to yourself." }, { status: 400 });
     }
 
-    const requesterId = orgId;
-    const requesterType = "organization";
-    const recipientType = "organization";
-
+    // Check for duplicate pending request
     const { data: existing } = await supabase
       .from("peer_requests")
       .select("id")
@@ -79,9 +90,9 @@ export async function POST(req: NextRequest) {
       // @ts-ignore - peer_requests Insert type
       .insert({
         requester_id: requesterId,
-        requester_type: "organization",
+        requester_type: requesterType,
         recipient_id: recipientId,
-        recipient_type: "organization",
+        recipient_type: recipientType,
         status: "pending",
         message: message?.trim() || null,
       })
@@ -92,23 +103,53 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create request" }, { status: 500 });
     }
 
-    // Notify the recipient org's owner about the incoming connection request
-    const recipientOwnerUserId = await getOrgOwnerUserId(recipientId);
-    if (recipientOwnerUserId) {
-      const { data: requesterOrgRow } = await supabase
-        .from("organizations")
-        .select("name, slug")
-        .eq("id", requesterId)
-        .single();
-      const requesterOrg = requesterOrgRow as { name: string; slug: string } | null;
+    // Notify the recipient about the incoming connection request
+    let notifyUserId: string | null = null;
+    if (recipientType === "organization") {
+      notifyUserId = await getOrgOwnerUserId(recipientId);
+    } else {
+      // recipient is a user — notify them directly
+      notifyUserId = recipientId;
+    }
+
+    if (notifyUserId) {
+      // Get requester display name
+      let requesterName = "Someone";
+      let requesterSlug: string | null = null;
+
+      if (requesterType === "organization") {
+        const { data: requesterOrg } = await supabase
+          .from("organizations")
+          .select("name, slug")
+          .eq("id", requesterId)
+          .single();
+        if (requesterOrg) {
+          const ro = requesterOrg as { name: string; slug: string };
+          requesterName = ro.name;
+          requesterSlug = ro.slug;
+        }
+      } else {
+        const { data: requesterUser } = await supabase
+          .from("user_profiles")
+          .select("full_name")
+          .eq("id", requesterId)
+          .single();
+        if (requesterUser) {
+          const ru = requesterUser as { full_name: string | null };
+          requesterName = ru.full_name ?? "A member";
+        }
+      }
+
       createNotification({
-        userId: recipientOwnerUserId,
+        userId: notifyUserId,
         type: "connection_request",
         payload: {
           request_id: (inserted as { id: string }).id,
-          organization_id: requesterId,
-          organization_name: requesterOrg?.name ?? "An organization",
-          organization_slug: requesterOrg?.slug ?? "",
+          requester_id: requesterId,
+          requester_type: requesterType,
+          organization_id: requesterType === "organization" ? requesterId : null,
+          organization_name: requesterName,
+          organization_slug: requesterSlug ?? "",
         },
       }).catch(() => {});
     }

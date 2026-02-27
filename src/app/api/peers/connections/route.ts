@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
         let otherOrgSlug: string | null = null;
         let otherProfileImageUrl: string | null = null;
         let otherLogoUrl: string | null = null;
+        let otherRole: string | null = null;
         if (otherType === "organization") {
           const { data: o } = await supabase
             .from("organizations")
@@ -62,12 +63,13 @@ export async function GET(req: NextRequest) {
           otherProfileImageUrl = oRow?.profile_image_url ?? null;
           otherLogoUrl = oRow?.logo_url ?? null;
         } else {
-          const { data: p } = await supabase.from("user_profiles").select("full_name, email").eq("id", otherId).single();
-          const pRow = p as { full_name: string | null; email: string | null } | null;
-          otherName = pRow?.full_name || pRow?.email || "User";
+          const { data: p } = await supabase.from("user_profiles").select("full_name, email, role").eq("id", otherId).single();
+          const pRow = p as { full_name: string | null; email: string | null; role: string | null } | null;
+          otherName = pRow?.full_name || pRow?.email || "Member";
+          otherRole = pRow?.role ?? "member";
         }
 
-        return { ...conn, threadId, otherId, otherType, otherName, otherOrgSlug, otherProfileImageUrl, otherLogoUrl };
+        return { ...conn, threadId, otherId, otherType, otherName, otherOrgSlug, otherProfileImageUrl, otherLogoUrl, otherRole };
       })
     );
 

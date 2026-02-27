@@ -18,8 +18,11 @@ import {
   Handshake,
   Send,
   UserPlus,
+  Building2,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserTypeBadge } from "@/components/user-type-badge";
 
 type PendingRequest = {
   id: string;
@@ -48,13 +51,28 @@ type OrgProfile = {
   profile_image_url: string | null;
 };
 
+type UserProfile = {
+  name: string;
+  role: string;
+  avatar_url: string | null;
+};
+
+type SearchResult = {
+  id: string;
+  type: "organization" | "user";
+  name: string;
+  slug?: string;
+  role?: string;
+};
+
 type Props = {
   pendingRequests: PendingRequest[];
   connections: Connection[];
   connectionThreads: Record<string, string>;
-  orgId: string;
-  orgNames: Record<string, string>;
+  callerId: string;
+  callerType: string;
   orgProfiles: Record<string, OrgProfile>;
+  userProfiles: Record<string, UserProfile>;
 };
 
 const PLACEHOLDER_AVATAR =
@@ -86,21 +104,22 @@ export function ConnectionsClient({
   pendingRequests,
   connections,
   connectionThreads,
-  orgId,
-  orgNames,
+  callerId,
+  callerType,
   orgProfiles,
+  userProfiles,
 }: Props) {
   const router = useRouter();
   const [searchQ, setSearchQ] = useState("");
-  const [searchResults, setSearchResults] = useState<
-    { id: string; type: string; name: string; slug?: string }[]
-  >([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [pending, setPending] = useState(pendingRequests);
   const [acceptingId, setAcceptingId] = useState<string | null>(null);
   const [decliningId, setDecliningId] = useState<string | null>(null);
   const [sendingTo, setSendingTo] = useState<string | null>(null);
+
+  const isOrgCaller = callerType === "organization";
 
   const activeThreads = useMemo(
     () => connections.filter((c) => connectionThreads[c.id]).length,
@@ -111,9 +130,7 @@ export function ConnectionsClient({
     if (searchQ.length < 2) return;
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/peers/search?q=${encodeURIComponent(searchQ)}`
-      );
+      const res = await fetch(`/api/peers/search?q=${encodeURIComponent(searchQ)}`);
       const data = await res.json();
       setSearchResults(data.results ?? []);
     } catch {
@@ -123,21 +140,22 @@ export function ConnectionsClient({
     }
   };
 
-  const handleSendRequest = async (recipientId: string) => {
-    setSendingTo(recipientId);
+  const handleSendRequest = async (result: SearchResult) => {
+    setSendingTo(result.id);
     try {
       const res = await fetch("/api/peers/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipientId }),
+        body: JSON.stringify({
+          recipientId: result.id,
+          recipientType: result.type,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed");
       toast.success("Connection request sent!");
-      setSearchResults((prev) => prev.filter((r) => r.id !== recipientId));
-      if (searchResults.length <= 1) {
-        setSearchQ("");
-      }
+      setSearchResults((prev) => prev.filter((r) => r.id !== result.id));
+      if (searchResults.length <= 1) setSearchQ("");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to send");
     } finally {
@@ -148,16 +166,12 @@ export function ConnectionsClient({
   const handleAccept = async (id: string) => {
     setAcceptingId(id);
     try {
-      const res = await fetch(`/api/peers/requests/${id}/accept`, {
-        method: "POST",
-      });
+      const res = await fetch(`/api/peers/requests/${id}/accept`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to accept");
       toast.success("Connection accepted!");
       setPending((p) => p.filter((r) => r.id !== id));
-      if (data.connectionId) {
-        router.refresh();
-      }
+      if (data.connectionId) router.refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to accept");
     } finally {
@@ -168,9 +182,7 @@ export function ConnectionsClient({
   const handleDecline = async (id: string) => {
     setDecliningId(id);
     try {
-      const res = await fetch(`/api/peers/requests/${id}/decline`, {
-        method: "POST",
-      });
+      const res = await fetch(`/api/peers/requests/${id}/decline`, { method: "POST" });
       if (!res.ok) throw new Error("Failed");
       setPending((p) => p.filter((r) => r.id !== id));
       toast.success("Request declined");
@@ -181,7 +193,34 @@ export function ConnectionsClient({
     }
   };
 
-  const getThreadId = (connId: string) => connectionThreads[connId] ?? null;
+  function getOtherParty(c: Connection) {
+    const otherId = c.side_a_id === callerId ? c.side_b_id : c.side_a_id;
+    const otherType = c.side_a_id === callerId ? c.side_b_type : c.side_a_type;
+    return { otherId, otherType };
+  }
+
+  function getDisplayInfo(id: string, type: string): { name: string; role?: string; avatarUrl: string | null; slug: string | null } {
+    if (type === "organization") {
+      const p = orgProfiles[id];
+      return {
+        name: p?.name ?? "Organization",
+        avatarUrl: p?.profile_image_url ?? p?.logo_url ?? null,
+        slug: p?.slug ?? null,
+      };
+    } else {
+      const p = userProfiles[id];
+      return {
+        name: p?.name ?? "Member",
+        role: p?.role ?? "member",
+        avatarUrl: p?.avatar_url ?? null,
+        slug: null,
+      };
+    }
+  }
+
+  function getRequesterInfo(req: PendingRequest) {
+    return getDisplayInfo(req.requester_id, req.requester_type);
+  }
 
   return (
     <div className="space-y-6 p-2 sm:p-4 max-w-[1400px] mx-auto">
@@ -189,52 +228,49 @@ export function ConnectionsClient({
       <div className="dashboard-fade-in dashboard-fade-in-delay-1 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-dashboard-text">
-            Connections
+            Community Connections
           </h1>
           <p className="text-sm text-dashboard-text-muted mt-0.5">
-            Build your network — connect with organizations, collaborate, and grow together.
+            Connect with donors, members, churches, nonprofits, and missionaries.
           </p>
         </div>
       </div>
 
-      {/* Missionaries section */}
-      <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden">
-        <div className="border-b border-dashboard-border px-5 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-500/20">
-              <UserPlus className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+      {/* Org-only: missionaries section */}
+      {isOrgCaller && (
+        <div className="dashboard-fade-in dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden">
+          <div className="border-b border-dashboard-border px-5 py-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-500/20">
+                <UserPlus className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-dashboard-text">Missionaries</h2>
+                <p className="text-xs text-dashboard-text-muted">
+                  Add givers as missionaries to split revenue with them.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-sm font-semibold text-dashboard-text">
-                Missionaries
-              </h2>
-              <p className="text-xs text-dashboard-text-muted">
-                Add givers as missionaries to split revenue with them. Create accounts for new missionaries.
-              </p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/dashboard/givers"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+              >
+                <Users className="h-4 w-4" />
+                Add from Givers
+              </Link>
+              <Link
+                href="/dashboard/givers"
+                className="inline-flex items-center gap-2 rounded-lg border border-dashboard-border px-4 py-2.5 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover transition-colors"
+              >
+                Create missionary
+              </Link>
             </div>
           </div>
         </div>
-        <div className="p-5 space-y-4">
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/dashboard/givers"
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
-            >
-              <Users className="h-4 w-4" />
-              Add from Givers
-            </Link>
-            <Link
-              href="/dashboard/givers"
-              className="inline-flex items-center gap-2 rounded-lg border border-dashboard-border px-4 py-2.5 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover transition-colors"
-            >
-              Create missionary
-            </Link>
-          </div>
-          <p className="text-xs text-dashboard-text-muted">
-            Go to Givers to add existing givers as missionaries. For someone who hasn&apos;t signed up, share your give page and ask them to sign up as a Giver with &quot;Yes&quot; to missionary — then add them from Givers once they&apos;re in the system.
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -242,7 +278,7 @@ export function ConnectionsClient({
           {
             label: "Total Connections",
             value: connections.length.toString(),
-            sub: connections.length === 1 ? "Organization" : "Organizations",
+            sub: connections.length === 1 ? "Connection" : "Connections",
             icon: Link2,
             gradient: "from-emerald-500/10 to-teal-500/10",
             iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
@@ -284,12 +320,10 @@ export function ConnectionsClient({
                   <p className="mt-2 text-2xl font-bold tracking-tight text-dashboard-text">
                     {card.value}
                   </p>
-                  <p className="mt-1 text-xs text-dashboard-text-muted">
-                    {card.sub}
-                  </p>
+                  <p className="mt-1 text-xs text-dashboard-text-muted">{card.sub}</p>
                 </div>
                 <div
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${card.iconBg} transition-transform duration-300`}
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${card.iconBg}`}
                 >
                   <Icon className={`h-5 w-5 ${card.iconColor}`} />
                 </div>
@@ -307,11 +341,9 @@ export function ConnectionsClient({
               <Search className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-dashboard-text">
-                Find organizations
-              </h2>
+              <h2 className="text-sm font-semibold text-dashboard-text">Find people & organizations</h2>
               <p className="text-xs text-dashboard-text-muted">
-                Search by name to send connection requests
+                Search donors, members, churches, nonprofits, and missionaries
               </p>
             </div>
           </div>
@@ -327,9 +359,7 @@ export function ConnectionsClient({
             <div className="flex flex-1 items-center gap-2 px-3">
               <Search
                 className={`h-4 w-4 shrink-0 transition-colors duration-200 ${
-                  searchFocused
-                    ? "text-emerald-500"
-                    : "text-dashboard-text-muted"
+                  searchFocused ? "text-emerald-500" : "text-dashboard-text-muted"
                 }`}
               />
               <input
@@ -339,16 +369,13 @@ export function ConnectionsClient({
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
-                placeholder="Search organizations by name..."
+                placeholder="Search by name…"
                 className="w-full bg-transparent py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted/60 outline-none"
               />
               {searchQ && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearchQ("");
-                    setSearchResults([]);
-                  }}
+                  onClick={() => { setSearchQ(""); setSearchResults([]); }}
                   className="shrink-0 rounded-md p-1 text-dashboard-text-muted hover:text-dashboard-text transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -360,11 +387,7 @@ export function ConnectionsClient({
               disabled={loading || searchQ.length < 2}
               className="bg-emerald-600 hover:bg-emerald-700 rounded-lg gap-1.5 shadow-sm px-5 transition-all duration-200 disabled:opacity-40"
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4" />
-              )}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               Search
             </Button>
           </div>
@@ -373,7 +396,7 @@ export function ConnectionsClient({
           {searchResults.length > 0 && (
             <div className="mt-4 space-y-2 conn-search-results">
               <p className="text-xs font-medium text-dashboard-text-muted px-1 mb-3">
-                {searchResults.length} organization{searchResults.length !== 1 ? "s" : ""} found
+                {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} found
               </p>
               {searchResults.map((r, i) => (
                 <div
@@ -383,22 +406,26 @@ export function ConnectionsClient({
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                      {getInitials(r.name)}
+                      {r.type === "organization" ? (
+                        <Building2 className="h-5 w-5" />
+                      ) : (
+                        <User className="h-5 w-5" />
+                      )}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-dashboard-text">
-                        {r.name}
-                      </p>
-                      {r.slug && (
-                        <p className="text-xs text-dashboard-text-muted">
-                          @{r.slug}
-                        </p>
-                      )}
+                      <p className="text-sm font-semibold text-dashboard-text">{r.name}</p>
+                      <div className="mt-0.5">
+                        {r.type === "organization" ? (
+                          <UserTypeBadge type={r.slug ? "organization" : "nonprofit"} size="xs" />
+                        ) : (
+                          <UserTypeBadge type={r.role ?? "member"} size="xs" />
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button
                     size="sm"
-                    onClick={() => handleSendRequest(r.id)}
+                    onClick={() => handleSendRequest(r)}
                     disabled={sendingTo === r.id}
                     className="bg-emerald-600 hover:bg-emerald-700 rounded-lg gap-1.5 shadow-sm text-xs transition-all duration-200"
                   >
@@ -426,11 +453,9 @@ export function ConnectionsClient({
                   <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-dashboard-text">
-                    Incoming requests
-                  </h2>
+                  <h2 className="text-sm font-semibold text-dashboard-text">Incoming requests</h2>
                   <p className="text-xs text-dashboard-text-muted">
-                    {pending.length} organization{pending.length !== 1 ? "s" : ""} want to connect
+                    {pending.length} {pending.length === 1 ? "person wants" : "people want"} to connect
                   </p>
                 </div>
               </div>
@@ -445,12 +470,7 @@ export function ConnectionsClient({
           </div>
           <div className="p-5 space-y-3">
             {pending.map((r, i) => {
-              const profile = orgProfiles[r.requester_id];
-              const name = orgNames[r.requester_id] ?? "Organization";
-              const avatarUrl =
-                profile?.profile_image_url ??
-                profile?.logo_url ??
-                PLACEHOLDER_AVATAR;
+              const info = getRequesterInfo(r);
               const isAccepting = acceptingId === r.id;
               const isDeclining = decliningId === r.id;
               return (
@@ -460,34 +480,33 @@ export function ConnectionsClient({
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div className="flex shrink-0 overflow-hidden rounded-xl ring-2 ring-amber-200/60 dark:ring-amber-700/30">
-                    {avatarUrl === PLACEHOLDER_AVATAR ? (
-                      <div className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-sm font-bold text-amber-600 dark:text-amber-400">
-                        {getInitials(name)}
-                      </div>
+                    {info.avatarUrl ? (
+                      <img src={info.avatarUrl} alt={info.name} className="h-12 w-12 object-cover" />
                     ) : (
-                      <img
-                        src={avatarUrl}
-                        alt={name}
-                        className="h-12 w-12 object-cover"
-                      />
+                      <div className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-sm font-bold text-amber-600 dark:text-amber-400">
+                        {getInitials(info.name)}
+                      </div>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-dashboard-text">
-                      {name}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-dashboard-text">{info.name}</p>
+                      {r.requester_type === "organization" ? (
+                        <UserTypeBadge type="organization" size="xs" />
+                      ) : (
+                        <UserTypeBadge type={userProfiles[r.requester_id]?.role ?? "member"} size="xs" />
+                      )}
+                    </div>
                     {r.message ? (
                       <p className="mt-0.5 text-xs text-dashboard-text-muted line-clamp-1">
                         &ldquo;{r.message}&rdquo;
                       </p>
                     ) : (
                       <p className="mt-0.5 text-xs text-dashboard-text-muted">
-                        Wants to connect with your organization
+                        Wants to connect with you
                       </p>
                     )}
-                    <p className="mt-1 text-[11px] text-dashboard-text-muted/60">
-                      {timeAgo(r.created_at)}
-                    </p>
+                    <p className="mt-1 text-[11px] text-dashboard-text-muted/60">{timeAgo(r.created_at)}</p>
                   </div>
                   {r.canAccept && (
                     <div className="flex shrink-0 gap-2">
@@ -497,11 +516,7 @@ export function ConnectionsClient({
                         disabled={isAccepting || isDeclining}
                         className="bg-emerald-600 hover:bg-emerald-700 rounded-lg gap-1.5 shadow-sm text-xs transition-all duration-200"
                       >
-                        {isAccepting ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <Check className="h-3 w-3" />
-                        )}
+                        {isAccepting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                         Accept
                       </Button>
                       <Button
@@ -511,11 +526,7 @@ export function ConnectionsClient({
                         disabled={isAccepting || isDeclining}
                         className="rounded-lg gap-1.5 text-xs transition-all duration-200 border-dashboard-border hover:border-red-300 hover:text-red-600 dark:hover:border-red-700 dark:hover:text-red-400"
                       >
-                        {isDeclining ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <X className="h-3 w-3" />
-                        )}
+                        {isDeclining ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
                         Decline
                       </Button>
                     </div>
@@ -530,19 +541,15 @@ export function ConnectionsClient({
       {/* Your Connections */}
       <div className="dashboard-fade-in dashboard-fade-in-delay-7 rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden">
         <div className="border-b border-dashboard-border px-5 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20">
-                <Handshake className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold text-dashboard-text">
-                  Your connections
-                </h2>
-                <p className="text-xs text-dashboard-text-muted">
-                  {connections.length} organization{connections.length !== 1 ? "s" : ""} in your network
-                </p>
-              </div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20">
+              <Handshake className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-dashboard-text">Your connections</h2>
+              <p className="text-xs text-dashboard-text-muted">
+                {connections.length} {connections.length === 1 ? "connection" : "connections"} in your network
+              </p>
             </div>
           </div>
         </div>
@@ -555,41 +562,30 @@ export function ConnectionsClient({
                 <Users className="h-9 w-9 text-emerald-500/60" />
               </div>
             </div>
-            <p className="text-base font-semibold text-dashboard-text">
-              No connections yet
-            </p>
+            <p className="text-base font-semibold text-dashboard-text">No connections yet</p>
             <p className="mt-2 max-w-sm text-sm text-dashboard-text-muted">
-              Start building your network by searching for organizations above. Connected organizations can message each other and collaborate on campaigns.
+              Build your community — connect with donors, members, churches, nonprofits, and missionaries.
             </p>
             <button
               type="button"
               onClick={() => {
-                const searchInput = document.querySelector<HTMLInputElement>(
-                  'input[placeholder*="Search organizations"]'
-                );
+                const searchInput = document.querySelector<HTMLInputElement>('input[placeholder*="Search by name"]');
                 searchInput?.focus();
               }}
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-emerald-700 hover:shadow-md active:scale-[0.98]"
             >
               <Search className="h-4 w-4" />
-              Find organizations
+              Find people
             </button>
           </div>
         ) : (
           <div className="p-5">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {connections.map((c, i) => {
-                const otherId =
-                  c.side_a_id === orgId ? c.side_b_id : c.side_a_id;
-                const profile = orgProfiles[otherId];
-                const name = orgNames[otherId] ?? "Organization";
-                const avatarUrl =
-                  profile?.profile_image_url ??
-                  profile?.logo_url ??
-                  PLACEHOLDER_AVATAR;
-                const threadId = getThreadId(c.id);
-                const orgSlug = profile?.slug;
-                const hasAvatar = avatarUrl !== PLACEHOLDER_AVATAR;
+                const { otherId, otherType } = getOtherParty(c);
+                const info = getDisplayInfo(otherId, otherType);
+                const threadId = connectionThreads[c.id] ?? null;
+                const hasAvatar = !!info.avatarUrl;
 
                 return (
                   <div
@@ -597,59 +593,75 @@ export function ConnectionsClient({
                     className="conn-card group relative rounded-2xl border border-dashboard-border bg-dashboard-card p-5 transition-all duration-300 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5"
                     style={{ animationDelay: `${i * 60}ms` }}
                   >
-                    {/* Subtle gradient overlay on hover */}
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/0 to-teal-500/0 transition-all duration-300 group-hover:from-emerald-500/[0.02] group-hover:to-teal-500/[0.04]" />
-
                     <div className="relative">
                       {/* Avatar + Name */}
                       <div className="flex items-center gap-3.5">
-                        {orgSlug ? (
+                        {info.slug && otherType === "organization" ? (
                           <Link
-                            href={`/org/${orgSlug}`}
+                            href={`/org/${info.slug}`}
                             className="flex shrink-0 overflow-hidden rounded-xl ring-2 ring-dashboard-border transition-all duration-300 group-hover:ring-emerald-500/40 group-hover:shadow-md"
                           >
                             {hasAvatar ? (
-                              <img
-                                src={avatarUrl}
-                                alt={name}
-                                className="h-13 w-13 object-cover"
-                              />
+                              <img src={info.avatarUrl!} alt={info.name} className="h-13 w-13 object-cover" />
                             ) : (
                               <div className="flex h-13 w-13 items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 text-base font-bold text-emerald-600 dark:text-emerald-400">
-                                {getInitials(name)}
+                                {getInitials(info.name)}
+                              </div>
+                            )}
+                          </Link>
+                        ) : otherType === "user" ? (
+                          <Link
+                            href={`/u/${otherId}`}
+                            className="flex shrink-0 overflow-hidden rounded-xl ring-2 ring-dashboard-border transition-all duration-300 group-hover:ring-emerald-500/40"
+                          >
+                            {hasAvatar ? (
+                              <img src={info.avatarUrl!} alt={info.name} className="h-13 w-13 object-cover" />
+                            ) : (
+                              <div className="flex h-13 w-13 items-center justify-center bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/40 dark:to-blue-900/40 text-base font-bold text-sky-600 dark:text-sky-400">
+                                {getInitials(info.name)}
                               </div>
                             )}
                           </Link>
                         ) : (
                           <div className="flex shrink-0 overflow-hidden rounded-xl ring-2 ring-dashboard-border">
                             {hasAvatar ? (
-                              <img
-                                src={avatarUrl}
-                                alt={name}
-                                className="h-13 w-13 object-cover"
-                              />
+                              <img src={info.avatarUrl!} alt={info.name} className="h-13 w-13 object-cover" />
                             ) : (
                               <div className="flex h-13 w-13 items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 text-base font-bold text-emerald-600 dark:text-emerald-400">
-                                {getInitials(name)}
+                                {getInitials(info.name)}
                               </div>
                             )}
                           </div>
                         )}
 
                         <div className="min-w-0 flex-1">
-                          {orgSlug ? (
+                          {info.slug && otherType === "organization" ? (
                             <Link
-                              href={`/org/${orgSlug}`}
+                              href={`/org/${info.slug}`}
                               className="block truncate text-sm font-semibold text-dashboard-text transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
                             >
-                              {name}
+                              {info.name}
+                            </Link>
+                          ) : otherType === "user" ? (
+                            <Link
+                              href={`/u/${otherId}`}
+                              className="block truncate text-sm font-semibold text-dashboard-text transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+                            >
+                              {info.name}
                             </Link>
                           ) : (
                             <span className="block truncate text-sm font-semibold text-dashboard-text">
-                              {name}
+                              {info.name}
                             </span>
                           )}
                           <div className="flex items-center gap-1.5 mt-0.5">
+                            <UserTypeBadge
+                              type={otherType === "organization" ? "organization" : (info.role ?? "member")}
+                              size="xs"
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-1">
                             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                             <span className="text-[11px] text-dashboard-text-muted">
                               Connected {timeAgo(c.created_at) ? timeAgo(c.created_at).toLowerCase() : ""}
@@ -658,15 +670,23 @@ export function ConnectionsClient({
                         </div>
                       </div>
 
-                      {/* Divider */}
                       <div className="my-4 h-px bg-dashboard-border/60" />
 
                       {/* Action Buttons */}
                       <div className="flex items-center gap-2">
-                        {orgSlug && (
+                        {info.slug && otherType === "organization" && (
                           <Link
-                            href={`/org/${orgSlug}`}
+                            href={`/org/${info.slug}`}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-dashboard-border px-3 py-2 text-xs font-medium text-dashboard-text-muted transition-all duration-200 hover:border-emerald-500/40 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/5"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            Profile
+                          </Link>
+                        )}
+                        {otherType === "user" && (
+                          <Link
+                            href={`/u/${otherId}`}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-dashboard-border px-3 py-2 text-xs font-medium text-dashboard-text-muted transition-all duration-200 hover:border-sky-500/40 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-500/5"
                           >
                             <ExternalLink className="h-3 w-3" />
                             Profile
