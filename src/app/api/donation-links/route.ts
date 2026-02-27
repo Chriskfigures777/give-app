@@ -115,9 +115,9 @@ export async function POST(req: NextRequest) {
     }
 
     for (const e of splitsArray) {
-      if (typeof e.percentage !== "number") {
+      if (typeof e.percentage !== "number" || e.percentage <= 0 || e.percentage > 100) {
         return NextResponse.json(
-          { error: "Each split must have percentage" },
+          { error: "Each split must have a percentage between 1 and 100" },
           { status: 400 }
         );
       }

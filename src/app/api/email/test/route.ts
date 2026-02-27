@@ -4,8 +4,10 @@
  */
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/resend";
+import { requirePlatformAdmin } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  await requirePlatformAdmin();
   try {
     const body = await req.json().catch(() => ({}));
     const to = typeof body?.to === "string" && body.to.trim() ? body.to.trim() : null;

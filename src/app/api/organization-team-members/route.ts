@@ -18,16 +18,13 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       console.error("team-members GET error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to fetch team members" }, { status: 500 });
     }
 
     return NextResponse.json(data ?? []);
   } catch (e) {
     console.error("organization-team-members GET error:", e);
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to fetch" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch team members" }, { status: 500 });
   }
 }
 
@@ -77,15 +74,12 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("team-members POST error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create team member" }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (e) {
     console.error("organization-team-members POST error:", e);
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to create" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to create team member" }, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
+import { requirePlatformAdmin } from "@/lib/auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 
@@ -57,7 +57,7 @@ const MOCK_ORGS = [
  */
 export async function POST() {
   try {
-    const { user, profile } = await requireAuth();
+    const { user, profile } = await requirePlatformAdmin();
     const supabase = createServiceClient();
 
     const createdOrgIds: string[] = [];

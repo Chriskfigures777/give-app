@@ -40,7 +40,8 @@ export async function POST(req: Request) {
       embedCardId?: string;
     };
 
-    if (!amountCents || amountCents < 100 || !organizationId) {
+    const MAX_AMOUNT_CENTS = 100_000_00; // $100,000 USD
+    if (!amountCents || amountCents < 100 || amountCents > MAX_AMOUNT_CENTS || !organizationId) {
       return NextResponse.json(
         { error: "Invalid amount or organization" },
         { status: 400 }
