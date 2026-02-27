@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, CheckCheck, Bell, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Check, CheckCheck, Bell, Sparkles, Heart, MessageSquare, DollarSign, Handshake, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { NotificationItem } from "@/app/api/notifications/route";
 
@@ -27,6 +29,15 @@ function formatRelativeTime(iso: string): string {
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString();
+}
+
+function formatCents(cents: number, currency = "usd"): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(cents / 100);
 }
 
 const dropdownVariants = {
@@ -72,18 +83,100 @@ function SkeletonLoader() {
 }
 
 function getNotificationIcon(type: string) {
-  if (type === "connection_accepted") {
-    return (
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-        <Sparkles className="h-4 w-4" />
-      </div>
-    );
+  switch (type) {
+    case "connection_accepted":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <Sparkles className="h-4 w-4" />
+        </div>
+      );
+    case "connection_request":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+          <Handshake className="h-4 w-4" />
+        </div>
+      );
+    case "donation_received":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <Heart className="h-4 w-4" />
+        </div>
+      );
+    case "message_received":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+          <MessageSquare className="h-4 w-4" />
+        </div>
+      );
+    case "fund_request_received":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+          <DollarSign className="h-4 w-4" />
+        </div>
+      );
+    case "fund_request_fulfilled":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <DollarSign className="h-4 w-4" />
+        </div>
+      );
+    default:
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+          <Bell className="h-4 w-4" />
+        </div>
+      );
   }
-  return (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-      <Bell className="h-4 w-4" />
-    </div>
-  );
+}
+
+function getNotificationText(n: NotificationItem): string {
+  const p = n.payload;
+  switch (n.type) {
+    case "connection_accepted":
+      return `${(p.organization_name as string) ?? "An organization"} accepted your connection request`;
+    case "connection_request":
+      return `${(p.organization_name as string) ?? "An organization"} wants to connect with you`;
+    case "donation_received": {
+      const amount = p.amount_cents
+        ? formatCents(p.amount_cents as number, (p.currency as string) ?? "usd")
+        : "a donation";
+      const donor = (p.donor_name as string) || "Someone";
+      const suffix = p.is_recurring ? " (recurring)" : "";
+      return `${donor} donated ${amount}${suffix}`;
+    }
+    case "message_received":
+      return `${(p.sender_name as string) ?? "Someone"} sent you a message`;
+    case "fund_request_received": {
+      const amount = p.amount_cents
+        ? formatCents(p.amount_cents as number, "usd")
+        : "funds";
+      return `${(p.organization_name as string) ?? "An organization"} sent a fund request for ${amount}`;
+    }
+    case "fund_request_fulfilled":
+      return "Your fund request has been fulfilled";
+    default:
+      return n.type.replace(/_/g, " ");
+  }
+}
+
+function getNotificationLink(n: NotificationItem): string | null {
+  const p = n.payload;
+  switch (n.type) {
+    case "connection_accepted":
+      return "/dashboard/connections";
+    case "connection_request":
+      return "/dashboard/connections";
+    case "donation_received":
+      return "/dashboard/donations";
+    case "message_received":
+      return p.thread_id ? `/dashboard/messages/${p.thread_id as string}` : "/dashboard/messages";
+    case "fund_request_received":
+      return p.thread_id ? `/dashboard/messages/${p.thread_id as string}` : "/dashboard/messages";
+    case "fund_request_fulfilled":
+      return "/dashboard/messages";
+    default:
+      return null;
+  }
 }
 
 export function NavNotificationsDropdown({
@@ -99,6 +192,7 @@ export function NavNotificationsDropdown({
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // connection_request type has its own dedicated dropdown — filter from bell
   const filteredNotifications = notifications.filter((n) => n.type !== "connection_request");
 
   useEffect(() => {
@@ -124,6 +218,7 @@ export function NavNotificationsDropdown({
     }
   }, [open]);
 
+  // Real-time subscription: show toast + update badge on new notifications
   useEffect(() => {
     if (!userId) return;
     const supabase = createClient();
@@ -139,13 +234,33 @@ export function NavNotificationsDropdown({
         },
         (payload) => {
           const newRow = payload.new as NotificationItem;
+
+          // connection_request type goes to the peers dropdown — skip it here
           if (newRow.type === "connection_request") return;
+
+          // Prepend to list
           setNotifications((prev) => [newRow, ...prev]);
           setUnreadCount((c) => {
             const next = c + 1;
             onUnreadChange?.(next);
             return next;
           });
+
+          // Show a Sonner toast for the new notification
+          const text = getNotificationText(newRow);
+          const link = getNotificationLink(newRow);
+          if (link) {
+            toast(text, {
+              action: {
+                label: "View",
+                onClick: () => {
+                  window.location.href = link;
+                },
+              },
+            });
+          } else {
+            toast(text);
+          }
         }
       )
       .subscribe();
@@ -248,53 +363,79 @@ export function NavNotificationsDropdown({
             ) : (
               <ul className="py-1">
                 <AnimatePresence mode="popLayout">
-                  {filteredNotifications.map((n, i) => (
-                    <motion.li
-                      key={n.id}
-                      layout
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      custom={i}
-                      className={`border-b border-slate-50/80 last:border-0 transition-colors duration-200 ${
-                        !n.read_at
-                          ? "bg-gradient-to-r from-emerald-50/50 via-emerald-50/30 to-transparent"
-                          : ""
-                      }`}
-                    >
+                  {filteredNotifications.map((n, i) => {
+                    const link = getNotificationLink(n);
+                    const text = getNotificationText(n);
+
+                    const itemContent = (
                       <div className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50/60 transition-colors duration-150">
                         {getNotificationIcon(n.type)}
                         <div className="min-w-0 flex-1">
-                          {n.type === "connection_accepted" ? (
-                            <p className="text-sm font-medium text-slate-800 leading-snug">
-                              <span className="font-semibold">{(n.payload.organization_name as string) ?? "An organization"}</span>{" "}
-                              accepted your connection request
-                            </p>
-                          ) : (
-                            <p className="text-sm font-medium text-slate-800 leading-snug">
-                              {n.type.replace(/_/g, " ")}
-                            </p>
-                          )}
+                          <p className="text-sm font-medium text-slate-800 leading-snug">
+                            {text}
+                          </p>
                           <p className="mt-1 text-[11px] font-medium text-slate-400">
                             {formatRelativeTime(n.created_at)}
                           </p>
                         </div>
-                        {!n.read_at && (
-                          <motion.button
-                            type="button"
-                            onClick={() => markRead(n.id)}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-emerald-500 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
-                            title="Mark as read"
-                          >
-                            <Check className="h-3.5 w-3.5" />
-                          </motion.button>
-                        )}
+                        <div className="flex shrink-0 items-center gap-1">
+                          {link && (
+                            <span className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 transition-colors hover:text-slate-500">
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </span>
+                          )}
+                          {!n.read_at && (
+                            <motion.button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                markRead(n.id);
+                              }}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-emerald-500 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                              title="Mark as read"
+                            >
+                              <Check className="h-3.5 w-3.5" />
+                            </motion.button>
+                          )}
+                        </div>
                       </div>
-                    </motion.li>
-                  ))}
+                    );
+
+                    return (
+                      <motion.li
+                        key={n.id}
+                        layout
+                        variants={itemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        custom={i}
+                        className={`border-b border-slate-50/80 last:border-0 transition-colors duration-200 ${
+                          !n.read_at
+                            ? "bg-gradient-to-r from-emerald-50/50 via-emerald-50/30 to-transparent"
+                            : ""
+                        }`}
+                      >
+                        {link ? (
+                          <Link
+                            href={link}
+                            onClick={() => {
+                              if (!n.read_at) markRead(n.id);
+                              onClose();
+                            }}
+                            className="block"
+                          >
+                            {itemContent}
+                          </Link>
+                        ) : (
+                          itemContent
+                        )}
+                      </motion.li>
+                    );
+                  })}
                 </AnimatePresence>
               </ul>
             )}

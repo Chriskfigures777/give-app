@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
+import { createNotification, getOrgOwnerUserId } from "@/lib/notifications";
 
 /** POST: Accept a peer request */
 export async function POST(
@@ -95,6 +96,29 @@ export async function POST(
       .insert({ connection_id: connectionId })
       .select("id")
       .single();
+
+    // Notify the requester org's owner that their connection request was accepted
+    if (request.requester_type === "organization") {
+      const requesterOwnerUserId = await getOrgOwnerUserId(request.requester_id);
+      if (requesterOwnerUserId) {
+        const { data: recipientOrgRow } = await supabase
+          .from("organizations")
+          .select("name, slug")
+          .eq("id", request.recipient_id)
+          .single();
+        const recipientOrg = recipientOrgRow as { name: string; slug: string } | null;
+        createNotification({
+          userId: requesterOwnerUserId,
+          type: "connection_accepted",
+          payload: {
+            organization_id: request.recipient_id,
+            organization_name: recipientOrg?.name ?? "An organization",
+            organization_slug: recipientOrg?.slug ?? "",
+            thread_id: (thread as { id: string } | null)?.id ?? null,
+          },
+        }).catch(() => {});
+      }
+    }
 
     return NextResponse.json({ success: true, connectionId, threadId: (thread as { id: string } | null)?.id });
   } catch (e) {

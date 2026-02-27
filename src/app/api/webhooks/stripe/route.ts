@@ -9,6 +9,7 @@ import { calculateStripeFeeCents } from "@/lib/fee-calculator";
 
 type SplitEntry = { percentage: number; accountId?: string };
 import { sendDonationReceived, sendReceiptAttached, sendOrgDonationReceived, sendPayoutProcessed } from "@/lib/email/send-transactional";
+import { createNotification } from "@/lib/notifications";
 
 const webhookSecret =
   process.env.STRIPE_WEBHOOK_SECRET ||
@@ -462,6 +463,20 @@ export async function POST(req: NextRequest) {
               adminEmail: ownerEmail,
             }).catch((e) => console.error("[email] org_donation_received failed:", e));
           }
+
+          // In-app notification for org owner
+          createNotification({
+            userId: org.owner_user_id,
+            type: "donation_received",
+            payload: {
+              donation_id: d.id,
+              amount_cents: donationAmountCents,
+              currency: pi.currency ?? "usd",
+              donor_name: metadata.donor_name || null,
+              donor_email: metadata.donor_email || null,
+              organization_id: organizationId,
+            },
+          }).catch(() => {});
         }
       }
 
@@ -679,6 +694,21 @@ export async function POST(req: NextRequest) {
                 adminEmail: ownerEmail,
               }).catch((e) => console.error("[email] org_donation_received (invoice) failed:", e));
             }
+
+            // In-app notification for org owner (recurring donation)
+            createNotification({
+              userId: org.owner_user_id,
+              type: "donation_received",
+              payload: {
+                donation_id: d.id,
+                amount_cents: donationAmountCents,
+                currency: invoice.currency ?? "usd",
+                donor_name: metadata.donor_name ?? null,
+                donor_email: donorEmail,
+                organization_id: organizationId,
+                is_recurring: true,
+              },
+            }).catch(() => {});
           }
         }
 

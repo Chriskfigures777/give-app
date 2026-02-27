@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
+import { createNotification, getOrgOwnerUserId } from "@/lib/notifications";
 
 /** GET: List peer requests (as requester or recipient) */
 export async function GET(req: NextRequest) {
@@ -89,6 +90,27 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       return NextResponse.json({ error: "Failed to create request" }, { status: 500 });
+    }
+
+    // Notify the recipient org's owner about the incoming connection request
+    const recipientOwnerUserId = await getOrgOwnerUserId(recipientId);
+    if (recipientOwnerUserId) {
+      const { data: requesterOrgRow } = await supabase
+        .from("organizations")
+        .select("name, slug")
+        .eq("id", requesterId)
+        .single();
+      const requesterOrg = requesterOrgRow as { name: string; slug: string } | null;
+      createNotification({
+        userId: recipientOwnerUserId,
+        type: "connection_request",
+        payload: {
+          request_id: (inserted as { id: string }).id,
+          organization_id: requesterId,
+          organization_name: requesterOrg?.name ?? "An organization",
+          organization_slug: requesterOrg?.slug ?? "",
+        },
+      }).catch(() => {});
     }
 
     return NextResponse.json({ peerRequest: inserted });

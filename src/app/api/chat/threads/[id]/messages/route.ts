@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
+import { createMessageNotification, getOrgOwnerUserId } from "@/lib/notifications";
 
 /** GET: List messages in a thread */
 export async function GET(
@@ -124,6 +125,41 @@ export async function POST(
 
     if (error) {
       return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
+    }
+
+    // Notify the other party about the new message (fire-and-forget)
+    const otherSide =
+      (conn.side_a_type === senderType && conn.side_a_id === senderId)
+        ? { id: conn.side_b_id, type: conn.side_b_type }
+        : { id: conn.side_a_id, type: conn.side_a_type };
+
+    let recipientUserId: string | null = null;
+    if (otherSide.type === "user") {
+      recipientUserId = otherSide.id;
+    } else if (otherSide.type === "organization") {
+      recipientUserId = await getOrgOwnerUserId(otherSide.id);
+    }
+
+    if (recipientUserId) {
+      // Determine a display name for the sender
+      let senderDisplayName = "Someone";
+      if (senderType === "organization" && orgId) {
+        const { data: senderOrg } = await supabase
+          .from("organizations")
+          .select("name")
+          .eq("id", orgId)
+          .single();
+        senderDisplayName = (senderOrg as { name: string } | null)?.name ?? "An organization";
+      } else {
+        senderDisplayName = profile?.full_name ?? user.email ?? "Someone";
+      }
+
+      createMessageNotification({
+        recipientUserId,
+        threadId,
+        senderName: senderDisplayName,
+        contentPreview: content.trim(),
+      }).catch(() => {});
     }
 
     return NextResponse.json({ message: inserted });
