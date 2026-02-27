@@ -26,10 +26,13 @@ export async function getRequestOrigin(): Promise<string> {
 /**
  * Base URL for dashboard pages (live preview, embed codes, etc.).
  * Prefers the request origin so previews work when accessed via custom domain.
+ * Never returns a localhost URL — embed codes and preview links must be publicly accessible.
  */
 export async function getBaseUrlForDashboard(): Promise<string> {
   const origin = await getRequestOrigin();
-  if (origin && origin.startsWith("http")) {
+  const isLocalhost =
+    origin.includes("localhost") || origin.includes("127.0.0.1");
+  if (origin && origin.startsWith("http") && !isLocalhost) {
     return origin.replace(/\/$/, "");
   }
   return env.app.domain().replace(/\/$/, "");

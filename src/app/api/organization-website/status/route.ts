@@ -53,10 +53,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    // Use request origin so preview URLs work on the current host
+    // Use request origin so preview URLs work on the current host.
+    // Skip localhost — preview links must be publicly accessible URLs.
     const origin = req.nextUrl.origin || "";
+    const isLocalhost =
+      origin.includes("localhost") || origin.includes("127.0.0.1");
     const base =
-      origin.startsWith("http")
+      origin.startsWith("http") && !isLocalhost
         ? origin
         : process.env.NEXT_PUBLIC_APP_URL ||
           process.env.DOMAIN ||

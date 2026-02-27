@@ -53,6 +53,7 @@ export function WebsiteBuilderClient({
   const [justPublishedUrl, setJustPublishedUrl] = useState<string | null>(null);
   const [publishMode, setPublishMode] = useState<"domain" | "preview" | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishErrorCode, setPublishErrorCode] = useState<string | null>(null);
   const baseIframeSrc = "/dashboard/pages/editor-frame";
   const iframeSrc =
     effectiveProjectId
@@ -129,6 +130,7 @@ export function WebsiteBuilderClient({
     if (!projectState || isPublishing) return;
     setIsPublishing(true);
     setPublishError(null);
+    setPublishErrorCode(null);
     try {
       const res = await fetch("/api/organization-website/publish", {
         method: "POST",
@@ -143,6 +145,7 @@ export function WebsiteBuilderClient({
       const data = await res.json();
       if (!res.ok) {
         setPublishError(data.error || "Failed to publish. Please try again.");
+        setPublishErrorCode(data.code ?? null);
         return;
       }
       if (data.ok) {
@@ -331,15 +334,24 @@ export function WebsiteBuilderClient({
             <span className="font-medium text-red-800 dark:text-red-300">{publishError}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link
-              href="/dashboard/settings"
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors"
-            >
-              Go to Settings
-            </Link>
+            {publishErrorCode === "PLAN_REQUIRED" ? (
+              <Link
+                href="/dashboard/billing"
+                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+              >
+                Upgrade to Growth
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard/settings"
+                className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors"
+              >
+                Go to Settings
+              </Link>
+            )}
             <button
               type="button"
-              onClick={() => setPublishError(null)}
+              onClick={() => { setPublishError(null); setPublishErrorCode(null); }}
               className="rounded-lg p-1 text-red-400 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-300 transition-colors"
             >
               <X className="h-4 w-4" />

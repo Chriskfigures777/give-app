@@ -4,13 +4,29 @@ import { getBaseUrlForDashboard } from "@/lib/request-origin";
 import { EmbedCardsPanel } from "../embed/embed-cards-panel";
 import { fetchFormsPageData } from "../forms/forms-data";
 import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
+import { getOrgVerification } from "@/lib/verification";
+import { VerificationGate } from "@/components/verification-gate";
 import { Code2 } from "lucide-react";
 
 export default async function CustomFormsPage() {
   const { profile, supabase } = await requireAuth();
   const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
+  const isPlatformAdmin = profile?.role === "platform_admin";
 
   if (!orgId) redirect("/dashboard");
+
+  if (!isPlatformAdmin) {
+    const { verificationStatus } = await getOrgVerification(orgId, supabase);
+    if (verificationStatus !== "verified") {
+      return (
+        <VerificationGate
+          verificationStatus={verificationStatus}
+          featureName="Custom Forms"
+          featureDescription="Create custom donation forms with your branding, splits, and design. You need a verified Stripe Connect account so payments can be processed."
+        />
+      );
+    }
+  }
 
   const data = await fetchFormsPageData(orgId, supabase);
   if (!data) redirect("/dashboard");

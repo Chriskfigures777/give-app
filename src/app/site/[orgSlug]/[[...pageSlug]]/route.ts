@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { resolveVideoPreview } from "@/lib/video-preview";
 import {
   renderFeaturedSermon,
@@ -34,11 +34,34 @@ const PAGE_ID_TO_SLUG: Record<string, string> = {
   "page-visit": "visit",
 };
 
-function rewriteLinks(html: string, basePath: string, previewProjectId?: string | null): string {
+function getSlugForPage(page: PageDef): string {
+  const nameSlug = toSlug(page.name);
+  if (nameSlug) return nameSlug;
+  const idPart = page.id ? page.id.replace(/^page-/, "") : "";
+  return PAGE_ID_TO_SLUG[page.id ?? ""] ?? idPart;
+}
+
+function rewriteLinks(
+  html: string,
+  basePath: string,
+  previewProjectId?: string | null,
+  pages?: PageDef[]
+): string {
   if (!basePath.endsWith("/")) basePath += "/";
   const baseNoTrail = basePath.replace(/\/$/, "");
   const qs = previewProjectId ? `?preview=${encodeURIComponent(previewProjectId)}` : "";
   let out = html;
+
+  // Build dynamic page-id -> slug map from project pages
+  const pageIdToSlug: Record<string, string> = { ...PAGE_ID_TO_SLUG };
+  if (pages?.length) {
+    for (const p of pages) {
+      if (p.id) {
+        const slug = getSlugForPage(p);
+        pageIdToSlug[p.id] = slug;
+      }
+    }
+  }
 
   out = out.replace(/href=["']([a-z0-9-]+)\.html["']/gi, (_, slug) => {
     const path = slug === "index" ? baseNoTrail : `${basePath}${slug}`;
@@ -50,7 +73,13 @@ function rewriteLinks(html: string, basePath: string, previewProjectId?: string 
   });
   out = out.replace(/href=["']page:\/\/page-([a-z0-9-]+)["']/gi, (_, idPart) => {
     const pageId = `page-${idPart}`;
-    const slug = PAGE_ID_TO_SLUG[pageId] ?? idPart;
+    const slug = pageIdToSlug[pageId] ?? PAGE_ID_TO_SLUG[pageId] ?? idPart;
+    const path = slug ? `${basePath}${slug}` : baseNoTrail;
+    return `href="${path}${qs}"`;
+  });
+  // Handle #page-xxx format (used by GrapesJS page_select trait)
+  out = out.replace(/href=["']#(page-[a-z0-9-]+)["']/gi, (_, pageId) => {
+    const slug = pageIdToSlug[pageId] ?? PAGE_ID_TO_SLUG[pageId] ?? pageId.replace(/^page-/, "");
     const path = slug ? `${basePath}${slug}` : baseNoTrail;
     return `href="${path}${qs}"`;
   });
@@ -309,12 +338,35 @@ export async function GET(
 
   const { data: org } = await supabase
     .from("organizations")
-    .select("id, slug, published_website_project_id")
+    .select("id, slug, name, published_website_project_id, stripe_connect_account_id, onboarding_completed")
     .eq("slug", orgSlug)
     .single();
 
   if (!org) {
     return new NextResponse("Organization not found", { status: 404 });
+  }
+
+  // Preview URLs are private — only authenticated org admins may access them
+  if (previewProjectId) {
+    const authClient = await createClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
+      loginUrl.searchParams.set("redirectTo", req.nextUrl.pathname + req.nextUrl.search);
+      return NextResponse.redirect(loginUrl);
+    }
+    const { data: adminRow } = await supabase
+      .from("organization_admins")
+      .select("id")
+      .eq("organization_id", (org as { id: string }).id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!adminRow) {
+      return new NextResponse(
+        "<!DOCTYPE html><html><body style='font-family:sans-serif;padding:40px;text-align:center;'><h1>Access denied</h1><p>You must be an admin of this organization to preview its site.</p></body></html>",
+        { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
+      );
+    }
   }
 
   let projectId: string | null = null;
@@ -323,10 +375,64 @@ export async function GET(
   } else if ((org as { published_website_project_id?: string | null }).published_website_project_id) {
     projectId = (org as { published_website_project_id: string }).published_website_project_id;
   } else {
+    const orgName = (org as { name?: string | null }).name ?? orgSlug;
+    const hasConnectAccount =
+      (org as { stripe_connect_account_id?: string | null }).stripe_connect_account_id ||
+      (org as { onboarding_completed?: boolean | null }).onboarding_completed;
+    const message = hasConnectAccount
+      ? "This organization's website is coming soon."
+      : "This organization is still setting up their account. Check back soon.";
     return new NextResponse(
-      "<!DOCTYPE html><html><body style='font-family:sans-serif;padding:40px;text-align:center;'><h1>Not published</h1><p>This site has not been published yet.</p></body></html>",
+      `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${orgName}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8fafc;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .icon {
+      width: 56px; height: 56px;
+      background: #f1f5f9;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 26px;
+    }
+    h1 { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    p { font-size: 0.9rem; color: #64748b; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🏛️</div>
+    <h1>${orgName}</h1>
+    <p>${message}</p>
+  </div>
+</body>
+</html>`,
       {
-        status: 404,
+        status: 200,
         headers: { "Content-Type": "text/html; charset=utf-8" },
       }
     );
@@ -381,27 +487,32 @@ export async function GET(
     const page = pages.find((p) => {
       const nameSlug = toSlug(p.name);
       const idSlug = p.id ? p.id.replace(/^page-/, "") : "";
+      const pageSlug = getSlugForPage(p);
       return (
         nameSlug === slugLower ||
         idSlug === slugLower ||
-        p.name.toLowerCase() === slugLower
+        pageSlug === slugLower ||
+        p.name.toLowerCase() === slugLower ||
+        // Allow "about" to match "about-us", "about-us" to match "about"
+        (slugLower && nameSlug.startsWith(slugLower))
       );
     });
-    if (!page) {
-      const first = pages[0];
-      html = (first?.component as string) ?? "";
-      if (!html) {
-        return new NextResponse("Page not found", { status: 404 });
-      }
-    } else {
-      html = (page.component as string) ?? "";
-      if (!html) {
-        return new NextResponse("Page not found", { status: 404 });
-      }
+    let targetPage = page ?? pages[0];
+    html = (targetPage?.component as string) ?? "";
+    if (!html) {
+      // Fallback: try first page with content
+      const firstWithContent = pages.find((p) => {
+        const c = p.component as string;
+        return typeof c === "string" && c.trim().length > 50;
+      });
+      html = (firstWithContent?.component as string) ?? "";
+    }
+    if (!html || html.trim().length < 10) {
+      return new NextResponse("Page not found", { status: 404 });
     }
   }
 
-  html = rewriteLinks(html, basePath, previewProjectId);
+  html = rewriteLinks(html, basePath, previewProjectId, pages);
 
   // Inject CMS content for org (events, media)
   const orgId = (org as { id: string }).id;

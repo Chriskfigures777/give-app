@@ -10,6 +10,7 @@ import {
   isHostingConfigured,
 } from "@/lib/aws-hosting";
 import { getVerificationStatus } from "@/lib/verification";
+import { getOrgPlan, hasAccessToPlan } from "@/lib/plan";
 
 async function canAccessOrg(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -76,6 +77,18 @@ export async function POST(req: NextRequest) {
             { status: 403 }
           );
         }
+      }
+
+      // Publishing requires the Growth plan ($29/mo)
+      const { plan, planStatus } = await getOrgPlan(organizationId, supabase);
+      if (!hasAccessToPlan(plan, planStatus, "growth")) {
+        return NextResponse.json(
+          {
+            error: "Publishing your website requires the Growth plan ($29/mo). Upgrade in Settings to publish to a public URL.",
+            code: "PLAN_REQUIRED",
+          },
+          { status: 403 }
+        );
       }
     }
 
