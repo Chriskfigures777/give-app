@@ -31,7 +31,7 @@ export default async function AdminOrgWebsitePage({
 
   if (!org) notFound();
 
-  const o = org as Record<string, unknown>;
+  const o = org as unknown as Record<string, unknown>;
 
   const [formsData, planInfo, baseUrl] = await Promise.all([
     fetchFormsPageData(orgId, supabase),
@@ -72,7 +72,7 @@ export default async function AdminOrgWebsitePage({
           <ArrowLeft className="h-4 w-4" />
           Back to {o.name as string}
         </Link>
-        {o.website_url && (
+        {Boolean(o.website_url) && (
           <a
             href={o.website_url as string}
             target="_blank"

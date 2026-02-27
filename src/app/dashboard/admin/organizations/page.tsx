@@ -11,9 +11,10 @@ export default async function AdminOrganizationsPage() {
     .select("id, name, slug, org_type, city, state, owner_user_id, member_count, website_url, stripe_connect_account_id, created_at, plan, plan_status, stripe_billing_customer_id")
     .order("created_at", { ascending: false });
 
-  const total = orgs?.length ?? 0;
-  const withPlan = orgs?.filter((o: { plan?: string }) => o.plan && o.plan !== "free").length ?? 0;
-  const withConnect = orgs?.filter((o: { stripe_connect_account_id?: string }) => o.stripe_connect_account_id).length ?? 0;
+  const orgList = (orgs as unknown as Record<string, unknown>[]) ?? [];
+  const total = orgList.length;
+  const withPlan = orgList.filter((o) => o.plan && o.plan !== "free").length;
+  const withConnect = orgList.filter((o) => o.stripe_connect_account_id).length;
 
   return (
     <div className="space-y-6">
@@ -35,7 +36,7 @@ export default async function AdminOrganizationsPage() {
 
       {/* Table */}
       <section className="rounded-2xl border border-dashboard-border bg-dashboard-card shadow-sm overflow-hidden">
-        <OrgsTable orgs={(orgs as Record<string, unknown>[]) ?? []} />
+        <OrgsTable orgs={orgList} />
       </section>
     </div>
   );

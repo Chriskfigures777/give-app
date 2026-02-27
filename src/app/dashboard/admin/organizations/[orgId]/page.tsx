@@ -78,7 +78,7 @@ export default async function AdminOrgDetailPage({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {o.website_url && (
+          {Boolean(o.website_url) && (
             <a
               href={o.website_url as string}
               target="_blank"
