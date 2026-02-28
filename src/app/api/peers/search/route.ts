@@ -45,24 +45,24 @@ export async function GET(req: NextRequest) {
     // 2. Search individual users (donors, members, missionaries)
     let userQuery = supabase
       .from("user_profiles")
-      .select("id, full_name, role")
+      .select("id, full_name, email, role")
       .neq("id", user.id) // exclude self
-      .not("full_name", "is", null)
       .limit(limit);
 
     if (q.length >= 2) {
       const term = `%${q}%`;
-      userQuery = userQuery.ilike("full_name", term);
+      userQuery = userQuery.or(`full_name.ilike.${term},email.ilike.${term}`);
     }
 
     const { data: users } = await userQuery;
     for (const u of users ?? []) {
-      const up = u as { id: string; full_name: string; role: string };
-      if (!up.full_name?.trim()) continue;
+      const up = u as { id: string; full_name: string | null; email: string | null; role: string };
+      const displayName = up.full_name?.trim() || up.email?.split("@")[0] || null;
+      if (!displayName) continue;
       results.push({
         id: up.id,
         type: "user",
-        name: up.full_name,
+        name: displayName,
         role: up.role,
       });
     }

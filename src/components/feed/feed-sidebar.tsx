@@ -98,7 +98,7 @@ export function FeedSidebar() {
           fetch("/api/peers/connections"),
           fetch("/api/donor/saved-organizations"),
           fetch("/api/search?limit=5"),
-          fetch("/api/peers/search?limit=8"),
+          fetch("/api/peers/search?limit=20"),
         ]);
 
         const meData = await meRes.json();
@@ -212,7 +212,7 @@ export function FeedSidebar() {
             (r: { type: string; id: string }) =>
               r.type === "user" && !connectedUserIds.has(r.id) && r.id !== myUserId
           )
-          .slice(0, 3);
+          .slice(0, 4);
         for (const u of suggestedUsers) {
           items.push({
             kind: "user",
