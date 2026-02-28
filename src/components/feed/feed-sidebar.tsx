@@ -264,7 +264,7 @@ export function FeedSidebar() {
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <p className="text-sm text-slate-500">No connections yet.</p>
             <Link
-              href="/dashboard/connections"
+              href="/community"
               className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700"
             >
               Find people <ArrowRight className="h-3.5 w-3.5" />

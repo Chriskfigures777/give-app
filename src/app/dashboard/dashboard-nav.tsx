@@ -99,9 +99,9 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
         {!orgId && !isPlatformAdmin && (
           <li className="shrink-0">
             <Link
-              href="/dashboard/connections"
+              href="/community"
               className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-                pathname.startsWith("/dashboard/connections")
+                pathname.startsWith("/community")
                   ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
                   : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
               }`}
