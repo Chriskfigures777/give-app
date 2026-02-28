@@ -54,14 +54,15 @@ export async function GET(req: NextRequest) {
         if (otherType === "organization") {
           const { data: o } = await supabase
             .from("organizations")
-            .select("name, slug, profile_image_url, logo_url")
+            .select("name, slug, profile_image_url, logo_url, org_type")
             .eq("id", otherId)
             .single();
-          const oRow = o as { name: string; slug: string; profile_image_url: string | null; logo_url: string | null } | null;
+          const oRow = o as { name: string; slug: string; profile_image_url: string | null; logo_url: string | null; org_type: string | null } | null;
           otherName = oRow?.name ?? "Organization";
           otherOrgSlug = oRow?.slug ?? null;
           otherProfileImageUrl = oRow?.profile_image_url ?? null;
           otherLogoUrl = oRow?.logo_url ?? null;
+          otherRole = oRow?.org_type ?? null;
         } else {
           const { data: p } = await supabase.from("user_profiles").select("full_name, email, role").eq("id", otherId).single();
           const pRow = p as { full_name: string | null; email: string | null; role: string | null } | null;

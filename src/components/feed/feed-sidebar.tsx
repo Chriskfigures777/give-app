@@ -10,6 +10,7 @@ type SidebarOrg = {
   id: string;
   name: string;
   slug: string;
+  org_type?: string | null;
   logo_url?: string | null;
   profile_image_url?: string | null;
 };
@@ -49,7 +50,7 @@ function SidebarSkeleton() {
   );
 }
 
-function OrgRow({ org, actionLabel }: { org: SidebarOrg; actionLabel: string }) {
+function OrgRow({ org }: { org: SidebarOrg }) {
   return (
     <Link
       href={`/org/${org.slug}`}
@@ -66,16 +67,25 @@ function OrgRow({ org, actionLabel }: { org: SidebarOrg; actionLabel: string }) 
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-slate-900">{org.name}</p>
+        {org.org_type && (
+          <div className="mt-0.5">
+            <UserTypeBadge type={org.org_type} size="xs" />
+          </div>
+        )}
       </div>
     </Link>
   );
 }
 
+type DiscoverItem =
+  | { kind: "org"; org: SidebarOrg }
+  | { kind: "user"; member: SidebarMember };
+
 export function FeedSidebar() {
   const [connections, setConnections] = useState<SidebarOrg[]>([]);
   const [memberConnections, setMemberConnections] = useState<SidebarMember[]>([]);
   const [savedOrgs, setSavedOrgs] = useState<SidebarOrg[]>([]);
-  const [discoverOrgs, setDiscoverOrgs] = useState<SidebarOrg[]>([]);
+  const [discoverItems, setDiscoverItems] = useState<DiscoverItem[]>([]);
   const [myOrgSlug, setMyOrgSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -83,20 +93,23 @@ export function FeedSidebar() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [meRes, connRes, savedRes, searchRes] = await Promise.all([
+        const [meRes, connRes, savedRes, searchRes, peersRes] = await Promise.all([
           fetch("/api/me"),
           fetch("/api/peers/connections"),
           fetch("/api/donor/saved-organizations"),
           fetch("/api/search?limit=5"),
+          fetch("/api/peers/search?limit=8"),
         ]);
 
         const meData = await meRes.json();
         const mySlug = meData.orgSlug ?? null;
+        const myUserId = meData.userId ?? null;
         setMyOrgSlug(mySlug);
 
         const connData = await connRes.json();
         const savedData = await savedRes.json();
         const searchData = await searchRes.json();
+        const peersData = peersRes.ok ? await peersRes.json() : { results: [] };
 
         const connOrgs: SidebarOrg[] = (connData.connections ?? [])
           .filter(
@@ -106,12 +119,14 @@ export function FeedSidebar() {
             (c: {
               otherName: string;
               otherOrgSlug: string;
+              otherRole?: string | null;
               otherProfileImageUrl?: string | null;
               otherLogoUrl?: string | null;
             }) => ({
               id: c.otherOrgSlug,
               name: c.otherName,
               slug: c.otherOrgSlug,
+              org_type: c.otherRole ?? undefined,
               profile_image_url: c.otherProfileImageUrl ?? undefined,
               logo_url: c.otherLogoUrl ?? undefined,
             })
@@ -137,12 +152,14 @@ export function FeedSidebar() {
             id: string;
             name: string;
             slug: string;
+            org_type?: string | null;
             logo_url?: string | null;
             profile_image_url?: string | null;
           }) => ({
             id: o.id,
             name: o.name,
             slug: o.slug,
+            org_type: o.org_type ?? undefined,
             profile_image_url: o.profile_image_url,
             logo_url: o.logo_url,
           })
@@ -162,34 +179,56 @@ export function FeedSidebar() {
         setConnections(peersList);
         setSavedOrgs(saved);
 
-        const orgs = searchData.organizations ?? [];
-        const existingSlugs = new Set(merged.keys());
-        const suggested = orgs
+        // Build discover list: mix of orgs and individual users not already connected
+        const connectedOrgSlugs = new Set(merged.keys());
+        const connectedUserIds = new Set(connMembers.map((m) => m.id));
+
+        const items: DiscoverItem[] = [];
+
+        // Add suggested orgs from /api/search
+        const suggestedOrgs = (searchData.organizations ?? [])
           .filter(
             (o: { slug: string }) =>
-              !existingSlugs.has(o.slug) && o.slug !== mySlug
+              !connectedOrgSlugs.has(o.slug) && o.slug !== mySlug
           )
-          .slice(0, 5)
-          .map(
-            (o: {
-              id: string;
-              name: string;
-              slug: string;
-              logo_url?: string | null;
-              profile_image_url?: string | null;
-            }) => ({
+          .slice(0, 3);
+        for (const o of suggestedOrgs) {
+          items.push({
+            kind: "org",
+            org: {
               id: o.id,
               name: o.name,
               slug: o.slug,
+              org_type: o.org_type ?? undefined,
               profile_image_url: o.profile_image_url,
               logo_url: o.logo_url,
-            })
-          );
-        setDiscoverOrgs(suggested);
+            },
+          });
+        }
+
+        // Add suggested individual users from /api/peers/search
+        const suggestedUsers = (peersData.results ?? [])
+          .filter(
+            (r: { type: string; id: string }) =>
+              r.type === "user" && !connectedUserIds.has(r.id) && r.id !== myUserId
+          )
+          .slice(0, 3);
+        for (const u of suggestedUsers) {
+          items.push({
+            kind: "user",
+            member: {
+              id: u.id,
+              name: u.name,
+              role: u.role ?? "member",
+            },
+          });
+        }
+
+        setDiscoverItems(items);
       } catch {
         setConnections([]);
         setSavedOrgs([]);
-        setDiscoverOrgs([]);
+        setDiscoverItems([]);
       } finally {
         setLoading(false);
       }
@@ -204,11 +243,11 @@ export function FeedSidebar() {
     ? rawOrgs.filter((o) => o.slug !== myOrgSlug)
     : rawOrgs;
   const totalPeers = yourOrgs.length + memberConnections.length;
-  const showDiscover = totalPeers < 3 && discoverOrgs.length > 0;
+  const showDiscover = discoverItems.length > 0;
 
   return (
     <div className="space-y-0">
-      {/* Your Peers (orgs + members) */}
+      {/* Your Network (orgs + members) */}
       <div className="p-4 pb-3">
         <div className="mb-3 flex items-center gap-2">
           <Users className="h-4 w-4 text-emerald-600" strokeWidth={2} />
@@ -234,7 +273,7 @@ export function FeedSidebar() {
         ) : (
           <div className="space-y-0.5">
             {yourOrgs.slice(0, 6).map((org) => (
-              <OrgRow key={org.slug} org={org} actionLabel="Visit" />
+              <OrgRow key={org.slug} org={org} />
             ))}
             {memberConnections.slice(0, 4).map((member) => (
               <Link
@@ -257,19 +296,37 @@ export function FeedSidebar() {
         )}
       </div>
 
-      {/* Discover */}
+      {/* Discover — mixed orgs + individual users */}
       {showDiscover && (
         <div className="border-t border-slate-100 p-4 pb-3">
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-emerald-600" strokeWidth={2} />
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Suggested
+              Discover
             </h3>
           </div>
           <div className="space-y-0.5">
-            {discoverOrgs.map((org) => (
-              <OrgRow key={org.slug} org={org} actionLabel="Follow" />
-            ))}
+            {discoverItems.map((item) =>
+              item.kind === "org" ? (
+                <OrgRow key={item.org.slug} org={item.org} />
+              ) : (
+                <Link
+                  key={item.member.id}
+                  href={`/u/${item.member.id}`}
+                  className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50"
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-600">
+                    {item.member.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-slate-900">{item.member.name}</p>
+                    <div className="mt-0.5">
+                      <UserTypeBadge type={item.member.role} size="xs" />
+                    </div>
+                  </div>
+                </Link>
+              )
+            )}
           </div>
           <Link
             href="/explore"

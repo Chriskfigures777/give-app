@@ -5,6 +5,7 @@ export type SavedOrg = {
   id: string;
   name: string;
   slug: string;
+  org_type: string | null;
   logo_url: string | null;
   profile_image_url: string | null;
 };
@@ -31,7 +32,7 @@ export async function GET() {
 
     const { data: orgs, error: orgError } = await supabase
       .from("organizations")
-      .select("id, name, slug, logo_url, profile_image_url")
+      .select("id, name, slug, org_type, logo_url, profile_image_url")
       .in("id", orgIds);
 
     if (orgError) {
@@ -42,6 +43,7 @@ export async function GET() {
       id: (o as { id: string }).id,
       name: (o as { name: string }).name,
       slug: (o as { slug: string }).slug,
+      org_type: (o as { org_type: string | null }).org_type,
       logo_url: (o as { logo_url: string | null }).logo_url,
       profile_image_url: (o as { profile_image_url: string | null }).profile_image_url,
     }));
