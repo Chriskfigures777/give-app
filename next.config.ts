@@ -16,6 +16,22 @@ const nextConfig: NextConfig = {
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
         ],
       },
+      {
+        // Unit banking CSP — allows Unit, Plaid, Zendesk, VeryGoodVault, Vouched
+        source: "/dashboard/banking/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "connect-src 'self' https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
+              "script-src 'self' 'unsafe-inline' https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://js.verygoodvault.com https://*.vouched.id",
+              "frame-src 'self' https://*.s.unit.sh https://*.unit.co https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
+              "img-src 'self' data: blob: https://*.s.unit.sh https://*.unit.co",
+              "style-src 'self' 'unsafe-inline'",
+            ].join("; "),
+          },
+        ],
+      },
     ];
   },
   webpack: (config, { dev }) => {

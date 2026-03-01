@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { DashboardNav } from "./dashboard-nav";
 import { DashboardThemePicker } from "@/components/dashboard-theme-picker";
 import { getCachedDashboardAuth } from "@/lib/auth";
+import { SignOutButton } from "./sign-out-button";
 
 export async function DashboardSidebar() {
   const { user, profile, orgId, isPlatformAdmin, onboardingCompleted, isMissionary, missionarySponsorOrgId } =
@@ -29,16 +29,7 @@ export async function DashboardSidebar() {
             <p className="truncate text-sm font-semibold text-dashboard-text">
               {profile?.full_name ?? user.email}
             </p>
-            <form action="/api/auth/signout" method="POST" className="mt-0.5">
-              <Button
-                type="submit"
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0 text-xs font-medium text-dashboard-text-muted hover:text-dashboard-text hover:bg-transparent"
-              >
-                Sign out
-              </Button>
-            </form>
+            <SignOutButton />
           </div>
           <DashboardThemePicker size="sm" />
         </div>
