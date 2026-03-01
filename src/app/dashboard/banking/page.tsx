@@ -1,8 +1,10 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+
+const FETCH_TIMEOUT_MS = 15_000;
 
 declare global {
   namespace JSX {
@@ -18,6 +20,15 @@ declare global {
   }
 }
 
+function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  return Promise.race([
+    fetch(url, options),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Request timed out")), timeoutMs)
+    ),
+  ]);
+}
+
 export default function BankingPage() {
   const [customerToken, setCustomerToken] = useState<string | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
@@ -26,65 +37,79 @@ export default function BankingPage() {
   const [scriptError, setScriptError] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasCustomer, setHasCustomer] = useState<boolean | null>(null);
-  // New users see a CTA first; clicking "Open an Account" sets this to true
   const [startOnboarding, setStartOnboarding] = useState(false);
+
+  const fetchCustomerToken = useCallback(async (accessToken: string) => {
+    try {
+      const res = await fetchWithTimeout(
+        "/api/unit/customer-token",
+        { credentials: "include" },
+        FETCH_TIMEOUT_MS
+      );
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.token) {
+        setCustomerToken(data.token);
+        setHasCustomer(true);
+        setError(null);
+      } else if (res.status === 404 && data.hasCustomer === false) {
+        setHasCustomer(false);
+        setJwtToken(accessToken);
+        setCustomerToken(null);
+        setError(null);
+      } else {
+        setError(data.error ?? "Failed to load banking");
+        setCustomerToken(null);
+        setHasCustomer(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error && err.message === "Request timed out" ? "Request timed out. Please try again." : "Failed to load banking");
+      setCustomerToken(null);
+      setHasCustomer(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
+
+    // Safety: if still loading after 12s, force-stop (getSession or fetch may be hanging)
+    const safetyTimer = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) {
+          setError("Loading is taking longer than expected. Please refresh the page.");
+          return false;
+        }
+        return prev;
+      });
+    }, 12_000);
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) {
         setLoading(false);
         return;
       }
-      try {
-        const res = await fetch("/api/unit/customer-token", { credentials: "include" });
-        const data = await res.json().catch(() => ({}));
-        if (res.ok && data.token) {
-          setCustomerToken(data.token);
-          setHasCustomer(true);
-        } else if (res.status === 404 && data.hasCustomer === false) {
-          setHasCustomer(false);
-          setJwtToken(session.access_token);
-        } else {
-          setError(data.error ?? "Failed to load banking");
-        }
-      } catch {
-        setError("Failed to load banking");
-      } finally {
-        setLoading(false);
-      }
+      await fetchCustomerToken(session.access_token);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
         setCustomerToken(null);
         setJwtToken(null);
+        setHasCustomer(null);
         setError(null);
+        setLoading(false);
         return;
       }
-      try {
-        const res = await fetch("/api/unit/customer-token", { credentials: "include" });
-        const data = await res.json().catch(() => ({}));
-        if (res.ok && data.token) {
-          setCustomerToken(data.token);
-          setHasCustomer(true);
-        } else if (res.status === 404 && data.hasCustomer === false) {
-          setHasCustomer(false);
-          setJwtToken(session.access_token);
-        } else {
-          setCustomerToken(null);
-          setJwtToken(null);
-          setError(data.error ?? "Failed to load banking");
-        }
-      } catch {
-        setCustomerToken(null);
-        setJwtToken(null);
-      }
+      setLoading(true);
+      await fetchCustomerToken(session.access_token);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      clearTimeout(safetyTimer);
+      subscription.unsubscribe();
+    };
+  }, [fetchCustomerToken]);
 
   // Existing customer → show their banking dashboard
   const showDashboard = !!(customerToken && scriptReady);
@@ -93,7 +118,7 @@ export default function BankingPage() {
   // New user who hasn't started yet → show the CTA card
   const showOnboardingCTA = hasCustomer === false && !startOnboarding && !loading;
 
-  // Only load Unit script when we need it — avoids 401s from Unit API when showing CTA
+  // Load Unit script only when we need to render unit-elements (avoids Unit 401s when showing CTA)
   const needUnitScript = !!customerToken || (hasCustomer === false && startOnboarding);
 
   return (
@@ -143,8 +168,21 @@ export default function BankingPage() {
 
         {/* API error */}
         {!loading && !scriptError && error && (
-          <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-amber-600">
-            {error}
+          <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-amber-600 space-y-4">
+            <p>{error}</p>
+            <button
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                createClient().auth.getSession().then(({ data: { session } }) => {
+                  if (session) fetchCustomerToken(session.access_token);
+                  else setLoading(false);
+                });
+              }}
+              className="text-sm underline text-dashboard-text hover:no-underline"
+            >
+              Retry
+            </button>
           </div>
         )}
 
