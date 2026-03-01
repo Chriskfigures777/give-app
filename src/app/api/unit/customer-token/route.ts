@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 
 const UNIT_API_URL = process.env.UNIT_API_URL ?? "https://api.s.unit.sh";
 
+// Prevent static optimization/caching — this route returns user-specific tokens
+export const dynamic = "force-dynamic";
+
 /**
  * Exchanges the user's Supabase JWT for a Unit customer token.
  * The banking page calls this instead of using the raw Supabase JWT,

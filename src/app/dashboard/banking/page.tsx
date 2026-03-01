@@ -69,7 +69,7 @@ export default function BankingPage() {
         if (res.ok && data.token) {
           setCustomerToken(data.token);
           setHasCustomer(true);
-        } else if (res.status === 404) {
+        } else if (res.status === 404 && data.hasCustomer === false) {
           setHasCustomer(false);
           setJwtToken(session.access_token);
         } else {
@@ -93,14 +93,19 @@ export default function BankingPage() {
   // New user who hasn't started yet → show the CTA card
   const showOnboardingCTA = hasCustomer === false && !startOnboarding && !loading;
 
+  // Only load Unit script when we need it — avoids 401s from Unit API when showing CTA
+  const needUnitScript = !!customerToken || (hasCustomer === false && startOnboarding);
+
   return (
     <div className="space-y-6 p-2 sm:p-4">
-      <Script
-        src="https://ui.s.unit.sh/release/latest/components-extended.js"
-        strategy="afterInteractive"
-        onReady={() => setScriptReady(true)}
-        onError={() => setScriptError(true)}
-      />
+      {needUnitScript && (
+        <Script
+          src="https://ui.s.unit.sh/release/latest/components-extended.js"
+          strategy="afterInteractive"
+          onReady={() => setScriptReady(true)}
+          onError={() => setScriptError(true)}
+        />
+      )}
 
       <div className="dashboard-fade-in flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Banking</h1>

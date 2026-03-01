@@ -48,7 +48,13 @@
     }
   ],
   "images": {
-    "sizes": [256, 640, 1080, 2048, 3840],
+    "sizes": [
+      256,
+      640,
+      1080,
+      2048,
+      3840
+    ],
     "remotePatterns": [
       {
         "protocol": "https",
@@ -81,6 +87,9 @@
       "maxDuration": 15
     },
     "src/app/api/connect/sync-verification/route.ts": {
+      "maxDuration": 15
+    },
+    "src/app/api/unit/customer-token/route.ts": {
       "maxDuration": 15
     }
   }
