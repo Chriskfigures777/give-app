@@ -17,9 +17,11 @@ declare global {
 
 export default function BankingPage() {
   const [customerToken, setCustomerToken] = useState<string | null>(null);
+  const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [scriptReady, setScriptReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasCustomer, setHasCustomer] = useState<boolean | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,6 +36,12 @@ export default function BankingPage() {
         const data = await res.json();
         if (res.ok && data.token) {
           setCustomerToken(data.token);
+          setHasCustomer(true);
+          setError(null);
+        } else if (res.status === 404 && data.hasCustomer === false) {
+          setHasCustomer(false);
+          setJwtToken(session.access_token);
+          setError(null);
         } else {
           setError(data.error ?? "Failed to load banking");
         }
@@ -47,6 +55,7 @@ export default function BankingPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
         setCustomerToken(null);
+        setJwtToken(null);
         setError(null);
         return;
       }
@@ -55,17 +64,28 @@ export default function BankingPage() {
         const data = await res.json();
         if (res.ok && data.token) {
           setCustomerToken(data.token);
+          setHasCustomer(true);
+          setError(null);
+        } else if (res.status === 404) {
+          setCustomerToken(null);
+          setHasCustomer(false);
+          setJwtToken(session.access_token);
           setError(null);
         } else {
           setCustomerToken(null);
+          setJwtToken(null);
           setError(data.error ?? "Failed to load banking");
         }
       } catch {
         setCustomerToken(null);
+        setJwtToken(null);
       }
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const showApp = (customerToken && scriptReady) || (hasCustomer === false && jwtToken && scriptReady);
+  const token = customerToken ?? jwtToken;
 
   return (
     <div className="space-y-6 p-2 sm:p-4">
@@ -91,7 +111,7 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && !customerToken && !error && (
+        {!loading && !token && !error && (
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-dashboard-text-muted">
             Session expired. Please{" "}
             <a href="/login" className="underline text-dashboard-text">
@@ -107,12 +127,14 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && customerToken && scriptReady && (
-          // @ts-ignore – custom web component; customer-token bypasses JWT 401
-          <unit-elements-white-label-app customer-token={customerToken} />
+        {!loading && showApp && token && (
+          // @ts-ignore – customer-token when approved; jwt-token for new users (application form)
+          <unit-elements-white-label-app
+            {...(customerToken ? { "customer-token": customerToken } : { "jwt-token": jwtToken! })}
+          />
         )}
 
-        {!loading && customerToken && !scriptReady && (
+        {!loading && token && !scriptReady && (
           <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
             Initializing banking interface…
           </div>

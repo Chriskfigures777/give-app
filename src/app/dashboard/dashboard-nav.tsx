@@ -94,7 +94,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       <NavSection title="Overview">
         {link("/dashboard", "Overview", <LayoutDashboard className={iconClass} />, true)}
         {link("/dashboard/my-donations", "My gifts", <Heart className={iconClass} />)}
-        {link("/banking", "Banking", <Landmark className={iconClass} />)}
+        {link("/dashboard/banking", "Banking", <Landmark className={iconClass} />)}
         {(isMissionary || profileRole === "missionary" || plansToBeMissionary) &&
           link("/dashboard/missionary", "My embed", <Share2 className={iconClass} />)}
         {/* Connections for all users — org owners see theirs, individual members see theirs */}

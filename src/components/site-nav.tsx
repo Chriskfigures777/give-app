@@ -165,7 +165,7 @@ export function SiteNav() {
 
   const USER_MENU_ITEMS = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/banking", label: "Banking", icon: Landmark },
+    { href: "/dashboard/banking", label: "Banking", icon: Landmark },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
@@ -451,13 +451,6 @@ export function SiteNav() {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Link
-                href="/banking"
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-300 hover:text-emerald-700"
-              >
-                <Landmark className="h-4 w-4" />
-                Login to Bank Account
-              </Link>
               <Link
                 href={orgSlugForLogin ? `/login?org=${encodeURIComponent(orgSlugForLogin)}` : "/login"}
                 className="rounded-xl px-4 py-2 text-sm font-extrabold text-slate-600 transition-all duration-300 hover:text-slate-900"

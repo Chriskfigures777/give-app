@@ -82,8 +82,14 @@ export async function POST(req: NextRequest) {
   const unitData = await unitRes.json();
 
   if (!unitRes.ok) {
-    const unitError = unitData?.errors?.[0]?.detail ?? unitData?.errors?.[0]?.title ?? "Failed to create banking account";
-    return NextResponse.json({ error: unitError }, { status: 400 });
+    // Log full Unit error server-side so we can debug
+    console.error("[Unit create-customer] status:", unitRes.status, JSON.stringify(unitData, null, 2));
+    const unitError =
+      unitData?.errors?.[0]?.detail ??
+      unitData?.errors?.[0]?.title ??
+      unitData?.error ??
+      `Unit API error ${unitRes.status}`;
+    return NextResponse.json({ error: unitError, unitErrors: unitData?.errors }, { status: 400 });
   }
 
   const unitCustomerId: string = unitData?.data?.id;
