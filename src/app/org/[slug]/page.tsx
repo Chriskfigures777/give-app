@@ -51,7 +51,7 @@ export default async function OrgPage({ params }: Props) {
       page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals,
       page_story, page_story_image_url, page_donation_goal_cents, logo_url, profile_image_url,
       stripe_connect_account_id, page_about_image_side, page_story_image_side,
-      city, state, website_url
+      city, state, website_url, page_published
     `)
     .eq("slug", slug)
     .single();
@@ -77,11 +77,13 @@ export default async function OrgPage({ params }: Props) {
     city: string | null;
     state: string | null;
     website_url: string | null;
+    page_published: boolean | null;
   } | null;
 
   if (!org) notFound();
 
-  if (!org.stripe_connect_account_id) {
+  // Gate: page must be explicitly published AND have Stripe Connect set up
+  if (!org.page_published || !org.stripe_connect_account_id) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-16">
         <div className="w-full max-w-md text-center">
@@ -98,13 +100,13 @@ export default async function OrgPage({ params }: Props) {
               What&apos;s needed
             </p>
             {[
-              { label: "Connect a Stripe account", done: false },
-              { label: "Complete identity verification", done: false },
-              { label: "Publish public page", done: false },
+              { label: "Connect a Stripe account", done: !!org.stripe_connect_account_id },
+              { label: "Complete identity verification", done: !!org.stripe_connect_account_id },
+              { label: "Publish public page from your dashboard", done: !!org.page_published },
             ].map((step) => (
               <div key={step.label} className="flex items-center gap-3 text-sm text-slate-600">
-                <div className="h-4 w-4 shrink-0 rounded-full border-2 border-slate-300" />
-                {step.label}
+                <div className={`h-4 w-4 shrink-0 rounded-full border-2 ${step.done ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`} />
+                <span className={step.done ? "line-through text-slate-400" : ""}>{step.label}</span>
               </div>
             ))}
           </div>

@@ -127,3 +127,35 @@ export async function savePublicPage(input: SaveProfileInput): Promise<{ ok: boo
     };
   }
 }
+
+export async function togglePagePublished(
+  orgSlug: string,
+  publish: boolean
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const { profile, supabase } = await requireAuth();
+    const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
+
+    if (!orgId) {
+      return { ok: false, error: "Organization required" };
+    }
+
+    // @ts-ignore — page_published not yet in generated types
+    const { error } = await supabase
+      .from("organizations")
+      .update({ page_published: publish, updated_at: new Date().toISOString() })
+      .eq("id", orgId);
+
+    if (error) {
+      console.error("togglePagePublished error:", error);
+      return { ok: false, error: error.message };
+    }
+
+    revalidatePath("/dashboard/profile");
+    revalidatePath(`/org/${orgSlug}`, "page");
+    return { ok: true };
+  } catch (e) {
+    console.error("togglePagePublished error:", e);
+    return { ok: false, error: e instanceof Error ? e.message : "Failed to update" };
+  }
+}

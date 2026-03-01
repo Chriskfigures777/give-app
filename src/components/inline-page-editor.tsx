@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { savePublicPage } from "@/app/dashboard/profile/actions";
+import { savePublicPage, togglePagePublished } from "@/app/dashboard/profile/actions";
 import Image from "next/image";
-import { Pencil, Image as ImageIcon, Video, ArrowLeftRight, Upload, Save, Eye } from "lucide-react";
+import { Pencil, Image as ImageIcon, Video, ArrowLeftRight, Upload, Save, Eye, Globe, EyeOff } from "lucide-react";
 import { PexelsMediaPicker } from "./pexels-media-picker";
 import { FormTemplateBox } from "./form-template-box";
 import { CompressedDonationCard } from "./compressed-donation-card";
@@ -69,6 +69,7 @@ type Props = {
   campaigns?: Campaign[];
   hasDefaultForm?: boolean;
   teamMembers?: TeamMember[];
+  pagePublished?: boolean;
 };
 
 const DEFAULT_FORM_ID = "__default__";
@@ -196,6 +197,7 @@ export function InlinePageEditor({
   campaigns = [],
   hasDefaultForm = false,
   teamMembers = [],
+  pagePublished = false,
 }: Props) {
   const effectiveCardId = orgPageEmbedCardId ?? donationCards[0]?.id ?? (hasDefaultForm ? DEFAULT_FORM_ID : null);
   const [data, setData] = useState<PageEditorData>({
@@ -222,6 +224,8 @@ export function InlinePageEditor({
   const [previewKey, setPreviewKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [published, setPublished] = useState(pagePublished);
+  const [toggling, setToggling] = useState(false);
   const [pexelsPicker, setPexelsPicker] = useState<{ field: string; mode: "photos" | "videos" } | null>(null);
   const [heroMediaMenuOpen, setHeroMediaMenuOpen] = useState(false);
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
@@ -304,6 +308,20 @@ export function InlinePageEditor({
     }
   }, [data, profile.slug, router]);
 
+  const handleTogglePublish = useCallback(async () => {
+    setToggling(true);
+    setError(null);
+    const next = !published;
+    const result = await togglePagePublished(profile.slug, next);
+    if (result.ok) {
+      setPublished(next);
+      router.refresh();
+    } else {
+      setError(result.error ?? "Failed to update publish status");
+    }
+    setToggling(false);
+  }, [published, profile.slug, router]);
+
   const handleFileUpload = useCallback(
     async (file: File, field: keyof typeof data) => {
       setUploadingFor(field);
@@ -369,11 +387,26 @@ export function InlinePageEditor({
       <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-8 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Public page</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Public page</h1>
+              {published ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Live
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                  Draft
+                </span>
+              )}
+            </div>
             <p className="mt-2 text-dashboard-text-muted">
               {isEditMode
                 ? "Edit your page directly below. Click any section to edit inline."
-                : "Preview your public page. Click Edit to make changes."}
+                : published
+                ? "Your page is live. Edit and save changes, then publish to update."
+                : "Your page is not visible to the public yet. Edit your content, then click Publish Page when ready."}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -408,6 +441,27 @@ export function InlinePageEditor({
               <Save className="h-4 w-4" />
               {saving ? "Saving…" : saved ? "Saved!" : "Save"}
             </button>
+            {published ? (
+              <button
+                type="button"
+                onClick={() => void handleTogglePublish()}
+                disabled={toggling}
+                className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-100 disabled:opacity-70"
+              >
+                <EyeOff className="h-4 w-4" />
+                {toggling ? "Updating…" : "Unpublish"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void handleTogglePublish()}
+                disabled={toggling}
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-70"
+              >
+                <Globe className="h-4 w-4" />
+                {toggling ? "Publishing…" : "Publish Page"}
+              </button>
+            )}
             {saved && (
               <a
                 href={orgUrl}

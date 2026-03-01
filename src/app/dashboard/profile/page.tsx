@@ -17,7 +17,8 @@ export default async function ProfilePage() {
   const [orgRes, formRes, teamRes, embedCardsRes, campaignsRes] = await Promise.all([
     supabase
       .from("organizations")
-      .select("id, name, slug, logo_url, profile_image_url, page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals, page_story, page_story_image_url, page_about_image_side, page_story_image_side")
+      // @ts-ignore — page_published not yet in generated types
+      .select("id, name, slug, logo_url, profile_image_url, page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals, page_story, page_story_image_url, page_about_image_side, page_story_image_side, page_published")
       .eq("id", targetOrgId)
       .single(),
     supabase
@@ -64,6 +65,7 @@ export default async function ProfilePage() {
     page_story_image_url: string | null;
     page_about_image_side: "left" | "right" | null;
     page_story_image_side: "left" | "right" | null;
+    page_published: boolean | null;
   };
   const formCustom = formRes.data as {
     donation_section_layout?: "text_left" | "text_right" | null;
@@ -131,6 +133,7 @@ export default async function ProfilePage() {
       campaigns={campaigns}
       hasDefaultForm={!!formCustom}
       teamMembers={teamMembers}
+      pagePublished={orgProfile.page_published ?? false}
     />
   );
 }
