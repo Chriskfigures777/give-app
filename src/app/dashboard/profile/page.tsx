@@ -50,7 +50,8 @@ export default async function ProfilePage() {
     redirect("/dashboard");
   }
 
-  const orgProfile = data as {
+  // @ts-ignore — page_published not yet in generated types
+  const orgProfile = data as unknown as {
     id: string;
     name: string;
     slug: string;
