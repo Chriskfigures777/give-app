@@ -21,6 +21,7 @@ export default function BankingPage() {
   const [loading, setLoading] = useState(true);
   const [scriptReady, setScriptReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scriptError, setScriptError] = useState(false);
   const [hasCustomer, setHasCustomer] = useState<boolean | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,8 +33,8 @@ export default function BankingPage() {
         return;
       }
       try {
-        const res = await fetch("/api/unit/customer-token");
-        const data = await res.json();
+        const res = await fetch("/api/unit/customer-token", { credentials: "include" });
+        const data = await res.json().catch(() => ({}));
         if (res.ok && data.token) {
           setCustomerToken(data.token);
           setHasCustomer(true);
@@ -60,8 +61,8 @@ export default function BankingPage() {
         return;
       }
       try {
-        const res = await fetch("/api/unit/customer-token");
-        const data = await res.json();
+        const res = await fetch("/api/unit/customer-token", { credentials: "include" });
+        const data = await res.json().catch(() => ({}));
         if (res.ok && data.token) {
           setCustomerToken(data.token);
           setHasCustomer(true);
@@ -93,6 +94,7 @@ export default function BankingPage() {
         src="https://ui.s.unit.sh/release/latest/components-extended.js"
         strategy="afterInteractive"
         onReady={() => setScriptReady(true)}
+        onError={() => setScriptError(true)}
       />
 
       <div className="dashboard-fade-in flex flex-col gap-1">
@@ -121,7 +123,13 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && error && (
+        {!loading && scriptError && (
+          <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-amber-600">
+            Failed to load the banking interface. Please refresh the page or try again later.
+          </div>
+        )}
+
+        {!loading && !scriptError && error && (
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-amber-600">
             {error}
           </div>
@@ -134,7 +142,7 @@ export default function BankingPage() {
           />
         )}
 
-        {!loading && token && !scriptReady && (
+        {!loading && token && !scriptReady && !scriptError && (
           <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
             Initializing banking interface…
           </div>

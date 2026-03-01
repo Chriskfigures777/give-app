@@ -16,19 +16,25 @@ const UNIT_API_URL = process.env.UNIT_API_URL ?? "https://api.s.unit.sh";
  */
 export async function GET() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const supabaseJwt = session.access_token;
+  // Get a fresh session for the access_token (needed for Unit JWT exchange)
+  const { data: { session } } = await supabase.auth.getSession();
+  const supabaseJwt = session?.access_token;
+
+  if (!supabaseJwt) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
 
   // @ts-ignore – unit_customer_id not in generated types yet
   const { data: profile } = await supabase
     .from("user_profiles")
     .select("unit_customer_id")
-    .eq("id", session.user.id)
+    .eq("id", user.id)
     .single();
 
   // @ts-ignore
