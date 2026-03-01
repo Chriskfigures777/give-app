@@ -9,7 +9,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       "unit-elements-white-label-app": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & { "jwt-token"?: string },
+        React.HTMLAttributes<HTMLElement> & { "jwt-token"?: string; "customer-token"?: string },
         HTMLElement
       >;
     }
@@ -17,20 +17,77 @@ declare global {
 }
 
 export default function BankingPage() {
-  const [token, setToken] = useState<string | null>(null);
+  const [customerToken, setCustomerToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [scriptReady, setScriptReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [hasCustomer, setHasCustomer] = useState<boolean | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setToken(session?.access_token ?? null);
-      setLoading(false);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
+        setAuthenticated(false);
+        setHasCustomer(false);
+        setLoading(false);
+        return;
+      }
+      setAuthenticated(true);
+
+      try {
+        const res = await fetch("/api/unit/customer-token");
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          setCustomerToken(data.token);
+          setHasCustomer(true);
+          setError(null);
+        } else if (res.status === 404 && data.hasCustomer === false) {
+          setHasCustomer(false);
+          setError(null);
+        } else {
+          setError(data.error ?? "Failed to load banking");
+          setHasCustomer(null);
+        }
+      } catch {
+        setError("Failed to load banking");
+        setHasCustomer(null);
+      } finally {
+        setLoading(false);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setToken(session?.access_token ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_e, session) => {
+      if (!session) {
+        setAuthenticated(false);
+        setCustomerToken(null);
+        setHasCustomer(false);
+        setError(null);
+        return;
+      }
+      setAuthenticated(true);
+      try {
+        const res = await fetch("/api/unit/customer-token");
+        const data = await res.json();
+        if (res.ok && data.token) {
+          setCustomerToken(data.token);
+          setHasCustomer(true);
+          setError(null);
+        } else if (res.status === 404) {
+          setCustomerToken(null);
+          setHasCustomer(false);
+          setError(null);
+        } else {
+          setCustomerToken(null);
+          setHasCustomer(null);
+          setError(data.error ?? "Failed to load banking");
+        }
+      } catch {
+        setCustomerToken(null);
+        setHasCustomer(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -52,7 +109,7 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && !token && (
+        {!loading && !authenticated && (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
               <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -74,16 +131,35 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && token && !scriptReady && (
+        {!loading && authenticated && hasCustomer === false && !customerToken && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Banking</h1>
+              <p className="mt-2 text-sm text-slate-500">Apply for banking to get started.</p>
+            </div>
+            <Link href="/dashboard/banking" className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-2.5 text-sm font-extrabold text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-opacity">
+              Go to Dashboard
+            </Link>
+          </div>
+        )}
+
+        {!loading && error && hasCustomer !== false && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+            <p className="text-sm text-amber-600">{error}</p>
+            <p className="text-xs text-slate-500">If you have not applied for banking yet, complete the application first.</p>
+          </div>
+        )}
+
+        {!loading && customerToken && !scriptReady && (
           <div className="flex flex-1 items-center justify-center">
             <span className="text-sm text-slate-400">Initializing banking interface…</span>
           </div>
         )}
 
-        {!loading && token && scriptReady && (
+        {!loading && customerToken && scriptReady && (
           <div className="flex-1 w-full">
-            {/* @ts-ignore – custom web component */}
-            <unit-elements-white-label-app jwt-token={token} />
+            {/* @ts-ignore – custom web component; customer-token bypasses JWT validation 401 */}
+            <unit-elements-white-label-app customer-token={customerToken} />
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       "unit-elements-white-label-app": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & { "jwt-token"?: string },
+        React.HTMLAttributes<HTMLElement> & { "jwt-token"?: string; "customer-token"?: string },
         HTMLElement
       >;
     }
@@ -16,21 +16,53 @@ declare global {
 }
 
 export default function BankingPage() {
-  const [token, setToken] = useState<string | null>(null);
+  const [customerToken, setCustomerToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [scriptReady, setScriptReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setToken(session?.access_token ?? null);
-      setLoading(false);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await fetch("/api/unit/customer-token");
+        const data = await res.json();
+        if (res.ok && data.token) {
+          setCustomerToken(data.token);
+        } else {
+          setError(data.error ?? "Failed to load banking");
+        }
+      } catch {
+        setError("Failed to load banking");
+      } finally {
+        setLoading(false);
+      }
     });
 
-    // Keep token fresh on session changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setToken(session?.access_token ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!session) {
+        setCustomerToken(null);
+        setError(null);
+        return;
+      }
+      try {
+        const res = await fetch("/api/unit/customer-token");
+        const data = await res.json();
+        if (res.ok && data.token) {
+          setCustomerToken(data.token);
+          setError(null);
+        } else {
+          setCustomerToken(null);
+          setError(data.error ?? "Failed to load banking");
+        }
+      } catch {
+        setCustomerToken(null);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -59,7 +91,7 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && !token && (
+        {!loading && !customerToken && !error && (
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-dashboard-text-muted">
             Session expired. Please{" "}
             <a href="/login" className="underline text-dashboard-text">
@@ -69,12 +101,18 @@ export default function BankingPage() {
           </div>
         )}
 
-        {!loading && token && scriptReady && (
-          // @ts-ignore – custom web component
-          <unit-elements-white-label-app jwt-token={token} />
+        {!loading && error && (
+          <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-amber-600">
+            {error}
+          </div>
         )}
 
-        {!loading && token && !scriptReady && (
+        {!loading && customerToken && scriptReady && (
+          // @ts-ignore – custom web component; customer-token bypasses JWT 401
+          <unit-elements-white-label-app customer-token={customerToken} />
+        )}
+
+        {!loading && customerToken && !scriptReady && (
           <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
             Initializing banking interface…
           </div>
