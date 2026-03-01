@@ -23,6 +23,7 @@ import {
   Receipt,
   Code2,
   UserCircle,
+  Landmark,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -93,6 +94,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       <NavSection title="Overview">
         {link("/dashboard", "Overview", <LayoutDashboard className={iconClass} />, true)}
         {link("/dashboard/my-donations", "My gifts", <Heart className={iconClass} />)}
+        {link("/banking", "Banking", <Landmark className={iconClass} />)}
         {(isMissionary || profileRole === "missionary" || plansToBeMissionary) &&
           link("/dashboard/missionary", "My embed", <Share2 className={iconClass} />)}
         {/* Connections for all users — org owners see theirs, individual members see theirs */}
