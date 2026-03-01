@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value: [
-              "connect-src 'self' https://*.supabase.co https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
               "script-src 'self' 'unsafe-inline' https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://js.verygoodvault.com https://*.vouched.id",
               "frame-src 'self' https://*.s.unit.sh https://*.unit.co https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
               "img-src 'self' data: blob: https://*.s.unit.sh https://*.unit.co https://images.pexels.com https://images.unsplash.com https://img.evbuc.com",
