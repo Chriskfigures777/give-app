@@ -15,6 +15,11 @@ import {
   ArrowRight,
   Loader2,
   Zap,
+  Search,
+  Users,
+  Building2,
+  Calendar,
+  MapPin,
 } from "lucide-react";
 import { useMe } from "@/lib/use-me";
 import { FeedItemCard } from "@/components/feed/feed-item-card";
@@ -107,6 +112,64 @@ export function FeedClient() {
   const sentinelRef     = useRef<HTMLDivElement>(null);
   const offsetRef       = useRef(0);
   const pendingItemsRef = useRef<FeedItemResponse[]>([]);
+
+  /* ── Global search ── */
+  type SearchHit =
+    | { kind: "person";  id: string; name: string; role: string; href: string }
+    | { kind: "org";     id: string; name: string; orgType: string | null; href: string }
+    | { kind: "event";   id: string; name: string; date: string; href: string };
+
+  const [searchQuery,   setSearchQuery]   = useState("");
+  const [searchHits,    setSearchHits]    = useState<SearchHit[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchOpen,    setSearchOpen]    = useState(false);
+  const searchRef       = useRef<HTMLDivElement>(null);
+  const searchDebounce  = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (searchQuery.length < 2) { setSearchHits([]); setSearchOpen(false); return; }
+    if (searchDebounce.current) clearTimeout(searchDebounce.current);
+    searchDebounce.current = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const q = encodeURIComponent(searchQuery);
+        const [commRes, evtRes] = await Promise.all([
+          fetch(`/api/community/members?q=${q}&limit=6`),
+          fetch(`/api/search?q=${q}&type=event&limit=3`),
+        ]);
+        const commData = commRes.ok ? await commRes.json() : { results: [] };
+        const evtData  = evtRes.ok  ? await evtRes.json()  : { events: [] };
+
+        const hits: SearchHit[] = [];
+        for (const r of commData.results ?? []) {
+          if (r.kind === "user") {
+            hits.push({ kind: "person", id: r.id, name: r.name, role: r.role, href: `/u/${r.id}` });
+          } else {
+            hits.push({ kind: "org", id: r.id, name: r.name, orgType: r.org_type ?? null, href: `/org/${r.slug}` });
+          }
+        }
+        for (const e of evtData.events ?? []) {
+          hits.push({ kind: "event", id: e.id, name: e.name, date: e.start_at, href: `/events/${e.slug ?? e.id}` });
+        }
+        setSearchHits(hits);
+        setSearchOpen(hits.length > 0);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+    return () => { if (searchDebounce.current) clearTimeout(searchDebounce.current); };
+  }, [searchQuery]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   /* ── Data fetching ── */
   const fetchFeed = useCallback(async (append = false) => {
@@ -346,6 +409,150 @@ export function FeedClient() {
                 <span className="text-[10px] font-bold uppercase tracking-wider">Live</span>
               </div>
             </div>
+          </div>
+
+          {/* ── Global search bar ── */}
+          <div ref={searchRef} className="relative mb-5">
+            <div
+              className="flex items-center gap-2 rounded-2xl px-4 py-3 transition-all duration-200"
+              style={{
+                background: "var(--feed-input-bg)",
+                border: "1px solid var(--feed-border)",
+                boxShadow: searchQuery ? "var(--feed-glow)" : "none",
+              }}
+            >
+              {searchLoading
+                ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" style={{ color: "var(--feed-text-muted)" }} />
+                : <Search className="h-4 w-4 shrink-0" style={{ color: "var(--feed-text-muted)" }} />
+              }
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => { if (searchHits.length > 0) setSearchOpen(true); }}
+                placeholder="Search people, organizations, events…"
+                className="flex-1 bg-transparent text-sm outline-none"
+                style={{ color: "var(--feed-text)" }}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => { setSearchQuery(""); setSearchHits([]); setSearchOpen(false); }}
+                  className="rounded-full p-0.5 transition-opacity hover:opacity-70"
+                  style={{ color: "var(--feed-text-muted)" }}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown results */}
+            <AnimatePresence>
+              {searchOpen && searchHits.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl shadow-2xl"
+                  style={{
+                    background: "var(--feed-card)",
+                    border: "1px solid var(--feed-border-strong)",
+                    boxShadow: "var(--feed-card-shadow-hover)",
+                  }}
+                >
+                  {/* Group: People */}
+                  {searchHits.filter(h => h.kind === "person").length > 0 && (
+                    <div>
+                      <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--feed-text-muted)" }}>
+                        People
+                      </p>
+                      {searchHits.filter(h => h.kind === "person").map((h) => (
+                        <Link
+                          key={h.id}
+                          href={h.href}
+                          onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-sky-50/60"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-600">
+                            {h.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium" style={{ color: "var(--feed-text)" }}>{h.name}</p>
+                            <p className="text-xs capitalize" style={{ color: "var(--feed-text-muted)" }}>{"role" in h ? h.role : ""}</p>
+                          </div>
+                          <Users className="ml-auto h-3.5 w-3.5 shrink-0 opacity-40" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {/* Group: Organizations */}
+                  {searchHits.filter(h => h.kind === "org").length > 0 && (
+                    <div>
+                      <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--feed-text-muted)" }}>
+                        Organizations
+                      </p>
+                      {searchHits.filter(h => h.kind === "org").map((h) => (
+                        <Link
+                          key={h.id}
+                          href={h.href}
+                          onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-emerald-50/60"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                            <Building2 className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium" style={{ color: "var(--feed-text)" }}>{h.name}</p>
+                            <p className="text-xs capitalize" style={{ color: "var(--feed-text-muted)" }}>{"orgType" in h && h.orgType ? h.orgType : "Organization"}</p>
+                          </div>
+                          <Building2 className="ml-auto h-3.5 w-3.5 shrink-0 opacity-40" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {/* Group: Events */}
+                  {searchHits.filter(h => h.kind === "event").length > 0 && (
+                    <div>
+                      <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--feed-text-muted)" }}>
+                        Events
+                      </p>
+                      {searchHits.filter(h => h.kind === "event").map((h) => (
+                        <Link
+                          key={h.id}
+                          href={h.href}
+                          onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-violet-50/60"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100">
+                            <Calendar className="h-4 w-4 text-violet-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium" style={{ color: "var(--feed-text)" }}>{h.name}</p>
+                            <p className="text-xs" style={{ color: "var(--feed-text-muted)" }}>
+                              {"date" in h ? new Date(h.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : ""}
+                            </p>
+                          </div>
+                          <Calendar className="ml-auto h-3.5 w-3.5 shrink-0 opacity-40" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {/* Footer: see all */}
+                  <div className="border-t px-4 py-3" style={{ borderColor: "var(--feed-border)" }}>
+                    <Link
+                      href={`/community?q=${encodeURIComponent(searchQuery)}`}
+                      onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                      className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      See all results for &ldquo;{searchQuery}&rdquo;
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* ── New items floating pill ── */}

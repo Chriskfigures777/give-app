@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
@@ -308,7 +309,8 @@ const ROLE_FILTERS: Record<TypeFilter, { label: string; value: RoleFilter }[]> =
 };
 
 export function CommunityClient() {
-  const [query, setQuery] = useState("");
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("");
   const [results, setResults] = useState<CommunityItem[]>([]);

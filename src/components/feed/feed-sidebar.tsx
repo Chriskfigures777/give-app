@@ -261,14 +261,8 @@ export function FeedSidebar() {
           )}
         </div>
         {totalPeers === 0 ? (
-          <div className="rounded-lg bg-slate-50 p-4 text-center">
+          <div className="rounded-lg bg-slate-50 p-3 text-center">
             <p className="text-sm text-slate-500">No connections yet.</p>
-            <Link
-              href="/community"
-              className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700"
-            >
-              Find people <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
         ) : (
           <div className="space-y-0.5">
@@ -294,6 +288,15 @@ export function FeedSidebar() {
             ))}
           </div>
         )}
+        {/* Always-visible Find People link */}
+        <Link
+          href="/community"
+          className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-sky-50 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+        >
+          <Users className="h-3.5 w-3.5" />
+          Find &amp; connect with people
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {/* Discover — mixed orgs + individual users */}

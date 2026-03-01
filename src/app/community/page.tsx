@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { CommunityClient } from "./community-client";
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function CommunityPage() {
-  return <CommunityClient />;
+  return (
+    <Suspense>
+      <CommunityClient />
+    </Suspense>
+  );
 }
