@@ -68,8 +68,32 @@ The `unit_jwt_hook` adds `unitRole: "individual"` to every JWT. Enable it:
 5. We save `unit_customer_id` to `user_profiles`
 6. User refreshes or returns → `customer-token` API finds `unit_customer_id` → returns token → banking dashboard loads
 
+## Localhost Development
+
+Banking works on `http://localhost:3000` with the same setup:
+
+1. **`.env.local`** — Add Unit vars (same as production):
+   ```
+   UNIT_API_TOKEN=your_sandbox_token
+   UNIT_API_URL=https://api.s.unit.sh
+   UNIT_WEBHOOK_SECRET=your_webhook_secret
+   ```
+
+2. **Supabase** — Add `http://localhost:3000` to Redirect URLs:
+   - Supabase Dashboard → Authentication → URL Configuration → Redirect URLs
+
+3. **Unit Dashboard** — JWKS URL is the same (Supabase URL, not app URL). No localhost-specific config.
+
+4. **Webhook** — For localhost, use [ngrok](https://ngrok.com) or [webhook.site](https://webhook.site) to receive `customer.created`, or test on Vercel.
+
+5. **Clear Unit cache** when switching users or debugging:
+   - DevTools → Application → Local Storage → remove `unitCustomerToken`, `unitVerifiedCustomerToken`
+
+**Note:** 404 on `/api/unit/customer-token` when logged in = "no banking account yet" (expected). The page shows "Open an Account". Unit 401s = JWKS not configured in Unit Dashboard.
+
 ## Troubleshooting
 
-- **"Demo" or generic view**: Unit cannot validate your JWT → check JWKS URL and Issuer in Unit Dashboard
+- **404 on customer-token**: Expected for new users (no `unit_customer_id`). Page shows "Open an Account" CTA.
+- **Unit 401 (theme/user/app)**: Unit cannot validate your JWT → configure JWKS URL in Unit Dashboard
+- **"Demo" or generic view**: Same as above — JWKS not configured
 - **Application submits but no DB save**: Webhook not configured or `UNIT_WEBHOOK_SECRET` mismatch
-- **401 on customer-token**: User has no `unit_customer_id` yet (application pending or webhook not received)
