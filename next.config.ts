@@ -17,18 +17,19 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Unit banking CSP — allows Unit, Supabase, Plaid, Zendesk, VeryGoodVault, Vouched
-        // Must include Supabase so client-side auth (getUser, getSession) is not blocked
+        // Unit banking CSP — Unit, Supabase, Plaid, Zendesk, VeryGoodVault, VeryGoodProxy, Vouched
+        // Google Fonts, YouTube (help videos), card tokenization (verygoodproxy.com)
         source: "/dashboard/banking/:path*",
         headers: [
           {
             key: "Content-Security-Policy",
             value: [
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.verygoodproxy.com https://*.vouched.id",
               "script-src 'self' 'unsafe-inline' https://*.s.unit.sh https://*.unit.co https://*.zdassets.com https://*.zendesk.com https://cdn.plaid.com https://js.verygoodvault.com https://*.vouched.id",
-              "frame-src 'self' https://*.s.unit.sh https://*.unit.co https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id",
-              "img-src 'self' data: blob: https://*.s.unit.sh https://*.unit.co https://images.pexels.com https://images.unsplash.com https://img.evbuc.com",
-              "style-src 'self' 'unsafe-inline'",
+              "frame-src 'self' https://*.s.unit.sh https://*.unit.co https://*.zendesk.com https://cdn.plaid.com https://*.verygoodvault.com https://*.vouched.id https://www.youtube.com https://www.youtube-nocookie.com https://*.youtube.com https://*.youtube-nocookie.com",
+              "img-src 'self' data: blob: https:",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
             ].join("; "),
           },
         ],
