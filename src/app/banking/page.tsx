@@ -43,16 +43,29 @@ export default function BankingPage() {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { setStatus("unauthenticated"); return; }
-      setToken(session.access_token);
 
-      // Pre-fill email; check if this user already has a Unit customer
-      const res = await fetch("/api/unit/customer-status");
-      const data = await res.json();
-      setStatus(data.hasCustomer ? "ready" : "apply");
+      // Try to get a Unit customer token (exchanges Supabase JWT → Unit token)
+      const res = await fetch("/api/unit/customer-token");
+
+      if (res.status === 404) {
+        // No Unit customer yet — show application form
+        setStatus("apply");
+        return;
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        setToken(data.token); // Unit customer token
+        setStatus("ready");
+        return;
+      }
+
+      // Fallback: check if they just need to apply
+      setStatus("apply");
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setToken(session?.access_token ?? null);
+      if (!session) setToken(null);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -78,6 +91,13 @@ export default function BankingPage() {
       setFormError(data.error ?? "Something went wrong. Please try again.");
       setSubmitting(false);
       return;
+    }
+
+    // Customer created — now exchange for a Unit customer token
+    const tokenRes = await fetch("/api/unit/customer-token");
+    if (tokenRes.ok) {
+      const tokenData = await tokenRes.json();
+      setToken(tokenData.token);
     }
 
     setStatus("ready");
