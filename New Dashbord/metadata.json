@@ -1,0 +1,11 @@
+{
+  "toolscriptVersion": "1.0.0",
+  "version": "43.0.9",
+  "pageUuid": "30ac292c-05c6-11f1-9d54-8b61b0eca8e8",
+  "appTemplate": {
+    "appThemeId": "custom",
+    "rootScreen": "page1",
+    "appThemeName": "Custom app theme",
+    "version": "3.337.0"
+  }
+}

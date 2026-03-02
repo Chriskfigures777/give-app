@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="modern-minimal">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Give | Your Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --accent: #0EA5E9;
+      --accent-dark: #0284C7;
+      --dark: #0F172A;
+      --light: #F8FAFC;
+      --text: #334155;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --heading: 'Crimson Pro', serif;
+      --body: 'Inter', sans-serif;
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow: 0 4px 16px rgba(15,23,42,0.06);
+      --shadow-lg: 0 8px 32px rgba(15,23,42,0.08);
+      --radius: 12px;
+      --radius-sm: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--body); color: var(--text); background: #fff; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3, h4 { font-family: var(--heading); color: var(--dark); line-height: 1.2; }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 700; }
+    h3 { font-size: 1.3rem; font-weight: 600; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { margin-bottom: 20px; }
+    .section-subtitle { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff; padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: none; cursor: pointer;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--dark); padding: 14px 32px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      font-family: var(--body); border: 2px solid var(--dark); cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { background: var(--dark); color: #fff; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: var(--dark);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 72px;
+    }
+    .nav-logo { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75); font-size: 0.9rem; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px; transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.08); }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 10px 22px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--accent-dark) !important; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; margin: 5px 0; border-radius: 2px; transition: 0.3s; }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        display: none; flex-direction: column; position: absolute;
+        top: 72px; left: 0; right: 0; background: var(--dark);
+        padding: 16px 24px 24px; gap: 4px; border-top: 1px solid rgba(255,255,255,0.08);
+      }
+      .nav-links a { padding: 12px 16px; width: 100%; }
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      position: relative; padding: 180px 0 100px; text-align: center;
+      background: linear-gradient(160deg, var(--dark) 0%, #1E293B 100%);
+      margin-top: 72px; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;
+      opacity: 0.12;
+    }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-hero .section-label { color: var(--accent); }
+    .page-hero h1 { color: #fff; margin-bottom: 16px; }
+    .page-hero p { color: rgba(248,250,252,0.65); font-size: 1.1rem; max-width: 540px; margin: 0 auto; }
+
+    /* GIVE EMBED */
+    .give-embed-container {
+      max-width: 640px; margin: 0 auto; padding: 48px; background: #fff;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* IMPACT */
+    .impact-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 48px; }
+    .impact-card {
+      text-align: center; padding: 36px 20px; background: #fff;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .impact-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .impact-number { font-family: var(--heading); font-size: 2.4rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    .impact-card p { color: var(--muted); font-size: 0.9rem; }
+
+    @media (max-width: 768px) {
+      .impact-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* TESTIMONIALS */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+    .testimonial-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 32px; transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .testimonial-card blockquote {
+      font-style: italic; color: var(--text); font-size: 0.95rem;
+      margin-bottom: 20px; line-height: 1.7;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 1rem;
+    }
+    .testimonial-name { font-weight: 600; color: var(--dark); font-size: 0.9rem; }
+    .testimonial-role { color: var(--muted); font-size: 0.82rem; }
+
+    @media (max-width: 768px) {
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+
+    /* WAYS TO GIVE */
+    .ways-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+    .way-card {
+      text-align: center; padding: 40px 28px; background: #fff;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .way-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .way-icon { font-size: 2rem; margin-bottom: 16px; }
+    .way-card h3 { margin-bottom: 10px; }
+    .way-card p { color: var(--muted); font-size: 0.9rem; }
+
+    @media (max-width: 768px) {
+      .ways-grid { grid-template-columns: 1fr; }
+    }
+
+    /* SCRIPTURE BANNER */
+    .scripture-banner {
+      background: var(--dark); color: #fff; text-align: center; padding: 80px 24px;
+    }
+    .scripture-banner blockquote {
+      font-family: var(--heading); font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 600; line-height: 1.5; max-width: 800px; margin: 0 auto 20px;
+      color: rgba(248,250,252,0.9);
+    }
+    .scripture-banner cite { color: var(--accent); font-style: normal; font-weight: 600; font-size: 0.95rem; }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(248,250,252,0.65); padding: 80px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+    .footer-brand { font-family: var(--heading); font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .footer-desc { font-size: 0.9rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a {
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6);
+      font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+    }
+    .footer-social a:hover { background: var(--accent); color: #fff; }
+    .footer-col h4 { color: #fff; font-family: var(--body); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      margin-top: 60px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Your Church</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <div class="section-label">Generosity</div>
+      <h1>Give Generously</h1>
+      <p>Your faithful giving empowers our church to reach more people, serve our community, and advance God's Kingdom.</p>
+    </div>
+  </section>
+
+  <!-- GIVE EMBED -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <div class="section-label">Online Giving</div>
+        <h2 class="section-title">Make a Gift</h2>
+        <p class="section-subtitle mx-auto">Giving is simple, secure, and makes an eternal impact. Thank you for your generosity.</p>
+      </div>
+      <div class="give-embed-container">
+        {{cms:give_embed}}
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section class="section" style="background: var(--light);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Your Impact</div>
+        <h2 class="section-title">Where Your Giving Goes</h2>
+        <p class="section-subtitle mx-auto">Every dollar you give helps transform lives locally and around the world.</p>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <div class="impact-number">2,400+</div>
+          <p>Meals Served Monthly</p>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number">150</div>
+          <p>Kids in Programs</p>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number">12</div>
+          <p>Global Mission Partners</p>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number">40+</div>
+          <p>Small Groups Weekly</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Stories of Impact</div>
+        <h2 class="section-title">Why We Give</h2>
+        <p class="section-subtitle mx-auto">Hear from members of our community about how generosity has shaped their faith.</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <blockquote>&ldquo;Giving has completely changed how I see my relationship with God. It's not about the amount — it's about the heart behind it.&rdquo;</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">J</div>
+            <div>
+              <div class="testimonial-name">James Wilson</div>
+              <div class="testimonial-role">Member since 2019</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <blockquote>&ldquo;Seeing our church feed hundreds of families every month reminded me that my small gift is part of something so much bigger.&rdquo;</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">M</div>
+            <div>
+              <div class="testimonial-name">Maria Gonzalez</div>
+              <div class="testimonial-role">Member since 2021</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <blockquote>&ldquo;Our family started tithing last year. It was a step of faith, but God has been so faithful in return. We wouldn't change a thing.&rdquo;</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">D</div>
+            <div>
+              <div class="testimonial-name">David &amp; Sarah Chen</div>
+              <div class="testimonial-role">Members since 2018</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAYS TO GIVE -->
+  <section class="section" style="background: var(--light);">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">Options</div>
+        <h2 class="section-title">Ways to Give</h2>
+        <p class="section-subtitle mx-auto">Choose the giving method that works best for you. Every option is safe and secure.</p>
+      </div>
+      <div class="ways-grid">
+        <div class="way-card">
+          <div class="way-icon">&#128187;</div>
+          <h3>Online</h3>
+          <p>Give securely through our website anytime using a credit card, debit card, or bank transfer.</p>
+        </div>
+        <div class="way-card">
+          <div class="way-icon">&#128241;</div>
+          <h3>Mobile App</h3>
+          <p>Download our church app and give on the go. Set up recurring gifts from your phone.</p>
+        </div>
+        <div class="way-card">
+          <div class="way-icon">&#9993;</div>
+          <h3>In Person</h3>
+          <p>Drop your gift in the offering box during any Sunday service or mail a check to our office.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTURE BANNER -->
+  <section class="scripture-banner">
+    <div class="container">
+      <blockquote>&ldquo;Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.&rdquo;</blockquote>
+      <cite>2 Corinthians 9:7</cite>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">Your Church</div>
+          <p class="footer-desc">A community of Christ-followers committed to loving God, loving people, and making a difference in the world.</p>
+          <div class="footer-social">
+            <a href="#">f</a>
+            <a href="#">ig</a>
+            <a href="#">yt</a>
+            <a href="#">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="ministries.html">Ministries</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="media.html">Media</a></li>
+            <li><a href="give.html">Give</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="visit.html">Plan a Visit</a></li>
+            <li><a href="#">Small Groups</a></li>
+            <li><a href="#">Volunteer</a></li>
+            <li><a href="#">Prayer Request</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>123 Main Street</li>
+            <li>City, State 12345</li>
+            <li style="margin-top: 12px;"><a href="tel:+15551234567">(555) 123-4567</a></li>
+            <li><a href="mailto:hello@yourchurch.com">hello@yourchurch.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Your Church. All rights reserved.</span>
+        <span><a href="#">Privacy Policy</a> &middot; <a href="#">Terms</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

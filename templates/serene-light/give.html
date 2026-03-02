@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="serene-light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Give — Serenity Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#7C3AED;
+  --accent-light:#A78BFA;
+  --dark:#581C87;
+  --bg:#FAF5FF;
+  --card:#FFFFFF;
+  --text:#581C87;
+  --muted:#7C3AED80;
+  --radius:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Lora',serif;line-height:1.2}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:72px;background:rgba(88,28,135,0.97);backdrop-filter:blur(12px);box-shadow:0 2px 20px rgba(88,28,135,0.15)}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo-icon{width:28px;height:28px;position:relative}
+.nav-logo-icon::before,.nav-logo-icon::after{content:'';position:absolute;background:var(--accent-light);border-radius:2px}
+.nav-logo-icon::before{width:4px;height:100%;left:50%;transform:translateX(-50%)}
+.nav-logo-icon::after{width:100%;height:4px;top:30%;transform:translateY(-50%)}
+.nav-logo span{font-family:'Lora',serif;font-size:20px;color:#fff;font-weight:700}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--accent-light)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:9px 22px;border-radius:var(--radius);font-weight:700!important;box-shadow:0 2px 12px rgba(124,58,237,0.3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;display:block}
+
+.page-hero{padding:160px 60px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
+.page-hero::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;filter:brightness(0.18)}
+.page-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(88,28,135,0.85),rgba(124,58,237,0.7))}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,0.5);font-size:13px;transition:color 0.2s}
+.breadcrumb a:hover{color:var(--accent-light)}
+.breadcrumb span{color:rgba(255,255,255,0.3);font-size:13px}
+.eyebrow{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent-light);font-weight:700;margin-bottom:14px;display:block}
+.page-hero h1{font-size:clamp(36px,5vw,60px);color:#fff;line-height:1.15;margin-bottom:20px}
+.page-hero p{color:rgba(255,255,255,0.75);font-size:17px;line-height:1.7;max-width:520px}
+
+.section{padding:90px 60px}
+.section.dark{background:var(--dark)}
+.section.cream{background:var(--bg)}
+.section.white{background:#fff}
+.container{max-width:1100px;margin:0 auto}
+.sec-eye{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;display:block}
+.sec-title{font-size:clamp(28px,4vw,44px);color:var(--dark);margin-bottom:18px}
+.sec-title.light{color:#fff}
+.sec-sub{color:var(--muted);font-size:16px;line-height:1.7;max-width:560px}
+.sec-sub.light{color:rgba(255,255,255,0.65)}
+.text-center{text-align:center}
+.text-center .sec-sub{margin:0 auto}
+.btn-primary{background:var(--accent);color:#fff;padding:14px 32px;border-radius:var(--radius);font-weight:700;font-size:14px;display:inline-block;box-shadow:0 4px 20px rgba(124,58,237,0.3);transition:transform 0.2s,box-shadow 0.2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.4)}
+.btn-outline{border:2px solid rgba(255,255,255,0.4);color:#fff;padding:14px 32px;border-radius:var(--radius);font-weight:600;font-size:14px;display:inline-block;background:transparent;transition:border-color 0.2s}
+.btn-outline:hover{border-color:var(--accent-light)}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+
+.give-embed-container{max-width:700px;margin:0 auto;padding:48px;background:var(--card);border-radius:var(--radius);box-shadow:0 8px 40px rgba(124,58,237,0.1)}
+
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.impact-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:transform 0.3s,border-color 0.3s}
+.impact-card:hover{transform:translateY(-4px);border-color:var(--accent-light)}
+.impact-icon{font-size:32px;margin-bottom:12px}
+.impact-num{font-family:'Lora',serif;font-size:36px;font-weight:700;color:#fff;margin-bottom:6px}
+.impact-label{color:rgba(255,255,255,0.6);font-size:14px;font-weight:500}
+
+.testimonial-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
+.testimonial-card{background:var(--card);border-radius:var(--radius);padding:40px;box-shadow:0 4px 24px rgba(124,58,237,0.08);transition:transform 0.3s}
+.testimonial-card:hover{transform:translateY(-4px)}
+.testimonial-card .quote{font-family:'Lora',serif;font-size:18px;font-style:italic;color:var(--dark);line-height:1.7;margin-bottom:24px}
+.testimonial-author{display:flex;align-items:center;gap:14px}
+.testimonial-author img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
+.testimonial-author .name{font-weight:700;color:var(--dark);font-size:15px}
+.testimonial-author .role{font-size:13px;color:var(--muted)}
+
+.ways-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.way-card{background:var(--card);border-radius:var(--radius);padding:36px 28px;text-align:center;box-shadow:0 4px 20px rgba(124,58,237,0.06);transition:transform 0.3s,box-shadow 0.3s;border:1px solid rgba(124,58,237,0.08)}
+.way-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(124,58,237,0.12)}
+.way-icon{width:56px;height:56px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.way-card h3{font-size:18px;color:var(--dark);margin-bottom:8px}
+.way-card p{font-size:14px;color:var(--muted);line-height:1.6}
+
+.scripture-banner{position:relative;padding:100px 60px;text-align:center;overflow:hidden}
+.scripture-banner .sb-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed;filter:brightness(0.15)}
+.scripture-banner .sb-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(88,28,135,0.7),rgba(124,58,237,0.5))}
+.scripture-banner .sb-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.scripture-banner .verse{font-family:'Lora',serif;font-size:clamp(22px,3.5vw,40px);color:#fff;line-height:1.4;margin-bottom:18px;font-style:italic}
+.scripture-banner .ref{color:var(--accent-light);font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
+
+.cta-section{text-align:center}
+
+footer{background:var(--dark);color:rgba(255,255,255,0.6);padding:70px 60px 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1100px;margin:0 auto 50px}
+.footer-brand .logo-text{font-family:'Lora',serif;font-size:22px;color:#fff;font-weight:700;display:block;margin-bottom:14px}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent-light);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,0.6);font-size:14px;transition:color 0.2s}
+.footer-col a:hover{color:var(--accent-light)}
+.footer-divider{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:0}
+.footer-bottom{max-width:1100px;margin:0 auto;padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent-light);transition:color 0.2s}
+.footer-bottom a:hover{color:#fff}
+.social-links{display:flex;gap:12px}
+.social-links a{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:13px;transition:all 0.2s}
+.social-links a:hover{border-color:var(--accent-light);color:var(--accent-light)}
+
+@media(max-width:900px){
+  .nav{padding:0 24px}
+  .nav-links{display:none;position:fixed;top:72px;left:0;right:0;background:rgba(88,28,135,0.98);flex-direction:column;padding:24px;gap:16px;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+  .nav-links a{padding:8px 0;font-size:15px}
+  .hamburger{display:flex}
+  .page-hero{padding:120px 24px 60px}
+  .section{padding:60px 24px}
+  .give-embed-container{padding:28px 20px}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .testimonial-grid{grid-template-columns:1fr}
+  .ways-grid{grid-template-columns:1fr}
+  .scripture-banner{padding:60px 24px}
+  footer{padding:50px 24px 30px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"></div>
+    <span>Serenity Church</span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,0.7)">Give</span></div>
+    <span class="eyebrow">Generosity</span>
+    <h1>Give in Peace</h1>
+    <p>Every act of generosity helps us reach more families, serve our community, and share the hope of the Gospel. Thank you for partnering with us in this mission.</p>
+  </div>
+</section>
+
+<!-- GIVE EMBED -->
+<section class="section cream">
+  <div class="container text-center">
+    <span class="sec-eye">Support Our Mission</span>
+    <h2 class="sec-title">Make Your Gift</h2>
+    <p class="sec-sub" style="margin:0 auto 40px">Your generosity fuels our mission. Choose a fund, select an amount, and give securely online.</p>
+  </div>
+  <div class="give-embed-container">
+    {{cms:give_embed}}
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="section dark">
+  <div class="container text-center">
+    <span class="sec-eye" style="color:var(--accent-light)">Our Impact Together</span>
+    <h2 class="sec-title light">See What Your Generosity Makes Possible</h2>
+    <p class="sec-sub light" style="margin:0 auto">Through your faithful giving, we are making a difference locally and globally.</p>
+    <div class="impact-grid">
+      <div class="impact-card"><div class="impact-icon">🌍</div><div class="impact-num">12</div><div class="impact-label">Mission Partners Worldwide</div></div>
+      <div class="impact-card"><div class="impact-icon">👨‍👩‍👧‍👦</div><div class="impact-num">850+</div><div class="impact-label">Families Served Annually</div></div>
+      <div class="impact-card"><div class="impact-icon">💰</div><div class="impact-num">$2.1M</div><div class="impact-label">Invested in Community</div></div>
+      <div class="impact-card"><div class="impact-icon">⛪</div><div class="impact-num">47</div><div class="impact-label">Active Ministries</div></div>
+      <div class="impact-card"><div class="impact-icon">🤝</div><div class="impact-num">320</div><div class="impact-label">Dedicated Volunteers</div></div>
+      <div class="impact-card"><div class="impact-icon">🏗️</div><div class="impact-num">3</div><div class="impact-label">Church Plants Launched</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section white">
+  <div class="container">
+    <div class="text-center">
+      <span class="sec-eye">Stories of Generosity</span>
+      <h2 class="sec-title">Why We Give</h2>
+      <p class="sec-sub" style="margin:0 auto">Hear from members of our community about how giving has transformed their lives and deepened their faith.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p class="quote">"When we started tithing faithfully, it wasn't just our finances that changed — it was our whole perspective. We've seen God provide in ways we never imagined, and we've become part of something so much bigger than ourselves."</p>
+        <div class="testimonial-author">
+          <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Sarah Mitchell">
+          <div><div class="name">Sarah Mitchell</div><div class="role">Member since 2018</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">"I sponsor a child through the missions fund and got to visit the school we built last summer. Seeing those kids' faces and knowing our church made that happen — that's something money can't buy."</p>
+        <div class="testimonial-author">
+          <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120" alt="James Rodriguez">
+          <div><div class="name">James Rodriguez</div><div class="role">Missions Team Volunteer</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAYS TO GIVE -->
+<section class="section cream">
+  <div class="container">
+    <div class="text-center">
+      <span class="sec-eye">Multiple Options</span>
+      <h2 class="sec-title">Ways to Give</h2>
+      <p class="sec-sub" style="margin:0 auto">We want to make it easy for you to be generous. Choose the method that works best for you.</p>
+    </div>
+    <div class="ways-grid">
+      <div class="way-card"><div class="way-icon">📱</div><h3>Text to Give</h3><p>Text any amount to <strong>(555) 555-GIVE</strong> and follow the simple prompts to complete your gift in seconds.</p></div>
+      <div class="way-card"><div class="way-icon">✉️</div><h3>Give by Mail</h3><p>Send a check made payable to Serenity Church at <strong>123 Serenity Lane, Your City, ST 12345</strong>.</p></div>
+      <div class="way-card"><div class="way-icon">🏦</div><h3>ACH / Bank Transfer</h3><p>Set up a direct bank transfer for recurring gifts. Contact our office for routing details.</p></div>
+      <div class="way-card"><div class="way-icon">📦</div><h3>In-Kind Donations</h3><p>Donate goods, supplies, or professional services to support our community outreach programs.</p></div>
+      <div class="way-card"><div class="way-icon">📜</div><h3>Estate &amp; Planned Giving</h3><p>Leave a legacy through your will, trust, or estate plan. Contact our stewardship team to learn more.</p></div>
+      <div class="way-card"><div class="way-icon">🙏</div><h3>Give In Person</h3><p>Drop your gift in the offering during any Sunday service or visit the Welcome Center in the lobby.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCRIPTURE BANNER -->
+<section class="scripture-banner">
+  <div class="sb-bg"></div>
+  <div class="sb-overlay"></div>
+  <div class="sb-content">
+    <p class="verse">"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."</p>
+    <span class="ref">— 2 Corinthians 9:7</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section dark cta-section">
+  <div class="container">
+    <span class="sec-eye" style="color:var(--accent-light)">Stewardship</span>
+    <h2 class="sec-title light" style="margin-bottom:16px">Questions About Giving?</h2>
+    <p class="sec-sub light" style="margin:0 auto 36px">Our stewardship team is here to help with tax receipts, recurring gifts, estate planning, or any questions about how your generosity makes an impact.</p>
+    <div class="btns" style="justify-content:center">
+      <a href="mailto:giving@serenitychurch.org" class="btn-primary">Contact Stewardship Team</a>
+      <a href="tel:+15555550123" class="btn-outline">Call (555) 555-0123</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo-text">✝ Serenity Church</span>
+      <p>A place of peace, healing, and community. Where every soul finds rest in His presence. You are always welcome here.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Get Involved</h5>
+      <ul>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="ministries.html">Small Groups</a></li>
+        <li><a href="ministries.html">Volunteer</a></li>
+        <li><a href="#">Prayer Requests</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="visit.html">123 Serenity Lane</a></li>
+        <li><a href="visit.html">Your City, ST 12345</a></li>
+        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
+        <li><a href="mailto:hello@serenitychurch.org">hello@serenitychurch.org</a></li>
+        <li><a href="visit.html">Sun 8:00 &amp; 10:30 AM</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="footer-divider">
+  <div class="footer-bottom">
+    <span>&copy; 2025 Serenity Church. All rights reserved.</span>
+    <div class="social-links">
+      <a href="#" title="Facebook">f</a>
+      <a href="#" title="Instagram">ig</a>
+      <a href="#" title="YouTube">▶</a>
+      <a href="#" title="Podcast">♪</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

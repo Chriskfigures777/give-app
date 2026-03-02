@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="bold-contemporary">
+<head>
+  <title>Visit Us - Faith Church</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#E63946;--primary-dark:#C62828;--dark:#0D1821;--light:#F8F9FA;--text:#212529;--muted:#6C757D;--card:#FFFFFF}
+body{font-family:'Open Sans',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+html{scroll-behavior:smooth}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,24,33,0.97);backdrop-filter:blur(12px);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.5px;text-transform:uppercase}
+.logo span{color:var(--primary)}
+#navLinks{display:flex;gap:32px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s}
+#navLinks a:hover,#navLinks a.active{color:#fff}
+.nav-cta{background:var(--primary)!important;color:#fff!important;padding:10px 26px;border-radius:6px;font-weight:700;transition:background 0.2s}
+.nav-cta:hover{background:var(--primary-dark)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:26px;height:2px;background:#fff;border-radius:2px}
+
+.hero{position:relative;min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,24,33,0.93),rgba(230,57,70,0.55))}
+.hero-content{position:relative;z-index:2;max-width:800px;padding:0 32px}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:20px;background:rgba(230,57,70,0.15);padding:8px 20px;border-radius:50px;border:1px solid rgba(230,57,70,0.3)}
+.hero h1{font-family:'Montserrat',sans-serif;font-size:clamp(40px,6vw,76px);font-weight:800;color:#fff;line-height:1.05;margin-bottom:24px;letter-spacing:-2px;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--primary)}
+.hero p{font-size:20px;color:rgba(255,255,255,0.85);max-width:640px;margin:0 auto;line-height:1.6}
+
+.btn{display:inline-block;padding:16px 36px;border-radius:6px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.3s;letter-spacing:0.5px;font-family:'Montserrat',sans-serif;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 20px rgba(230,57,70,0.3);border:none}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 30px rgba(230,57,70,0.4)}
+
+section{padding:100px 60px}
+.container{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .eyebrow{color:var(--primary)}
+.section-header h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;color:var(--dark);line-height:1.1;letter-spacing:-1px;text-transform:uppercase;margin-top:12px}
+.section-header p{font-size:18px;color:var(--muted);max-width:600px;margin:16px auto 0}
+
+.info-cards{background:#fff}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.info-card{background:var(--light);border-radius:10px;padding:48px 32px;text-align:center;border-top:4px solid var(--primary);box-shadow:0 4px 24px rgba(0,0,0,0.04);transition:all 0.3s}
+.info-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
+.info-icon{width:72px;height:72px;border-radius:50%;background:rgba(230,57,70,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.info-card h3{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:800;color:var(--dark);margin-bottom:12px;text-transform:uppercase}
+.info-card p{font-size:15px;color:var(--muted);line-height:1.7}
+
+.times-section{background:var(--dark);text-align:center}
+.times-section .section-header h2{color:#fff}
+.times-section .section-header p{color:rgba(255,255,255,0.6)}
+.times-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:960px;margin:0 auto}
+.time-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:40px 28px;text-align:center;transition:all 0.3s}
+.time-card:hover{border-color:var(--primary);transform:translateY(-4px)}
+.time-card h3{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;color:var(--primary);margin-bottom:8px;text-transform:uppercase}
+.time-card p{font-size:16px;color:rgba(255,255,255,0.8);font-weight:600}
+.time-card span{font-size:14px;color:rgba(255,255,255,0.5)}
+
+.contact-section{background:#fff}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-info h2{font-family:'Montserrat',sans-serif;font-size:clamp(30px,3.5vw,44px);font-weight:800;color:var(--dark);line-height:1.1;letter-spacing:-1px;text-transform:uppercase;margin-bottom:24px}
+.contact-info h2 em{font-style:normal;color:var(--primary)}
+.contact-info p{font-size:17px;color:var(--muted);line-height:1.8;margin-bottom:24px}
+.contact-details{list-style:none;display:flex;flex-direction:column;gap:16px}
+.contact-details li{display:flex;align-items:center;gap:16px;font-size:16px;color:var(--text)}
+.contact-details .detail-icon{width:48px;height:48px;border-radius:50%;background:rgba(230,57,70,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-details a{color:var(--primary);text-decoration:none;font-weight:600}
+
+.form-card{background:var(--light);border-radius:10px;padding:48px 40px;border-top:4px solid var(--primary);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
+.form-card h3{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:800;color:var(--dark);margin-bottom:32px;text-transform:uppercase}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid #E5E7EB;border-radius:8px;font-size:15px;font-family:'Open Sans',sans-serif;transition:border 0.2s;outline:none;background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
+.form-group textarea{resize:vertical;min-height:120px}
+
+.map-section{background:var(--light)}
+.map-container{border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.08);border:4px solid var(--card)}
+.map-container iframe{width:100%;height:450px;border:0;display:block}
+
+.faq-section{background:#fff}
+.faq-list{max-width:800px;margin:0 auto}
+.faq-item{border-bottom:2px solid #E5E7EB;padding:28px 0}
+.faq-item:first-child{border-top:2px solid #E5E7EB}
+.faq-question{display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:20px}
+.faq-question h3{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;color:var(--dark)}
+.faq-question .faq-toggle{width:36px;height:36px;border-radius:50%;background:rgba(230,57,70,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--primary);font-weight:800;flex-shrink:0;transition:all 0.3s}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.faq-answer p{padding-top:16px;font-size:16px;color:var(--muted);line-height:1.8}
+.faq-item.open .faq-answer{max-height:300px}
+.faq-item.open .faq-toggle{background:var(--primary);color:#fff;transform:rotate(45deg)}
+
+.contact-strip{background:var(--dark);text-align:center}
+.contact-strip .section-header h2{color:#fff}
+.contact-strip .section-header p{color:rgba(255,255,255,0.6)}
+.contact-strip-grid{display:flex;justify-content:center;gap:60px;flex-wrap:wrap}
+.contact-strip-item{color:#fff;text-align:center}
+.contact-strip-item .strip-icon{width:56px;height:56px;border-radius:50%;background:rgba(230,57,70,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;border:1px solid rgba(230,57,70,0.3)}
+.contact-strip-item h4{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.contact-strip-item p{font-size:15px;color:rgba(255,255,255,0.7)}
+.contact-strip-item a{color:var(--primary);text-decoration:none;font-weight:600}
+
+.cta-section{position:relative;padding:120px 60px;text-align:center;background:url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;background-attachment:fixed}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,24,33,0.92),rgba(230,57,70,0.5))}
+.cta-content{position:relative;z-index:2;max-width:700px;margin:0 auto}
+.cta-content h2{font-family:'Montserrat',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:-1px;margin-bottom:20px}
+.cta-content h2 em{font-style:normal;color:var(--primary)}
+.cta-content p{font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:40px}
+.btn-on-dark{background:var(--primary);color:#fff;box-shadow:0 4px 20px rgba(230,57,70,0.3)}
+.btn-on-dark:hover{background:var(--primary-dark);transform:translateY(-2px)}
+
+footer{background:var(--dark);color:rgba(255,255,255,0.8);padding:80px 60px 40px;border-top:3px solid var(--primary)}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:16px;text-transform:uppercase;letter-spacing:-0.5px}
+.footer-brand span{color:var(--primary)}
+.footer-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,0.6);max-width:300px;margin-bottom:20px}
+.social-links{display:flex;gap:12px}
+.social-links a{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;border:1px solid rgba(255,255,255,0.08)}
+.social-links a:hover{background:var(--primary);border-color:var(--primary)}
+.social-links svg{width:16px;height:16px;fill:#fff}
+.footer-col h5{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--primary);margin-bottom:20px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;transition:color 0.2s}
+.footer-col a:hover{color:#fff}
+.footer-col li{font-size:14px;color:rgba(255,255,255,0.6)}
+.footer-bottom{max-width:1280px;margin:0 auto;padding-top:32px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,0.4)}
+
+@media(max-width:1024px){
+.info-grid,.times-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+nav{padding:0 24px;height:64px}
+#navLinks{display:none;position:absolute;top:64px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-top:1px solid rgba(255,255,255,0.08)}
+#navLinks[style*="flex"]{display:flex!important}
+.hamburger{display:flex}
+section{padding:60px 24px}
+.hero-content{padding:0 20px}
+.info-grid{grid-template-columns:1fr}
+.times-grid{grid-template-columns:1fr}
+.contact-grid{grid-template-columns:1fr;gap:40px}
+.form-row{grid-template-columns:1fr}
+.map-container iframe{height:300px}
+.contact-strip-grid{gap:32px}
+.cta-section{padding:80px 24px;background-attachment:scroll}
+footer{padding:60px 24px 32px}
+.footer-grid{grid-template-columns:1fr;gap:32px}
+.footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Faith <span>Church</span></a>
+  <ul id="navLinks">
+    <li><a href="about.html" ABOUT>About</a></li>
+    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+    <li><a href="events.html" EVENTS>Events</a></li>
+    <li><a href="media.html" MEDIA>Media</a></li>
+    <li><a href="give.html" GIVE>Give</a></li>
+    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+  </ul>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="eyebrow">We Would Love to Meet You</div>
+    <h1>Plan Your <em>Visit</em></h1>
+    <p>Whether it is your first time or you are looking for a church home, we have saved a seat just for you.</p>
+  </div>
+</section>
+
+<section class="info-cards">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">What to Expect</div>
+      <h2>Your First Visit</h2>
+      <p>Here is everything you need to know to feel right at home from the moment you walk through the doors.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">&#128205;</div>
+        <h3>Easy to Find</h3>
+        <p>We are located at 123 Main Street in Grand Rapids. Look for the red sign out front. Free parking is available in our lot and the adjacent garage.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">&#9749;</div>
+        <h3>Welcoming Atmosphere</h3>
+        <p>Grab a free coffee, check your kids into our safe children's area, and enjoy a relaxed environment where you can come as you are.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">&#127926;</div>
+        <h3>Dynamic Worship</h3>
+        <p>Expect bold, energetic worship with a live band followed by a relevant, Bible-centered message. Services last about 75 minutes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="times-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Join Us</div>
+      <h2>Service Times</h2>
+      <p>We gather multiple times each week for worship, teaching, and community.</p>
+    </div>
+    <div class="times-grid">
+      <div class="time-card">
+        <h3>Sunday Morning</h3>
+        <p>9:00 AM &amp; 11:00 AM</p>
+        <span>Main Worship Service</span>
+      </div>
+      <div class="time-card">
+        <h3>Wednesday Evening</h3>
+        <p>7:00 PM</p>
+        <span>Bible Study &amp; Prayer</span>
+      </div>
+      <div class="time-card">
+        <h3>Friday Night</h3>
+        <p>6:30 PM</p>
+        <span>Youth Service</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="eyebrow">Get in Touch</div>
+        <h2>Let Us Know You're <em>Coming</em></h2>
+        <p>Fill out the form and our welcome team will have everything ready for you when you arrive. We will save you a seat, prepare your kids' name tags, and make sure you feel at home.</p>
+        <ul class="contact-details">
+          <li>
+            <div class="detail-icon">&#128205;</div>
+            <div><strong>Address</strong><br>123 Main Street, Grand Rapids, MI 49503</div>
+          </li>
+          <li>
+            <div class="detail-icon">&#128222;</div>
+            <div><strong>Phone</strong><br><a href="tel:+16165551234">(616) 555-1234</a></div>
+          </li>
+          <li>
+            <div class="detail-icon">&#9993;</div>
+            <div><strong>Email</strong><br><a href="mailto:info@faithchurch.org">info@faithchurch.org</a></div>
+          </li>
+        </ul>
+      </div>
+      <div class="form-card">
+        <h3>Plan Your Visit</h3>
+        <form>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Smith" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(616) 555-0000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="service">Preferred Service</label>
+              <select id="service" name="service">
+                <option value="">Select a service</option>
+                <option value="sun-9">Sunday 9:00 AM</option>
+                <option value="sun-11">Sunday 11:00 AM</option>
+                <option value="wed-7">Wednesday 7:00 PM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="groupSize">Group Size</label>
+              <select id="groupSize" name="groupSize">
+                <option value="">How many?</option>
+                <option value="1">Just me</option>
+                <option value="2">2 people</option>
+                <option value="3-4">3-4 people</option>
+                <option value="5+">5 or more</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message (Optional)</label>
+            <textarea id="message" name="message" placeholder="Anything you'd like us to know? Kids ages, accessibility needs, questions..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;font-size:16px;padding:18px">Submit Your Visit Plan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="map-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Find Us</div>
+      <h2>Our Location</h2>
+    </div>
+    <div class="map-container">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2919.6!2d-85.6681!3d42.9634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDU3JzQ4LjIiTiA4NcKwNDAnMDUuMiJX!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Common Questions</div>
+      <h2>FAQ</h2>
+      <p>Everything you need to know before your first visit.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <h3>What should I wear?</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>Come as you are. You will see everything from jeans and sneakers to suits. We care more about your heart than your wardrobe. Wear whatever makes you comfortable.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <h3>What about my kids?</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>We have safe, fun, and age-appropriate programs for children from birth through 5th grade during every service. Our team uses a secure check-in system so you can worship with peace of mind.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <h3>How long is the service?</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>Our Sunday services are approximately 75 minutes and include live worship music, a relevant message from the Bible, and opportunities to connect with others.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Where do I park?</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>Free parking is available in our main lot and the adjacent parking garage. First-time guest parking spots are reserved near the main entrance. Our parking team will help direct you.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <h3>Is the building accessible?</h3>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <p>Yes. Our facility is fully ADA accessible with ramps, elevators, and designated seating. We also offer assisted listening devices and large-print bulletins upon request.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-strip">
+  <div class="container">
+    <div class="section-header">
+      <div class="eyebrow">Reach Out</div>
+      <h2>Contact Us</h2>
+      <p>We are here to help. Reach out anytime and we will get back to you promptly.</p>
+    </div>
+    <div class="contact-strip-grid">
+      <div class="contact-strip-item">
+        <div class="strip-icon">&#128205;</div>
+        <h4>Address</h4>
+        <p>123 Main Street<br>Grand Rapids, MI 49503</p>
+      </div>
+      <div class="contact-strip-item">
+        <div class="strip-icon">&#128222;</div>
+        <h4>Phone</h4>
+        <p><a href="tel:+16165551234">(616) 555-1234</a></p>
+      </div>
+      <div class="contact-strip-item">
+        <div class="strip-icon">&#9993;</div>
+        <h4>Email</h4>
+        <p><a href="mailto:info@faithchurch.org">info@faithchurch.org</a></p>
+      </div>
+      <div class="contact-strip-item">
+        <div class="strip-icon">&#128337;</div>
+        <h4>Office Hours</h4>
+        <p>Mon-Fri: 9 AM - 5 PM</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="cta-content">
+    <div class="eyebrow">Your Next Step</div>
+    <h2>We Cannot Wait to <em>Meet You</em></h2>
+    <p>Take the first step. Join us this Sunday and discover a community that will change your life.</p>
+    <a href="#" class="btn btn-on-dark" onclick="document.querySelector('.contact-section').scrollIntoView({behavior:'smooth'});return false">Plan Your Visit Now</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Faith <span>Church</span></div>
+        <p class="footer-desc">Bold faith, Christ-centered community, and a relentless passion to make disciples and transform lives through the gospel.</p>
+        <div class="social-links">
+          <a href="#"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="#"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a href="#"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Navigate</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="ministries.html">Ministries</a></li>
+          <li><a href="events.html">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="give.html">Give</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li>123 Main Street</li>
+          <li>Grand Rapids, MI 49503</li>
+          <li><a href="tel:+16165551234">(616) 555-1234</a></li>
+          <li><a href="mailto:info@faithchurch.org">info@faithchurch.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Faith Church. All rights reserved.</span>
+      <span>Bold faith. Real community.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

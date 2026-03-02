@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="urban-modern">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Give — City Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6366F1;--accent-light:#818CF8;--accent-hover:#4F46E5;--dark:#18181B;--bg:#F4F4F5;--card:#FFFFFF;--text:#27272A;--muted:#71717A;--border:#E4E4E7;--accent-glow:rgba(99,102,241,.25)}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+.urb-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px;border-bottom:1px solid rgba(255,255,255,.06)}
+.urb-nav-logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.urb-nav-logo span{color:var(--accent)}
+.urb-nav-links{display:flex;align-items:center;gap:32px}
+.urb-nav-links a{color:rgba(255,255,255,.7);font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.urb-nav-links a:hover,.urb-nav-links a.active{color:var(--accent)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:10px;font-weight:600!important;font-size:13px!important;letter-spacing:.5px;transition:all .2s}
+.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
+
+/* PAGE HERO */
+.page-hero{padding:160px 48px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;filter:brightness(.12)}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,24,27,.8),rgba(24,24,27,.65))}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,.4);font-size:13px;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:rgba(255,255,255,.25);font-size:13px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.eyebrow::before,.eyebrow::after{content:'';width:28px;height:1px;background:var(--accent)}
+.accent-bar{width:48px;height:3px;background:var(--accent);border-radius:2px;margin:16px 0 24px}
+.accent-bar.center{margin-left:auto;margin-right:auto}
+.page-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,64px);color:#fff;line-height:1.1;margin-bottom:20px;font-weight:700;letter-spacing:-1.5px}
+.page-hero p{color:rgba(255,255,255,.6);font-size:17px;line-height:1.7;max-width:520px}
+
+/* SECTIONS */
+.section{padding:100px 48px}
+.container{max-width:1280px;margin:0 auto}
+.sec-title-block{text-align:center;margin-bottom:56px}
+.sec-title-block .sec-eye{display:block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.sec-title-block h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--dark);margin-bottom:16px;letter-spacing:-1px}
+.sec-title-block h2.light{color:#fff}
+.sec-title-block p{font-size:16px;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.7}
+.sec-title-block p.light{color:rgba(255,255,255,.6)}
+
+/* GIVE EMBED */
+.give-embed-container{max-width:800px;margin:0 auto;padding:60px 48px;background:var(--card);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.06);border:1px solid var(--border)}
+
+/* IMPACT GRID */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.impact-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:40px 28px;text-align:center;transition:transform .3s,border-color .3s;position:relative;overflow:hidden}
+.impact-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:3px;background:var(--accent);border-radius:0 0 4px 4px}
+.impact-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.impact-icon{font-size:32px;margin-bottom:12px}
+.impact-num{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:-1px}
+.impact-label{color:rgba(255,255,255,.55);font-size:14px;font-weight:500}
+
+/* TESTIMONIALS */
+.testimonial-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:48px}
+.testimonial-card{background:var(--card);border-radius:16px;padding:40px;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:transform .3s;border:1px solid rgba(0,0,0,.04)}
+.testimonial-card:hover{transform:translateY(-4px)}
+.testimonial-card .quote{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:24px;font-style:italic;border-left:3px solid var(--accent);padding-left:20px}
+.testimonial-author{display:flex;align-items:center;gap:14px}
+.testimonial-author img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+.testimonial-author .name{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--dark);font-size:15px}
+.testimonial-author .role{font-size:13px;color:var(--muted)}
+
+/* WAYS TO GIVE */
+.ways-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.way-card{background:var(--card);border-radius:16px;padding:36px 28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.04);transition:transform .3s,box-shadow .3s;border:1px solid rgba(0,0,0,.04)}
+.way-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(99,102,241,.1)}
+.way-icon{width:56px;height:56px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.way-card h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--dark);margin-bottom:8px;letter-spacing:-.3px}
+.way-card p{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* SCRIPTURE BANNER */
+.scripture-banner{min-height:400px;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(rgba(24,24,27,.8),rgba(24,24,27,.85)),url('https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed;padding:80px 48px}
+.scripture-inner{max-width:720px}
+.scripture-inner .verse{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3.5vw,40px);font-weight:500;color:#fff;line-height:1.5;margin-bottom:24px;letter-spacing:-.5px}
+.scripture-inner .verse em{font-style:italic;color:var(--accent)}
+.scripture-inner .ref{font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+
+/* CTA */
+.cta-section{text-align:center;background:var(--dark);padding:100px 48px}
+.cta-section h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:700;color:#fff;margin-bottom:16px;letter-spacing:-1px}
+.cta-section p{color:rgba(255,255,255,.5);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
+.sec-eye{display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.btn-fill{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;font-size:15px;transition:all .2s}
+.btn-fill:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 6px 24px var(--accent-glow)}
+.btn-ghost-w{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:2px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;font-weight:600;font-size:15px;transition:all .2s;background:transparent}
+.btn-ghost-w:hover{border-color:var(--accent);color:var(--accent)}
+
+/* FOOTER */
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.5);padding:80px 48px 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;max-width:1280px;margin:0 auto 50px}
+.footer-brand .logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:14px;letter-spacing:-.5px}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h5{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:'DM Sans',sans-serif}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,.5);font-size:14px;transition:color .2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{max-width:1280px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent);transition:color .2s}
+.footer-bottom a:hover{color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .urb-nav{padding:0 24px}
+  .urb-nav-links{display:none;position:fixed;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-bottom:1px solid rgba(255,255,255,.06);z-index:999}
+  .hamburger{display:flex}
+  .page-hero{padding:120px 24px 60px}
+  .section{padding:70px 24px}
+  .give-embed-container{padding:36px 24px}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .testimonial-grid{grid-template-columns:1fr}
+  .ways-grid{grid-template-columns:1fr}
+  .scripture-banner{padding:60px 24px}
+  .cta-section{padding:70px 24px}
+  footer{padding:50px 24px 24px}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="urb-nav">
+  <a href="index.html" class="urb-nav-logo">City<span>Church</span></a>
+  <div class="urb-nav-links" id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.6)">Give</span></div>
+    <span class="eyebrow">Generosity</span>
+    <div class="accent-bar"></div>
+    <h1>Invest in Faith</h1>
+    <p>Every act of generosity helps us reach more families, serve our community, and share the hope of the Gospel. Thank you for partnering with us.</p>
+  </div>
+</section>
+
+<!-- GIVE EMBED -->
+<section class="section" style="background:var(--bg)">
+  <div class="container">
+    <div class="sec-title-block">
+      <span class="sec-eye">Give Online</span>
+      <div class="accent-bar center"></div>
+      <h2>Make Your Gift</h2>
+      <p>Secure, simple, and impactful. Choose a fund and amount to get started.</p>
+    </div>
+    <div class="give-embed-container">
+      {{cms:give_embed}}
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="section" style="background:var(--dark)">
+  <div class="container">
+    <div class="sec-title-block">
+      <span class="sec-eye">Our Impact Together</span>
+      <div class="accent-bar center"></div>
+      <h2 class="light">See What Your Generosity Makes Possible</h2>
+      <p class="light">Through your faithful giving, we are making a difference locally and globally.</p>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-icon">🌍</div>
+        <div class="impact-num">12</div>
+        <div class="impact-label">Mission Partners Worldwide</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">👨‍👩‍👧‍👦</div>
+        <div class="impact-num">850+</div>
+        <div class="impact-label">Families Served Annually</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">💰</div>
+        <div class="impact-num">$2.1M</div>
+        <div class="impact-label">Invested in Community</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">⛪</div>
+        <div class="impact-num">47</div>
+        <div class="impact-label">Active Ministries</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">🤝</div>
+        <div class="impact-num">320</div>
+        <div class="impact-label">Dedicated Volunteers</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-icon">🏗️</div>
+        <div class="impact-num">3</div>
+        <div class="impact-label">Church Plants Launched</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--bg)">
+  <div class="container">
+    <div class="sec-title-block">
+      <span class="sec-eye">Stories of Generosity</span>
+      <h2>Why We Give</h2>
+      <p>Hear from members of our community about how giving has transformed their lives and deepened their faith.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p class="quote">When we started tithing faithfully, it wasn't just our finances that changed — it was our whole perspective. We've seen God provide in ways we never imagined, and we've become part of something so much bigger than ourselves.</p>
+        <div class="testimonial-author">
+          <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Sarah Mitchell">
+          <div>
+            <div class="name">Sarah Mitchell</div>
+            <div class="role">Member since 2018</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">I sponsor a child through the missions fund and got to visit the school we built last summer. Seeing those kids' faces and knowing our church made that happen — that's something money can't buy.</p>
+        <div class="testimonial-author">
+          <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=120" alt="James Rodriguez">
+          <div>
+            <div class="name">James Rodriguez</div>
+            <div class="role">Missions Team Volunteer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAYS TO GIVE -->
+<section class="section" style="background:var(--card)">
+  <div class="container">
+    <div class="sec-title-block">
+      <span class="sec-eye">Multiple Options</span>
+      <h2>Ways to Give</h2>
+      <p>We want to make it easy for you to be generous. Choose the method that works best for you.</p>
+    </div>
+    <div class="ways-grid">
+      <div class="way-card">
+        <div class="way-icon">📱</div>
+        <h3>Text to Give</h3>
+        <p>Text any amount to <strong>(555) 555-GIVE</strong> and follow the prompts to complete your gift in seconds.</p>
+      </div>
+      <div class="way-card">
+        <div class="way-icon">✉️</div>
+        <h3>Give by Mail</h3>
+        <p>Send a check payable to City Church at <strong>200 Urban Way, Metro City, ST 10001</strong>.</p>
+      </div>
+      <div class="way-card">
+        <div class="way-icon">🏦</div>
+        <h3>ACH / Bank Transfer</h3>
+        <p>Set up a direct bank transfer for recurring gifts. Contact our office for routing details.</p>
+      </div>
+      <div class="way-card">
+        <div class="way-icon">📦</div>
+        <h3>In-Kind Donations</h3>
+        <p>Donate goods, supplies, or professional services to support our community outreach programs.</p>
+      </div>
+      <div class="way-card">
+        <div class="way-icon">📜</div>
+        <h3>Estate &amp; Planned Giving</h3>
+        <p>Leave a legacy through your will, trust, or estate plan. Contact our stewardship team to learn more.</p>
+      </div>
+      <div class="way-card">
+        <div class="way-icon">🙏</div>
+        <h3>Give In Person</h3>
+        <p>Drop your gift in the offering during any Sunday service or visit the Welcome Center in the lobby.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCRIPTURE BANNER -->
+<section class="scripture-banner">
+  <div class="scripture-inner">
+    <p class="verse">"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a <em>cheerful giver</em>."</p>
+    <span class="ref">— 2 Corinthians 9:7</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <span class="sec-eye" style="display:block;margin-bottom:16px">Stewardship</span>
+    <div class="accent-bar center"></div>
+    <h2>Questions About Giving?</h2>
+    <p>Our stewardship team is here to help with tax receipts, recurring gifts, estate planning, or any questions about how your generosity makes an impact.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="mailto:giving@citychurch.org" class="btn-fill">Contact Stewardship Team</a>
+      <a href="tel:+15555550123" class="btn-ghost-w">Call (555) 555-0123</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">City<span>Church</span></div>
+      <p>A Christ-centered, urban community rooted in faith, love, and service. Real people. Real faith. One city.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Get Involved</h5>
+      <ul>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="#">Small Groups</a></li>
+        <li><a href="#">Volunteer</a></li>
+        <li><a href="#">Prayer Requests</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">200 Urban Way</a></li>
+        <li><a href="#">Metro City, ST 10001</a></li>
+        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
+        <li><a href="mailto:hello@citychurch.org">hello@citychurch.org</a></li>
+        <li><a href="#">Sun 9 &amp; 11 AM · Wed 7 PM</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 City Church. All rights reserved.</span>
+    <a href="#">Powered by Stripe GIVE</a>
+  </div>
+</footer>
+
+</body>
+</html>

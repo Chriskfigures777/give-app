@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit Banking — Full Customer Flow Test</title>
+  <script async src="https://ui.s.unit.sh/release/latest/components-extended.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .header {
+      padding: 24px;
+      border-bottom: 1px solid #eee;
+    }
+    .header h1 { margin: 0 0 8px 0; font-size: 1.5rem; }
+    .header p { margin: 0; color: #666; font-size: 0.9rem; }
+    .controls {
+      padding: 20px 24px;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .controls label { font-size: 0.9rem; font-weight: 500; }
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary {
+      background: #059669;
+      color: white;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    .status.success { color: #059669; }
+    .status.error { color: #dc2626; }
+    .banking-wrapper {
+      min-height: 600px;
+      position: relative;
+    }
+    .banking-wrapper.loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
+    .instructions {
+      padding: 16px 24px;
+      font-size: 0.85rem;
+      color: #6b7280;
+      background: #f9fafb;
+      border-top: 1px solid #eee;
+    }
+    .instructions a { color: #059669; }
+    .instructions code { background: #e5e7eb; padding: 2px 6px; border-radius: 4px; }
+    .file-warning {
+      padding: 16px 24px;
+      background: #fef3c7;
+      border-bottom: 1px solid #fcd34d;
+      font-size: 0.9rem;
+    }
+    .file-warning a { color: #059669; font-weight: 600; }
+    .paste-area {
+      padding: 16px 24px;
+      background: #f9fafb;
+      border-bottom: 1px solid #eee;
+    }
+    .setup-note { background: #fef3c7; border-color: #fcd34d; }
+    .paste-area textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Unit Banking — Full Customer Flow</h1>
+      <p>Create an account, apply for banking, and complete the full flow. Requires Unit JWKS configured with Supabase.</p>
+    </div>
+
+    <div class="file-warning" id="file-warning" style="display: none;">
+      <strong>Wrong way to open.</strong> You opened this file directly. Run <code>pnpm dev</code> in your project, then open <a href="http://localhost:3000/banking-test.html">http://localhost:3000/banking-test.html</a> in your browser. "Load with my account" is disabled until you do.
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-load" onclick="loadWithMyAccount()">
+        Load with my account (JWT from app)
+      </button>
+      <button class="btn btn-secondary" id="btn-demo" onclick="loadDemo()">
+        Demo mode
+      </button>
+      <button class="btn btn-secondary" id="btn-paste" onclick="togglePaste()">
+        Paste JWT
+      </button>
+      <span class="status" id="status"></span>
+    </div>
+
+    <div class="paste-area" id="paste-area" style="display: none;">
+      <textarea id="jwt-input" placeholder="Paste your Supabase JWT here..." rows="3"></textarea>
+      <button class="btn btn-primary" onclick="loadWithPastedJwt()">Load</button>
+    </div>
+
+    <div class="banking-wrapper" id="banking-wrapper">
+      <div class="loading" id="loading">Choose a mode above to load the banking component.</div>
+      <div id="unit-container" style="display: none;"></div>
+    </div>
+
+    <div class="instructions">
+      <strong>Full flow:</strong> 1) <a href="/login">Sign in</a> to the app first. 2) Return here and click "Load with my account". 3) Unit will show the application form (new user) or dashboard (existing). 4) Complete the form to create your banking account. 5) After approval, the webhook saves your <code>unit_customer_id</code>.
+    </div>
+    <div class="instructions setup-note">
+      <strong>Unit 401 / can't start flow?</strong> Unit must validate your JWT. In Unit Dashboard → Authentication, add <strong>Custom with JWKS</strong>: JWKS Path <code>https://atpkddkjvvtfosuuoprm.supabase.co/auth/v1/.well-known/jwks.json</code>, Issuer <code>https://atpkddkjvvtfosuuoprm.supabase.co/auth/v1</code>.
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    const isFile = window.location.protocol === 'file:';
+
+    if (isFile) {
+      document.getElementById('file-warning').style.display = 'block';
+      document.getElementById('btn-load').disabled = true;
+      document.getElementById('btn-load').title = 'Open via http://localhost:3000/banking-test.html instead';
+    }
+
+    function togglePaste() {
+      const area = document.getElementById('paste-area');
+      area.style.display = area.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function loadWithPastedJwt() {
+      const jwt = document.getElementById('jwt-input').value.trim();
+      if (!jwt) {
+        setStatus('Paste a JWT first', 'error');
+        return;
+      }
+      setStatus('Loaded with pasted JWT', 'success');
+      createUnitElement(jwt, false);
+      showUnit();
+    }
+    const container = document.getElementById('unit-container');
+    const loading = document.getElementById('loading');
+    const status = document.getElementById('status');
+
+    function setStatus(msg, type = '') {
+      status.textContent = msg;
+      status.className = 'status ' + type;
+    }
+
+    function showUnit() {
+      loading.style.display = 'none';
+      container.style.display = 'block';
+    }
+
+    function showLoading(msg) {
+      loading.textContent = msg;
+      loading.style.display = 'flex';
+      container.style.display = 'none';
+    }
+
+    function createUnitElement(token, isCustomerToken = false) {
+      container.innerHTML = '';
+      const el = document.createElement('unit-elements-white-label-app');
+      el.setAttribute(isCustomerToken ? 'customer-token' : 'jwt-token', token);
+      el.setAttribute('settings-json', JSON.stringify({
+        global: {
+          colors: { primary: '#059669' },
+          buttons: {
+            primary: { default: { border: { radius: '8px' } } },
+            outline: { default: { border: { radius: '8px' } } },
+            flat: { default: { border: { radius: '8px' } } }
+          }
+        }
+      }));
+      container.appendChild(el);
+    }
+
+    async function loadWithMyAccount() {
+      if (isFile) return;
+      setStatus('Fetching token...');
+      showLoading('Fetching your session...');
+      try {
+        // Try customer token first (existing banking customer)
+        const tokenRes = await fetch(API_BASE + '/api/unit/customer-token', { credentials: 'include' });
+        const tokenData = await tokenRes.json();
+        if (tokenRes.ok && tokenData.token) {
+          setStatus('Loaded — existing customer', 'success');
+          createUnitElement(tokenData.token, true);
+          showUnit();
+          return;
+        }
+        // New user: get JWT for application form
+        const jwtRes = await fetch(API_BASE + '/api/unit/debug-jwt', { credentials: 'include' });
+        const jwtData = await jwtRes.json();
+        if (!jwtRes.ok) {
+          setStatus(jwtData.error || 'Failed', 'error');
+          showLoading('Sign in at /login first, then try again.');
+          return;
+        }
+        setStatus('Loaded — new user (apply for account)', 'success');
+        createUnitElement(jwtData.jwt, false);
+        showUnit();
+      } catch (err) {
+        setStatus('Network error', 'error');
+        const msg = isFile
+          ? 'Open this page via the app: run pnpm dev, then go to http://localhost:3000/banking-test.html'
+          : 'Make sure the app is running on ' + API_BASE;
+        showLoading(msg);
+      }
+    }
+
+    function loadDemo() {
+      setStatus('Demo mode');
+      createUnitElement('demo.jwt.token', false);
+      showUnit();
+    }
+  </script>
+</body>
+</html>

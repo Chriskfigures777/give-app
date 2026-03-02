@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="vibrant-community">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Community Church - Vibrant Faith. Real Community.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#059669;--accent-light:#6EE7B7;--accent-hover:#047857;--dark:#064E3B;--bg:#ECFDF5;--card:#FFFFFF;--text:#065F46;--muted:#047857;--radius:14px;--shadow:0 4px 24px rgba(6,78,59,.10);--orange:#F97316;--orange-light:#FED7AA}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:'Fredoka',sans-serif;line-height:1.25}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--accent-light)}
+#navLinks{display:flex;gap:28px;list-style:none;align-items:center}
+#navLinks a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:1px;transition:color .25s;position:relative}
+#navLinks a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2.5px;background:var(--accent-light);border-radius:2px;transition:width .25s}
+#navLinks a:hover{color:#fff}
+#navLinks a:hover::after,#navLinks a.active::after{width:100%}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 26px;border-radius:50px;font-weight:600!important;font-size:14px;transition:all .3s;letter-spacing:0}
+.nav-cta:hover{background:var(--accent-hover)!important;transform:translateY(-1px)}
+.nav-cta::after{display:none!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+.hamburger span{display:block;width:24px;height:2.5px;background:#fff;border-radius:2px}
+
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.88),rgba(5,150,105,0.6))}
+.hero-content{position:relative;z-index:2;max-width:880px;padding:0 32px}
+.badge{display:inline-block;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);font-weight:600;margin-bottom:20px;background:rgba(110,231,183,0.15);padding:8px 22px;border-radius:50px;border:1px solid rgba(110,231,183,0.3)}
+.hero h1{font-family:'Fredoka',sans-serif;font-size:clamp(42px,7vw,84px);font-weight:700;color:#fff;line-height:1.08;margin-bottom:24px}
+.hero h1 em{font-style:normal;color:var(--accent-light)}
+.hero p{font-size:20px;color:rgba(255,255,255,.85);max-width:620px;margin:0 auto 40px;line-height:1.7}
+.btn{display:inline-block;padding:16px 36px;border-radius:var(--radius);font-weight:600;font-size:15px;text-decoration:none;transition:all .3s;font-family:'Poppins',sans-serif;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(5,150,105,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(5,150,105,.4)}
+.btn-outline{border:2px solid rgba(255,255,255,.35);color:#fff;margin-left:16px}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 20px rgba(249,115,22,.3)}
+.btn-orange:hover{background:#EA580C;transform:translateY(-2px)}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-dark:hover{background:#053E30;transform:translateY(-2px)}
+
+.service-strip{background:var(--accent);padding:28px 48px;text-align:center}
+.service-strip-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:center;gap:60px;flex-wrap:wrap}
+.service-strip-item{color:#fff;font-family:'Fredoka',sans-serif}
+.service-strip-item strong{display:block;font-size:18px;font-weight:600}
+.service-strip-item span{font-size:14px;opacity:.85;font-weight:500;font-family:'Poppins',sans-serif}
+
+section{padding:100px 48px}
+.container{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .badge{color:var(--accent);border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.08)}
+.section-header h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,50px);font-weight:700;color:var(--dark);line-height:1.15;margin-top:12px}
+.section-header h2 em{font-style:normal;color:var(--accent)}
+.section-header p{font-size:18px;color:var(--muted);max-width:600px;margin:16px auto 0}
+
+.welcome{background:#fff}
+.welcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.welcome-img{border-radius:var(--radius);overflow:hidden;position:relative}
+.welcome-img img{width:100%;height:480px;object-fit:cover;display:block}
+.welcome-img::after{content:'';position:absolute;bottom:-16px;right:-16px;width:180px;height:180px;background:var(--accent-light);border-radius:var(--radius);z-index:-1;opacity:.25}
+.welcome-text h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,46px);font-weight:700;color:var(--dark);line-height:1.15;margin-bottom:24px}
+.welcome-text h2 em{font-style:normal;color:var(--accent)}
+.welcome-text p{font-size:17px;color:var(--muted);line-height:1.8;margin-bottom:20px}
+
+.ministries-section{background:var(--bg)}
+.ministry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.ministry-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border-left:4px solid var(--accent);transition:all .3s}
+.ministry-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(6,78,59,.15)}
+.ministry-card img{width:100%;height:220px;object-fit:cover}
+.ministry-card-body{padding:28px}
+.ministry-card h3{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;color:var(--dark);margin-bottom:10px}
+.ministry-card p{font-size:15px;color:var(--muted);line-height:1.7}
+
+.scripture-banner{position:relative;padding:120px 48px;text-align:center;background:url('https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat}
+.scripture-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(6,78,59,0.92),rgba(5,150,105,0.7))}
+.scripture-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.scripture-content blockquote{font-family:'Fredoka',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:600;color:#fff;line-height:1.5;margin-bottom:20px}
+.scripture-content blockquote em{font-style:normal;color:var(--accent-light)}
+.scripture-content cite{font-size:16px;color:rgba(255,255,255,.7);font-style:normal;font-weight:500;letter-spacing:2px;text-transform:uppercase}
+
+.events-section{background:#fff}
+.give-cta{background:var(--dark);text-align:center}
+.give-cta h2{font-family:'Fredoka',sans-serif;font-size:clamp(30px,4vw,50px);font-weight:700;color:#fff;margin-bottom:20px}
+.give-cta h2 em{font-style:normal;color:var(--accent-light)}
+.give-cta p{font-size:18px;color:rgba(255,255,255,.7);max-width:600px;margin:0 auto 40px}
+
+.gallery-section{background:var(--bg)}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.gallery-grid img{width:100%;height:250px;object-fit:cover;border-radius:var(--radius);transition:transform .3s}
+.gallery-grid img:hover{transform:scale(1.03)}
+.gallery-grid img:first-child{grid-column:span 2;grid-row:span 2;height:100%}
+
+footer{background:var(--dark);color:rgba(255,255,255,.8);padding:80px 48px 40px;border-top:4px solid var(--accent)}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:16px}
+.footer-brand span{color:var(--accent-light)}
+.footer-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.55);max-width:300px;margin-bottom:20px}
+.social-links{display:flex;gap:12px}
+.social-links a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .2s;border:1px solid rgba(255,255,255,.08)}
+.social-links a:hover{background:var(--accent);border-color:var(--accent)}
+.social-links svg{width:16px;height:16px;fill:#fff}
+.footer-col h5{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent-light);margin-bottom:20px;font-family:'Poppins',sans-serif}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,.4)}
+.footer-bottom a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
+.footer-bottom a:hover{color:#fff}
+
+@media(max-width:1024px){
+  .welcome-grid,.footer-grid{grid-template-columns:1fr}
+  .ministry-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid img:first-child{grid-column:span 2;height:300px}
+}
+@media(max-width:768px){
+  nav{padding:0 24px}
+  #navLinks{display:none;position:absolute;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-top:1px solid rgba(255,255,255,.08)}
+  .hamburger{display:flex}
+  section{padding:64px 24px}
+  .hero h1{font-size:clamp(32px,9vw,52px)}
+  .ministry-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .gallery-grid img:first-child{grid-column:span 1;grid-row:span 1;height:250px}
+  .service-strip{padding:20px 24px}
+  .service-strip-inner{gap:24px}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Community <span>Church</span></a>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="badge">Welcome Home</span>
+    <h1>Vibrant Faith. <em>Real Community.</em></h1>
+    <p>A place where everyone belongs. Join us as we grow together in faith, serve our neighbors, and celebrate the joy of community.</p>
+    <a href="visit.html" class="btn btn-primary">Plan Your Visit</a>
+    <a href="about.html" class="btn btn-outline">Learn More</a>
+  </div>
+</section>
+
+<div class="service-strip">
+  <div class="service-strip-inner">
+    <div class="service-strip-item"><strong>Sunday Morning</strong><span>9:00 AM &amp; 11:00 AM</span></div>
+    <div class="service-strip-item"><strong>Wednesday Night</strong><span>7:00 PM</span></div>
+    <div class="service-strip-item"><strong>Youth Group</strong><span>Fridays 6:30 PM</span></div>
+  </div>
+</div>
+
+<section class="welcome">
+  <div class="container">
+    <div class="welcome-grid">
+      <div class="welcome-img">
+        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Community gathering" loading="lazy">
+      </div>
+      <div class="welcome-text">
+        <span class="badge">Who We Are</span>
+        <h2>A Place Where <em>Everyone Belongs</em></h2>
+        <p>At Community Church, we believe faith is lived out together. Whether you're just exploring or have walked with God for decades, there's a seat at our table for you.</p>
+        <p>We're a vibrant, multigenerational community passionate about worship, growth, and making a difference in our city and beyond.</p>
+        <a href="about.html" class="btn btn-primary">Our Story</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ministries-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Get Involved</span>
+      <h2>Ministries That <em>Connect</em></h2>
+      <p>Find your place in our community through one of our vibrant ministries.</p>
+    </div>
+    <div class="ministry-grid">
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/8613089/pexels-photo-8613089.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Small Groups" loading="lazy">
+        <div class="ministry-card-body">
+          <h3>Small Groups</h3>
+          <p>Life is better together. Join a small group and experience authentic community, meaningful conversations, and lasting friendships.</p>
+        </div>
+      </div>
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth Ministry" loading="lazy">
+        <div class="ministry-card-body">
+          <h3>Youth Ministry</h3>
+          <p>A fun, safe space where teens can grow in faith, build friendships, and discover their God-given purpose and potential.</p>
+        </div>
+      </div>
+      <div class="ministry-card">
+        <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community Outreach" loading="lazy">
+        <div class="ministry-card-body">
+          <h3>Community Outreach</h3>
+          <p>We believe the church should be the hands and feet of Jesus. Serve alongside us as we love our neighbors in practical ways.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="scripture-banner">
+  <div class="scripture-content">
+    <blockquote>&ldquo;For where two or three gather in my name, <em>there am I with them.</em>&rdquo;</blockquote>
+    <cite>— Matthew 18:20</cite>
+  </div>
+</div>
+
+<section class="events-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Upcoming</span>
+      <h2>What's <em>Happening</em></h2>
+      <p>Stay connected with everything going on at Community Church.</p>
+    </div>
+    <!-- cms:events_list -->
+    <div data-cms-block="events_list">{{cms:events_list}}</div>
+    <!-- /cms:events_list -->
+  </div>
+</section>
+
+<section class="give-cta">
+  <div class="container">
+    <h2>Make a <em>Difference</em> Today</h2>
+    <p>Your generosity fuels our mission to serve our community and share the love of Christ with everyone we meet.</p>
+    <a href="give.html" class="btn btn-orange">Give Now</a>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">Life Together</span>
+      <h2>Our <em>Community</em></h2>
+    </div>
+    <div class="gallery-grid">
+      <img src="https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church community" loading="lazy">
+      <img src="https://images.pexels.com/photos/8613312/pexels-photo-8613312.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship" loading="lazy">
+      <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community event" loading="lazy">
+      <img src="https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Together" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Community <span>Church</span></div>
+        <p class="footer-desc">A vibrant, welcoming community where faith comes alive and everyone has a place to belong.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Visit</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="visit.html">Plan a Visit</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="ministries.html">Ministries</a></li>
+          <li><a href="#">Small Groups</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="give.html">Give</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="#">123 Community Lane</a></li>
+          <li><a href="#">Springfield, ST 12345</a></li>
+          <li><a href="tel:5551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@communitychurch.org">hello@communitychurch.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Community Church. All rights reserved.</p>
+      <div><a href="#">Privacy Policy</a> &nbsp;|&nbsp; <a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

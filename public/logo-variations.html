@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Logo Variations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Barlow', system-ui, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .section-header {
+      grid-column: 1 / -1;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #334155;
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-preview {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 1rem;
+    }
+    .card-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .card-desc {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
+    }
+    .dark-section {
+      background: #0f172a;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .dark-section h2 {
+      color: white;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .dark-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .dark-card {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 56px;
+    }
+    .dark-card * { color: white !important; }
+    .dark-card path { stroke: #34d399 !important; }
+    .dark-card .emerald { background: #34d399 !important; }
+    .emerald { color: #10b981; }
+    .emerald-bg { background: #10b981; }
+  </style>
+</head>
+<body>
+  <h1>The Exchange — Logo Variations</h1>
+  <p class="subtitle">15 design options. Pick your favorite.</p>
+
+  <div class="grid">
+    <!-- 1. Classic Swoosh -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 40 24" fill="none" style="height: 24px; width: 24px;">
+            <path d="M2 22 C12 2 28 2 38 22" stroke="#10b981" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">1. Classic Swoosh</div>
+      <div class="card-desc">Nike-style. One fluid stroke.</div>
+    </div>
+
+    <!-- 2. Wave -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 64 24" fill="none" style="height: 24px; width: 32px;">
+            <path d="M8 24 Q24 8 40 24 Q56 40 72 24" stroke="#10b981" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">2. Wave</div>
+      <div class="card-desc">Gentle S-curve. Flow, connection.</div>
+    </div>
+
+    <!-- 3. Stripe -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <span style="height: 24px; width: 6px; border-radius: 3px; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">3. Stripe</div>
+      <div class="card-desc">Single bar. Adidas-inspired.</div>
+    </div>
+
+    <!-- 4. Three Stripes -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <span style="display: flex; gap: 2px;">
+            <span style="height: 24px; width: 2px; border-radius: 1px; background: #10b981;"></span>
+            <span style="height: 24px; width: 2px; border-radius: 1px; background: #10b981;"></span>
+            <span style="height: 24px; width: 2px; border-radius: 1px; background: #10b981;"></span>
+          </span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">4. Three Stripes</div>
+      <div class="card-desc">Adidas. Connection through repetition.</div>
+    </div>
+
+    <!-- 5. Dot + Swoosh -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <svg viewBox="0 0 40 24" fill="none" style="height: 20px; width: 24px;">
+            <path d="M4 20 C20 8 36 8 40 20" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">5. Dot + Swoosh</div>
+      <div class="card-desc">Node + flow. Connection.</div>
+    </div>
+
+    <!-- 6. Arc -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 64 24" fill="none" style="height: 24px; width: 32px;">
+            <path d="M8 12 Q32 36 56 12" stroke="#10b981" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">6. Arc</div>
+      <div class="card-desc">U-shaped. Bridge, connection.</div>
+    </div>
+
+    <!-- 7. Bold Swoosh -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 40 24" fill="none" style="height: 28px; width: 32px;">
+            <path d="M2 22 C12 2 28 2 38 22" stroke="#10b981" stroke-width="5" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">7. Bold Swoosh</div>
+      <div class="card-desc">Thicker. More presence.</div>
+    </div>
+
+    <!-- 8. Linked Dots -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 2px; width: 16px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8. Linked Dots</div>
+      <div class="card-desc">Two nodes connected.</div>
+    </div>
+
+    <!-- 9. Pure Wordmark -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+      </div>
+      <div class="card-label">9. Pure Wordmark</div>
+      <div class="card-desc">No mark. Bold Barlow.</div>
+    </div>
+
+    <!-- 10. E Accent -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">
+          <span style="color: #10b981;">E</span><span>xchange</span>
+        </span>
+      </div>
+      <div class="card-label">10. E Accent</div>
+      <div class="card-desc">E in emerald + "xchange"</div>
+    </div>
+
+    <!-- 11. Underscore -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-start;">
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+          <span style="height: 3px; width: 56px; border-radius: 2px; background: #10b981; margin-top: 4px;"></span>
+        </span>
+      </div>
+      <div class="card-label">11. Underscore</div>
+      <div class="card-desc">Exchange + emerald line</div>
+    </div>
+
+    <!-- 12. Lowercase -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; text-transform: lowercase;">exchange</span>
+      </div>
+      <div class="card-label">12. Lowercase</div>
+      <div class="card-desc">Softer, approachable.</div>
+    </div>
+
+    <!-- 13. Gradient Swoosh -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 40 24" fill="none" style="height: 24px; width: 24px;">
+            <defs>
+              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#34d399"/>
+                <stop offset="100%" stop-color="#0d9488"/>
+              </linearGradient>
+            </defs>
+            <path d="M2 22 C12 2 28 2 38 22" stroke="url(#grad)" stroke-width="4" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">13. Gradient Swoosh</div>
+      <div class="card-desc">Emerald-to-teal gradient.</div>
+    </div>
+
+    <!-- 14. Rising Arc -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.75rem;">
+          <svg viewBox="0 0 64 24" fill="none" style="height: 24px; width: 32px;">
+            <path d="M8 36 Q32 12 56 28" stroke="#10b981" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">14. Rising Arc</div>
+      <div class="card-desc">Arc rising left-to-right. Growth.</div>
+    </div>
+
+    <!-- 15. Minimal Arrow -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <svg viewBox="0 0 24 24" fill="none" style="height: 20px; width: 20px;">
+            <path d="M4 12 L20 12 M14 6 L20 12 L14 18" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">15. Minimal Arrow</div>
+      <div class="card-desc">Direction, flow.</div>
+    </div>
+  </div>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Linked Dots — Variations</h2>
+  <div class="grid" style="margin-bottom: 2rem;">
+    <!-- 8a. Original -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 2px; width: 16px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8a. Original</div>
+      <div class="card-desc">Default spacing and size.</div>
+    </div>
+    <!-- 8b. Tight -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.125rem;">
+          <span style="height: 8px; width: 8px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 1.5px; width: 8px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 8px; width: 8px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8b. Tight</div>
+      <div class="card-desc">Closer dots, shorter line.</div>
+    </div>
+    <!-- 8c. Spacious -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 2px; width: 28px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 10px; width: 10px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8c. Spacious</div>
+      <div class="card-desc">Wider gap, longer connector.</div>
+    </div>
+    <!-- 8d. Bold -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span style="height: 14px; width: 14px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 3px; width: 18px; border-radius: 2px; background: #10b981;"></span>
+          <span style="height: 14px; width: 14px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8d. Bold</div>
+      <div class="card-desc">Larger dots, thicker line.</div>
+    </div>
+    <!-- 8e. Minimal -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.2rem;">
+          <span style="height: 6px; width: 6px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 1px; width: 12px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 6px; width: 6px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8e. Minimal</div>
+      <div class="card-desc">Smaller, delicate.</div>
+    </div>
+    <!-- 8f. Three Dots -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.15rem;">
+          <span style="height: 8px; width: 8px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 1.5px; width: 10px; background: #10b981; border-radius: 1px;"></span>
+          <span style="height: 8px; width: 8px; border-radius: 50%; background: #10b981;"></span>
+          <span style="height: 1.5px; width: 10px; background: #10b981; border-radius: 1px;"></span>
+          <span style="height: 8px; width: 8px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8f. Three Dots</div>
+      <div class="card-desc">Three nodes, two connectors.</div>
+    </div>
+    <!-- 8g. Outlined -->
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span style="height: 10px; width: 10px; border-radius: 50%; border: 2px solid #10b981; background: transparent;"></span>
+          <span style="height: 2px; width: 16px; border-radius: 1px; background: #10b981;"></span>
+          <span style="height: 10px; width: 10px; border-radius: 50%; border: 2px solid #10b981; background: transparent;"></span>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.5rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8g. Outlined</div>
+      <div class="card-desc">Hollow circles, outlined nodes.</div>
+    </div>
+    <div class="section-header">8h. Mountain Curve — Three Dots (10 variations)</div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="4" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q17 4 24 4 Q31 4 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-1. Center Peak</div>
+      <div class="card-desc">Middle dot at top of mountain.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="4" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q24 4 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-2. Single Arc</div>
+      <div class="card-desc">One continuous mountain over all three.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="6" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q17 6 24 6 Q31 6 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-3. Gentle</div>
+      <div class="card-desc">Softer, lower peaks.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="2" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q17 2 24 2 Q31 2 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-4. Tall</div>
+      <div class="card-desc">Dramatic, high peaks.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="2.5" fill="#10b981"/><circle cx="24" cy="4" r="2.5" fill="#10b981"/><circle cx="42" cy="14" r="2.5" fill="#10b981"/><path d="M10 14 Q17 4 24 4 Q31 4 38 14" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-5. Delicate</div>
+      <div class="card-desc">Small dots, thin stroke.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="5" fill="#10b981"/><circle cx="24" cy="4" r="5" fill="#10b981"/><circle cx="42" cy="14" r="5" fill="#10b981"/><path d="M12 14 Q18 4 24 4 Q30 4 36 14" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-6. Bold</div>
+      <div class="card-desc">Larger dots, thicker stroke.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" stroke="#10b981" stroke-width="2" fill="none"/><circle cx="24" cy="4" r="4" stroke="#10b981" stroke-width="2" fill="none"/><circle cx="42" cy="14" r="4" stroke="#10b981" stroke-width="2" fill="none"/><path d="M10 14 Q17 4 24 4 Q31 4 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-7. Outlined</div>
+      <div class="card-desc">Hollow circles, filled curve.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="4" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q17 0 24 4 Q31 8 38 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-8. Asymmetric</div>
+      <div class="card-desc">Left peak tall, right peak low.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 40 20" fill="none" style="height: 24px; width: 34px;"><circle cx="5" cy="14" r="3.5" fill="#10b981"/><circle cx="20" cy="4" r="3.5" fill="#10b981"/><circle cx="35" cy="14" r="3.5" fill="#10b981"/><path d="M9 14 Q14.5 4 20 4 Q25.5 4 31 14" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-9. Compact</div>
+      <div class="card-desc">Tighter spacing.</div>
+    </div>
+    <div class="card">
+      <div class="card-preview">
+        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 24px; width: 40px;"><circle cx="6" cy="14" r="4" fill="#10b981"/><circle cx="24" cy="4" r="4" fill="#10b981"/><circle cx="42" cy="14" r="4" fill="#10b981"/><path d="M10 14 Q17 4 24 4 Q31 4 38 14" stroke="#10b981" stroke-width="1" stroke-linecap="round" fill="none"/></svg>
+          <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; margin-left: 0.25rem;">Exchange</span>
+        </span>
+      </div>
+      <div class="card-label">8h-10. Light</div>
+      <div class="card-desc">Thin stroke, minimal.</div>
+    </div>
+  </div>
+
+  <div class="dark-section">
+    <h2>Dark background preview</h2>
+    <div class="dark-grid">
+      <div class="dark-card"><span style="display: inline-flex; align-items: center; gap: 0.5rem;"><svg viewBox="0 0 40 24" fill="none" style="height: 20px; width: 20px;"><path d="M2 22 C12 2 28 2 38 22" stroke="#34d399" stroke-width="3" stroke-linecap="round" fill="none"/></svg><span style="font-weight: 800; font-size: 1rem;">Exchange</span></span></div>
+      <div class="dark-card"><span style="display: inline-flex; align-items: center; gap: 0.5rem;"><svg viewBox="0 0 64 24" fill="none" style="height: 20px; width: 24px;"><path d="M8 24 Q24 8 40 24 Q56 40 72 24" stroke="#34d399" stroke-width="3" stroke-linecap="round" fill="none"/></svg><span style="font-weight: 800; font-size: 1rem;">Exchange</span></span></div>
+      <div class="dark-card"><span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span style="height: 10px; width: 10px; border-radius: 50%; background: #34d399;"></span><svg viewBox="0 0 40 24" fill="none" style="height: 16px; width: 20px;"><path d="M4 20 C20 8 36 8 40 20" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg><span style="font-weight: 800; font-size: 1rem;">Exchange</span></span></div>
+      <div class="dark-card"><span style="display: inline-flex; align-items: center; gap: 0.25rem;"><span style="height: 8px; width: 8px; border-radius: 50%; background: #34d399;"></span><span style="height: 2px; width: 12px; background: #34d399; border-radius: 1px;"></span><span style="height: 8px; width: 8px; border-radius: 50%; background: #34d399;"></span><span style="font-weight: 800; font-size: 1rem; margin-left: 0.5rem;">Exchange</span></span></div>
+      <div class="dark-card"><span style="font-weight: 800; font-size: 1rem;">Exchange</span></div>
+      <div class="dark-card"><span style="font-weight: 800; font-size: 1rem;"><span style="color: #34d399;">E</span><span>xchange</span></span></div>
+      <div class="dark-card">
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <svg viewBox="0 0 48 20" fill="none" style="height: 22px; width: 36px;">
+            <circle cx="6" cy="14" r="4" fill="#34d399"/>
+            <circle cx="24" cy="4" r="4" fill="#34d399"/>
+            <circle cx="42" cy="14" r="4" fill="#34d399"/>
+            <path d="M10 14 Q17 4 24 4 Q31 4 38 14" stroke="#34d399" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+          <span style="font-weight: 800; font-size: 1rem;">Exchange</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

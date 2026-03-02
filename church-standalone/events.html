@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Events — Grace Community Church</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ── SHARED STYLES: Grace Community Church ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C9A84C; --deep: #1A1A2E; --navy: #16213E;
+  --cream: #FAF7F2; --text: #333344; --muted: #6B7280;
+}
+body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text); }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; background: rgba(26,26,46,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,0.2); }
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.cross { width: 28px; height: 28px; position: relative; }
+.cross::before, .cross::after { content:''; position: absolute; background: var(--gold); border-radius: 2px; }
+.cross::before { width: 4px; height: 100%; left: 50%; transform: translateX(-50%); }
+.cross::after { width: 100%; height: 4px; top: 30%; transform: translateY(-50%); }
+.nav-logo span { font-family: 'Playfair Display', serif; font-size: 20px; color: white; font-weight: 600; }
+.nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+.nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-cta { background: var(--gold) !important; color: var(--deep) !important; padding: 9px 22px; border-radius: 6px; font-weight: 700 !important; color: var(--deep); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+.hamburger span { width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; display: block; }
+
+/* PAGE HERO (inner pages) */
+.page-hero { padding: 160px 60px 80px; background: linear-gradient(135deg, var(--deep) 0%, var(--navy) 100%); position: relative; overflow: hidden; }
+.page-hero::before { content:''; position: absolute; inset: 0; background-image: var(--hero-img, none); background-size: cover; background-position: center; filter: brightness(0.18); }
+.page-hero-content { position: relative; max-width: 700px; }
+.eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
+.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 64px); color: white; line-height: 1.15; margin-bottom: 20px; }
+.page-hero p { color: rgba(255,255,255,0.7); font-size: 17px; line-height: 1.7; max-width: 520px; }
+.breadcrumb { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
+.breadcrumb a { color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--gold); }
+.breadcrumb span { color: rgba(255,255,255,0.3); font-size: 13px; }
+
+/* TYPOGRAPHY */
+.sec-eye { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; display: block; }
+.sec-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); color: var(--deep); line-height: 1.2; margin-bottom: 18px; }
+.sec-title.light { color: white; }
+.sec-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 560px; }
+.sec-sub.light { color: rgba(255,255,255,0.65); }
+.text-center { text-align: center; }
+.text-center .sec-sub { margin: 0 auto; }
+
+/* BUTTONS */
+.btn-primary { background: var(--gold); color: var(--deep); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 20px rgba(201,168,76,0.35); transition: transform 0.2s, box-shadow 0.2s; display: inline-block; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
+.btn-secondary { background: var(--deep); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; display: inline-block; }
+.btn-secondary:hover { background: #2a2a4e; }
+.btn-outline { border: 2px solid rgba(255,255,255,0.5); color: white; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: border-color 0.2s; display: inline-block; }
+.btn-outline:hover { border-color: var(--gold); }
+.btn-outline-dark { border: 2px solid var(--deep); color: var(--deep); padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; display: inline-block; }
+.btn-outline-dark:hover { background: var(--deep); color: white; }
+.btn-sm { background: var(--deep); color: white; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.2s; white-space: nowrap; display: inline-block; }
+.btn-sm:hover { background: var(--gold); color: var(--deep); }
+.btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* CARDS */
+.img-card { border-radius: 14px; overflow: hidden; background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
+.img-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(0,0,0,0.13); }
+.img-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.img-card .card-body { padding: 24px; }
+.img-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 8px; }
+.img-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.img-card .card-tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 8px; display: block; }
+
+/* SECTION WRAPPERS */
+.section { padding: 90px 60px; }
+.section.dark { background: var(--deep); }
+.section.navy { background: var(--navy); }
+.section.cream { background: var(--cream); }
+.section.white { background: white; }
+.container { max-width: 1100px; margin: 0 auto; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+/* QUOTE BLOCK */
+.quote-block { border-left: 4px solid var(--gold); padding-left: 24px; margin: 28px 0; }
+.quote-block p { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); font-style: italic; line-height: 1.6; }
+.quote-block cite { font-size: 13px; color: var(--gold); font-style: normal; font-weight: 600; letter-spacing: 1px; margin-top: 8px; display: block; }
+
+/* SCRIPTURE BANNER */
+.scripture-banner { position: relative; padding: 100px 60px; text-align: center; overflow: hidden; }
+.scripture-banner .sb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-attachment: fixed; filter: brightness(0.18); }
+.scripture-banner .sb-content { position: relative; max-width: 800px; margin: 0 auto; }
+.scripture-banner .verse { font-family: 'Playfair Display', serif; font-size: clamp(22px, 3.5vw, 42px); color: white; line-height: 1.4; margin-bottom: 18px; font-style: italic; }
+.scripture-banner .ref { color: var(--gold); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+
+/* FOOTER */
+footer { background: var(--deep); color: rgba(255,255,255,0.6); padding: 70px 60px 36px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+.footer-brand .logo-text { font-family: 'Playfair Display', serif; font-size: 20px; color: white; margin-bottom: 14px; display: block; }
+.footer-brand p { font-size: 14px; line-height: 1.7; max-width: 260px; }
+.footer-col h5 { color: white; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--gold); }
+.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.social-links { display: flex; gap: 12px; }
+.social-links a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none; transition: all 0.2s; }
+.social-links a:hover { border-color: var(--gold); color: var(--gold); }
+
+/* DIVIDER */
+.gold-divider { width: 50px; height: 3px; background: var(--gold); margin: 20px 0; border-radius: 2px; }
+.gold-divider.center { margin: 20px auto; }
+
+/* STATS ROW */
+.stats-row { display: flex; gap: 0; }
+.stat-item { flex: 1; text-align: center; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.08); }
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--gold); font-weight: 700; line-height: 1; margin-bottom: 8px; }
+.stat-label { color: rgba(255,255,255,0.6); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* TEAM CARD */
+.team-card { text-align: center; }
+.team-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 18px; }
+.team-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--deep); margin-bottom: 4px; }
+.team-card .role { color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.team-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .section { padding: 60px 24px; }
+  .page-hero { padding: 120px 24px 60px; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 28px; }
+  .stats-row { flex-wrap: wrap; }
+  .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  footer { padding: 50px 24px 30px; }
+}
+
+
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.filter-btn{padding:8px 20px;border-radius:20px;border:1px solid #ddd;background:white;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--text);}
+.filter-btn:hover,.filter-btn.active{background:var(--deep);color:white;border-color:var(--deep);}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:60px;}
+.ev-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 3px 20px rgba(0,0,0,0.07);transition:transform 0.2s,box-shadow 0.2s;}
+.ev-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,0.12);}
+.ev-card img{width:100%;height:200px;object-fit:cover;display:block;}
+.ev-body{padding:24px;}
+.ev-meta{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.ev-date-pill{background:var(--gold);color:var(--deep);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;}
+.ev-cat{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.ev-card h3{font-family:'Playfair Display',serif;font-size:19px;color:var(--deep);margin-bottom:8px;}
+.ev-card p{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:16px;}
+.ev-detail{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.ev-full-list{display:flex;flex-direction:column;gap:16px;}
+.erow{display:grid;grid-template-columns:90px 1fr auto;gap:22px;align-items:center;padding:22px 28px;background:white;border-radius:12px;box-shadow:0 2px 14px rgba(0,0,0,0.06);border-left:4px solid transparent;transition:all 0.2s;}
+.erow:hover{border-left-color:var(--gold);transform:translateX(4px);}
+.edate{text-align:center;background:var(--cream);border-radius:10px;padding:10px 6px;}
+.edate .em{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.edate .eday{font-family:'Playfair Display',serif;font-size:32px;color:var(--deep);line-height:1;font-weight:700;}
+.einfo h4{font-size:16px;color:var(--deep);font-weight:700;margin-bottom:5px;}
+.einfo p{color:var(--muted);font-size:13px;}
+@media(max-width:900px){.ev-grid{grid-template-columns:1fr;}.erow{grid-template-columns:72px 1fr;}.erow>div:last-child{grid-column:span 2;}}
+
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo"><div class="cross"></div><span>Grace Community</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="about.html" ABOUT>About</a></li>
+    <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+    <li><a href="events.html" EVENTS>Events</a></li>
+    <li><a href="media.html" MEDIA>Media</a></li>
+    <li><a href="give.html" GIVE>Give</a></li>
+    <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+  </ul>
+  <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero" style="--hero-img:url('https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,0.6)">Events</span></div>
+    <span class="eyebrow">What's Happening</span>
+    <h1>Upcoming Events<br>&amp; Gatherings</h1>
+    <p>From revivals to family nights, there's always something happening at Grace Community. Join us and make memories that last.</p>
+  </div>
+</div>
+
+<div class="section white">
+  <div class="container">
+    <span class="sec-eye">Featured Events</span>
+    <h2 class="sec-title">Don't Miss These</h2>
+    <div class="filter-bar">
+      <button class="filter-btn active">All Events</button>
+      <button class="filter-btn">Worship</button>
+      <button class="filter-btn">Family</button>
+      <button class="filter-btn">Men</button>
+      <button class="filter-btn">Women</button>
+      <button class="filter-btn">Youth</button>
+      <button class="filter-btn">Community</button>
+    </div>
+    <!-- cms:events_grid -->
+    <div data-cms-block="events_grid">{{cms:events_grid}}</div>
+    <!-- /cms:events_grid -->
+  </div>
+</div>
+
+<div class="section cream">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px;">
+      <div><span class="sec-eye">Full Schedule</span><h2 class="sec-title">All Upcoming Events</h2></div>
+    </div>
+    <!-- cms:events_list -->
+    <div data-cms-block="events_list">{{cms:events_list}}</div>
+    <!-- /cms:events_list -->
+  </div>
+</div>
+
+<div class="section dark" style="text-align:center;">
+  <div class="container">
+    <span class="sec-eye">Host an Event</span>
+    <h2 class="sec-title light">Want to Organize Something?</h2>
+    <p class="sec-sub light" style="margin:0 auto 32px;">We love when members step up to serve and host. Submit a request to use our facilities or co-sponsor a ministry event.</p>
+    <a href="visit.html" class="btn-primary">Contact Our Events Team</a>
+  </div>
+</div>
+<footer><div class="footer-grid"><div class="footer-brand"><span class="logo-text">✝ Grace Community Church</span><p>A place of hope, healing, and community in Grand Rapids, Michigan. You are always welcome here.</p></div><div class="footer-col"><h5>Navigate</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="ministries.html">Ministries</a></li><li><a href="events.html">Events</a></li><li><a href="media.html">Media</a></li></ul></div><div class="footer-col"><h5>Ministries</h5><ul><li><a href="ministries.html">Children's Ministry</a></li><li><a href="ministries.html">Youth Group</a></li><li><a href="ministries.html">Men's Ministry</a></li><li><a href="ministries.html">Women's Ministry</a></li><li><a href="ministries.html">Small Groups</a></li></ul></div><div class="footer-col"><h5>Contact</h5><ul><li><a href="visit.html">📍 123 Faith Ave, Grand Rapids, MI</a></li><li><a href="tel:6165550199">📞 (616) 555-0199</a></li><li><a href="mailto:info@gracegr.church">✉️ info@gracegr.church</a></li><li><a href="visit.html">Sun 8AM · 10:30AM</a></li></ul></div></div><hr class="footer-divider"><div class="footer-bottom"><span>© 2025 Grace Community Church. All rights reserved.</span><div class="social-links"><a href="#" title="Facebook">f</a><a href="#" title="Instagram">ig</a><a href="#" title="YouTube">▶</a><a href="#" title="Podcast">♪</a></div></div></footer>
+</body>
+</html>

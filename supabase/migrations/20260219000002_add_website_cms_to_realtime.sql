@@ -1,0 +1,23 @@
+-- Enable Supabase real-time on website CMS tables so published sites can
+-- receive live updates via WebSocket without polling or republishing.
+--
+-- NOTE: The CMS tables were already added to the publication via an earlier
+-- manual step. This migration adds the events table and the missing public
+-- read policy for sermon_archive.
+--
+-- Tables in supabase_realtime publication (added previously):
+--   website_cms_featured_sermon
+--   website_cms_podcast_config
+--   website_cms_podcast_episodes
+--   website_cms_worship_recordings
+--   website_cms_sermon_archive
+--
+-- Added by this migration:
+--   events
+
+-- RLS is already enabled on all CMS tables.
+-- Public read policies already exist for all CMS tables except sermon_archive.
+-- Org admin write policies already exist for all CMS tables.
+
+-- This file documents the intended state; the actual DDL was applied via
+-- the Supabase migration tool (add_events_realtime_and_sermon_archive_rls).

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js
+.next
+out
+
+# Environment – NEVER commit real secrets
+.env
+.env.local
+.env*.local
+
+# Debug
+npm-debug.log*
+.pnpm-debug.log*
+
+# IDE / Editor
+.idea
+.vscode
+.cursor
+*.swp
+*.swo
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated exports
+brevo-export/
+
+# Lambda build artifacts
+lambda/*/dist/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo

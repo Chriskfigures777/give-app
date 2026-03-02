@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="organic-natural">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Us — Creation Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#65A30D;
+  --accent-dark:#4D7C0F;
+  --dark:#1A2E05;
+  --bg:#F7FEE7;
+  --card:#FFFFFF;
+  --text:#1A2E05;
+  --muted:#3F6212;
+  --border:#D9F99D;
+  --radius:16px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px;overflow-x:hidden}
+h1,h2,h3,h4,h5,h6{font-family:'Merriweather',serif}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* NAV */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--dark);padding:0 60px;display:flex;align-items:center;justify-content:space-between;height:72px;transition:box-shadow .3s}
+.site-nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.nav-logo{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:.5px}
+.nav-logo span{color:var(--accent)}
+#navLinks{display:flex;align-items:center;gap:32px}
+#navLinks a{color:rgba(255,255,255,.8);font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:color .2s}
+#navLinks a:hover,#navLinks a.active{color:var(--accent)}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:10px 24px;border-radius:var(--radius)!important;font-weight:600!important;font-size:13px!important;letter-spacing:1px;transition:all .2s}
+.nav-cta:hover{background:var(--accent-dark)!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(101,163,13,.4)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;display:block}
+
+/* PAGE HERO */
+.page-hero{padding:160px 60px 80px;position:relative;overflow:hidden;min-height:50vh;display:flex;align-items:center}
+.page-hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2566573/pexels-photo-2566573.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;filter:brightness(.15)}
+.page-hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(26,46,5,.8),rgba(26,46,5,.6))}
+.page-hero-content{position:relative;z-index:2;max-width:700px}
+.breadcrumb{display:flex;gap:8px;align-items:center;margin-bottom:24px}
+.breadcrumb a{color:rgba(255,255,255,.5);font-size:13px;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:rgba(255,255,255,.3);font-size:13px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.eyebrow::before,.eyebrow::after{content:'';width:28px;height:1px;background:var(--accent)}
+.leaf-divider{width:60px;height:3px;background:var(--accent);border-radius:2px;margin:16px 0 24px}
+.leaf-divider.center{margin:16px auto 24px}
+.page-hero h1{font-size:clamp(36px,5vw,60px);color:#fff;line-height:1.15;margin-bottom:20px;font-weight:700}
+.page-hero p{color:rgba(255,255,255,.75);font-size:17px;line-height:1.7;max-width:520px}
+
+/* SECTIONS */
+.section{padding:100px 60px}
+.container{max-width:1200px;margin:0 auto}
+.sec-eye{font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+.sec-title{font-size:clamp(30px,4vw,46px);color:var(--dark);line-height:1.2;margin-bottom:16px;font-weight:700}
+.sec-title.light{color:#fff}
+.sec-sub{color:var(--muted);font-size:16px;line-height:1.7;max-width:560px}
+.text-center{text-align:center}
+.text-center .sec-sub{margin:0 auto}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+
+/* BUTTONS */
+.btn-primary{background:var(--accent);color:#fff;padding:16px 36px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:all .25s;display:inline-block;letter-spacing:.5px;border:none;cursor:pointer;font-family:'Quicksand',sans-serif}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(101,163,13,.4)}
+.btn-outline-dark{border:2px solid var(--dark);color:var(--dark);padding:14px 32px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:all .2s;display:inline-block}
+.btn-outline-dark:hover{background:var(--dark);color:#fff}
+.btn-secondary{background:transparent;border:2px solid rgba(255,255,255,.6);color:#fff;padding:14px 34px;border-radius:var(--radius);font-weight:600;font-size:15px;transition:all .25s;display:inline-block}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:#fff}
+
+/* STORY IMAGE */
+.story-img{width:100%;height:460px;object-fit:cover;border-radius:var(--radius);box-shadow:0 20px 60px rgba(26,46,5,.15)}
+
+/* VALUES */
+.values-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.value-card{background:var(--card);border-radius:var(--radius);padding:36px 28px;text-align:center;box-shadow:0 4px 20px rgba(26,46,5,.06);border:1px solid var(--border);transition:transform .3s,box-shadow .3s}
+.value-card:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(26,46,5,.12)}
+.value-icon{width:64px;height:64px;border-radius:50%;background:rgba(101,163,13,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.value-card h3{font-size:18px;color:var(--dark);margin-bottom:10px;font-weight:700}
+.value-card p{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* TEAM */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.team-card{text-align:center}
+.team-card img{width:100%;height:320px;object-fit:cover;border-radius:var(--radius);margin-bottom:20px;border:3px solid var(--border)}
+.team-card h3{font-size:20px;color:var(--dark);margin-bottom:4px;font-weight:700}
+.team-card .role{color:var(--accent);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:block}
+.team-card p{color:var(--muted);font-size:14px;line-height:1.7;max-width:300px;margin:0 auto}
+
+/* CTA SECTION */
+.cta-section{text-align:center;background:var(--dark);padding:100px 60px}
+.cta-section h2{font-size:clamp(28px,4vw,46px);color:#fff;margin-bottom:16px}
+.cta-section p{color:rgba(255,255,255,.7);font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(255,255,255,.6);padding:80px 60px 40px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 50px}
+.footer-brand .logo{font-family:'Merriweather',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:14px;display:block}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px}
+.footer-col h5{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:'Quicksand',sans-serif}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:rgba(255,255,255,.6);font-size:14px;transition:color .2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{max-width:1200px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.footer-bottom a{color:var(--accent);transition:color .2s}
+.footer-bottom a:hover{color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .site-nav{padding:0 24px}
+  #navLinks{display:none;position:fixed;top:72px;left:0;right:0;background:var(--dark);flex-direction:column;padding:24px;gap:16px;border-bottom:3px solid var(--accent);z-index:999}
+  .hamburger{display:flex}
+  .page-hero{padding:120px 24px 60px}
+  .section{padding:60px 24px}
+  .grid-2{grid-template-columns:1fr;gap:32px}
+  .values-grid{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:1fr}
+  .cta-section{padding:70px 24px}
+  footer{padding:60px 24px 32px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+@media(max-width:600px){
+  .values-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <a href="index.html" class="nav-logo">Creation <span>Church</span></a>
+  <div id="navLinks">
+    <a href="about.html" ABOUT>About</a>
+    <a href="ministries.html" MINISTRIES>Ministries</a>
+    <a href="events.html" EVENTS>Events</a>
+    <a href="media.html" MEDIA>Media</a>
+    <a href="give.html" GIVE>Give</a>
+    <a href="visit.html" class="nav-cta">Visit Us</a>
+  </div>
+  <button class="hamburger" aria-label="Menu" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span style="color:rgba(255,255,255,.7)">About</span></div>
+    <span class="eyebrow">Who We Are</span>
+    <div class="leaf-divider"></div>
+    <h1>Our Roots</h1>
+    <p>For over 25 years, Creation Church has been rooted in scripture and committed to nurturing a community grounded in God's creation and care.</p>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <div class="grid-2">
+      <div>
+        <span class="sec-eye">Our Story</span>
+        <h2 class="sec-title">Connecting People to God &amp; Each Other</h2>
+        <div class="leaf-divider"></div>
+        <p style="color:var(--muted);line-height:1.9;margin-bottom:16px">Creation Church was founded in 1999 by Pastor David Mercer and a small group of passionate believers who wanted to create a church that felt less like an institution and more like a family. What began as a gathering of twelve families in a school gymnasium has grown into a thriving community of over three thousand members.</p>
+        <p style="color:var(--muted);line-height:1.9;margin-bottom:28px">Our vision is simple: love God, love people, and serve the world. We cultivate an atmosphere of organic growth, where faith can take root and flourish naturally — inspired by the beauty of God's creation all around us.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <a href="visit.html" class="btn-primary">Plan Your Visit</a>
+          <a href="ministries.html" class="btn-outline-dark">Explore Ministries</a>
+        </div>
+      </div>
+      <div>
+        <img src="https://images.pexels.com/photos/8468459/pexels-photo-8468459.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Church community" class="story-img">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="section" style="background:var(--bg)">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:56px">
+      <span class="sec-eye">What Guides Us</span>
+      <h2 class="sec-title">Our Core Values</h2>
+      <div class="leaf-divider center"></div>
+      <p class="sec-sub" style="margin:0 auto">Four pillars that shape everything we do as a church family.</p>
+    </div>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🌿</div>
+        <h3>Stewardship</h3>
+        <p>We honor God by faithfully caring for the resources, relationships, and world He has entrusted to us — living as grateful stewards of His creation.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <h3>Community</h3>
+        <p>We believe faith grows best in the soil of authentic relationship. We gather, support, and bear one another's burdens as the family of God.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🌱</div>
+        <h3>Growth</h3>
+        <p>Like seeds planted in rich soil, we are always pursuing deeper roots in Christ — through prayer, study, worship, and Spirit-led transformation.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">💛</div>
+        <h3>Service</h3>
+        <p>Following the example of Jesus, we extend our hands and hearts to those in need — locally and globally — with compassion and generosity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:56px">
+      <span class="sec-eye">Leadership</span>
+      <h2 class="sec-title">Meet Our Team</h2>
+      <div class="leaf-divider center"></div>
+      <p class="sec-sub" style="margin:0 auto">Faithful shepherds who lead with humility, wisdom, and a deep love for this community.</p>
+    </div>
+    <!-- cms:team_members --><div data-cms-block="team_members">{{cms:team_members}}</div><!-- /cms:team_members -->
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <span class="sec-eye" style="color:var(--accent);display:block;margin-bottom:12px">Join Our Family</span>
+    <div class="leaf-divider center"></div>
+    <h2>Come Grow With Us</h2>
+    <p>Whether you're just beginning your faith journey or have been walking with Christ for years, there's a place for you at Creation Church.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="visit.html" class="btn-primary">Plan Your Visit</a>
+      <a href="ministries.html" class="btn-secondary">Explore Ministries</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">Creation <span>Church</span></span>
+      <p>A faith community rooted in creation, growing in grace, and branching out with love. You're always welcome here.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="ministries.html">Ministries</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="media.html">Media</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Get Involved</h5>
+      <ul>
+        <li><a href="give.html">Give Online</a></li>
+        <li><a href="visit.html">Plan a Visit</a></li>
+        <li><a href="#">Small Groups</a></li>
+        <li><a href="#">Volunteer</a></li>
+        <li><a href="#">Prayer Requests</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">321 Meadow Lane</a></li>
+        <li><a href="#">Your City, ST 12345</a></li>
+        <li><a href="tel:+15555550123">(555) 555-0123</a></li>
+        <li><a href="mailto:hello@creationchurch.org">hello@creationchurch.org</a></li>
+        <li><a href="#">Sun 9:00 &amp; 11:00 AM</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 Creation Church. All rights reserved.</span>
+    <a href="#">Powered by Stripe GIVE</a>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('scroll',function(){
+  var nav=document.querySelector('.site-nav');
+  if(window.scrollY>60){nav.classList.add('scrolled')}else{nav.classList.remove('scrolled')}
+});
+</script>
+</body>
+</html>

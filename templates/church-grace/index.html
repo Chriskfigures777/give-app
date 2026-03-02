@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="church-grace">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grace Community Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#C9A84C;--deep:#1A1A2E;--navy:#16213E;--cream:#FAF7F2;--text:#333344;--muted:#6B7280}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream);line-height:1.6}
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;color:var(--deep)}
+    a{text-decoration:none}
+    img{max-width:100%;display:block}
+
+    nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(26,26,46,0.97);backdrop-filter:blur(12px);padding:0 2rem}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600}
+    .cross-icon{width:28px;height:28px;position:relative;flex-shrink:0}
+    .cross-icon::before,.cross-icon::after{content:'';position:absolute;background:var(--gold);border-radius:1px}
+    .cross-icon::before{width:4px;height:28px;left:12px;top:0}
+    .cross-icon::after{width:20px;height:4px;left:4px;top:8px}
+    .nav-links{display:flex;list-style:none;gap:4px;align-items:center}
+    .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.9rem;font-weight:400;padding:8px 14px;border-radius:6px;transition:all 0.3s}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-cta{background:var(--gold)!important;color:var(--deep)!important;font-weight:500!important;padding:8px 20px!important}
+    .nav-cta:hover{background:#b8943d!important}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{width:24px;height:2px;background:#fff;border-radius:2px}
+
+    .btn-primary{display:inline-block;background:var(--gold);color:var(--deep);padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;border:none;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif}
+    .btn-primary:hover{background:#b8943d;transform:translateY(-1px)}
+    .btn-outline{display:inline-block;border:2px solid #fff;color:#fff;padding:12px 30px;border-radius:8px;font-weight:500;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-outline:hover{background:rgba(255,255,255,0.1)}
+    .btn-secondary{display:inline-block;background:var(--deep);color:#fff;padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-secondary:hover{background:var(--navy)}
+
+    section{padding:80px 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-header h2{font-size:2.25rem;margin-bottom:12px}
+    .section-header p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+    .section-label{font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+
+    .card{background:#fff;border-radius:14px;box-shadow:0 2px 20px rgba(0,0,0,0.06);overflow:hidden;transition:transform 0.3s,box-shadow 0.3s}
+    .card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+    .card img{width:100%;height:220px;object-fit:cover}
+    .card-body{padding:24px}
+    .card-body h3{font-size:1.25rem;margin-bottom:8px}
+    .card-body p{color:var(--muted);font-size:0.95rem;line-height:1.6}
+
+    .scripture-banner{background:var(--deep);color:#fff;text-align:center;padding:60px 2rem}
+    .scripture-banner blockquote{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;max-width:800px;margin:0 auto 12px;line-height:1.6}
+    .scripture-banner cite{color:var(--gold);font-style:normal;font-size:1rem}
+
+    footer{background:var(--deep);color:rgba(255,255,255,0.7);padding:60px 2rem 30px}
+    .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px}
+    .footer-brand p{font-size:0.9rem;line-height:1.7;margin:16px 0 20px}
+    footer h4{color:#fff;font-size:1rem;margin-bottom:16px;font-family:'Inter',sans-serif;font-weight:600}
+    footer ul{list-style:none}
+    footer ul li{margin-bottom:10px}
+    footer ul a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;transition:color 0.3s}
+    footer ul a:hover{color:var(--gold)}
+    .social-links{display:flex;gap:12px;margin-top:8px}
+    .social-links a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;transition:all 0.3s}
+    .social-links a:hover{border-color:var(--gold);color:var(--gold)}
+    .footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.85rem}
+
+    @media(max-width:768px){
+      .hamburger{display:flex}
+      .nav-links{display:none;position:absolute;top:72px;left:0;width:100%;background:rgba(26,26,46,0.98);flex-direction:column;padding:20px;gap:4px}
+      .nav-links a{padding:12px 16px;width:100%}
+      .footer-grid{grid-template-columns:1fr;gap:30px}
+      .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+    }
+
+    .hero{position:relative;height:100vh;min-height:640px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:var(--deep)}
+    .hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/2351722/pexels-photo-2351722.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;opacity:0.35}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,26,46,0.4) 0%,rgba(26,26,46,0.7) 100%)}
+    .hero-content{position:relative;z-index:2;max-width:800px;padding:0 2rem}
+    .hero-content .section-label{color:var(--gold);margin-bottom:16px}
+    .hero-content h1{color:#fff;font-size:3.5rem;line-height:1.2;margin-bottom:20px}
+    .hero-content p{color:rgba(255,255,255,0.85);font-size:1.15rem;max-width:560px;margin:0 auto 32px;font-weight:300}
+    .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+    .service-strip{background:var(--navy);padding:0;overflow:hidden}
+    .service-strip-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+    .service-item{padding:28px 24px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);color:#fff}
+    .service-item:last-child{border-right:none}
+    .service-item .time{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:4px}
+    .service-item .label{font-size:0.85rem;color:rgba(255,255,255,0.7);font-weight:300}
+
+    .welcome{background:#fff}
+    .welcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .welcome-img{border-radius:14px;overflow:hidden;position:relative}
+    .welcome-img img{width:100%;height:480px;object-fit:cover}
+    .welcome-text .section-label{text-align:left}
+    .welcome-text h2{font-size:2.25rem;margin-bottom:16px}
+    .welcome-text p{color:var(--muted);margin-bottom:20px;font-size:1rem;line-height:1.7}
+    .quote-block{background:var(--cream);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 10px 10px 0;margin:24px 0}
+    .quote-block p{font-family:'Playfair Display',serif;font-style:italic;color:var(--deep);font-size:1.05rem}
+    .quote-block cite{color:var(--gold);font-style:normal;font-size:0.9rem;margin-top:8px;display:block}
+
+    .ministries-home{background:var(--cream)}
+    .ministry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .ministry-card{position:relative;border-radius:14px;overflow:hidden;height:340px;cursor:pointer}
+    .ministry-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s}
+    .ministry-card:hover img{transform:scale(1.05)}
+    .ministry-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(26,26,46,0.85) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:28px}
+    .ministry-card-overlay h3{color:#fff;font-size:1.4rem;margin-bottom:6px}
+    .ministry-card-overlay p{color:rgba(255,255,255,0.8);font-size:0.9rem}
+
+    .events-home{background:#fff}
+
+    .give-home{background:var(--cream)}
+    .fund-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .fund-card{background:#fff;border-radius:14px;padding:32px;text-align:center;box-shadow:0 2px 20px rgba(0,0,0,0.06);transition:transform 0.3s}
+    .fund-card:hover{transform:translateY(-4px)}
+    .fund-icon{width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem}
+    .fund-card h3{font-size:1.2rem;margin-bottom:8px}
+    .fund-card p{color:var(--muted);font-size:0.9rem;margin-bottom:20px}
+
+    .gallery{background:#fff}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .gallery-grid img{width:100%;height:220px;object-fit:cover;border-radius:8px;transition:opacity 0.3s}
+    .gallery-grid img:hover{opacity:0.85}
+
+    @media(max-width:1024px){
+      .service-strip-inner{grid-template-columns:repeat(2,1fr)}
+      .ministry-grid{grid-template-columns:repeat(2,1fr)}
+      .fund-grid{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .hero-content h1{font-size:2.25rem}
+      .service-strip-inner{grid-template-columns:1fr}
+      .welcome-grid{grid-template-columns:1fr;gap:32px}
+      .welcome-img img{height:320px}
+      .ministry-grid{grid-template-columns:1fr}
+      .fund-grid{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid img{height:160px}
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="section-label">Welcome to Grace Community Church</div>
+      <h1>A Place to Belong, Believe &amp; Become</h1>
+      <p>Join a Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith.</p>
+      <div class="hero-btns">
+        <a href="visit.html" class="btn-primary">Plan Your Visit</a>
+        <a href="#services" class="btn-outline">Service Times</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="service-strip" id="services">
+    <div class="service-strip-inner">
+      <div class="service-item">
+        <div class="time">Sunday 8:00 AM</div>
+        <div class="label">Traditional Worship</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Sunday 10:30 AM</div>
+        <div class="label">Contemporary Worship</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Wednesday 6:30 PM</div>
+        <div class="label">Bible Study</div>
+      </div>
+      <div class="service-item">
+        <div class="time">Sunday 9:15 AM</div>
+        <div class="label">Kids Ministry</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="welcome">
+    <div class="container">
+      <div class="welcome-grid">
+        <div class="welcome-img">
+          <img src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Pastor welcome">
+        </div>
+        <div class="welcome-text">
+          <div class="section-label">Welcome Home</div>
+          <h2>A Word from Our Pastor</h2>
+          <p>At Grace Community Church, we believe that every person has a purpose and a place. Whether you're a lifelong believer or just beginning to explore faith, you'll find a warm and welcoming community here.</p>
+          <p>We are committed to authentic worship, biblical teaching, and caring for one another as we walk through life together.</p>
+          <div class="quote-block">
+            <p>"For where two or three gather in my name, there am I with them."</p>
+            <cite>— Matthew 18:20</cite>
+          </div>
+          <a href="about.html" class="btn-secondary">Our Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ministries-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Get Involved</div>
+        <h2>Ministries That Transform</h2>
+        <p>Discover meaningful ways to connect, serve, and grow in your faith journey.</p>
+      </div>
+      <div class="ministry-grid">
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Worship">
+          <div class="ministry-card-overlay">
+            <h3>Worship Ministry</h3>
+            <p>Lifting hearts through music and praise</p>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/8363104/pexels-photo-8363104.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Youth">
+          <div class="ministry-card-overlay">
+            <h3>Youth Ministry</h3>
+            <p>Building the next generation of leaders</p>
+          </div>
+        </div>
+        <div class="ministry-card">
+          <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outreach">
+          <div class="ministry-card-overlay">
+            <h3>Outreach Ministry</h3>
+            <p>Serving our neighbors with compassion</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="scripture-banner">
+    <blockquote>"Come to me, all you who are weary and burdened, and I will give you rest."</blockquote>
+    <cite>— Matthew 11:28</cite>
+  </div>
+
+  <section class="events-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">What's Happening</div>
+        <h2>Upcoming Events</h2>
+        <p>Stay connected with everything happening at Grace Community.</p>
+      </div>
+      <!-- cms:events_list -->
+      <div class="events-list" data-cms-block="events_list">{{cms:events_list}}</div>
+      <!-- /cms:events_list -->
+    </div>
+  </section>
+
+  <section class="give-home">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Generosity</div>
+        <h2>Give Generously</h2>
+        <p>Your generosity makes our ministry possible and changes lives in our community and beyond.</p>
+      </div>
+      <div class="fund-grid">
+        <div class="fund-card">
+          <div class="fund-icon">✝</div>
+          <h3>Tithes &amp; Offerings</h3>
+          <p>Support the ongoing ministry and operations of our church family.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+        <div class="fund-card">
+          <div class="fund-icon">🏗</div>
+          <h3>Building Fund</h3>
+          <p>Help us expand our facilities to reach more people for Christ.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+        <div class="fund-card">
+          <div class="fund-icon">🌍</div>
+          <h3>Missions Fund</h3>
+          <p>Support our local and global mission partners sharing the gospel.</p>
+          <a href="give.html" class="btn-primary">Give Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Life at Grace</div>
+        <h2>Our Community</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Church life">
+        <img src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
+        <img src="https://images.pexels.com/photos/8815895/pexels-photo-8815895.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
+        <img src="https://images.pexels.com/photos/3807755/pexels-photo-3807755.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
+        <img src="https://images.pexels.com/photos/3184613/pexels-photo-3184613.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
+        <img src="https://images.pexels.com/photos/6994982/pexels-photo-6994982.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Service">
+        <img src="https://images.pexels.com/photos/3280130/pexels-photo-3280130.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship night">
+        <img src="https://images.pexels.com/photos/3408353/pexels-photo-3408353.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Nature retreat">
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+        <p>A Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith and serve others.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="YouTube">yt</a>
+          <a href="#" aria-label="Twitter">x</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="give.html">Give</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ministries</h4>
+        <ul>
+          <li><a href="ministries.html">Worship</a></li>
+          <li><a href="ministries.html">Youth</a></li>
+          <li><a href="ministries.html">Children</a></li>
+          <li><a href="ministries.html">Small Groups</a></li>
+          <li><a href="ministries.html">Outreach</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul>
+          <li>1234 Grace Avenue</li>
+          <li>Springfield, IL 62701</li>
+          <li><a href="tel:+15551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@gracecommunity.org">hello@gracecommunity.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Grace Community Church. All rights reserved.</span>
+      <span><a href="#" style="color:rgba(255,255,255,0.5)">Privacy Policy</a></span>
+    </div>
+  </footer>
+
+</body>
+</html>

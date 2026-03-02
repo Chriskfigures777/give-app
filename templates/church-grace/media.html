@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" data-template-theme="church-grace">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media - Grace Community Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#C9A84C;--deep:#1A1A2E;--navy:#16213E;--cream:#FAF7F2;--text:#333344;--muted:#6B7280}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream);line-height:1.6}
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;color:var(--deep)}
+    a{text-decoration:none}
+    img{max-width:100%;display:block}
+
+    nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(26,26,46,0.97);backdrop-filter:blur(12px);padding:0 2rem}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600}
+    .cross-icon{width:28px;height:28px;position:relative;flex-shrink:0}
+    .cross-icon::before,.cross-icon::after{content:'';position:absolute;background:var(--gold);border-radius:1px}
+    .cross-icon::before{width:4px;height:28px;left:12px;top:0}
+    .cross-icon::after{width:20px;height:4px;left:4px;top:8px}
+    .nav-links{display:flex;list-style:none;gap:4px;align-items:center}
+    .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.9rem;font-weight:400;padding:8px 14px;border-radius:6px;transition:all 0.3s}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-cta{background:var(--gold)!important;color:var(--deep)!important;font-weight:500!important;padding:8px 20px!important}
+    .nav-cta:hover{background:#b8943d!important}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{width:24px;height:2px;background:#fff;border-radius:2px}
+
+    .btn-primary{display:inline-block;background:var(--gold);color:var(--deep);padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95rem;text-decoration:none;border:none;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif}
+    .btn-primary:hover{background:#b8943d;transform:translateY(-1px)}
+    .btn-outline{display:inline-block;border:2px solid #fff;color:#fff;padding:12px 30px;border-radius:8px;font-weight:500;font-size:0.95rem;text-decoration:none;transition:all 0.3s}
+    .btn-outline:hover{background:rgba(255,255,255,0.1)}
+
+    section{padding:80px 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-header h2{font-size:2.25rem;margin-bottom:12px}
+    .section-header p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+    .section-label{font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+
+    footer{background:var(--deep);color:rgba(255,255,255,0.7);padding:60px 2rem 30px}
+    .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px}
+    .footer-brand p{font-size:0.9rem;line-height:1.7;margin:16px 0 20px}
+    footer h4{color:#fff;font-size:1rem;margin-bottom:16px;font-family:'Inter',sans-serif;font-weight:600}
+    footer ul{list-style:none}
+    footer ul li{margin-bottom:10px}
+    footer ul a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;transition:color 0.3s}
+    footer ul a:hover{color:var(--gold)}
+    .social-links{display:flex;gap:12px;margin-top:8px}
+    .social-links a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.8rem;transition:all 0.3s}
+    .social-links a:hover{border-color:var(--gold);color:var(--gold)}
+    .footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.85rem}
+
+    @media(max-width:768px){
+      .hamburger{display:flex}
+      .nav-links{display:none;position:absolute;top:72px;left:0;width:100%;background:rgba(26,26,46,0.98);flex-direction:column;padding:20px;gap:4px}
+      .nav-links a{padding:12px 16px;width:100%}
+      .footer-grid{grid-template-columns:1fr;gap:30px}
+      .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+    }
+
+    .page-hero{position:relative;background:linear-gradient(135deg,var(--deep),var(--navy));padding:160px 2rem 80px;text-align:center;overflow:hidden}
+    .page-hero::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;opacity:0.15}
+    .page-hero h1{color:#fff;font-size:3rem;position:relative;z-index:1}
+    .page-hero p{color:rgba(255,255,255,0.8);font-size:1.15rem;max-width:600px;margin:16px auto 0;position:relative;z-index:1}
+    .page-hero .section-label{position:relative;z-index:1}
+
+    .featured-section{background:#fff}
+    .sermon-archive-section{background:var(--cream)}
+    .archive-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+    .archive-header a{color:var(--gold);font-weight:600;font-size:0.9rem}
+
+    .podcast-worship-section{background:var(--deep);color:#fff}
+    .pw-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+    .pw-grid h2{color:#fff;font-size:1.75rem;margin-bottom:24px}
+
+    .gallery-section{background:var(--cream)}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .gallery-grid img{width:100%;height:220px;object-fit:cover;border-radius:8px;transition:opacity 0.3s}
+    .gallery-grid img:hover{opacity:0.85}
+
+    @media(max-width:1024px){
+      .pw-grid{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .page-hero h1{font-size:2rem}
+      .gallery-grid img{height:160px}
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+      <button class="hamburger" onclick="var n=document.getElementById('navLinks');n.style.display=n.style.display==='flex'?'none':'flex'" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about.html" ABOUT>About</a></li>
+        <li><a href="ministries.html" MINISTRIES>Ministries</a></li>
+        <li><a href="events.html" EVENTS>Events</a></li>
+        <li><a href="media.html" MEDIA>Media</a></li>
+        <li><a href="give.html" GIVE>Give</a></li>
+        <li><a href="visit.html" class="nav-cta">Visit Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="section-label">Messages &amp; Media</div>
+    <h1>Listen. Watch. Be Transformed.</h1>
+    <p>Catch up on sermons, worship sessions, and podcasts — wherever you are, whenever you need it.</p>
+  </section>
+
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Latest Message</div>
+        <h2>Featured Sermon</h2>
+      </div>
+      <!-- cms:featured_sermon -->
+      <div data-cms-block="featured_sermon">{{cms:featured_sermon}}</div>
+      <!-- /cms:featured_sermon -->
+    </div>
+  </section>
+
+  <section class="sermon-archive-section">
+    <div class="container">
+      <div class="archive-header">
+        <div>
+          <div class="section-label">Sermon Archive</div>
+          <h2>Recent Messages</h2>
+        </div>
+        <a href="#">View All Sermons &rarr;</a>
+      </div>
+      <!-- cms:sermon_archive -->
+      <div data-cms-block="sermon_archive">{{cms:sermon_archive}}</div>
+      <!-- /cms:sermon_archive -->
+    </div>
+  </section>
+
+  <section class="podcast-worship-section">
+    <div class="container">
+      <div class="pw-grid">
+        <div>
+          <div class="section-label" style="color:var(--gold)">Podcast</div>
+          <h2>Grace Community Podcast</h2>
+          <!-- cms:podcast -->
+          <div data-cms-block="podcast">{{cms:podcast}}</div>
+          <!-- /cms:podcast -->
+        </div>
+        <div>
+          <div class="section-label" style="color:var(--gold)">Worship</div>
+          <h2>Worship Recordings</h2>
+          <!-- cms:worship_recordings -->
+          <div data-cms-block="worship_recordings">{{cms:worship_recordings}}</div>
+          <!-- /cms:worship_recordings -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Photo Gallery</div>
+        <h2>Life at Grace Community</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Community">
+        <img src="https://images.pexels.com/photos/8468471/pexels-photo-8468471.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Worship">
+        <img src="https://images.pexels.com/photos/1586996/pexels-photo-1586996.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Music">
+        <img src="https://images.pexels.com/photos/3822621/pexels-photo-3822621.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Prayer">
+        <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serving">
+        <img src="https://images.pexels.com/photos/1616113/pexels-photo-1616113.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Youth">
+        <img src="https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fellowship">
+        <img src="https://images.pexels.com/photos/9555700/pexels-photo-9555700.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Bible study">
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><span class="cross-icon"></span> Grace Community</a>
+        <p>A Christ-centered community where every person is welcomed, encouraged, and empowered to grow in faith and serve others.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="YouTube">yt</a>
+          <a href="#" aria-label="Twitter">x</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="give.html">Give</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ministries</h4>
+        <ul>
+          <li><a href="ministries.html">Worship</a></li>
+          <li><a href="ministries.html">Youth</a></li>
+          <li><a href="ministries.html">Children</a></li>
+          <li><a href="ministries.html">Small Groups</a></li>
+          <li><a href="ministries.html">Outreach</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul>
+          <li>1234 Grace Avenue</li>
+          <li>Springfield, IL 62701</li>
+          <li><a href="tel:+15551234567">(555) 123-4567</a></li>
+          <li><a href="mailto:hello@gracecommunity.org">hello@gracecommunity.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Grace Community Church. All rights reserved.</span>
+      <span><a href="#" style="color:rgba(255,255,255,0.5)">Privacy Policy</a></span>
+    </div>
+  </footer>
+
+</body>
+</html>
