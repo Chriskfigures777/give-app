@@ -61,6 +61,14 @@ export default async function OAuthConsentPage({ searchParams }: Props) {
     );
   }
 
+  // OAuthRedirect: user already consented — redirect immediately
+  if ("redirect_url" in authDetails) {
+    redirect(authDetails.redirect_url);
+  }
+
+  // OAuthAuthorizationDetails: show consent page with client info
+  const details = authDetails;
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-slate-200 bg-white px-6 py-4">
@@ -72,7 +80,7 @@ export default async function OAuthConsentPage({ searchParams }: Props) {
       <main className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <h1 className="text-2xl font-semibold text-slate-900">
-            Authorize {authDetails.client.name}
+            Authorize {details.client.name}
           </h1>
           <p className="mt-2 text-slate-600">
             This application wants to access your account.
@@ -81,21 +89,21 @@ export default async function OAuthConsentPage({ searchParams }: Props) {
           <div className="mt-6 space-y-4 rounded-xl bg-slate-50 p-4">
             <div>
               <p className="text-sm font-medium text-slate-500">Application</p>
-              <p className="mt-0.5 font-medium text-slate-900">{authDetails.client.name}</p>
+              <p className="mt-0.5 font-medium text-slate-900">{details.client.name}</p>
             </div>
-            {authDetails.redirect_uri && (
+            {details.redirect_uri && (
               <div>
                 <p className="text-sm font-medium text-slate-500">Redirect URI</p>
                 <p className="mt-0.5 break-all text-sm text-slate-700">
-                  {authDetails.redirect_uri}
+                  {details.redirect_uri}
                 </p>
               </div>
             )}
-            {authDetails.scope && authDetails.scope.trim() && (
+            {details.scope && details.scope.trim() && (
               <div>
                 <p className="text-sm font-medium text-slate-500">Requested permissions</p>
                 <ul className="mt-1.5 space-y-1">
-                  {authDetails.scope.split(" ").map((scopeItem) => (
+                  {details.scope.split(" ").map((scopeItem) => (
                     <li key={scopeItem} className="text-sm text-slate-700">
                       • {scopeItem}
                     </li>
