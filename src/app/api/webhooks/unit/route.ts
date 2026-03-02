@@ -86,14 +86,25 @@ export async function POST(req: NextRequest) {
 
     // userIds are JWT sub values = Supabase user UUIDs (auth.users.id)
     for (const userId of userIds) {
-      const { error } = await supabase
+      const { data: existing } = await supabase
         .from("user_profiles")
-        // @ts-ignore – unit_customer_id not in generated types yet
-        .update({ unit_customer_id: unitCustomerId })
-        .eq("id", userId);
+        .select("id")
+        .eq("id", userId)
+        .single();
 
-      if (error) {
-        console.error("[unit-webhook] Failed to update user_profiles", userId, error);
+      if (existing) {
+        const { error } = await supabase
+          .from("user_profiles")
+          // @ts-ignore – unit_customer_id not in generated types yet
+          .update({ unit_customer_id: unitCustomerId })
+          .eq("id", userId);
+        if (error) console.error("[unit-webhook] Failed to update user_profiles", userId, error);
+      } else {
+        const { error } = await supabase
+          .from("user_profiles")
+          // @ts-ignore – unit_customer_id not in generated types yet
+          .insert({ id: userId, unit_customer_id: unitCustomerId, role: "donor" });
+        if (error) console.error("[unit-webhook] Failed to insert user_profile with unit_customer_id", userId, error);
       }
     }
   }

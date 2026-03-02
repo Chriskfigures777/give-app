@@ -118,6 +118,7 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       {(isPlatformAdmin || orgId) && (
         <NavSection title="Organization">
           {(isPlatformAdmin || orgId) && link("/dashboard/donations", "Donations", <Wallet className={iconClass} />)}
+
           {!isPlatformAdmin && orgId && (
             <>
               <li className="shrink-0">

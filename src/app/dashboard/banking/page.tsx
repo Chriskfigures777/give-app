@@ -6,13 +6,17 @@ import { createClient } from "@/lib/supabase/client";
 
 const FETCH_TIMEOUT_MS = 15_000;
 
+// Ready-to-Launch mode: no Org Settings/JWT Settings in dashboard — use jwt-token only (Identity Provider validates)
+const UNIT_READY_TO_LAUNCH = process.env.NEXT_PUBLIC_UNIT_READY_TO_LAUNCH === "true";
+
 declare global {
   namespace JSX {
-    interface IntrinsicElements {
+    interface     IntrinsicElements {
       "unit-elements-white-label-app": React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement> & {
           "jwt-token"?: string;
           "customer-token"?: string;
+          "settings-json"?: string;
         },
         HTMLElement
       >;
@@ -38,28 +42,62 @@ export default function BankingPage() {
   const [error, setError] = useState<string | null>(null);
   const [hasCustomer, setHasCustomer] = useState<boolean | null>(null);
   const [startOnboarding, setStartOnboarding] = useState(false);
+  // Fallback when Unit customer-token API fails (e.g. jwtSettings not configured): use JWT directly
+  const [useJwtFallback, setUseJwtFallback] = useState(false);
 
-  const fetchCustomerToken = useCallback(async (accessToken: string) => {
+  const fetchBankingState = useCallback(async (accessToken: string) => {
     try {
-      const res = await fetchWithTimeout(
-        "/api/unit/customer-token",
-        { credentials: "include" },
-        FETCH_TIMEOUT_MS
-      );
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data.token) {
-        setCustomerToken(data.token);
-        setHasCustomer(true);
-        setError(null);
-      } else if (res.status === 404 && data.hasCustomer === false) {
-        setHasCustomer(false);
-        setJwtToken(accessToken);
-        setCustomerToken(null);
-        setError(null);
+      if (UNIT_READY_TO_LAUNCH) {
+        // Ready-to-Launch: no Org JWT Settings — use jwt-token only (Identity Provider validates)
+        const res = await fetchWithTimeout(
+          "/api/unit/customer-status",
+          { credentials: "include" },
+          FETCH_TIMEOUT_MS
+        );
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          setHasCustomer(data.hasCustomer ?? false);
+          setJwtToken(accessToken);
+          setUseJwtFallback(true); // Always use JWT for Ready-to-Launch
+          setError(null);
+          setCustomerToken(null);
+        } else {
+          setError("Failed to load banking status");
+          setHasCustomer(null);
+        }
       } else {
-        setError(data.error ?? "Failed to load banking");
-        setCustomerToken(null);
-        setHasCustomer(null);
+        // Custom Build: try customer-token API first
+        const res = await fetchWithTimeout(
+          "/api/unit/customer-token",
+          { credentials: "include" },
+          FETCH_TIMEOUT_MS
+        );
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.token) {
+          setCustomerToken(data.token);
+          setHasCustomer(true);
+          setError(null);
+        } else if (res.status === 404 && data.hasCustomer === false) {
+          setHasCustomer(false);
+          setJwtToken(accessToken);
+          setCustomerToken(null);
+          setError(null);
+        } else {
+          const errMsg = data.error ?? "Failed to load banking";
+          const isJwtSettingsError = typeof errMsg === "string" && errMsg.toLowerCase().includes("jwtsettings");
+          if (isJwtSettingsError) {
+            setJwtToken(accessToken);
+            setHasCustomer(true);
+            setUseJwtFallback(true);
+            setError(null);
+            setCustomerToken(null);
+          } else {
+            setError(errMsg);
+            setCustomerToken(null);
+            setHasCustomer(null);
+          }
+          console.error("[banking] customer-token error:", res.status, errMsg, data);
+        }
       }
     } catch (err) {
       setError(err instanceof Error && err.message === "Request timed out" ? "Request timed out. Please try again." : "Failed to load banking");
@@ -89,7 +127,7 @@ export default function BankingPage() {
         setLoading(false);
         return;
       }
-      await fetchCustomerToken(session.access_token);
+      await fetchBankingState(session.access_token);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -97,29 +135,34 @@ export default function BankingPage() {
         setCustomerToken(null);
         setJwtToken(null);
         setHasCustomer(null);
+        setUseJwtFallback(false);
         setError(null);
         setLoading(false);
         return;
       }
       setLoading(true);
-      await fetchCustomerToken(session.access_token);
+      setUseJwtFallback(false);
+      await fetchBankingState(session.access_token);
     });
 
     return () => {
       clearTimeout(safetyTimer);
       subscription.unsubscribe();
     };
-  }, [fetchCustomerToken]);
+  }, [fetchBankingState]);
 
-  // Existing customer → show their banking dashboard
+  // Existing customer → show their banking dashboard (customer token or JWT fallback)
   const showDashboard = !!(customerToken && scriptReady);
-  // New user who clicked "Open an Account" → show the application form
-  const showApplicationForm = !!(hasCustomer === false && jwtToken && startOnboarding && scriptReady);
-  // New user who hasn't started yet → show the CTA card
-  const showOnboardingCTA = hasCustomer === false && !startOnboarding && !loading;
+  const showDashboardWithJwt = !!(!UNIT_READY_TO_LAUNCH && useJwtFallback && jwtToken && scriptReady);
+  // New user who clicked "Open an Account" → show the application form (Custom Build only)
+  const showApplicationForm = !!(!UNIT_READY_TO_LAUNCH && hasCustomer === false && jwtToken && startOnboarding && scriptReady);
+  // New user who hasn't started yet → show the CTA card (Custom Build only)
+  const showOnboardingCTA = hasCustomer === false && !startOnboarding && !loading && !UNIT_READY_TO_LAUNCH;
+  // Ready-to-Launch: Unit component handles everything (application form + dashboard) — show it directly
+  const showUnitDirect = UNIT_READY_TO_LAUNCH && !!jwtToken && scriptReady;
 
   // Load Unit script only when we need to render unit-elements (avoids Unit 401s when showing CTA)
-  const needUnitScript = !!customerToken || (hasCustomer === false && startOnboarding);
+  const needUnitScript = !!customerToken || !!useJwtFallback || (hasCustomer === false && startOnboarding) || (UNIT_READY_TO_LAUNCH && !!jwtToken);
 
   return (
     <div className="space-y-6 p-2 sm:p-4">
@@ -149,7 +192,7 @@ export default function BankingPage() {
         )}
 
         {/* Not logged in */}
-        {!loading && !customerToken && !jwtToken && !error && (
+        {!loading && !customerToken && !jwtToken && !useJwtFallback && !error && (
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center text-sm text-dashboard-text-muted">
             Session expired. Please{" "}
             <a href="/login" className="underline text-dashboard-text">
@@ -175,7 +218,7 @@ export default function BankingPage() {
                 setError(null);
                 setLoading(true);
                 createClient().auth.getSession().then(({ data: { session } }) => {
-                  if (session) fetchCustomerToken(session.access_token);
+                  if (session) fetchBankingState(session.access_token);
                   else setLoading(false);
                 });
               }}
@@ -186,7 +229,25 @@ export default function BankingPage() {
           </div>
         )}
 
-        {/* New user — "Open a Banking Account" CTA */}
+        {/* Ready-to-Launch: Unit component handles application form + dashboard directly */}
+        {showUnitDirect && (
+          // @ts-ignore
+          <unit-elements-white-label-app
+            jwt-token={jwtToken}
+            settings-json={JSON.stringify({
+              global: {
+                colors: { primary: "#059669" },
+                buttons: {
+                  primary: { default: { border: { radius: "8px" } } },
+                  outline: { default: { border: { radius: "8px" } } },
+                  flat: { default: { border: { radius: "8px" } } },
+                },
+              },
+            })}
+          />
+        )}
+
+        {/* New user — "Open a Banking Account" CTA (Custom Build only) */}
         {showOnboardingCTA && (
           <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-10 flex flex-col items-center text-center gap-6">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/20">
@@ -234,6 +295,12 @@ export default function BankingPage() {
           <unit-elements-white-label-app customer-token={customerToken} />
         )}
 
+        {/* Existing customer — JWT fallback when customer-token API fails (e.g. jwtSettings not configured) */}
+        {showDashboardWithJwt && (
+          // @ts-ignore
+          <unit-elements-white-label-app jwt-token={jwtToken} />
+        )}
+
         {/* New user — Unit application form */}
         {showApplicationForm && (
           // @ts-ignore
@@ -247,10 +314,24 @@ export default function BankingPage() {
           </div>
         )}
 
+        {/* Waiting for script to load (JWT fallback for existing customer) */}
+        {!loading && useJwtFallback && jwtToken && !scriptReady && !scriptError && (
+          <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
+            Initializing banking interface…
+          </div>
+        )}
+
         {/* Waiting for script to load (new user starting onboarding) */}
         {!loading && startOnboarding && jwtToken && !scriptReady && !scriptError && (
           <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
             Opening account application…
+          </div>
+        )}
+
+        {/* Waiting for script to load (Ready-to-Launch) */}
+        {!loading && UNIT_READY_TO_LAUNCH && jwtToken && !scriptReady && !scriptError && (
+          <div className="flex items-center justify-center py-24 text-dashboard-text-muted text-sm">
+            Initializing banking interface…
           </div>
         )}
       </div>

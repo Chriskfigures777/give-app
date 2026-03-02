@@ -120,10 +120,26 @@ export async function proxy(req: NextRequest) {
   // IMPORTANT: Do not run code between createServerClient and getUser/getClaims.
   // Proper session refresh here prevents random logouts.
   // On Supabase timeout (network issues), continue as unauthenticated so the app stays responsive.
+  let user = null;
   try {
-    await supabase.auth.getUser();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
   } catch {
     // Supabase unreachable: proceed without session refresh
+  }
+
+  // Redirect unauthenticated users from /dashboard/* to login, preserving return path (localhost + prod)
+  const pathname = url.pathname;
+  if (!user && pathname.startsWith("/dashboard")) {
+    const loginUrl = new URL("/login", req.url);
+    // Safe redirect: only allow relative paths (no protocol-relative or absolute URLs)
+    if (pathname.startsWith("/") && !pathname.includes("//")) {
+      loginUrl.searchParams.set("redirect", pathname);
+    }
+    const redirectRes = NextResponse.redirect(loginUrl);
+    // Copy any cookies from session refresh (e.g. cleared session) to redirect response
+    supabaseResponse.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value, c));
+    return redirectRes;
   }
 
   return supabaseResponse;

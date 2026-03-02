@@ -397,7 +397,7 @@ export function FeedItemCard({
         className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full"
         style={{ background: "var(--feed-input-bg)" }}
       >
-        <div className="h-full w-full overflow-hidden rounded-full" style={{ background: "var(--feed-card)" }}>
+        <div className="relative h-full w-full overflow-hidden rounded-full" style={{ background: "var(--feed-card)" }}>
           <Image
             src={imageUrl}
             alt={item.organization_name}

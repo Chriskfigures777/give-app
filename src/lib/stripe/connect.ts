@@ -18,6 +18,7 @@ export async function createConnectAccount(params: {
     capabilities: {
       card_payments: { requested: true },
       transfers: { requested: true },
+      treasury: { requested: true },
     },
     metadata: {
       organization_id: params.organizationId,
@@ -79,6 +80,7 @@ export async function createConnectAccountForEndowment(params: {
     capabilities: {
       card_payments: { requested: true },
       transfers: { requested: true },
+      treasury: { requested: true },
     },
     metadata: {
       endowment_fund_id: params.endowmentFundId,

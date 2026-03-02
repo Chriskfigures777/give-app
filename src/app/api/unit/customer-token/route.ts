@@ -73,8 +73,15 @@ export async function GET() {
   const unitData = await unitRes.json();
 
   if (!unitRes.ok) {
-    const errMsg = unitData?.errors?.[0]?.detail ?? unitData?.errors?.[0]?.title ?? "Failed to get banking token";
-    return NextResponse.json({ error: errMsg }, { status: 400 });
+    const unitErr = unitData?.errors?.[0];
+    const errMsg = unitErr?.detail ?? unitErr?.title ?? "Failed to get banking token";
+    const errCode = unitErr?.code;
+    // Log for debugging (e.g. "jwtSettings was not found", JWT validation failures)
+    console.error("[customer-token] Unit API error:", unitRes.status, unitData);
+    return NextResponse.json(
+      { error: errMsg, unitErrorCode: errCode },
+      { status: 400 }
+    );
   }
 
   const customerToken: string = unitData?.data?.attributes?.token;

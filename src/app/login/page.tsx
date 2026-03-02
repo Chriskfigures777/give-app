@@ -4,7 +4,7 @@ import { LoginForm } from "./login-form";
 import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
 
-type Props = { searchParams: Promise<{ org?: string; frequency?: string }> };
+type Props = { searchParams: Promise<{ org?: string | string[]; frequency?: string | string[]; redirect?: string | string[] }> };
 
 export default async function LoginPage({ searchParams }: Props) {
   const supabase = await createClient();
@@ -12,16 +12,19 @@ export default async function LoginPage({ searchParams }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { org: orgSlug, frequency } = await searchParams;
+  const { org: orgSlug, frequency, redirect: redirectParam } = await searchParams;
   const orgSlugStr =
     (typeof orgSlug === "string" ? orgSlug : orgSlug?.[0]) ?? null;
   const frequencyStr =
     (typeof frequency === "string" ? frequency : frequency?.[0]) ?? null;
+  const redirectTo =
+    (typeof redirectParam === "string" ? redirectParam : redirectParam?.[0]) ?? null;
 
   const returnToGive = orgSlugStr
     ? `/give/${orgSlugStr}${frequencyStr ? `?frequency=${encodeURIComponent(frequencyStr)}` : ""}`
     : null;
   if (user && returnToGive) redirect(returnToGive);
+  if (user && redirectTo) redirect(redirectTo);
   if (user) redirect("/dashboard");
 
   let orgName: string | null = null;
@@ -104,7 +107,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
           <div className="mt-10">
             <LoginForm
-              redirectTo={returnToGive ?? "/dashboard"}
+              redirectTo={returnToGive ?? redirectTo ?? "/dashboard"}
               orgName={orgName}
               orgSlug={orgSlugStr}
               frequency={frequencyStr}
