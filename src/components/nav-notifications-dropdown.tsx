@@ -265,7 +265,8 @@ export function NavNotificationsDropdown({
       )
       .subscribe();
     return () => {
-      supabase.removeChannel(channel);
+      // Defer teardown to avoid "WebSocket closed before connection" in React Strict Mode
+      setTimeout(() => supabase.removeChannel(channel), 150);
     };
   }, [userId, onUnreadChange]);
 

@@ -46,25 +46,42 @@ export async function POST(req: NextRequest) {
   }
 
   const idempotencyKey = randomUUID();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25_000);
 
-  const res = await fetch(`${UNIT_API_URL}/application-forms`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiToken}`,
-      "Content-Type": "application/vnd.api+json",
-      "X-Accept-Version": "V2024_06",
-    },
-    body: JSON.stringify({
-      data: {
-        type: "applicationForm",
-        attributes: {
-          idempotencyKey,
-          tags: { userId: tagsUserId },
-          jwtSubject,
-        },
+  let res: Response;
+  try {
+    res = await fetch(`${UNIT_API_URL}/application-forms`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        "Content-Type": "application/vnd.api+json",
+        "X-Accept-Version": "V2024_06",
       },
-    }),
-  });
+      body: JSON.stringify({
+        data: {
+          type: "applicationForm",
+          attributes: {
+            idempotencyKey,
+            tags: { userId: tagsUserId },
+            jwtSubject,
+          },
+        },
+      }),
+      signal: controller.signal,
+    });
+  } catch (e) {
+    clearTimeout(timeoutId);
+    if (e instanceof Error && e.name === "AbortError") {
+      console.error("[Unit create-application-form] Unit API timed out");
+      return NextResponse.json(
+        { error: "Unit API timed out. Please try again." },
+        { status: 504 }
+      );
+    }
+    throw e;
+  }
+  clearTimeout(timeoutId);
 
   const data = await res.json().catch(() => ({}));
 

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "./login-form";
 import Link from "next/link";
@@ -106,12 +107,14 @@ export default async function LoginPage({ searchParams }: Props) {
           </p>
 
           <div className="mt-10">
-            <LoginForm
-              redirectTo={returnToGive ?? redirectTo ?? "/dashboard"}
-              orgName={orgName}
-              orgSlug={orgSlugStr}
-              frequency={frequencyStr}
-            />
+            <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-slate-100" />}>
+              <LoginForm
+                redirectTo={returnToGive ?? redirectTo ?? "/dashboard"}
+                orgName={orgName}
+                orgSlug={orgSlugStr}
+                frequency={frequencyStr}
+              />
+            </Suspense>
           </div>
         </div>
       </main>

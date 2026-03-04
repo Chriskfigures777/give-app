@@ -16,7 +16,7 @@ const webhookSecret = process.env.UNIT_WEBHOOK_SECRET;
  * Token: same as UNIT_WEBHOOK_SECRET
  *
  * @see https://unit.co/docs/api/webhooks/
- * @see https://www.unit.co/docs/ready-to-launch/banking/advanced-implementation/#webhook-events
+ * @see https://unit.co/docs/api/webhooks
  */
 function verifyUnitSignature(body: string, signature: string): boolean {
   if (!webhookSecret) return false;

@@ -15,6 +15,19 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 
+// BANKGO-matching dark palette
+const SB = {
+  card:      "#181c26",
+  cardHover: "#1e2330",
+  border:    "rgba(255,255,255,0.06)",
+  text:      "#eef0f6",
+  textMuted: "#8891a5",
+  textDim:   "#565e72",
+  accent:    "#34d399",
+  accentDim: "rgba(52,211,153,0.12)",
+  inputBg:   "#12151c",
+} as const;
+
 type Thread = {
   id: string;
   connectionId: string;
@@ -75,26 +88,24 @@ function AvatarMini({
   size?: "xs" | "sm" | "md";
   showOnline?: boolean;
 }) {
-  const sizeClasses = { xs: "h-6 w-6 text-[8px]", sm: "h-9 w-9 text-[10px]", md: "h-10 w-10 text-xs" };
+  const sizePx = { xs: "h-6 w-6 text-[8px]", sm: "h-9 w-9 text-[10px]", md: "h-10 w-10 text-xs" };
   return (
-    <div className={cn("relative shrink-0", sizeClasses[size])}>
+    <div className={cn("relative shrink-0", sizePx[size])}>
       <div
-        className={cn(
-          "h-full w-full rounded-full overflow-hidden bg-gradient-to-br from-emerald-400/20 to-teal-400/20 ring-1 ring-black/[0.04]",
-          sizeClasses[size]
-        )}
+        className={cn("h-full w-full rounded-full overflow-hidden", sizePx[size])}
+        style={{ background: `linear-gradient(135deg, ${SB.accentDim}, rgba(13,148,136,0.15))` }}
       >
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <span className="flex h-full w-full items-center justify-center font-semibold text-emerald-700">
+          <span className="flex h-full w-full items-center justify-center font-semibold" style={{ color: SB.accent }}>
             {getInitials(name)}
           </span>
         )}
       </div>
       {showOnline && (
-        <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full border border-white bg-emerald-500" />
+        <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full border" style={{ background: "#22c55e", borderColor: SB.card }} />
       )}
     </div>
   );
@@ -136,10 +147,10 @@ export function PanelMessages() {
       <div className="p-4 space-y-3">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center gap-2.5 animate-pulse">
-            <div className="h-9 w-9 rounded-full bg-slate-100 shrink-0" />
+            <div className="h-9 w-9 rounded-full shrink-0" style={{ background: SB.cardHover }} />
             <div className="flex-1 space-y-1.5">
-              <div className="h-3 w-24 rounded-lg bg-slate-100" />
-              <div className="h-2.5 w-36 rounded-lg bg-slate-50" />
+              <div className="h-3 w-24 rounded-lg" style={{ background: SB.cardHover }} />
+              <div className="h-2.5 w-36 rounded-lg" style={{ background: SB.inputBg }} />
             </div>
           </div>
         ))}
@@ -162,13 +173,18 @@ export function PanelMessages() {
       {/* Search */}
       <div className="p-3 pb-2">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2" style={{ color: SB.textMuted }} />
           <input
             type="text"
             placeholder="Search messages..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200/60 bg-slate-50/50 py-2 pl-9 pr-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition-all focus:border-emerald-300 focus:ring-2 focus:ring-emerald-500/10"
+            className="w-full rounded-xl py-2 pl-9 pr-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+            style={{
+              background: SB.inputBg,
+              border: `1px solid ${SB.border}`,
+              color: SB.text,
+            }}
           />
         </div>
       </div>
@@ -176,25 +192,26 @@ export function PanelMessages() {
       {/* Thread list */}
       {filteredThreads.length === 0 ? (
         <div className="flex flex-col items-center px-4 py-10 text-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100">
-            <MessageCircle className="h-5 w-5 text-emerald-600" />
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: SB.accentDim }}>
+            <MessageCircle className="h-5 w-5" style={{ color: SB.accent }} />
           </div>
           {threads.length === 0 ? (
             <>
-              <p className="text-sm font-medium text-slate-600">No conversations yet</p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="text-sm font-medium" style={{ color: SB.textMuted }}>No conversations yet</p>
+              <p className="mt-1 text-xs" style={{ color: SB.textMuted }}>
                 Connect with peers to start messaging
               </p>
               <Link
                 href="/dashboard/connections"
-                className="mt-3 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-all hover:shadow-md"
+                className="mt-3 inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold text-white shadow-sm transition-all hover:shadow-md"
+                style={{ background: "linear-gradient(to right, #10b981, #0d9488)" }}
               >
                 Find peers
                 <ArrowUpRight className="h-3 w-3" />
               </Link>
             </>
           ) : (
-            <p className="text-sm text-slate-400">No matches found</p>
+            <p className="text-sm" style={{ color: SB.textMuted }}>No matches found</p>
           )}
         </div>
       ) : (
@@ -207,7 +224,9 @@ export function PanelMessages() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all duration-200 hover:bg-slate-50/80"
+              className="mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all duration-200"
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
             >
               <AvatarMini
                 src={t.otherProfileImageUrl ?? t.otherLogoUrl}
@@ -217,16 +236,16 @@ export function PanelMessages() {
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-1">
-                  <p className="truncate text-sm font-semibold text-slate-800">
+                  <p className="truncate text-sm font-semibold" style={{ color: SB.text }}>
                     {t.otherName}
                   </p>
                   {t.lastMessageAt && (
-                    <span className="shrink-0 text-[10px] tabular-nums text-slate-400">
+                    <span className="shrink-0 text-[10px] tabular-nums" style={{ color: SB.textMuted }}>
                       {formatThreadDate(t.lastMessageAt)}
                     </span>
                   )}
                 </div>
-                <p className="mt-0.5 truncate text-xs text-slate-500">
+                <p className="mt-0.5 truncate text-xs" style={{ color: SB.textMuted }}>
                   {t.lastMessagePreview ?? "No messages yet"}
                 </p>
               </div>
@@ -236,10 +255,13 @@ export function PanelMessages() {
       )}
 
       {/* Full messages link */}
-      <div className="border-t border-slate-100/80 px-3 py-3">
+      <div className="px-3 py-3" style={{ borderTop: `1px solid ${SB.border}` }}>
         <Link
           href="/messages"
-          className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-50/80 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          className="flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-colors"
+          style={{ background: SB.inputBg, color: SB.textMuted }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; (e.currentTarget as HTMLElement).style.color = SB.text; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.inputBg; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
         >
           <MessageCircle className="h-3.5 w-3.5" />
           Open full messages
@@ -365,25 +387,31 @@ function CompactConversation({
   return (
     <div className="flex h-full flex-col" style={{ maxHeight: "calc(100vh - 310px)" }}>
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-slate-100/80 px-3 py-2.5 shrink-0">
+      <div className="flex items-center gap-2 px-3 py-2.5 shrink-0" style={{ borderBottom: `1px solid ${SB.border}` }}>
         <button
           type="button"
           onClick={onBack}
-          className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+          className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors"
+          style={{ color: SB.textMuted }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
         <AvatarMini src={otherAvatar} name={thread.otherName} size="sm" showOnline />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-slate-800">
+          <p className="truncate text-sm font-semibold" style={{ color: SB.text }}>
             {thread.otherName}
           </p>
-          <p className="text-[10px] text-emerald-600 font-medium">Active now</p>
+          <p className="text-[10px] font-medium" style={{ color: SB.accent }}>Active now</p>
         </div>
         <Link
           href={`/messages?thread=${thread.id}`}
-          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+          className="rounded-lg p-1.5 transition-colors"
+          style={{ color: SB.textMuted }}
           title="Open full view"
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
         >
           <ArrowUpRight className="h-3.5 w-3.5" />
         </Link>
@@ -393,14 +421,14 @@ function CompactConversation({
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1 min-h-0">
         {!messagesLoaded ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+            <Loader2 className="h-5 w-5 animate-spin" style={{ color: SB.accent }} />
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-center">
-            <Send className="h-6 w-6 text-slate-300 -rotate-12 mb-2" />
-            <p className="text-xs text-slate-500">
+            <Send className="h-6 w-6 -rotate-12 mb-2" style={{ color: SB.textMuted }} />
+            <p className="text-xs" style={{ color: SB.textMuted }}>
               Start chatting with{" "}
-              <span className="font-semibold text-slate-700">{thread.otherName}</span>
+              <span className="font-semibold" style={{ color: SB.text }}>{thread.otherName}</span>
             </p>
           </div>
         ) : (
@@ -420,16 +448,19 @@ function CompactConversation({
                   className={cn(
                     "max-w-[80%] rounded-2xl px-3 py-2 text-xs leading-relaxed",
                     fromMe
-                      ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-br-md"
-                      : "bg-slate-100 text-slate-800 rounded-bl-md"
+                      ? "rounded-br-md"
+                      : "rounded-bl-md"
                   )}
+                  style={
+                    fromMe
+                      ? { background: "linear-gradient(135deg, #059669, #0d9488)", color: "#fff" }
+                      : { background: SB.cardHover, color: SB.text }
+                  }
                 >
                   <p className="whitespace-pre-wrap break-words">{m.content}</p>
                   <p
-                    className={cn(
-                      "text-[9px] mt-0.5 tabular-nums",
-                      fromMe ? "text-emerald-200/70" : "text-slate-400"
-                    )}
+                    className="text-[9px] mt-0.5 tabular-nums"
+                    style={{ color: fromMe ? "rgba(255,255,255,0.6)" : SB.textMuted }}
                   >
                     {formatMessageTime(m.created_at)}
                   </p>
@@ -442,8 +473,11 @@ function CompactConversation({
       </div>
 
       {/* Input */}
-      <div className="border-t border-slate-100/80 px-3 py-2 shrink-0">
-        <div className="flex items-end gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 px-3 py-1.5">
+      <div className="px-3 py-2 shrink-0" style={{ borderTop: `1px solid ${SB.border}` }}>
+        <div
+          className="flex items-end gap-2 rounded-xl px-3 py-1.5"
+          style={{ border: `1px solid ${SB.border}`, background: SB.inputBg }}
+        >
           <textarea
             ref={inputRef}
             value={newMessage}
@@ -461,11 +495,15 @@ function CompactConversation({
             }}
             placeholder="Message..."
             rows={1}
-            className="flex-1 bg-transparent text-xs text-slate-800 placeholder:text-slate-400 resize-none outline-none py-1 max-h-[80px] leading-relaxed"
+            className="flex-1 bg-transparent text-xs resize-none outline-none py-1 max-h-[80px] leading-relaxed"
+            style={{ color: SB.text }}
           />
           <button
             type="button"
-            className="mb-0.5 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+            className="mb-0.5 p-1 transition-colors"
+            style={{ color: SB.textMuted }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
           >
             <Smile className="h-4 w-4" />
           </button>
@@ -473,7 +511,8 @@ function CompactConversation({
             type="button"
             onClick={handleSend}
             disabled={sending || !newMessage.trim()}
-            className="mb-0.5 flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-sm transition-all disabled:opacity-40"
+            className="mb-0.5 flex h-7 w-7 items-center justify-center rounded-lg text-white shadow-sm transition-all disabled:opacity-40"
+            style={{ background: "linear-gradient(135deg, #059669, #0d9488)" }}
           >
             <Send className="h-3.5 w-3.5" />
           </button>

@@ -798,18 +798,20 @@ export function FeedItemCard({
         {commentSection}
       </div>
 
-      {/* Edit modal */}
+      {/* Edit modal — matches feed light theme (portaled to body) */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent
+          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+        >
           <DialogHeader>
-            <DialogTitle>Edit post</DialogTitle>
+            <DialogTitle className="text-[#1a1d24]">Edit post</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               placeholder="What's on your mind?"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+              className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#f1f3f5] px-4 py-3 text-sm text-[#1a1d24] placeholder:text-[#9ca3af] transition-all focus:border-[#059669] focus:outline-none focus:ring-2 focus:ring-[#059669]/20"
               rows={4}
               maxLength={5000}
             />
@@ -817,14 +819,14 @@ export function FeedItemCard({
               <Button
                 onClick={handleEditSubmit}
                 disabled={!editContent.trim() || editSubmitting}
-                className="rounded-xl"
+                className="rounded-xl bg-[#059669] text-white hover:bg-[#047857]"
               >
                 {editSubmitting ? "Saving..." : "Save changes"}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setEditModalOpen(false)}
-                className="rounded-xl"
+                className="rounded-xl border-[#e5e7eb] text-[#1a1d24] hover:bg-[#f8f9fb]"
               >
                 Cancel
               </Button>
@@ -833,13 +835,15 @@ export function FeedItemCard({
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirm modal */}
+      {/* Delete confirm modal — matches feed light theme */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent
+          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+        >
           <DialogHeader>
-            <DialogTitle>Delete this post?</DialogTitle>
+            <DialogTitle className="text-[#1a1d24]">Delete this post?</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[#6b7280]">
             This action cannot be undone. The post and all its comments will
             be permanently removed.
           </p>
@@ -855,7 +859,7 @@ export function FeedItemCard({
             <Button
               variant="outline"
               onClick={() => setDeleteConfirmOpen(false)}
-              className="rounded-xl"
+              className="rounded-xl border-[#e5e7eb] text-[#1a1d24] hover:bg-[#f8f9fb]"
             >
               Cancel
             </Button>
@@ -863,25 +867,27 @@ export function FeedItemCard({
         </DialogContent>
       </Dialog>
 
-      {/* Share modal */}
+      {/* Share modal — matches feed light theme */}
       <Dialog open={shareModalOpen} onOpenChange={setShareModalOpen}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent
+          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+        >
           <DialogHeader>
-            <DialogTitle>Share to your feed</DialogTitle>
+            <DialogTitle className="text-[#1a1d24]">Share to your feed</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <textarea
               value={shareComment}
               onChange={(e) => setShareComment(e.target.value)}
               placeholder="Add your thoughts (optional)..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+              className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#f1f3f5] px-4 py-3 text-sm text-[#1a1d24] placeholder:text-[#9ca3af] transition-all focus:border-[#059669] focus:outline-none focus:ring-2 focus:ring-[#059669]/20"
               rows={3}
               maxLength={500}
             />
             <Button
               onClick={handleShareSubmit}
               disabled={shareSubmitting}
-              className="rounded-xl"
+              className="rounded-xl bg-[#059669] text-white hover:bg-[#047857]"
             >
               {shareSubmitting ? "Sharing..." : "Share now"}
             </Button>

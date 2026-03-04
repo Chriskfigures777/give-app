@@ -7,7 +7,8 @@ import { PanelPeers } from "./panel-peers";
 import { PanelMessages } from "./panel-messages";
 import { PanelNotifications } from "./panel-notifications";
 import { FeedSidebar } from "./feed-sidebar";
-import { useFeedTheme } from "./feed-theme-context";
+
+/* Uses feed theme CSS variables to match light feed */
 
 export type PanelPage = "home" | "peers" | "messages" | "notifications";
 
@@ -24,7 +25,6 @@ const PANEL_TABS: {
 
 export function FeedRightPanel() {
   const [activePage, setActivePage] = useState<PanelPage>("home");
-  const { theme } = useFeedTheme();
 
   return (
     <aside className="hidden w-[296px] shrink-0 lg:block">
@@ -33,11 +33,8 @@ export function FeedRightPanel() {
 
         {/* ── Tab bar ── */}
         <div
-          className="rounded-2xl overflow-hidden ft-card-shadow"
-          style={{
-            background: "var(--feed-card)",
-            border: "1px solid var(--feed-border)",
-          }}
+          className="rounded-2xl overflow-hidden ft-card"
+          style={{ border: "1px solid var(--feed-border)" }}
         >
           <div className="p-1.5">
             <div className="relative flex gap-0.5">
@@ -49,34 +46,28 @@ export function FeedRightPanel() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActivePage(tab.id)}
-                    className="relative flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center text-[9px] font-bold uppercase tracking-wider transition-all duration-200"
+                    className="relative flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider transition-all duration-200"
                     style={
                       isActive
-                        ? {
-                            background: "var(--feed-nav-active-bg)",
-                            color: "var(--feed-nav-active-text)",
-                          }
-                        : { color: "var(--feed-text-dim)" }
+                        ? { background: "var(--feed-nav-active-bg)", color: "var(--feed-nav-active-text)" }
+                        : { color: "var(--feed-text)" }
                     }
                     onMouseEnter={(e) => {
                       if (!isActive)
-                        (e.currentTarget as HTMLElement).style.color =
-                          "var(--feed-text-muted)";
+                        (e.currentTarget as HTMLElement).style.color = "var(--feed-accent)";
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive)
-                        (e.currentTarget as HTMLElement).style.color =
-                          "var(--feed-text-dim)";
+                        (e.currentTarget as HTMLElement).style.color = "var(--feed-text)";
                     }}
                   >
-                    <Icon className="h-4 w-4 shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={isActive ? 2.5 : 2} />
                     <span>{tab.label}</span>
-                    {/* Active underline */}
                     {isActive && (
                       <motion.span
                         layoutId="panel-tab-indicator"
                         className="absolute bottom-0 left-1 right-1 h-0.5 rounded-full"
-                        style={{ background: "var(--feed-gradient)" }}
+                        style={{ background: "var(--feed-accent)" }}
                         transition={{ type: "spring", stiffness: 400, damping: 35 }}
                       />
                     )}
@@ -89,9 +80,8 @@ export function FeedRightPanel() {
 
         {/* ── Panel content ── */}
         <div
-          className="rounded-2xl overflow-hidden ft-card-shadow feed-scroll-area"
+          className="rounded-2xl overflow-hidden feed-scroll-area ft-card"
           style={{
-            background: "var(--feed-card)",
             border: "1px solid var(--feed-border)",
             maxHeight: "calc(100vh - 9rem)",
             overflowY: "auto",
@@ -147,23 +137,14 @@ export function FeedRightPanel() {
 
         {/* ── Live status indicator ── */}
         <div
-          className="rounded-xl px-3 py-2 flex items-center gap-2"
-          style={{
-            background: "var(--feed-input-bg)",
-            border: "1px solid var(--feed-border)",
-          }}
+          className="rounded-xl px-3 py-2 flex items-center gap-2 ft-input-bg"
+          style={{ border: "1px solid var(--feed-border)" }}
         >
           <span
             className="h-1.5 w-1.5 rounded-full"
-            style={{
-              background: "var(--feed-accent)",
-              boxShadow: "0 0 6px var(--feed-accent)",
-            }}
+            style={{ background: "var(--feed-accent)", boxShadow: "0 0 6px var(--feed-accent)" }}
           />
-          <span
-            className="text-[10px] font-semibold uppercase tracking-wider"
-            style={{ color: "var(--feed-text-dim)" }}
-          >
+          <span className="text-[10px] font-semibold uppercase tracking-wider ft-text-muted">
             Live updates active
           </span>
         </div>

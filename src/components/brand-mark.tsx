@@ -49,8 +49,8 @@ export function BrandMark({ className = "", id = "brand", fullLogo = false, icon
 
   if (iconOnly) {
     return (
-      <span className={`inline-flex shrink-0 ${className}`} aria-label="The Exchange">
-        <MountainCurveMark color={markColor} className="h-8 w-8 shrink-0" />
+      <span className={`inline-flex shrink-0 items-center justify-center ${className}`} aria-label="The Exchange">
+        <MountainCurveMark color={markColor} className={`shrink-0 ${className || "h-8 w-8"}`} />
       </span>
     );
   }

@@ -77,6 +77,28 @@ export async function POST(
           .select("id")
           .eq("connection_id", connectionId)
           .single();
+        // Sync user↔user to friends when already connected
+        if (sideA.type === "user" && sideB.type === "user") {
+          try {
+            const { data: pA } = await service.from("user_profiles").select("unit_customer_id, full_name").eq("id", sideA.id).single();
+            const { data: pB } = await service.from("user_profiles").select("unit_customer_id, full_name").eq("id", sideB.id).single();
+            const nameA = (pA as { full_name?: string } | null)?.full_name ?? null;
+            const nameB = (pB as { full_name?: string } | null)?.full_name ?? null;
+            const unitA = (pA as { unit_customer_id?: string } | null)?.unit_customer_id ?? null;
+            const unitB = (pB as { unit_customer_id?: string } | null)?.unit_customer_id ?? null;
+            await (service as unknown as { from: (t: string) => { upsert: (rows: unknown[], opts: { onConflict: string }) => Promise<unknown> } })
+              .from("friends")
+              .upsert(
+                [
+                  { user_id: sideA.id, friend_id: sideB.id, unit_customer_id: unitB, display_name: nameB },
+                  { user_id: sideB.id, friend_id: sideA.id, unit_customer_id: unitA, display_name: nameA },
+                ],
+                { onConflict: "user_id,friend_id" }
+              );
+          } catch {
+            // ignore
+          }
+        }
         return NextResponse.json({ success: true, alreadyConnected: true, connectionId, threadId: (existingThread as { id: string } | null)?.id });
       }
       return NextResponse.json(
@@ -117,6 +139,31 @@ export async function POST(
             thread_id: (thread as { id: string } | null)?.id ?? null,
           },
         }).catch(() => {});
+      }
+    }
+
+    // Sync user↔user connections to friends table for banking app P2P
+    if (sideA.type === "user" && sideB.type === "user") {
+      try {
+        const { data: pA } = await service.from("user_profiles").select("unit_customer_id, full_name").eq("id", sideA.id).single();
+        const { data: pB } = await service.from("user_profiles").select("unit_customer_id, full_name").eq("id", sideB.id).single();
+        const unitA = (pA as { unit_customer_id?: string; full_name?: string } | null)?.unit_customer_id;
+        const unitB = (pB as { unit_customer_id?: string; full_name?: string } | null)?.unit_customer_id;
+        const nameA = (pA as { full_name?: string } | null)?.full_name ?? null;
+        const nameB = (pB as { full_name?: string } | null)?.full_name ?? null;
+
+        // Insert both directions (A→B and B→A)
+        await (service as unknown as { from: (t: string) => { upsert: (rows: unknown[], opts: { onConflict: string }) => Promise<unknown> } })
+          .from("friends")
+          .upsert(
+            [
+              { user_id: sideA.id, friend_id: sideB.id, unit_customer_id: unitB ?? null, display_name: nameB },
+              { user_id: sideB.id, friend_id: sideA.id, unit_customer_id: unitA ?? null, display_name: nameA },
+            ],
+            { onConflict: "user_id,friend_id" }
+          );
+      } catch (err) {
+        console.warn("[accept] friends sync skipped:", err);
       }
     }
 

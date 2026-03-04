@@ -18,6 +18,19 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+// BANKGO-matching dark palette
+const SB = {
+  card:      "#181c26",
+  cardHover: "#1e2330",
+  border:    "rgba(255,255,255,0.06)",
+  text:      "#eef0f6",
+  textMuted: "#8891a5",
+  textDim:   "#565e72",
+  accent:    "#34d399",
+  accentDim: "rgba(52,211,153,0.12)",
+  inputBg:   "#12151c",
+} as const;
+
 type PeerConnection = {
   id: string;
   otherName: string;
@@ -212,10 +225,10 @@ export function PanelPeers() {
       <div className="p-4 space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-center gap-3 animate-pulse">
-            <div className="h-10 w-10 rounded-full bg-slate-100 shrink-0" />
+            <div className="h-10 w-10 rounded-full shrink-0" style={{ background: SB.cardHover }} />
             <div className="flex-1 space-y-1.5">
-              <div className="h-3.5 w-3/4 rounded-lg bg-slate-100" />
-              <div className="h-2.5 w-1/2 rounded-lg bg-slate-50" />
+              <div className="h-3.5 w-3/4 rounded-lg" style={{ background: SB.cardHover }} />
+              <div className="h-2.5 w-1/2 rounded-lg" style={{ background: SB.inputBg }} />
             </div>
           </div>
         ))}
@@ -227,8 +240,18 @@ export function PanelPeers() {
     <div className="flex flex-col">
       {/* Search bar */}
       <div className="p-3 pb-2">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+        <div
+          className="flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-200"
+          style={{
+            background: SB.inputBg,
+            border: searchQuery ? `1px solid rgba(52,211,153,0.35)` : `1px solid ${SB.border}`,
+            boxShadow: searchQuery ? "0 0 0 3px rgba(52,211,153,0.06)" : "none",
+          }}
+        >
+          {searching
+            ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" style={{ color: SB.accent }} />
+            : <Search className="h-3.5 w-3.5 shrink-0 transition-colors" style={{ color: searchQuery ? SB.accent : SB.textMuted }} />
+          }
           <input
             type="text"
             placeholder="Search peers..."
@@ -238,16 +261,20 @@ export function PanelPeers() {
               if (e.target.value.length < 2) setSearchResults([]);
             }}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="w-full rounded-xl border border-slate-200/60 bg-slate-50/50 py-2 pl-9 pr-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition-all focus:border-emerald-300 focus:ring-2 focus:ring-emerald-500/10"
+            className="flex-1 min-w-0 bg-transparent text-[13px] outline-none placeholder:opacity-50"
+            style={{ color: SB.text }}
+            autoComplete="off"
+            spellCheck={false}
           />
           {searchQuery.length >= 2 && (
             <button
               type="button"
               onClick={handleSearch}
               disabled={searching}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-emerald-500 px-2 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-emerald-600"
+              className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ background: SB.accent }}
             >
-              {searching ? <Loader2 className="h-3 w-3 animate-spin" /> : "Find"}
+              Go
             </button>
           )}
         </div>
@@ -260,11 +287,18 @@ export function PanelPeers() {
             key={f}
             type="button"
             onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-[11px] font-semibold transition-all duration-200 ${
+            className="rounded-full px-3 py-1 text-[11px] font-semibold transition-all duration-200"
+            style={
               filter === f
-                ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm"
-                : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
-            }`}
+                ? { background: "linear-gradient(to right, #10b981, #0d9488)", color: "#fff" }
+                : { color: SB.textMuted, background: "transparent" }
+            }
+            onMouseEnter={(e) => {
+              if (filter !== f) (e.currentTarget as HTMLElement).style.background = SB.cardHover;
+            }}
+            onMouseLeave={(e) => {
+              if (filter !== f) (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
           >
             {f === "all" ? "All" : f === "connected" ? "Connected" : "Pending"}
             {f === "pending" && pendingRequests.length > 0 && (
@@ -283,30 +317,39 @@ export function PanelPeers() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-b border-slate-100/80"
+            style={{ borderBottom: `1px solid ${SB.border}` }}
           >
             <div className="px-3 py-2">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider" style={{ color: SB.textMuted }}>
                 Search Results
               </p>
               {searchResults.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50"
+                  className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors"
+                  style={{ cursor: "default" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-100 to-indigo-100">
-                    <span className="text-[10px] font-bold text-violet-600">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full"
+                    style={{ background: "rgba(139,92,246,0.2)" }}
+                  >
+                    <span className="text-[10px] font-bold" style={{ color: "#a78bfa" }}>
                       {getInitials(r.name)}
                     </span>
                   </div>
-                  <span className="flex-1 truncate text-sm font-medium text-slate-700">
+                  <span className="flex-1 truncate text-sm font-medium" style={{ color: SB.text }}>
                     {r.name}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleSendRequest(r.id)}
                     disabled={actionLoading === r.id}
-                    className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-600 transition-colors hover:bg-emerald-100 disabled:opacity-50"
+                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors disabled:opacity-50"
+                    style={{ background: SB.accentDim, color: SB.accent }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.2)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.accentDim; }}
                   >
                     {actionLoading === r.id ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -324,8 +367,8 @@ export function PanelPeers() {
 
       {/* Pending requests */}
       {filteredPending.length > 0 && (
-        <div className="border-b border-slate-100/80 px-3 py-2">
-          <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        <div className="px-3 py-2" style={{ borderBottom: `1px solid ${SB.border}` }}>
+          <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider" style={{ color: SB.textMuted }}>
             <Clock className="h-3 w-3" />
             Pending Requests
           </p>
@@ -341,18 +384,23 @@ export function PanelPeers() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50"
+                  className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-orange-100">
-                    <span className="text-[10px] font-bold text-amber-600">
+                  <div
+                    className="flex h-9 w-9 items-center justify-center rounded-full"
+                    style={{ background: "rgba(245,158,11,0.15)" }}
+                  >
+                    <span className="text-[10px] font-bold" style={{ color: "#fbbf24" }}>
                       {getInitials(name)}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-700">
+                    <p className="truncate text-sm font-medium" style={{ color: SB.text }}>
                       {name}
                     </p>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px]" style={{ color: SB.textMuted }}>
                       {r.direction === "incoming" ? "Wants to connect" : "Request sent"}{" "}
                       &middot; {timeAgo(r.created_at)}
                     </p>
@@ -363,7 +411,10 @@ export function PanelPeers() {
                         type="button"
                         onClick={() => handleAccept(r.id)}
                         disabled={actionLoading === r.id}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100 disabled:opacity-50"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-50"
+                        style={{ background: SB.accentDim, color: SB.accent }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.2)"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.accentDim; }}
                       >
                         <Check className="h-3.5 w-3.5" />
                       </button>
@@ -371,13 +422,16 @@ export function PanelPeers() {
                         type="button"
                         onClick={() => handleDecline(r.id)}
                         disabled={actionLoading === r.id}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-50"
+                        style={{ background: "rgba(255,255,255,0.05)", color: SB.textMuted }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; }}
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   ) : (
-                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-600">
+                    <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: "rgba(245,158,11,0.15)", color: "#fbbf24" }}>
                       Sent
                     </span>
                   )}
@@ -391,22 +445,25 @@ export function PanelPeers() {
       {/* Connected peers */}
       <div className="px-3 py-2">
         {filter !== "pending" && (
-          <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider" style={{ color: SB.textMuted }}>
             <Users className="h-3 w-3" />
             Your Peers
-            <span className="ml-auto rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-600">
+            <span
+              className="ml-auto rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+              style={{ background: SB.accentDim, color: SB.accent }}
+            >
               {filteredPeers.length}
             </span>
           </p>
         )}
 
         {filteredPeers.length === 0 && filter !== "pending" ? (
-          <div className="flex flex-col items-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 px-4 py-8 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100">
-              <Sparkles className="h-5 w-5 text-emerald-600" />
+          <div className="flex flex-col items-center rounded-xl px-4 py-8 text-center" style={{ background: SB.inputBg }}>
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: SB.accentDim }}>
+              <Sparkles className="h-5 w-5" style={{ color: SB.accent }} />
             </div>
-            <p className="text-sm font-medium text-slate-600">No peers yet</p>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="text-sm font-medium" style={{ color: SB.textMuted }}>No peers yet</p>
+            <p className="mt-1 text-xs" style={{ color: SB.textMuted }}>
               Search above to find organizations and connect
             </p>
           </div>
@@ -419,8 +476,15 @@ export function PanelPeers() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.025 }}
               >
-                <div className="group flex items-center gap-2.5 rounded-xl px-2 py-2 transition-all duration-200 hover:bg-slate-50">
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 p-[1.5px]">
+                <div
+                  className="group flex items-center gap-2.5 rounded-xl px-2 py-2 transition-all duration-200"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                >
+                  <div
+                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full p-[1.5px]"
+                    style={{ background: `linear-gradient(135deg, ${SB.accentDim}, rgba(13,148,136,0.2))` }}
+                  >
                     <div className="h-full w-full overflow-hidden rounded-full">
                       <Image
                         src={getAvatar(peer.otherProfileImageUrl, peer.otherLogoUrl)}
@@ -430,17 +494,21 @@ export function PanelPeers() {
                         sizes="40px"
                       />
                     </div>
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" />
+                    <span
+                      className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2"
+                      style={{ background: "#22c55e", borderColor: SB.card }}
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-800 group-hover:text-slate-900">
+                    <p className="truncate text-sm font-medium" style={{ color: SB.text }}>
                       {peer.otherName}
                     </p>
                     <div className="mt-0.5 flex items-center gap-2">
                       {peer.otherOrgSlug && (
                         <Link
                           href={`/org/${peer.otherOrgSlug}`}
-                          className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-600 transition-colors hover:text-emerald-700"
+                          className="flex items-center gap-0.5 text-[10px] font-medium transition-colors"
+                          style={{ color: SB.accent }}
                         >
                           <ExternalLink className="h-2.5 w-2.5" />
                           Visit
@@ -449,7 +517,8 @@ export function PanelPeers() {
                       {peer.threadId && (
                         <Link
                           href={`/messages?thread=${peer.threadId}`}
-                          className="flex items-center gap-0.5 text-[10px] font-medium text-slate-500 transition-colors hover:text-slate-700"
+                          className="flex items-center gap-0.5 text-[10px] font-medium transition-colors"
+                          style={{ color: SB.textMuted }}
                         >
                           <MessageSquare className="h-2.5 w-2.5" />
                           Message
@@ -464,11 +533,14 @@ export function PanelPeers() {
         )}
       </div>
 
-      {/* Bottom link to full peers page */}
-      <div className="border-t border-slate-100/80 px-3 py-3">
+      {/* Footer link */}
+      <div className="px-3 py-3" style={{ borderTop: `1px solid ${SB.border}` }}>
         <Link
           href="/dashboard/connections"
-          className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-50/80 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          className="flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-colors"
+          style={{ background: SB.inputBg, color: SB.textMuted }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; (e.currentTarget as HTMLElement).style.color = SB.text; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.inputBg; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
         >
           <Users className="h-3.5 w-3.5" />
           View all peers

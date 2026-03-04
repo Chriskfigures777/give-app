@@ -10,12 +10,12 @@ import { isStripeTestMode } from "@/lib/stripe/constants";
 function DashboardSidebarFallback() {
   return (
     <>
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        <div className="space-y-1">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4">
+        <div className="space-y-1 px-2">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="h-12 animate-pulse rounded-xl bg-dashboard-card-hover/50"
+              className="h-10 animate-pulse rounded bg-dashboard-card-hover/50"
             />
           ))}
         </div>
@@ -40,27 +40,29 @@ export default async function DashboardLayout({
 }) {
   const sidebar = (
     <>
-      {/* Brand */}
-      <div className="shrink-0 px-4 pt-5 pb-4">
+      {/* Brand header — BANKGO style: logo-in-box + app name, 64px height, no border */}
+      <div className="shrink-0">
+        {/* App logo + name — same as BankGO: fixed height, logo box, truncate title */}
         <Link
           href="/dashboard"
-          className="group flex items-center gap-3 rounded-xl py-2 px-2 -ml-1 transition-all duration-200 hover:bg-dashboard-card-hover/50"
+          className="sidebar-brand-link flex h-[var(--topbar-height)] items-center gap-3 px-4 transition-colors duration-150 hover:bg-dashboard-card-hover hover:opacity-90"
         >
-          <BrandMark
-            iconOnly
-            className="drop-shadow-[0_6px_10px_rgba(16,185,129,0.2)] transition-transform duration-200 group-hover:scale-105"
-            id="dash"
-          />
-          <span className="block text-[10px] font-extrabold uppercase tracking-[0.12em] text-dashboard-text-muted">Dashboard</span>
+          <div className="sidebar-logo flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[10px] bg-[rgba(16,185,129,0.12)]">
+            <BrandMark iconOnly className="h-5 w-5" id="dash" />
+          </div>
+          <span className="sidebar-brand-text min-w-0 truncate text-[17px] font-bold tracking-tight text-dashboard-text">
+            Exchange
+          </span>
         </Link>
+        {/* Homepage shortcut — full-width nav item style, hidden when collapsed */}
         <Link
           href="/feed"
-          className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-extrabold text-dashboard-text-muted hover:bg-dashboard-card-hover/50 hover:text-dashboard-text transition-all duration-200 -ml-1"
+          className="sidebar-homepage-link flex w-full items-center gap-3 px-4 py-2.5 text-dashboard-text transition-colors duration-150 hover:bg-dashboard-card-hover hover:opacity-90"
         >
-          <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
-          Homepage
+          <span className="sidebar-nav-label">Homepage</span>
         </Link>
       </div>
 

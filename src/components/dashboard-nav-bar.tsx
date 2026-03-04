@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Bell, Handshake } from "lucide-react";
 import { useUser } from "@/lib/use-user";
 import { NavNotificationsDropdown } from "./nav-notifications-dropdown";
@@ -8,8 +9,45 @@ import { NavConnectionRequestsDropdown } from "./nav-connection-requests-dropdow
 import { DashboardSearch } from "./dashboard-search";
 import { DashboardThemePicker } from "./dashboard-theme-picker";
 
+const TITLE_MAP: Record<string, string> = {
+  "/dashboard": "Overview",
+  "/dashboard/my-donations": "My Gifts",
+  "/dashboard/missionary": "My Embed",
+  "/community": "Community",
+  "/dashboard/donations": "Donations",
+  "/dashboard/connections": "Peers",
+  "/dashboard/events": "Events",
+  "/dashboard/goals": "Goals",
+  "/dashboard/givers": "Givers",
+  "/dashboard/profile": "Public Page",
+  "/dashboard/pages": "Website Builder",
+  "/dashboard/pages/cms": "Website Content",
+  "/dashboard/custom-forms": "Custom Forms",
+  "/dashboard/account": "My Profile",
+  "/dashboard/settings": "Settings",
+  "/dashboard/billing": "Plan & Billing",
+  "/dashboard/connect/verify": "Payout Account",
+  "/dashboard/connect/manage": "Manage Billing",
+  "/dashboard/admin": "Platform Admin",
+  "/dashboard/survey-results": "Survey Results",
+};
+
+function getPageTitle(pathname: string): string {
+  if (TITLE_MAP[pathname]) return TITLE_MAP[pathname];
+  // Match prefix patterns
+  for (const [key, val] of Object.entries(TITLE_MAP)) {
+    if (pathname.startsWith(key + "/")) return val;
+  }
+  // Fallback: humanize last path segment
+  const last = pathname.split("/").filter(Boolean).pop() ?? "";
+  return last.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Dashboard";
+}
+
 export function DashboardNavBar() {
   const { user } = useUser();
+  const pathname = usePathname();
+  const pageTitle = getPageTitle(pathname);
+
   const [unreadCount, setUnreadCount] = useState(0);
   const [connectionRequestCount, setConnectionRequestCount] = useState(0);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -39,15 +77,27 @@ export function DashboardNavBar() {
   if (!user) return null;
 
   return (
-    <div className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-dashboard-border/60 px-5" style={{ background: "var(--dashboard-glass)", backdropFilter: "blur(16px) saturate(1.8)", WebkitBackdropFilter: "blur(16px) saturate(1.8)" }}>
-      {/* Left: search - flex-1 so it grows and stays responsive */}
-      <div className="flex flex-1 items-center gap-2 min-w-0 mr-4">
-        <DashboardSearch />
+    <div
+      className="sticky top-0 z-40 flex h-[60px] shrink-0 items-center justify-between gap-4 border-b border-dashboard-border/60 px-6"
+      style={{
+        background: "var(--dashboard-glass)",
+        backdropFilter: "blur(16px) saturate(1.8)",
+        WebkitBackdropFilter: "blur(16px) saturate(1.8)",
+      }}
+    >
+      {/* Left: page title */}
+      <div className="flex items-center gap-3 min-w-0">
+        <h1 className="text-[15px] font-bold text-dashboard-text truncate">
+          {pageTitle}
+        </h1>
       </div>
 
-      {/* Right: theme picker + action buttons */}
-      <div className="flex items-center gap-1">
+      {/* Right: search + actions */}
+      <div className="flex items-center gap-1.5">
+        <DashboardSearch />
         <DashboardThemePicker size="sm" placement="top" />
+
+        {/* Connection requests */}
         <div className="relative">
           <button
             type="button"
@@ -77,6 +127,8 @@ export function DashboardNavBar() {
             anchorRef={connectionRequestsAnchorRef}
           />
         </div>
+
+        {/* Notifications */}
         <div className="relative">
           <button
             type="button"

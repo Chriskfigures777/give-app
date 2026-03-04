@@ -23,7 +23,6 @@ import {
   Receipt,
   Code2,
   UserCircle,
-  Landmark,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -39,7 +38,31 @@ type Props = {
 
 const iconClass = "h-5 w-5 shrink-0";
 
-export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMissionary, missionarySponsorOrgId, plansToBeMissionary, profileRole }: Props) {
+// BANKGO-matching class strings (no rounded, no font overrides — inherits ~14px default)
+// Active:   bg = rgba(52,211,153,0.12)  text = #34d399  icon = #34d399
+// Inactive: bg = transparent            text = #eef0f6  icon = #eef0f6
+// Hover:    bg = var(--bg-card-hover) at 90% opacity
+
+const navLinkBase =
+  "sidebar-nav-link group relative flex w-full items-center gap-3 px-4 py-2.5 transition-colors duration-150";
+
+const navLinkActive =
+  "text-[#34d399]";
+
+const navLinkInactive =
+  "text-dashboard-text hover:bg-dashboard-card-hover hover:opacity-90";
+
+const navLinkActiveBg = { background: "rgba(52, 211, 153, 0.12)" };
+
+export function DashboardNav({
+  isPlatformAdmin,
+  orgId,
+  onboardingCompleted,
+  isMissionary,
+  missionarySponsorOrgId,
+  plansToBeMissionary,
+  profileRole,
+}: Props) {
   const pathname = usePathname();
   const [connectionRequestCount, setConnectionRequestCount] = useState(0);
 
@@ -65,27 +88,25 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       <li className="shrink-0">
         <Link
           href={href}
-          className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-            active
-              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
-              : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
-          }`}
+          title={label}
+          className={`${navLinkBase} ${active ? navLinkActive : navLinkInactive}`}
+          style={active ? navLinkActiveBg : undefined}
         >
-          <span className={`transition-colors ${active ? "text-emerald-600 dark:text-emerald-400" : "text-dashboard-text-muted group-hover:text-dashboard-text"}`}>
+          <span className={`shrink-0 ${active ? "text-[#34d399]" : "text-dashboard-text"}`}>
             {icon}
           </span>
-          <span>{label}</span>
+          <span className="sidebar-nav-label">{label}</span>
         </Link>
       </li>
     );
   };
 
   const NavSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="mb-5 last:mb-0">
-      <p className="mb-1.5 px-3.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-dashboard-text-muted/70">
+    <div className="mb-4 last:mb-0">
+      <p className="sidebar-section-title mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">
         {title}
       </p>
-      <ul className="flex flex-col gap-0.5">{children}</ul>
+      <ul className="space-y-0.5">{children}</ul>
     </div>
   );
 
@@ -94,22 +115,22 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
       <NavSection title="Overview">
         {link("/dashboard", "Overview", <LayoutDashboard className={iconClass} />, true)}
         {link("/dashboard/my-donations", "My gifts", <Heart className={iconClass} />)}
-        {link("/dashboard/banking", "Banking", <Landmark className={iconClass} />)}
         {(isMissionary || profileRole === "missionary" || plansToBeMissionary) &&
           link("/dashboard/missionary", "My embed", <Share2 className={iconClass} />)}
-        {/* Connections for all users — org owners see theirs, individual members see theirs */}
         {!orgId && !isPlatformAdmin && (
           <li className="shrink-0">
             <Link
               href="/community"
-              className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-                pathname.startsWith("/community")
-                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
-                  : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
+              title="Community"
+              className={`${navLinkBase} ${
+                pathname.startsWith("/community") ? navLinkActive : navLinkInactive
               }`}
+              style={pathname.startsWith("/community") ? navLinkActiveBg : undefined}
             >
-              <Handshake className={iconClass} />
-              <span>Community</span>
+              <span className={`shrink-0 ${pathname.startsWith("/community") ? "text-[#34d399]" : "text-dashboard-text"}`}>
+                <Handshake className={iconClass} />
+              </span>
+              <span className="sidebar-nav-label">Community</span>
             </Link>
           </li>
         )}
@@ -124,21 +145,21 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
               <li className="shrink-0">
                 <Link
                   href="/dashboard/connections"
-                  className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-                    pathname.startsWith("/dashboard/connections")
-                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
-                      : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
+                  title="Peers"
+                  className={`${navLinkBase} ${
+                    pathname.startsWith("/dashboard/connections") ? navLinkActive : navLinkInactive
                   }`}
+                  style={pathname.startsWith("/dashboard/connections") ? navLinkActiveBg : undefined}
                 >
-                  <span className="relative">
+                  <span className={`relative shrink-0 ${pathname.startsWith("/dashboard/connections") ? "text-[#34d399]" : "text-dashboard-text"}`}>
                     <Handshake className={iconClass} />
                     {connectionRequestCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                      <span className="sidebar-badge absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
                         {connectionRequestCount > 9 ? "9+" : connectionRequestCount}
                       </span>
                     )}
                   </span>
-                  <span>Peers</span>
+                  <span className="sidebar-nav-label">Peers</span>
                 </Link>
               </li>
               {link("/dashboard/events", "Events", <Calendar className={iconClass} />)}
@@ -162,32 +183,36 @@ export function DashboardNav({ isPlatformAdmin, orgId, onboardingCompleted, isMi
             <li className="shrink-0">
               <Link
                 href="/dashboard/connect/verify"
-                className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-                  pathname.startsWith("/dashboard/connect")
-                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
-                    : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
+                title={onboardingCompleted ? "Payout account" : "Complete verification"}
+                className={`${navLinkBase} ${
+                  pathname.startsWith("/dashboard/connect") ? navLinkActive : navLinkInactive
                 }`}
+                style={pathname.startsWith("/dashboard/connect") ? navLinkActiveBg : undefined}
               >
-                <CreditCard className={iconClass} />
-                <span>{onboardingCompleted ? "Payout account" : "Complete verification"}</span>
+                <span className={`shrink-0 ${pathname.startsWith("/dashboard/connect") ? "text-[#34d399]" : "text-dashboard-text"}`}>
+                  <CreditCard className={iconClass} />
+                </span>
+                <span className="sidebar-nav-label">
+                  {onboardingCompleted ? "Payout account" : "Complete verification"}
+                </span>
               </Link>
             </li>
             {onboardingCompleted && (
-              <>
-                <li className="shrink-0">
-                  <Link
-                    href="/dashboard/connect/manage"
-                    className={`group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-extrabold transition-all duration-200 ${
-                      pathname === "/dashboard/connect/manage"
-                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/10"
-                        : "text-dashboard-text-muted hover:bg-dashboard-card-hover/60 hover:text-dashboard-text"
-                    }`}
-                  >
+              <li className="shrink-0">
+                <Link
+                  href="/dashboard/connect/manage"
+                  title="Manage billing"
+                  className={`${navLinkBase} ${
+                    pathname === "/dashboard/connect/manage" ? navLinkActive : navLinkInactive
+                  }`}
+                  style={pathname === "/dashboard/connect/manage" ? navLinkActiveBg : undefined}
+                >
+                  <span className={`shrink-0 ${pathname === "/dashboard/connect/manage" ? "text-[#34d399]" : "text-dashboard-text"}`}>
                     <Banknote className={iconClass} />
-                    <span>Manage billing</span>
-                  </Link>
-                </li>
-              </>
+                  </span>
+                  <span className="sidebar-nav-label">Manage billing</span>
+                </Link>
+              </li>
             )}
           </>
         )}

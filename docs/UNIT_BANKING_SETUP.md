@@ -1,53 +1,42 @@
-# Unit Banking Setup
+# Unit Banking Setup (Custom Build)
 
 This guide covers the configuration needed for Unit banking to work end-to-end: application form → approval → database save → banking dashboard.
-
-## Unit Ready-to-Launch vs Custom Build
-
-| Mode | Dashboard | JWT Settings | Flow |
-|------|-----------|--------------|------|
-| **Ready-to-Launch** | Simplified; no Org Settings | Identity Provider only (Developer → Authentication) | Set `NEXT_PUBLIC_UNIT_READY_TO_LAUNCH=true` — app uses `jwt-token` only |
-| **Custom Build** | Full; Org Settings → JWT Settings | Org-level JWT Settings + Identity Provider | App uses `customer-token` API when available; falls back to `jwt-token` if jwtSettings error |
-
-**Ready-to-Launch** does not expose Org Settings or JWT Settings. The customer-token API requires those, so it will fail. Set `NEXT_PUBLIC_UNIT_READY_TO_LAUNCH=true` so the app skips the customer-token API and always uses `jwt-token` (validated by Identity Provider).
 
 ## Prerequisites
 
 - Unit Sandbox account: [app.s.unit.sh](https://app.s.unit.sh)
 - Supabase project with `unit_customer_id` column on `user_profiles`
 
-## 1. Unit Dashboard — Authentication (Required)
+## 1. Unit Dashboard — JWT Settings (Required)
 
 Unit uses your app's JWT to identify users and verify they are logged in. Unit does **not** ask users for separate banking credentials. Before sensitive banking activities, Unit will OTP the user.
 
 **Sandbox OTP code:** Use `000001` to complete any OTP challenge in sandbox.
 
-Configure your identity provider in **Developer → Settings → Authentication**:
+Configure in **Unit Dashboard → Settings → Org Settings → JWT Settings**:
 
-1. **Provider**: Choose **Custom with JWKS**
-2. **JWKS Path**: `https://<your-project-ref>.supabase.co/auth/v1/.well-known/jwks.json`
-   - Find your project ref in Supabase Dashboard → Settings → API
-3. **JWT Issuer**: `https://<your-project-ref>.supabase.co/auth/v1`
-4. **JWT Audience**: `authenticated` (Supabase uses this for authenticated user tokens)
+1. **Provider**: Choose **Custom with JWKS** (or Auth0 if listed)
+2. **JWKS Path**: Your identity provider's JWKS URL
+3. **JWT Issuer**: Your identity provider's issuer URL
+4. **JWT Audience** (if applicable): Match your API identifier
 
-Without this, Unit cannot recognize your users' JWTs and will reject them or show errors.
+### Supabase
 
-**Example (Supabase):**
-- JWKS Path: `https://atpkddkjvvtfosuuoprm.supabase.co/auth/v1/.well-known/jwks.json`
-- JWT Issuer: `https://atpkddkjvvtfosuuoprm.supabase.co/auth/v1`
+- JWKS Path: `https://<your-project-ref>.supabase.co/auth/v1/.well-known/jwks.json`
+- JWT Issuer: `https://<your-project-ref>.supabase.co/auth/v1`
 - JWT Audience: `authenticated`
 
-Unit also supports Okta, Auth0, AWS Cognito, and Stytch—configure their JWKS paths and issuers the same way. Any provider with a JWKS endpoint works with Custom with JWKS.
+### Auth0
 
-**Provider-specific JWKS paths (Custom Build → Org Settings → JWT Settings):**
+- JWKS Path: `https://<domain>.auth0.com/.well-known/jwks.json`
+  - Example: `https://dev-xu3cgr3v5sc87jnp.us.auth0.com/.well-known/jwks.json`
+- JWT Issuer: `https://<domain>.auth0.com/`
+  - Example: `https://dev-xu3cgr3v5sc87jnp.us.auth0.com/`
+- JWT Audience (optional): Your Auth0 API identifier, e.g. `https://unit-banking` (must match `NEXT_PUBLIC_AUTH0_BANKING_AUDIENCE`)
 
-| Provider | JWKS Path |
-|----------|-----------|
-| Auth0 | `https://<domain>.auth0.com/.well-known/jwks.json` |
-| Stytch | `https://[live\|test].stytch.com/v1/sessions/jwks/<project-id>` |
-| Cognito | `https://cognito-idp.<region>.amazonaws.com/<user-pool-id>/.well-known/jwks.json` |
+Replace `<domain>` with your Auth0 tenant from `NEXT_PUBLIC_AUTH0_DOMAIN`.
 
-Use the `UnitJwtSettingsGuide` component for an in-app setup reference.
+Without this, Unit cannot recognize your users' JWTs and will reject them or show errors.
 
 ## 2. Unit Dashboard — Webhook (Required for DB Save)
 
@@ -67,11 +56,10 @@ Set in Vercel (and `.env.local` for local dev):
 
 | Variable | Description |
 |----------|-------------|
-| `UNIT_API_TOKEN` | Org API token from Unit Dashboard → Settings → API Tokens (Custom Build) |
+| `UNIT_API_TOKEN` | Org API token from Unit Dashboard → Settings → API Tokens |
 | `UNIT_API_URL` | `https://api.s.unit.sh` (sandbox) or `https://api.unit.co` (production) |
-| `UNIT_ORG_ID` | Optional. Positive integer (e.g. `1` or `12345`). Only needed for direct customer creation; create-customer uses application flow. |
+| `UNIT_ORG_ID` | Optional. Positive integer. Only needed for direct customer creation. |
 | `UNIT_WEBHOOK_SECRET` | Secret for webhook signature verification and callbacks |
-| `NEXT_PUBLIC_UNIT_READY_TO_LAUNCH` | Set to `true` if using Unit Ready-to-Launch (simplified dashboard, no Org JWT Settings). Uses jwt-token only. |
 
 ## 4. Callback Endpoints (Optional but Recommended)
 
@@ -84,18 +72,20 @@ Configure in Unit Dashboard → Settings → Callback Endpoints:
 | Banking Page URL | `https://give-app78.vercel.app/banking` |
 | Reactivation Billpay | `https://give-app78.vercel.app/banking/billpay` |
 
-## 5. Supabase JWT Hook
+## 5. Supabase JWT Hook (Supabase auth only)
 
-The `unit_jwt_hook` adds `unitRole: "individual"` to every JWT. Enable it:
+When using Supabase for banking auth, the `unit_jwt_hook` adds `unitRole: "individual"` to every JWT. Enable it:
 
 1. Run migration: `supabase db push` (includes `20260302000000_unit_banking_jwt_hook.sql`)
 2. Supabase Dashboard → Authentication → Hooks → Custom Access Token
 3. Select function: `public.unit_jwt_hook`
 
+(Skip this when using Auth0 for banking.)
+
 ## Flow Summary
 
-1. User goes to **Banking** → sees "Open an Account" CTA
-2. Clicks CTA → Unit component loads with their **Supabase JWT**
+1. User goes to **Banking** → sees "Open an Account" CTA or "Sign in with Auth0"
+2. User authenticates (Supabase or Auth0) → Unit component loads with their JWT
 3. User fills application → Unit processes it
 4. Unit approves → sends `customer.created` webhook to `/api/webhooks/unit`
 5. We save `unit_customer_id` to `user_profiles`
@@ -117,7 +107,7 @@ Banking works on `http://localhost:3000` with the same setup:
 3. **Supabase** — Add `http://localhost:3000` to Redirect URLs:
    - Supabase Dashboard → Authentication → URL Configuration → Redirect URLs
 
-4. **Unit Dashboard** — JWKS URL is the same (Supabase URL, not app URL). No localhost-specific config.
+4. **Unit Dashboard** — JWKS URL is the same (Supabase/Auth0 URL, not app URL). No localhost-specific config.
 
 5. **Webhook** — For localhost, use [ngrok](https://ngrok.com) or [webhook.site](https://webhook.site) to receive `customer.created`, or test on Vercel.
 
@@ -129,16 +119,7 @@ Banking works on `http://localhost:3000` with the same setup:
 ## Troubleshooting
 
 - **404 on customer-token**: Expected for new users (no `unit_customer_id`). Page shows "Open an Account" CTA.
-- **Unit 401 (theme/user/app)**: Unit cannot validate your JWT → configure JWKS URL in Unit Dashboard
+- **Unit 401 (theme/user/app)**: Unit cannot validate your JWT → configure JWKS URL in Unit Dashboard → Settings → Org Settings → JWT Settings
+- **"No key found in jwks.json with kid ..." (Unit 400)**: (1) Unit Issuer must be exactly `https://<domain>.auth0.com/` (with `https://` and trailing slash) — e.g. `https://dev-xu3cgr3v5sc87jnp.us.auth0.com/`. (2) Create an Auth0 API (Dashboard → APIs) with identifier matching `NEXT_PUBLIC_AUTH0_BANKING_AUDIENCE` (e.g. `https://unit-banking`) so `getAccessTokenSilently` returns a JWT. (3) When this error occurs, the app now falls back to the application form so you can complete sign-up.
 - **"Demo" or generic view**: Same as above — JWKS not configured
 - **Application submits but no DB save**: Webhook not configured or `UNIT_WEBHOOK_SECRET` mismatch
-
-### Ready-to-Launch shows "No customers found" but API has data
-
-If you see customers/accounts when using the **Custom Build** dashboard (or via API) but **Ready-to-Launch** shows "No customers found", this is usually because:
-
-1. **Different org context** — Ready-to-Launch and Custom Build may use different organizations in the Unit dashboard. Your `UNIT_API_TOKEN` is tied to one org (e.g. org 9220). When you switch to "Ready To Launch" in the Unit Sandbox UI, you may be viewing a *different* org that Unit created for Ready-to-Launch—one that starts empty. Check for an **org switcher** in the Unit dashboard and ensure you're viewing the same org as your API token (e.g. "Figures Solutions LLC" / org 9220).
-
-2. **Application-flow only** — Ready-to-Launch may only list customers created through the **embedded application flow** (user goes to your app → Banking → Open Account → fills the Unit form). Customers created via API might not appear in the Ready-to-Launch Customers/Accounts tabs. To populate Ready-to-Launch: have a user sign in to your app, go to Banking, click "Open an Account", and complete the application. That customer should then appear in the Ready-to-Launch dashboard.
-
-3. **Verify via API** — You can confirm your data exists: `GET https://api.s.unit.sh/customers` and `GET https://api.s.unit.sh/accounts` with your `UNIT_API_TOKEN`. If those return data, it's in your org; the Ready-to-Launch UI may simply be showing a different org or filtered view.

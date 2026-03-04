@@ -101,31 +101,31 @@ export function DashboardShortcuts({ orgId, isPlatformAdmin }: Props) {
   if (loading || !hasShortcuts) return null;
 
   return (
-    <div className="mb-6 last:mb-0">
+    <div className="sidebar-shortcuts mb-6 last:mb-0">
       <button
         type="button"
         onClick={() => setIsOpen((o) => !o)}
-        className="mb-2 flex w-full items-center gap-2 px-4 py-1.5 text-left"
+        className="mb-1 flex w-full items-center gap-2 px-4 py-1.5 text-left"
       >
         {isOpen ? (
-          <ChevronDown className="h-4 w-4 shrink-0 text-dashboard-text-muted" />
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-dashboard-text-muted" />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-dashboard-text-muted" />
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-dashboard-text-muted" />
         )}
         <p className="text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted">
           Shortcuts
         </p>
       </button>
       {isOpen && (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-0.5">
           {orgSlug && donationLinksCount > 0 && (
             <li className="shrink-0">
               <Link
                 href={`/give/${orgSlug}`}
-                className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-dashboard-text-muted transition-all duration-200 hover:bg-dashboard-card-hover/50 hover:text-dashboard-text"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-dashboard-text transition-colors hover:bg-dashboard-card-hover hover:opacity-90"
               >
-                <ExternalLink className="h-4 w-4 shrink-0" />
-                <span>Your give page</span>
+                <ExternalLink className="h-4 w-4 shrink-0 text-dashboard-text" />
+                <span className="text-sm">Your give page</span>
               </Link>
             </li>
           )}
@@ -133,18 +133,18 @@ export function DashboardShortcuts({ orgId, isPlatformAdmin }: Props) {
             <li key={org.slug} className="shrink-0">
               <Link
                 href={`/org/${org.slug}`}
-                className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-all duration-200 hover:bg-dashboard-card-hover/50"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-dashboard-text transition-colors hover:bg-dashboard-card-hover hover:opacity-90"
               >
-                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-dashboard-card-hover">
+                <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-dashboard-card-hover">
                   <Image
                     src={getOrgImageUrl(org)}
                     alt={org.name}
                     fill
                     className="object-cover"
-                    sizes="32px"
+                    sizes="28px"
                   />
                 </div>
-                <span className="truncate text-sm font-medium text-dashboard-text-muted hover:text-dashboard-text">
+                <span className="truncate text-sm text-dashboard-text">
                   {org.name}
                 </span>
               </Link>

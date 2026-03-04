@@ -14,6 +14,19 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// BANKGO-matching dark palette
+const SB = {
+  card:      "#181c26",
+  cardHover: "#1e2330",
+  border:    "rgba(255,255,255,0.06)",
+  text:      "#eef0f6",
+  textMuted: "#8891a5",
+  textDim:   "#565e72",
+  accent:    "#34d399",
+  accentDim: "rgba(52,211,153,0.12)",
+  inputBg:   "#12151c",
+} as const;
+
 type Notification = {
   id: string;
   user_id: string;
@@ -41,19 +54,19 @@ function getNotificationIcon(type: string) {
   switch (type) {
     case "donation":
     case "donation_received":
-      return { icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" };
+      return { icon: DollarSign, color: SB.accent, bg: SB.accentDim };
     case "peer_request":
     case "peer_accepted":
     case "connection_request":
-      return { icon: UserPlus, color: "text-violet-600", bg: "bg-violet-50" };
+      return { icon: UserPlus, color: "#a78bfa", bg: "rgba(139,92,246,0.15)" };
     case "message":
     case "new_message":
-      return { icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50" };
+      return { icon: MessageSquare, color: "#fbbf24", bg: "rgba(245,158,11,0.15)" };
     case "reaction":
     case "support":
-      return { icon: Heart, color: "text-rose-600", bg: "bg-rose-50" };
+      return { icon: Heart, color: "#fb7185", bg: "rgba(251,113,133,0.15)" };
     default:
-      return { icon: Bell, color: "text-slate-600", bg: "bg-slate-50" };
+      return { icon: Bell, color: SB.textMuted, bg: "rgba(255,255,255,0.08)" };
   }
 }
 
@@ -136,10 +149,10 @@ export function PanelNotifications() {
       <div className="p-4 space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-start gap-2.5 animate-pulse">
-            <div className="h-8 w-8 rounded-lg bg-slate-100 shrink-0" />
+            <div className="h-8 w-8 rounded-lg shrink-0" style={{ background: SB.cardHover }} />
             <div className="flex-1 space-y-1.5 pt-0.5">
-              <div className="h-3 w-full rounded-lg bg-slate-100" />
-              <div className="h-2.5 w-1/3 rounded-lg bg-slate-50" />
+              <div className="h-3 w-full rounded-lg" style={{ background: SB.cardHover }} />
+              <div className="h-2.5 w-1/3 rounded-lg" style={{ background: SB.inputBg }} />
             </div>
           </div>
         ))}
@@ -151,15 +164,16 @@ export function PanelNotifications() {
     <div className="flex flex-col">
       {/* Header actions */}
       {unreadCount > 0 && (
-        <div className="flex items-center justify-between px-4 py-2 border-b border-slate-100/80">
-          <span className="text-[11px] font-semibold text-slate-500">
+        <div className="flex items-center justify-between px-4 py-2" style={{ borderBottom: `1px solid ${SB.border}` }}>
+          <span className="text-[11px] font-semibold" style={{ color: SB.textMuted }}>
             {unreadCount} unread
           </span>
           <button
             type="button"
             onClick={handleMarkAllRead}
             disabled={markingRead}
-            className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 transition-colors hover:text-emerald-700 disabled:opacity-50"
+            className="flex items-center gap-1 text-[11px] font-semibold transition-colors disabled:opacity-50"
+            style={{ color: SB.accent }}
           >
             {markingRead ? (
               <Loader2 className="h-3 w-3 animate-spin" />
@@ -174,17 +188,17 @@ export function PanelNotifications() {
       {/* Notification list */}
       {notifications.length === 0 ? (
         <div className="flex flex-col items-center px-4 py-10 text-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-pink-100">
-            <Bell className="h-5 w-5 text-rose-500" />
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: "rgba(251,113,133,0.15)" }}>
+            <Bell className="h-5 w-5" style={{ color: "#fb7185" }} />
           </div>
-          <p className="text-sm font-medium text-slate-600">All caught up!</p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="text-sm font-medium" style={{ color: SB.textMuted }}>All caught up!</p>
+          <p className="mt-1 text-xs" style={{ color: SB.textMuted }}>
             No new notifications right now
           </p>
         </div>
       ) : (
         <div className="px-2 py-1">
-            {notifications.map((n, i) => {
+          {notifications.map((n, i) => {
             const { icon: Icon, color, bg } = getNotificationIcon(n.type);
             const isUnread = !n.read_at;
             return (
@@ -196,28 +210,31 @@ export function PanelNotifications() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.025 }}
                 className={cn(
-                  "mb-0.5 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all duration-200 hover:bg-slate-50/80",
-                  isUnread && "bg-emerald-50/30"
+                  "mb-0.5 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all duration-200"
                 )}
+                style={isUnread ? { background: "rgba(52,211,153,0.05)" } : undefined}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = isUnread ? "rgba(52,211,153,0.05)" : "transparent"; }}
               >
                 <div
-                  className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                    bg
-                  )}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                  style={{ background: bg }}
                 >
-                  <Icon className={cn("h-3.5 w-3.5", color)} />
+                  <Icon className="h-3.5 w-3.5" style={{ color }} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className={cn("text-xs leading-snug", isUnread ? "font-semibold text-slate-800" : "font-medium text-slate-600")}>
+                  <p
+                    className="text-xs leading-snug"
+                    style={{ color: isUnread ? SB.text : SB.textMuted, fontWeight: isUnread ? 600 : 500 }}
+                  >
                     {getNotificationText(n)}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-slate-400">
+                  <p className="mt-0.5 text-[10px]" style={{ color: SB.textMuted }}>
                     {timeAgo(n.created_at)}
                   </p>
                 </div>
                 {isUnread && (
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full" style={{ background: SB.accent }} />
                 )}
               </motion.button>
             );
@@ -226,10 +243,13 @@ export function PanelNotifications() {
       )}
 
       {/* Footer */}
-      <div className="border-t border-slate-100/80 px-3 py-3">
+      <div className="px-3 py-3" style={{ borderTop: `1px solid ${SB.border}` }}>
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-50/80 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          className="flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-colors"
+          style={{ background: SB.inputBg, color: SB.textMuted }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; (e.currentTarget as HTMLElement).style.color = SB.text; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.inputBg; (e.currentTarget as HTMLElement).style.color = SB.textMuted; }}
         >
           <Bell className="h-3.5 w-3.5" />
           View all activity

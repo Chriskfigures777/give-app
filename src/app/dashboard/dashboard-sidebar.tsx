@@ -9,7 +9,7 @@ export async function DashboardSidebar() {
 
   return (
     <>
-      <nav className="flex-1 overflow-y-auto px-3 pb-4">
+      <nav className="sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-4">
         <DashboardNav
           isPlatformAdmin={isPlatformAdmin}
           orgId={orgId}
@@ -21,17 +21,19 @@ export async function DashboardSidebar() {
         />
       </nav>
       <div className="shrink-0 border-t border-dashboard-border px-4 py-4">
-        <div className="flex items-center gap-3 rounded-xl bg-dashboard-card px-4 py-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 text-sm font-bold text-white">
+        <div className="sidebar-user-card flex items-center gap-3 rounded-xl bg-dashboard-card px-4 py-3 transition-all duration-300">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-bold text-white shadow-sm">
             {(profile?.full_name ?? user.email ?? "U")[0].toUpperCase()}
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="sidebar-user-text min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-dashboard-text">
               {profile?.full_name ?? user.email}
             </p>
             <SignOutButton />
           </div>
-          <DashboardThemePicker size="sm" />
+          <div className="sidebar-user-text">
+            <DashboardThemePicker size="sm" />
+          </div>
         </div>
       </div>
     </>

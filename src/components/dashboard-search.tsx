@@ -22,6 +22,13 @@ import {
   ArrowRight,
   Loader2,
   Code2,
+  Handshake,
+  UserCircle,
+  Share2,
+  Banknote,
+  ShieldCheck,
+  BarChart3,
+  FileStack,
 } from "lucide-react";
 
 type DashboardPage = {
@@ -34,17 +41,25 @@ type DashboardPage = {
 const DASHBOARD_PAGES: DashboardPage[] = [
   { label: "Overview", href: "/dashboard", keywords: "home overview dashboard main", icon: <LayoutDashboard className="h-4 w-4" /> },
   { label: "My gifts", href: "/dashboard/my-donations", keywords: "my gifts donations giving history", icon: <Heart className="h-4 w-4" /> },
+  { label: "My embed", href: "/dashboard/missionary", keywords: "missionary embed share link fundraising", icon: <Share2 className="h-4 w-4" /> },
+  { label: "Community", href: "/community", keywords: "community explore discover organizations", icon: <Handshake className="h-4 w-4" /> },
   { label: "Donations", href: "/dashboard/donations", keywords: "donations received incoming payments", icon: <Wallet className="h-4 w-4" /> },
+  { label: "Peers", href: "/dashboard/connections", keywords: "peers connections partners organizations", icon: <Handshake className="h-4 w-4" /> },
   { label: "Events", href: "/dashboard/events", keywords: "events calendar fundraising", icon: <Calendar className="h-4 w-4" /> },
   { label: "Goals", href: "/dashboard/goals", keywords: "goals targets campaigns fundraising", icon: <Target className="h-4 w-4" /> },
   { label: "Givers", href: "/dashboard/givers", keywords: "givers donors supporters people", icon: <Users className="h-4 w-4" /> },
   { label: "Public page", href: "/dashboard/profile", keywords: "public page profile organization info", icon: <FileText className="h-4 w-4" /> },
   { label: "Website builder", href: "/dashboard/pages", keywords: "website builder pages site design", icon: <Layout className="h-4 w-4" /> },
+  { label: "Website content", href: "/dashboard/pages/cms", keywords: "website content cms pages blog articles", icon: <FileStack className="h-4 w-4" /> },
   { label: "Website form", href: "/dashboard/pages?openForm=1", keywords: "website form form design donation form customization branding colors logo", icon: <Palette className="h-4 w-4" /> },
   { label: "Custom forms", href: "/dashboard/custom-forms", keywords: "custom forms embed forms donation form embed webflow wordpress", icon: <Code2 className="h-4 w-4" /> },
+  { label: "My Profile", href: "/dashboard/account", keywords: "my profile account personal info name photo", icon: <UserCircle className="h-4 w-4" /> },
   { label: "Settings", href: "/dashboard/settings", keywords: "settings preferences configuration domain", icon: <Settings className="h-4 w-4" /> },
   { label: "Plan & billing", href: "/dashboard/billing", keywords: "plan billing subscription pricing upgrade", icon: <Receipt className="h-4 w-4" /> },
   { label: "Payout account", href: "/dashboard/connect/verify", keywords: "payout account verification stripe connect bank", icon: <CreditCard className="h-4 w-4" /> },
+  { label: "Manage billing", href: "/dashboard/connect/manage", keywords: "manage billing stripe payouts bank account", icon: <Banknote className="h-4 w-4" /> },
+  { label: "Platform Admin", href: "/dashboard/admin", keywords: "admin platform management users organizations", icon: <ShieldCheck className="h-4 w-4" /> },
+  { label: "Survey Results", href: "/dashboard/survey-results", keywords: "survey results analytics responses data", icon: <BarChart3 className="h-4 w-4" /> },
 ];
 
 type OrgResult = {
@@ -85,7 +100,7 @@ export function DashboardSearch() {
     ? DASHBOARD_PAGES.filter(
         (p) => p.label.toLowerCase().includes(q) || p.keywords.includes(q)
       )
-    : DASHBOARD_PAGES.slice(0, 6);
+    : DASHBOARD_PAGES.slice(0, 5);
 
   const allItems: Array<
     | { type: "page"; data: DashboardPage }
@@ -200,9 +215,9 @@ export function DashboardSearch() {
   }, [activeIndex]);
 
   return (
-    <div ref={containerRef} className="relative flex-1 min-w-[200px] max-w-3xl w-full">
+    <div ref={containerRef} className={`relative transition-all duration-200 ${focused ? "w-72" : "w-52"}`}>
       {/* Always-visible search input */}
-      <div className="flex items-center gap-2 rounded-xl border border-dashboard-border/60 bg-dashboard-card/60 px-3.5 py-2 transition-all duration-200 focus-within:border-emerald-300/60 focus-within:bg-dashboard-card-hover focus-within:shadow-sm dark:focus-within:border-emerald-600/40">
+      <div className="flex items-center gap-2 rounded-xl border border-dashboard-border/60 bg-dashboard-card/60 px-3 py-1.5 transition-all duration-200 focus-within:border-emerald-300/60 focus-within:bg-dashboard-card-hover focus-within:shadow-sm dark:focus-within:border-emerald-600/40">
         <Search className="h-3.5 w-3.5 shrink-0 text-dashboard-text-muted" />
         <input
           ref={inputRef}
@@ -212,8 +227,8 @@ export function DashboardSearch() {
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           onKeyDown={handleKeyNavigation}
-          placeholder="Search pages, organizations, events..."
-          className="flex-1 min-w-0 bg-transparent text-sm text-dashboard-text outline-none placeholder:text-dashboard-text-muted"
+          placeholder="Search dashboard..."
+          className="flex-1 min-w-0 bg-transparent text-[13px] text-dashboard-text outline-none placeholder:text-dashboard-text-muted"
           autoComplete="off"
           spellCheck={false}
         />

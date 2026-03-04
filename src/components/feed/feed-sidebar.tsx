@@ -6,6 +6,19 @@ import Image from "next/image";
 import { Users, TrendingUp, ArrowRight, Sparkles } from "lucide-react";
 import { UserTypeBadge } from "@/components/user-type-badge";
 
+// BANKGO-matching dark palette
+const SB = {
+  card:      "#181c26",
+  cardHover: "#1e2330",
+  border:    "rgba(255,255,255,0.06)",
+  text:      "#eef0f6",
+  textMuted: "#8891a5",
+  textDim:   "#565e72",
+  accent:    "#34d399",
+  accentDim: "rgba(52,211,153,0.12)",
+  inputBg:   "#12151c",
+} as const;
+
 type SidebarOrg = {
   id: string;
   name: string;
@@ -34,13 +47,13 @@ function SidebarSkeleton() {
     <div className="space-y-4 p-4">
       <div className="space-y-3">
         <div className="space-y-3">
-          <div className="feed-shimmer h-4 w-24 rounded-lg" />
+          <div className="h-4 w-24 rounded-lg animate-pulse" style={{ background: SB.cardHover }} />
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="feed-shimmer h-10 w-10 rounded-full" />
+              <div className="h-10 w-10 rounded-full animate-pulse shrink-0" style={{ background: SB.cardHover }} />
               <div className="flex-1 space-y-1.5">
-                <div className="feed-shimmer h-3.5 w-3/4 rounded" />
-                <div className="feed-shimmer h-2.5 w-1/2 rounded" />
+                <div className="h-3.5 w-3/4 rounded animate-pulse" style={{ background: SB.cardHover }} />
+                <div className="h-2.5 w-1/2 rounded animate-pulse" style={{ background: SB.inputBg }} />
               </div>
             </div>
           ))}
@@ -54,19 +67,22 @@ function OrgRow({ org }: { org: SidebarOrg }) {
   return (
     <Link
       href={`/org/${org.slug}`}
-      className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50"
+      className="flex items-center gap-3 rounded-lg p-2 transition-colors"
+      style={{ color: SB.text }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
     >
-      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-slate-100">
-          <Image
-            src={getOrgImageUrl(org)}
-            alt={org.name}
-            fill
-            className="object-cover"
-            sizes="36px"
-          />
+      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full" style={{ background: SB.cardHover }}>
+        <Image
+          src={getOrgImageUrl(org)}
+          alt={org.name}
+          fill
+          className="object-cover"
+          sizes="36px"
+        />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-slate-900">{org.name}</p>
+        <p className="truncate text-sm font-medium" style={{ color: SB.text }}>{org.name}</p>
         {org.org_type && (
           <div className="mt-0.5">
             <UserTypeBadge type={org.org_type} size="xs" />
@@ -132,7 +148,6 @@ export function FeedSidebar() {
             })
           );
 
-        // Individual member connections (users, not orgs)
         const connMembers: SidebarMember[] = (connData.connections ?? [])
           .filter(
             (c: { otherType: string; otherOrgSlug: string | null }) =>
@@ -179,13 +194,11 @@ export function FeedSidebar() {
         setConnections(peersList);
         setSavedOrgs(saved);
 
-        // Build discover list: mix of orgs and individual users not already connected
         const connectedOrgSlugs = new Set(merged.keys());
         const connectedUserIds = new Set(connMembers.map((m) => m.id));
 
         const items: DiscoverItem[] = [];
 
-        // Add suggested orgs from /api/search
         const suggestedOrgs = (searchData.organizations ?? [])
           .filter(
             (o: { slug: string }) =>
@@ -206,7 +219,6 @@ export function FeedSidebar() {
           });
         }
 
-        // Add suggested individual users from /api/peers/search
         const suggestedUsers = (peersData.results ?? [])
           .filter(
             (r: { type: string; id: string }) =>
@@ -247,22 +259,25 @@ export function FeedSidebar() {
 
   return (
     <div className="space-y-0">
-      {/* Your Network (orgs + members) */}
+      {/* Your Network */}
       <div className="p-4 pb-3">
         <div className="mb-3 flex items-center gap-2">
-          <Users className="h-4 w-4 text-emerald-600" strokeWidth={2} />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <Users className="h-4 w-4 shrink-0" style={{ color: SB.accent }} strokeWidth={2} />
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: SB.textMuted }}>
             Your Network
           </h3>
           {totalPeers > 0 && (
-            <span className="ml-auto rounded bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+            <span
+              className="ml-auto rounded px-2 py-0.5 text-[11px] font-medium"
+              style={{ background: "rgba(255,255,255,0.08)", color: SB.textMuted }}
+            >
               {totalPeers}
             </span>
           )}
         </div>
         {totalPeers === 0 ? (
-          <div className="rounded-lg bg-slate-50 p-3 text-center">
-            <p className="text-sm text-slate-500">No connections yet.</p>
+          <div className="rounded-lg p-3 text-center" style={{ background: SB.inputBg }}>
+            <p className="text-sm" style={{ color: SB.textMuted }}>No connections yet.</p>
           </div>
         ) : (
           <div className="space-y-0.5">
@@ -273,13 +288,18 @@ export function FeedSidebar() {
               <Link
                 key={member.id}
                 href={`/u/${member.id}`}
-                className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50"
+                className="flex items-center gap-3 rounded-lg p-2 transition-colors"
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-600">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                  style={{ background: "rgba(14,165,233,0.15)", color: "#38bdf8" }}
+                >
                   {member.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{member.name}</p>
+                  <p className="truncate text-sm font-medium" style={{ color: SB.text }}>{member.name}</p>
                   <div className="mt-0.5">
                     <UserTypeBadge type={member.role} size="xs" />
                   </div>
@@ -288,10 +308,12 @@ export function FeedSidebar() {
             ))}
           </div>
         )}
-        {/* Always-visible Find People link */}
         <Link
           href="/community"
-          className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-sky-50 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+          className="mt-3 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors"
+          style={{ background: "rgba(14,165,233,0.12)", color: "#38bdf8" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(14,165,233,0.2)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(14,165,233,0.12)"; }}
         >
           <Users className="h-3.5 w-3.5" />
           Find &amp; connect with people
@@ -299,12 +321,12 @@ export function FeedSidebar() {
         </Link>
       </div>
 
-      {/* Discover — mixed orgs + individual users */}
+      {/* Discover */}
       {showDiscover && (
-        <div className="border-t border-slate-100 p-4 pb-3">
+        <div className="p-4 pb-3" style={{ borderTop: `1px solid ${SB.border}` }}>
           <div className="mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-600" strokeWidth={2} />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <TrendingUp className="h-4 w-4 shrink-0" style={{ color: SB.accent }} strokeWidth={2} />
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: SB.textMuted }}>
               Discover
             </h3>
           </div>
@@ -316,13 +338,18 @@ export function FeedSidebar() {
                 <Link
                   key={item.member.id}
                   href={`/u/${item.member.id}`}
-                  className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50"
+                  className="flex items-center gap-3 rounded-lg p-2 transition-colors"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-600">
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                    style={{ background: "rgba(14,165,233,0.15)", color: "#38bdf8" }}
+                  >
                     {item.member.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-900">{item.member.name}</p>
+                    <p className="truncate text-sm font-medium" style={{ color: SB.text }}>{item.member.name}</p>
                     <div className="mt-0.5">
                       <UserTypeBadge type={item.member.role} size="xs" />
                     </div>
@@ -333,7 +360,10 @@ export function FeedSidebar() {
           </div>
           <Link
             href="/explore"
-            className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+            className="mt-4 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors"
+            style={{ background: SB.accentDim, color: SB.accent }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.2)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.accentDim; }}
           >
             <Sparkles className="h-3.5 w-3.5" />
             Explore all
@@ -342,8 +372,8 @@ export function FeedSidebar() {
       )}
 
       {/* Live indicator */}
-      <div className="border-t border-slate-100 p-4">
-        <p className="text-xs text-slate-500">
+      <div className="p-4" style={{ borderTop: `1px solid ${SB.border}` }}>
+        <p className="text-xs" style={{ color: SB.textMuted }}>
           Feed updates in real time.
         </p>
       </div>

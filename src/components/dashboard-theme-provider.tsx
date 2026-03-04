@@ -32,7 +32,7 @@ const DashboardThemeContext = createContext<DashboardThemeContextValue | null>(n
  * Supports: light, dark, purple, green, dark-gray, blue.
  */
 export function DashboardThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<DashboardThemeId>("light");
+  const [theme, setThemeState] = useState<DashboardThemeId>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

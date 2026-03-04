@@ -28,7 +28,6 @@ import { FeedLeftSidebar } from "@/components/feed/feed-left-sidebar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { FeedItemResponse } from "@/app/api/feed/route";
-import { useFeedTheme } from "@/components/feed/feed-theme-context";
 
 type PostType = "text" | "photo" | "video" | "link";
 
@@ -103,7 +102,6 @@ export function FeedClient() {
   const [composerFocused, setComposerFocused] = useState(false);
 
   const { me } = useMe();
-  const { theme } = useFeedTheme();
   const orgId = me?.orgId ?? null;
 
   const [newItemsBanner, setNewItemsBanner] = useState(0);
@@ -123,8 +121,9 @@ export function FeedClient() {
   const [searchHits,    setSearchHits]    = useState<SearchHit[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchOpen,    setSearchOpen]    = useState(false);
-  const searchRef       = useRef<HTMLDivElement>(null);
-  const searchDebounce  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRef        = useRef<HTMLDivElement>(null);
+  const searchInputRef   = useRef<HTMLInputElement>(null);
+  const searchDebounce   = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (searchQuery.length < 2) { setSearchHits([]); setSearchOpen(false); return; }
@@ -169,6 +168,19 @@ export function FeedClient() {
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // "/" shortcut to focus feed search
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) return;
+      e.preventDefault();
+      searchInputRef.current?.focus();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
   /* ── Data fetching ── */
@@ -345,26 +357,6 @@ export function FeedClient() {
   /* ── Render ── */
   return (
     <>
-      {/* Ambient background orbs — theme-aware */}
-      <div
-        className="pointer-events-none fixed inset-0 overflow-hidden"
-        aria-hidden
-        style={{ zIndex: 0 }}
-      >
-        <div
-          className="feed-orb-1 absolute -top-[20%] -left-[5%] h-[600px] w-[600px] rounded-full blur-[120px]"
-          style={{ background: "var(--feed-orb-1)" }}
-        />
-        <div
-          className="feed-orb-2 absolute -top-[10%] right-[8%] h-[500px] w-[500px] rounded-full blur-[100px]"
-          style={{ background: "var(--feed-orb-2)" }}
-        />
-        <div
-          className="feed-orb-3 absolute bottom-[15%] left-[25%] h-[400px] w-[400px] rounded-full blur-[90px]"
-          style={{ background: "var(--feed-orb-3)" }}
-        />
-      </div>
-
       {/* Layout: left | center | right */}
       <div
         className="relative z-10 mx-auto flex w-full max-w-[1680px] justify-start gap-8 px-4 py-8 sm:px-6 lg:gap-10 xl:gap-12 xl:px-10"
@@ -414,35 +406,47 @@ export function FeedClient() {
           {/* ── Global search bar ── */}
           <div ref={searchRef} className="relative mb-5">
             <div
-              className="flex items-center gap-2 rounded-2xl px-4 py-3 transition-all duration-200"
+              className="group flex items-center gap-2.5 rounded-2xl px-4 py-2.5 transition-all duration-200"
               style={{
                 background: "var(--feed-input-bg)",
-                border: "1px solid var(--feed-border)",
+                border: searchQuery
+                  ? "1px solid var(--feed-border-strong)"
+                  : "1px solid var(--feed-border)",
                 boxShadow: searchQuery ? "var(--feed-glow)" : "none",
               }}
             >
               {searchLoading
-                ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" style={{ color: "var(--feed-text-muted)" }} />
-                : <Search className="h-4 w-4 shrink-0" style={{ color: "var(--feed-text-muted)" }} />
+                ? <Loader2 className="h-[15px] w-[15px] shrink-0 animate-spin" style={{ color: "var(--feed-text-muted)" }} />
+                : <Search className="h-[15px] w-[15px] shrink-0 transition-colors" style={{ color: searchQuery ? "var(--feed-accent)" : "var(--feed-text-muted)" }} />
               }
               <input
+                ref={searchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => { if (searchHits.length > 0) setSearchOpen(true); }}
                 placeholder="Search people, organizations, events…"
-                className="flex-1 bg-transparent text-sm outline-none"
+                className="flex-1 bg-transparent text-[13px] outline-none placeholder:opacity-60"
                 style={{ color: "var(--feed-text)" }}
+                autoComplete="off"
+                spellCheck={false}
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <button
                   type="button"
                   onClick={() => { setSearchQuery(""); setSearchHits([]); setSearchOpen(false); }}
-                  className="rounded-full p-0.5 transition-opacity hover:opacity-70"
-                  style={{ color: "var(--feed-text-muted)" }}
+                  className="flex h-5 w-5 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+                  style={{ background: "var(--feed-border-strong)", color: "var(--feed-text-muted)" }}
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-3 w-3" />
                 </button>
+              ) : (
+                <kbd
+                  className="hidden shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium sm:inline-block"
+                  style={{ background: "var(--feed-card)", border: "1px solid var(--feed-border-strong)", color: "var(--feed-text-muted)" }}
+                >
+                  /
+                </kbd>
               )}
             </div>
 
@@ -472,9 +476,12 @@ export function FeedClient() {
                           key={h.id}
                           href={h.href}
                           onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-sky-50/60"
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors"
+                          style={{ color: "inherit" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--feed-card-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = ""; }}
                         >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-600">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold" style={{ background: "var(--feed-badge-bg)", color: "var(--feed-accent)" }}>
                             {h.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
@@ -497,10 +504,13 @@ export function FeedClient() {
                           key={h.id}
                           href={h.href}
                           onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-emerald-50/60"
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors"
+                          style={{ color: "inherit" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--feed-card-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = ""; }}
                         >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                            <Building2 className="h-4 w-4 text-emerald-600" />
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--feed-badge-bg)" }}>
+                            <Building2 className="h-4 w-4" style={{ color: "var(--feed-accent)" }} />
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-sm font-medium" style={{ color: "var(--feed-text)" }}>{h.name}</p>
@@ -522,10 +532,13 @@ export function FeedClient() {
                           key={h.id}
                           href={h.href}
                           onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                          className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-violet-50/60"
+                          className="flex items-center gap-3 px-4 py-2.5 transition-colors"
+                          style={{ color: "inherit" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--feed-card-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = ""; }}
                         >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100">
-                            <Calendar className="h-4 w-4 text-violet-600" />
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--feed-badge-bg)" }}>
+                            <Calendar className="h-4 w-4" style={{ color: "var(--feed-accent)" }} />
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-sm font-medium" style={{ color: "var(--feed-text)" }}>{h.name}</p>
@@ -543,7 +556,8 @@ export function FeedClient() {
                     <Link
                       href={`/community?q=${encodeURIComponent(searchQuery)}`}
                       onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                      className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700"
+                      className="flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-90"
+                      style={{ color: "var(--feed-accent)" }}
                     >
                       <Search className="h-3.5 w-3.5" />
                       See all results for &ldquo;{searchQuery}&rdquo;

@@ -20,8 +20,8 @@ export async function GET(req: NextRequest) {
     process.env.NEXT_PUBLIC_APP_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : req.nextUrl.origin);
 
-  // Redirect to dashboard/banking or connect page where Plaid Link can re-open with session
-  const redirectTo = "/dashboard/banking";
+  // Redirect to dashboard where Plaid Link can re-open with session
+  const redirectTo = "/dashboard";
   const redirectUrl = new URL(redirectTo, baseUrl);
 
   if (linkSessionId) {

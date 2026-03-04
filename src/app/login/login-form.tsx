@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { TypeformForm } from "@/components/typeform-form";
@@ -40,7 +40,7 @@ const STEPS = [
 ];
 
 export function LoginForm({
-  redirectTo = "/dashboard",
+  redirectTo: redirectToProp = "/dashboard",
   orgName,
   orgSlug,
   frequency,
@@ -49,6 +49,10 @@ export function LoginForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Prefer redirect from URL (e.g. /login?redirect=/dashboard/banking) so banking sign-in returns to banking
+  const redirectFromUrl = searchParams.get("redirect");
+  const redirectTo = redirectFromUrl || redirectToProp || "/dashboard";
 
   async function handleSubmit(data: Record<string, string>) {
     setError(null);
@@ -126,7 +130,7 @@ export function LoginForm({
             <p className="text-center text-sm text-slate-400">
               Nonprofit?{" "}
               <Link
-                href="/login/organization"
+                href={redirectFromUrl ? `/login/organization?redirect=${encodeURIComponent(redirectFromUrl)}` : "/login/organization"}
                 className="font-medium text-emerald-600 hover:text-emerald-700"
               >
                 Organization login
@@ -137,7 +141,7 @@ export function LoginForm({
           <p className="text-center text-sm text-slate-400">
             Giver?{" "}
             <Link
-              href="/login"
+              href={redirectFromUrl ? `/login?redirect=${encodeURIComponent(redirectFromUrl)}` : "/login"}
               className="font-medium text-emerald-600 hover:text-emerald-700"
             >
               Sign in as giver

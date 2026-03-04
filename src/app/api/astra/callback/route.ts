@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : req.nextUrl.origin);
 
   // Default redirect after callback
-  const defaultRedirect = "/dashboard/banking";
+  const defaultRedirect = "/dashboard";
 
   if (error) {
     console.error("[astra-callback] OAuth error:", error, errorDescription);
