@@ -8,9 +8,10 @@ import { TypeformForm } from "@/components/typeform-form";
 
 type LoginFormProps = {
   redirectTo?: string;
+  returnTo?: string;
   orgName?: string | null;
   orgSlug?: string | null;
-  frequency?: string | null;
+  frequency?: string | string[] | null;
   loginType?: "giver" | "organization";
 };
 
@@ -41,6 +42,7 @@ const STEPS = [
 
 export function LoginForm({
   redirectTo: redirectToProp = "/dashboard",
+  returnTo,
   orgName,
   orgSlug,
   frequency,
@@ -114,8 +116,10 @@ export function LoginForm({
           <Link
             href={
               orgSlug
-                ? `/signup?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}`
-                : "/signup"
+                ? `/signup?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(typeof frequency === "string" ? frequency : frequency?.[0] ?? "")}` : ""}${returnTo ? `&return_to=${encodeURIComponent(returnTo)}` : ""}`
+                : returnTo
+                  ? `/signup?return_to=${encodeURIComponent(returnTo)}`
+                  : "/signup"
             }
             className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
           >

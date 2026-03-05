@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSupabaseEnv } from "@/lib/supabase/env";
+import { isBankingReturnTo, buildBankingCallbackRedirectUrl } from "@/lib/banking-redirect";
 
 const LOG = (msg: string, d?: object, _hypothesisId?: string) => {
   if (process.env.NODE_ENV === "development") {
@@ -84,8 +85,12 @@ export async function POST(req: NextRequest) {
 
     let emailRedirectTo =
       typeof body.emailRedirectTo === "string" ? body.emailRedirectTo : undefined;
+    const returnTo = typeof body.return_to === "string" ? body.return_to : undefined;
+    // Exchange Banking: when return_to is the allowlisted banking callback, send confirmation link to BankGO.
+    if (returnTo && isBankingReturnTo(returnTo)) {
+      emailRedirectTo = buildBankingCallbackRedirectUrl("/dashboard");
+    }
     // Fallback: use app URL so email links go to /auth/callback, not root.
-    // In local dev with no env vars, use localhost so links work.
     if (!emailRedirectTo) {
       const appUrl =
         process.env.NEXT_PUBLIC_APP_URL ||

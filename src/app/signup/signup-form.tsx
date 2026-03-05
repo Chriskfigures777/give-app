@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { TypeformForm, type TypeformStepConfig } from "@/components/typeform-form";
 import { devLog } from "@/lib/secure-log";
+import { getBankingLoginUrl, buildBankingCallbackRedirectUrl } from "@/lib/banking-redirect";
 
 const ACCOUNT_TYPES = [
   { value: "giver", label: "Giver", description: "I want to give to nonprofits and churches. Track my giving and support causes I care about.", emoji: "heart" },
@@ -125,11 +126,12 @@ const STEPS_NONPROFIT: TypeformStepConfig[] = [
 
 type SignupFormProps = {
   redirectTo?: string;
+  returnTo?: string;
   orgSlug?: string | null;
   frequency?: string | null;
 };
 
-export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: SignupFormProps) {
+export function SignupForm({ redirectTo = "/dashboard", returnTo, orgSlug, frequency }: SignupFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -141,13 +143,18 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
     setMessage(null);
     setLoading(true);
     const role = accountType === "organization" ? "organization_admin" : (data.plansToBeMissionary === "yes" ? "missionary" : "donor");
-    // Use production app URL for email links (not localhost) so confirmation/reset emails work in production
-    const baseUrl =
-      (typeof window !== "undefined" && process.env.NEXT_PUBLIC_APP_URL) ||
-      (typeof window !== "undefined" ? window.location.origin : "");
-    const emailRedirectTo = baseUrl
-      ? `${String(baseUrl).replace(/\/$/, "")}/auth/callback${orgSlug ? `?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}` : ""}`
-      : undefined;
+    // Use production app URL for email links (not localhost) so confirmation/reset emails work in production.
+    // When returnTo is banking callback, confirmation link should go to BankGO so it can exchange the code.
+    const emailRedirectTo = returnTo
+      ? buildBankingCallbackRedirectUrl("/dashboard")
+      : (() => {
+          const baseUrl =
+            (typeof window !== "undefined" && process.env.NEXT_PUBLIC_APP_URL) ||
+            (typeof window !== "undefined" ? window.location.origin : "");
+          return baseUrl
+            ? `${String(baseUrl).replace(/\/$/, "")}/auth/callback${orgSlug ? `?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}` : ""}`
+            : undefined;
+        })();
 
     let res: Response;
     const controller = new AbortController();
@@ -172,6 +179,7 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
           desiredTools: data.desiredTools,
           marketingConsent: data.marketingConsent,
           emailRedirectTo,
+          return_to: returnTo ?? undefined,
         }),
         signal: controller.signal,
       });
@@ -207,8 +215,9 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
         }
       }
       router.refresh();
-      // Full redirect so auth state is properly loaded on destination (give page or dashboard)
-      window.location.href = redirectTo;
+      // When returning to Exchange Banking, send to banking login (no code with immediate session)
+      const finalRedirect = returnTo ? getBankingLoginUrl({ from: "exchange" }) : redirectTo;
+      window.location.href = finalRedirect;
       return;
     }
     setMessage("Check your email to confirm your account.");
@@ -264,7 +273,7 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
         <p className="mt-6 text-center text-sm text-slate-500">
           Already have an account?{" "}
           <Link
-            href={orgSlug ? `/login?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}` : "/login"}
+            href={orgSlug ? `/login?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}${returnTo ? `&return_to=${encodeURIComponent(returnTo)}` : ""}` : returnTo ? `/login?return_to=${encodeURIComponent(returnTo)}` : "/login"}
             className="font-semibold text-emerald-600 hover:text-emerald-700"
           >
             Sign in
@@ -275,7 +284,7 @@ export function SignupForm({ redirectTo = "/dashboard", orgSlug, frequency }: Si
   }
 
   const steps = accountType === "organization" ? STEPS_NONPROFIT : STEPS_GIVER;
-  const loginHref = orgSlug ? `/login?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}` : "/login";
+  const loginHref = orgSlug ? `/login?org=${encodeURIComponent(orgSlug)}${frequency ? `&frequency=${encodeURIComponent(frequency)}` : ""}${returnTo ? `&return_to=${encodeURIComponent(returnTo)}` : ""}` : returnTo ? `/login?return_to=${encodeURIComponent(returnTo)}` : "/login";
 
   return (
     <div className="w-full">

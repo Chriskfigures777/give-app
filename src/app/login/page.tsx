@@ -4,8 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "./login-form";
 import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
+import { isBankingReturnTo, getBankingLoginUrl } from "@/lib/banking-redirect";
 
-type Props = { searchParams: Promise<{ org?: string | string[]; frequency?: string | string[]; redirect?: string | string[] }> };
+type Props = { searchParams: Promise<{ org?: string | string[]; frequency?: string | string[]; redirect?: string | string[]; return_to?: string | string[] }> };
 
 export default async function LoginPage({ searchParams }: Props) {
   const supabase = await createClient();
@@ -13,18 +14,23 @@ export default async function LoginPage({ searchParams }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { org: orgSlug, frequency, redirect: redirectParam } = await searchParams;
+  const { org: orgSlug, frequency, redirect: redirectParam, return_to: returnToParam } = await searchParams;
   const orgSlugStr =
     (typeof orgSlug === "string" ? orgSlug : orgSlug?.[0]) ?? null;
   const frequencyStr =
     (typeof frequency === "string" ? frequency : frequency?.[0]) ?? null;
   const redirectTo =
     (typeof redirectParam === "string" ? redirectParam : redirectParam?.[0]) ?? null;
+  const returnTo = (typeof returnToParam === "string" ? returnToParam : returnToParam?.[0]) ?? null;
+
+  // Exchange Banking: if user came from banking (return_to=banking callback), after password login we send them to banking login (no code with password flow)
+  const bankingRedirectTo = returnTo && isBankingReturnTo(returnTo) ? getBankingLoginUrl({ from: "exchange" }) : null;
 
   const returnToGive = orgSlugStr
     ? `/give/${orgSlugStr}${frequencyStr ? `?frequency=${encodeURIComponent(frequencyStr)}` : ""}`
     : null;
   if (user && returnToGive) redirect(returnToGive);
+  if (user && bankingRedirectTo) redirect(bankingRedirectTo);
   if (user && redirectTo) redirect(redirectTo);
   if (user) redirect("/dashboard");
 
@@ -109,7 +115,8 @@ export default async function LoginPage({ searchParams }: Props) {
           <div className="mt-10">
             <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-slate-100" />}>
               <LoginForm
-                redirectTo={returnToGive ?? redirectTo ?? "/dashboard"}
+                redirectTo={returnToGive ?? bankingRedirectTo ?? redirectTo ?? "/dashboard"}
+                returnTo={returnTo && isBankingReturnTo(returnTo) ? returnTo : undefined}
                 orgName={orgName}
                 orgSlug={orgSlugStr}
                 frequency={frequencyStr}

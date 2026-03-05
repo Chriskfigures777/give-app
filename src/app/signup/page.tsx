@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { SignupForm } from "./signup-form";
 import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
+import { isBankingReturnTo } from "@/lib/banking-redirect";
 
-type Props = { searchParams: Promise<{ org?: string; frequency?: string }> };
+type Props = { searchParams: Promise<{ org?: string | string[]; frequency?: string | string[]; return_to?: string | string[] }> };
 
 export default async function SignupPage({ searchParams }: Props) {
   const supabase = await createClient();
@@ -12,11 +13,13 @@ export default async function SignupPage({ searchParams }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { org: orgSlug, frequency } = await searchParams;
+  const { org: orgSlug, frequency, return_to: returnToParam } = await searchParams;
   const orgSlugStr =
     (typeof orgSlug === "string" ? orgSlug : orgSlug?.[0]) ?? null;
   const frequencyStr =
     (typeof frequency === "string" ? frequency : frequency?.[0]) ?? null;
+  const returnTo = (typeof returnToParam === "string" ? returnToParam : returnToParam?.[0]) ?? null;
+  const isBanking = returnTo ? isBankingReturnTo(returnTo) : false;
 
   const returnToGive = orgSlugStr
     ? `/give/${orgSlugStr}${frequencyStr ? `?frequency=${encodeURIComponent(frequencyStr)}` : ""}`
@@ -104,6 +107,7 @@ export default async function SignupPage({ searchParams }: Props) {
           <div className="mt-10">
             <SignupForm
               redirectTo={returnToGive ?? "/dashboard"}
+              returnTo={isBanking ? returnTo : undefined}
               orgSlug={orgSlugStr}
               frequency={frequencyStr}
             />
