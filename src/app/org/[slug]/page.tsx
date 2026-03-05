@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Clock } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
+import { getSession } from "@/lib/auth";
 import { OrgHero } from "./org-hero";
 import { OrgPageBlocks } from "./org-page-blocks";
 import { OrgAboutSection } from "./org-about-section";
@@ -51,7 +52,7 @@ export default async function OrgPage({ params }: Props) {
       page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals,
       page_story, page_story_image_url, page_donation_goal_cents, logo_url, profile_image_url,
       stripe_connect_account_id, page_about_image_side, page_story_image_side,
-      city, state, website_url, page_published
+      city, state, website_url, page_published, owner_user_id
     `)
     .eq("slug", slug)
     .single();
@@ -78,12 +79,32 @@ export default async function OrgPage({ params }: Props) {
     state: string | null;
     website_url: string | null;
     page_published: boolean | null;
+    owner_user_id: string | null;
   } | null;
 
   if (!org) notFound();
 
   // Gate: page must be explicitly published AND have Stripe Connect set up
   if (!org.page_published || !org.stripe_connect_account_id) {
+    // Only show the "finish setup" message to the org owner or org admins; everyone else gets 404
+    const { user } = await getSession();
+    let isOrgOwnerOrAdmin = false;
+    if (user) {
+      isOrgOwnerOrAdmin = org.owner_user_id === user.id;
+      if (!isOrgOwnerOrAdmin) {
+        const { data: adminRow } = await supabase
+          .from("organization_admins")
+          .select("id")
+          .eq("organization_id", org.id)
+          .eq("user_id", user.id)
+          .maybeSingle();
+        isOrgOwnerOrAdmin = !!adminRow;
+      }
+    }
+    if (!isOrgOwnerOrAdmin) {
+      // Visitors and non-owners see nothing — page is not public yet
+      notFound();
+    }
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-16">
         <div className="w-full max-w-md text-center">
@@ -92,8 +113,8 @@ export default async function OrgPage({ params }: Props) {
           </div>
           <h1 className="text-2xl font-bold text-slate-900">{org.name}</h1>
           <p className="mt-3 text-base text-slate-600">
-            This organization hasn&apos;t finished setting up their page yet. They need to complete
-            verification before their public page goes live.
+            Your organization hasn&apos;t finished setting up its page yet. Complete the steps below
+            so your public page goes live.
           </p>
           <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left space-y-2">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">

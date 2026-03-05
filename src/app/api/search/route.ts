@@ -70,9 +70,11 @@ export async function GET(req: NextRequest) {
     let events: SearchEventResult[] = [];
 
     if (isOrgType) {
+      // Only show organizations that have published their public page and have Stripe connected
       let orgQuery = supabase
         .from("organizations")
         .select("id, name, slug, org_type, city, state, causes, logo_url, profile_image_url, description, card_preview_image_url, card_preview_video_url, page_hero_video_url")
+        .eq("page_published", true)
         .not("stripe_connect_account_id", "is", null)
         .order("name")
         .range(offset, offset + limit - 1);

@@ -41,6 +41,7 @@ export async function LandingFeaturedOrgs() {
     .select(
       "id, name, slug, org_type, city, state, causes, logo_url, profile_image_url, description, card_preview_image_url, card_preview_video_url, page_hero_video_url"
     )
+    .eq("page_published", true)
     .not("stripe_connect_account_id", "is", null)
     .eq("org_type", "church")
     .order("name")
@@ -54,6 +55,7 @@ export async function LandingFeaturedOrgs() {
       .select(
         "id, name, slug, org_type, city, state, causes, logo_url, profile_image_url, description, card_preview_image_url, card_preview_video_url, page_hero_video_url"
       )
+      .eq("page_published", true)
       .not("stripe_connect_account_id", "is", null)
       .or("org_type.neq.church,org_type.is.null")
       .order("name")

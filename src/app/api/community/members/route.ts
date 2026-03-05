@@ -49,6 +49,7 @@ export async function GET(req: NextRequest) {
       let orgQ = supabase
         .from("organizations")
         .select("id, name, slug, org_type, city, state, logo_url, profile_image_url, description")
+        .eq("page_published", true)
         .not("stripe_connect_account_id", "is", null)
         .order("name")
         .range(offset, offset + limit - 1);
