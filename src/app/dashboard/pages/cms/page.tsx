@@ -58,21 +58,17 @@ export default async function CmsPage() {
       </div>
 
       {/* Page header */}
-      <div className="border-b border-dashboard-border bg-dashboard-card/40">
-        <div className="mx-auto max-w-7xl px-6 py-5">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-bold text-dashboard-text tracking-tight">Content Manager</h1>
-              <p className="mt-1 text-sm text-dashboard-text-muted">
-                Manage your website&apos;s media, events, sermons, and more.
-              </p>
-            </div>
-          </div>
+      <div className="border-b border-dashboard-border bg-gradient-to-b from-dashboard-card/60 to-transparent">
+        <div className="mx-auto max-w-7xl px-6 py-7">
+          <h1 className="text-3xl font-black tracking-tight text-dashboard-text">Content Manager</h1>
+          <p className="mt-2 text-base text-dashboard-text-muted">
+            Manage your website&apos;s media, events, sermons, and more.
+          </p>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="mx-auto max-w-7xl px-6 py-6">
+      <div className="mx-auto max-w-7xl px-6 py-8">
         <CmsClient organizationId={orgId} />
       </div>
     </div>
