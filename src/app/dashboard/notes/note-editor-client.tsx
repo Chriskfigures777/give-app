@@ -161,6 +161,33 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   );
   const Sep = () => <div className="mx-1.5 h-5 w-px bg-dashboard-border" />;
 
+  // Horizontal ruler — tick marks every 12px, labels every inch (96px)
+  const Ruler = () => {
+    const ticks: { x: number; h: number; label: string | null }[] = [];
+    for (let i = 0; i <= 2400; i += 12) {
+      const isInch = i % 96 === 0;
+      const isHalf = i % 48 === 0 && !isInch;
+      ticks.push({ x: i, h: isInch ? 13 : isHalf ? 8 : 4, label: isInch && i > 0 ? String(i / 96) : null });
+    }
+    return (
+      <div
+        className="sticky top-0 z-[5] w-full select-none overflow-hidden"
+        style={{ height: 24, background: "hsl(var(--dashboard-card))", borderBottom: "1px solid hsl(var(--dashboard-border))" }}
+      >
+        <svg width="100%" height="24" xmlns="http://www.w3.org/2000/svg">
+          {ticks.map((t) => (
+            <g key={t.x}>
+              <line x1={t.x} y1={24} x2={t.x} y2={24 - t.h} stroke="currentColor" strokeWidth={0.75} className="text-dashboard-text-muted" opacity={0.45} />
+              {t.label && (
+                <text x={t.x + 2} y={10} fill="currentColor" fontSize={8} className="text-dashboard-text-muted" opacity={0.5} fontFamily="ui-monospace, monospace">{t.label}</text>
+              )}
+            </g>
+          ))}
+        </svg>
+      </div>
+    );
+  };
+
   return (
     <div className="-mx-6 -mt-6 flex flex-col" style={{ minHeight: "calc(100vh - 64px)" }}>
 
@@ -281,15 +308,16 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
       {/* ── Document canvas — Google Docs / Word style ── */}
       <div className="flex-1 overflow-y-auto" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
-        <div className="mx-auto px-6 py-10" style={{ maxWidth: 1000 }}>
+        <Ruler />
+        <div className="mx-auto px-6 py-8" style={{ maxWidth: 1000 }}>
 
-          {/* Paper page */}
+          {/* Paper page — border like Google Docs, no shadow */}
           <div
             style={{
               background: "hsl(var(--dashboard-card))",
               minHeight: "calc(100vh - 180px)",
-              boxShadow: "0 4px 40px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2)",
-              borderRadius: 4,
+              border: "1px solid hsl(var(--dashboard-border))",
+              borderRadius: 2,
             }}
           >
             <EditorContent editor={editor} className="tiptap-doc" />
