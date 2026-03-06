@@ -162,7 +162,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const Sep = () => <div className="mx-1.5 h-5 w-px bg-dashboard-border" />;
 
   return (
-    <div className="flex flex-col" style={{ minHeight: "calc(100vh - 64px)" }}>
+    <div className="-mx-6 -mt-6 flex flex-col" style={{ minHeight: "calc(100vh - 64px)" }}>
 
       {/* ── Header bar ── */}
       <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-dashboard-border bg-dashboard-card/95 backdrop-blur px-5 py-3">
@@ -279,25 +279,29 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         </div>
       )}
 
-      {/* ── Document canvas (dark bg, card-coloured document page) ── */}
-      <div className="flex-1 overflow-y-auto py-8 px-4" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
-        <div className="mx-auto" style={{ maxWidth: 760 }}>
+      {/* ── Document canvas — Google Docs / Word style ── */}
+      <div className="flex-1 overflow-y-auto" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
+        <div className="mx-auto px-6 py-10" style={{ maxWidth: 1000 }}>
 
-          {/* Document page */}
+          {/* Paper page */}
           <div
-            className="rounded-xl shadow-2xl ring-1 ring-white/5 overflow-hidden"
-            style={{ background: "hsl(var(--dashboard-card))" }}
+            style={{
+              background: "hsl(var(--dashboard-card))",
+              minHeight: "calc(100vh - 180px)",
+              boxShadow: "0 4px 40px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2)",
+              borderRadius: 4,
+            }}
           >
             <EditorContent editor={editor} className="tiptap-doc" />
           </div>
 
           {/* Generated questions panel */}
           {(generatedQuestions !== null || genError) && (
-            <div className="mt-6 rounded-xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-xl ring-1 ring-emerald-500/10">
+            <div className="mt-8 rounded-xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-xl ring-1 ring-emerald-500/10">
               <div className="flex items-center justify-between border-b border-dashboard-border bg-emerald-500/5 px-5 py-3.5">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-emerald-400" />
-                  <h3 className="text-sm font-semibold text-dashboard-text">
+                  <Sparkles className="h-5 w-5 text-emerald-400" />
+                  <h3 className="text-base font-semibold text-dashboard-text">
                     {genError ? "Generation failed" : `${generatedQuestions?.length ?? 0} questions generated`}
                   </h3>
                 </div>
@@ -305,24 +309,24 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
                   onClick={() => { setGeneratedQuestions(null); setGenError(null); }}
                   className="rounded p-1 text-dashboard-text-muted hover:text-dashboard-text transition-colors"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
               {genError ? (
-                <p className="p-5 text-sm text-rose-400">{genError}</p>
+                <p className="p-5 text-base text-rose-400">{genError}</p>
               ) : (
                 <>
                   <ul className="divide-y divide-dashboard-border">
                     {generatedQuestions?.map((q, i) => (
-                      <li key={i} className="px-5 py-3.5">
-                        <p className="text-sm font-medium text-dashboard-text">
+                      <li key={i} className="px-5 py-4">
+                        <p className="text-base font-medium text-dashboard-text">
                           <span className="mr-2 tabular-nums text-dashboard-text-muted">{i + 1}.</span>
                           {q.text}
                         </p>
                         {q.type === "multiple_choice" && q.options?.length ? (
-                          <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          <div className="mt-2 flex flex-wrap gap-2">
                             {q.options.map((opt) => (
-                              <span key={opt} className="rounded-full bg-dashboard-card-hover px-2.5 py-0.5 text-xs text-dashboard-text-muted">
+                              <span key={opt} className="rounded-full bg-dashboard-card-hover px-3 py-1 text-sm text-dashboard-text-muted">
                                 {opt}
                               </span>
                             ))}
@@ -331,11 +335,11 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
                       </li>
                     ))}
                   </ul>
-                  <div className="flex items-center justify-between gap-4 border-t border-dashboard-border bg-emerald-500/5 px-5 py-3.5">
-                    <p className="text-xs text-dashboard-text-muted">No extra credit used when creating the survey from these.</p>
+                  <div className="flex items-center justify-between gap-4 border-t border-dashboard-border bg-emerald-500/5 px-5 py-4">
+                    <p className="text-sm text-dashboard-text-muted">No extra credit used when creating the survey from these.</p>
                     <Link href={`/dashboard/surveys/new?fromNote=${savedNoteId}`}>
-                      <Button size="sm" className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white">
-                        Create survey <ChevronRight className="h-3.5 w-3.5" />
+                      <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                        Create survey <ChevronRight className="h-4 w-4" />
                       </Button>
                     </Link>
                   </div>

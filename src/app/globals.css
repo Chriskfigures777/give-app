@@ -1777,16 +1777,16 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
 /* ── TipTap document editor ── */
 .tiptap-doc .ProseMirror {
   outline: none;
-  min-height: 520px;
-  padding: 56px 72px;
+  min-height: calc(100vh - 180px);
+  padding: 72px 96px;
   font-size: 16px;
   font-family: var(--font-barlow), sans-serif;
   line-height: 1.9;
   color: hsl(var(--dashboard-text));
   caret-color: #34d399;
 }
-@media (max-width: 640px) {
-  .tiptap-doc .ProseMirror { padding: 32px 28px; }
+@media (max-width: 768px) {
+  .tiptap-doc .ProseMirror { padding: 40px 36px; }
 }
 .tiptap-doc .ProseMirror:focus { outline: none; }
 .tiptap-doc .ProseMirror > * + * { margin-top: 0.75em; }
