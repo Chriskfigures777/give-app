@@ -8,8 +8,6 @@ import { PanelMessages } from "./panel-messages";
 import { PanelNotifications } from "./panel-notifications";
 import { FeedSidebar } from "./feed-sidebar";
 
-/* Uses feed theme CSS variables to match light feed */
-
 export type PanelPage = "home" | "peers" | "messages" | "notifications";
 
 const PANEL_TABS: {
@@ -17,83 +15,116 @@ const PANEL_TABS: {
   label: string;
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
 }[] = [
-  { id: "home",          label: "Network",   icon: Globe         },
-  { id: "peers",         label: "Peers",     icon: Users         },
-  { id: "messages",      label: "Messages",  icon: MessageSquare },
-  { id: "notifications", label: "Activity",  icon: Bell          },
+  { id: "home",          label: "Network",  icon: Globe         },
+  { id: "peers",         label: "Peers",    icon: Users         },
+  { id: "messages",      label: "Messages", icon: MessageSquare },
+  { id: "notifications", label: "Activity", icon: Bell          },
 ];
 
 export function FeedRightPanel() {
   const [activePage, setActivePage] = useState<PanelPage>("home");
 
   return (
-    <aside className="hidden w-[296px] shrink-0 lg:block">
-      {/* Sticky container */}
-      <div className="sticky top-[4.5rem] space-y-3 max-h-[calc(100vh-4.5rem)]">
+    <aside className="hidden w-[280px] shrink-0 lg:block">
+      <div className="sticky top-[4.5rem] space-y-2.5">
 
         {/* ── Tab bar ── */}
         <div
-          className="rounded-2xl overflow-hidden ft-card"
-          style={{ border: "1px solid var(--feed-border)" }}
+          className="overflow-hidden rounded-2xl"
+          style={{
+            background: "var(--feed-card)",
+            border: "1px solid var(--feed-border-strong)",
+            boxShadow: "var(--feed-card-shadow)",
+          }}
         >
-          <div className="p-1.5">
-            <div className="relative flex gap-0.5">
-              {PANEL_TABS.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activePage === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActivePage(tab.id)}
-                    className="relative flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider transition-all duration-200"
-                    style={
-                      isActive
-                        ? { background: "var(--feed-nav-active-bg)", color: "var(--feed-nav-active-text)" }
-                        : { color: "var(--feed-text)" }
-                    }
-                    onMouseEnter={(e) => {
-                      if (!isActive)
-                        (e.currentTarget as HTMLElement).style.color = "var(--feed-accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive)
-                        (e.currentTarget as HTMLElement).style.color = "var(--feed-text)";
-                    }}
-                  >
-                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                    <span>{tab.label}</span>
-                    {isActive && (
-                      <motion.span
-                        layoutId="panel-tab-indicator"
-                        className="absolute bottom-0 left-1 right-1 h-0.5 rounded-full"
-                        style={{ background: "var(--feed-accent)" }}
-                        transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider"
+              style={{ color: "var(--feed-text-dim)" }}
+            >
+              Connections
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span
+                className="h-1.5 w-1.5 rounded-full ft-live-dot"
+                style={{ background: "#059669" }}
+              />
+              <span
+                className="text-[9px] font-bold uppercase tracking-widest"
+                style={{ color: "#059669" }}
+              >
+                Live
+              </span>
             </div>
+          </div>
+
+          {/* Pill tabs */}
+          <div className="flex gap-1 px-2 pb-2.5">
+            {PANEL_TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activePage === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActivePage(tab.id)}
+                  className="relative flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wider transition-all duration-200"
+                  style={
+                    isActive
+                      ? { background: "var(--feed-nav-active-bg)", color: "var(--feed-nav-active-text)" }
+                      : { color: "var(--feed-text-dim)" }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.background = "var(--feed-input-bg)";
+                      (e.currentTarget as HTMLElement).style.color = "var(--feed-text-muted)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                      (e.currentTarget as HTMLElement).style.color = "var(--feed-text-dim)";
+                    }
+                  }}
+                >
+                  <Icon
+                    className="h-[15px] w-[15px] shrink-0"
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                  <span>{tab.label}</span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="panel-tab-indicator"
+                      className="absolute bottom-0 inset-x-2 h-0.5 rounded-full"
+                      style={{ background: "var(--feed-accent-dark)" }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* ── Panel content ── */}
         <div
-          className="rounded-2xl overflow-hidden feed-scroll-area ft-card"
+          className="rounded-2xl overflow-hidden feed-scroll-area"
           style={{
-            border: "1px solid var(--feed-border)",
-            maxHeight: "calc(100vh - 9rem)",
+            background: "var(--feed-card)",
+            border: "1px solid var(--feed-border-strong)",
+            maxHeight: "calc(100vh - 9.5rem)",
             overflowY: "auto",
+            boxShadow: "var(--feed-card-shadow)",
           }}
         >
           <AnimatePresence mode="wait">
             {activePage === "home" && (
               <motion.div
                 key="home"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -8 }}
                 transition={{ duration: 0.18, ease: "easeInOut" }}
               >
                 <FeedSidebar />
@@ -102,9 +133,9 @@ export function FeedRightPanel() {
             {activePage === "peers" && (
               <motion.div
                 key="peers"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -8 }}
                 transition={{ duration: 0.18, ease: "easeInOut" }}
               >
                 <PanelPeers />
@@ -113,9 +144,9 @@ export function FeedRightPanel() {
             {activePage === "messages" && (
               <motion.div
                 key="messages"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -8 }}
                 transition={{ duration: 0.18, ease: "easeInOut" }}
               >
                 <PanelMessages />
@@ -124,9 +155,9 @@ export function FeedRightPanel() {
             {activePage === "notifications" && (
               <motion.div
                 key="notifications"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -8 }}
                 transition={{ duration: 0.18, ease: "easeInOut" }}
               >
                 <PanelNotifications />
@@ -135,16 +166,23 @@ export function FeedRightPanel() {
           </AnimatePresence>
         </div>
 
-        {/* ── Live status indicator ── */}
+        {/* ── Live status ── */}
         <div
-          className="rounded-xl px-3 py-2 flex items-center gap-2 ft-input-bg"
-          style={{ border: "1px solid var(--feed-border)" }}
+          className="flex items-center gap-2 rounded-xl px-3 py-2"
+          style={{
+            background: "var(--feed-card)",
+            border: "1px solid var(--feed-border-strong)",
+            boxShadow: "var(--feed-card-shadow)",
+          }}
         >
           <span
-            className="h-1.5 w-1.5 rounded-full"
-            style={{ background: "var(--feed-accent)", boxShadow: "0 0 6px var(--feed-accent)" }}
+            className="h-1.5 w-1.5 rounded-full shrink-0 ft-live-dot"
+            style={{ background: "#059669" }}
           />
-          <span className="text-[10px] font-semibold uppercase tracking-wider ft-text-muted">
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wider"
+            style={{ color: "var(--feed-text-muted)" }}
+          >
             Live updates active
           </span>
         </div>

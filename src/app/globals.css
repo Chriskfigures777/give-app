@@ -1515,41 +1515,89 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
    FEED THEME SYSTEM — 5 Themes, 2026 Design Language
    ═══════════════════════════════════════════════════ */
 
-/* Feed — light theme (warm off-white, soft shadows, single emerald accent, 2025–26) */
+/* Feed — light-base + dark-element hybrid (social, engaging, 2026) */
 [data-feed-theme] {
-  --feed-bg: #f4f5f7;
-  --feed-surface: #fafbfc;
+  /* ── Light canvas ── */
+  --feed-bg: #eef1f7;
+  --feed-surface: #f5f7fb;
   --feed-card: #ffffff;
-  --feed-card-hover: #f8f9fb;
-  --feed-border: rgba(0, 0, 0, 0.06);
+  --feed-card-hover: #f8f9fd;
+  --feed-border: rgba(0, 0, 0, 0.055);
   --feed-border-strong: rgba(0, 0, 0, 0.1);
-  --feed-text: #1a1d24;
+
+  /* ── Typography ── */
+  --feed-text: #0e1117;
   --feed-text-muted: #6b7280;
   --feed-text-dim: #9ca3af;
-  --feed-accent: #059669;
+
+  /* ── BANKGO emerald accent ── */
+  --feed-accent: #34d399;
+  --feed-accent-dark: #059669;
   --feed-accent-2: #10b981;
   --feed-accent-3: #0d9488;
+
+  /* ── Glass ── */
   --feed-glass: rgba(255, 255, 255, 0.9);
   --feed-glass-border: rgba(0, 0, 0, 0.06);
   --feed-sidebar: #ffffff;
-  --feed-input-bg: #f1f3f5;
-  --feed-input-border: rgba(0, 0, 0, 0.08);
-  --feed-glow: 0 0 20px rgba(5, 150, 105, 0.12);
-  --feed-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
-  --feed-card-shadow-hover: 0 0 0 1px rgba(5, 150, 105, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
-  --feed-gradient: linear-gradient(135deg, #059669 0%, #0d9488 100%);
-  --feed-badge-bg: rgba(5, 150, 105, 0.1);
+
+  /* ── Inputs (light) ── */
+  --feed-input-bg: #edf0f5;
+  --feed-input-border: rgba(0, 0, 0, 0.075);
+
+  /* ── Glow & shadows ── */
+  --feed-glow: 0 0 28px rgba(52, 211, 153, 0.28);
+  --feed-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.07);
+  --feed-card-shadow-hover: 0 0 0 1.5px rgba(52, 211, 153, 0.35), 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  /* ── Gradient ── */
+  --feed-gradient: linear-gradient(135deg, #34d399 0%, #0d9488 100%);
+
+  /* ── Badges / nav ── */
+  --feed-badge-bg: rgba(52, 211, 153, 0.12);
   --feed-badge-text: #059669;
-  --feed-nav-active-bg: rgba(5, 150, 105, 0.1);
+  --feed-nav-active-bg: rgba(52, 211, 153, 0.1);
   --feed-nav-active-text: #059669;
-  --feed-scrollbar: rgba(0, 0, 0, 0.12);
+
+  /* ── Misc ── */
+  --feed-scrollbar: rgba(0, 0, 0, 0.1);
   --feed-composer-bg: #ffffff;
-  --feed-skeleton: rgba(0, 0, 0, 0.06);
-  --feed-skeleton-shine: rgba(0, 0, 0, 0.08);
+  --feed-skeleton: rgba(0, 0, 0, 0.055);
+  --feed-skeleton-shine: rgba(0, 0, 0, 0.09);
+
+  /* ── Tinted content blocks — clean, soft, readable ── */
+  --feed-dark-block: #f4f6f9;
+  --feed-dark-text: #0e1117;
+  --feed-dark-text-muted: #6b7280;
+
+  /* Donation: soft emerald wash */
+  --feed-donation-bg: rgba(5, 150, 105, 0.07);
+  --feed-donation-border: rgba(5, 150, 105, 0.2);
+  --feed-donation-text: #059669;
+
+  /* Goal: soft teal wash */
+  --feed-goal-bg: rgba(14, 148, 136, 0.07);
+  --feed-goal-border: rgba(14, 148, 136, 0.2);
+
+  /* New org: soft violet wash */
+  --feed-new-org-bg: rgba(124, 58, 237, 0.07);
+  --feed-new-org-border: rgba(124, 58, 237, 0.18);
+  --feed-new-org-text: #7c3aed;
+
+  /* ── Subtle aurora on light bg ── */
+  --feed-aurora-1: rgba(52, 211, 153, 0.05);
+  --feed-aurora-2: rgba(14, 148, 136, 0.035);
+  --feed-aurora-3: rgba(99, 102, 241, 0.025);
 }
 
 /* ── Feed theme utility classes ── */
-.ft-bg { background-color: var(--feed-bg); }
+.ft-bg {
+  background-color: var(--feed-bg);
+  background-image:
+    radial-gradient(ellipse 75% 45% at 5% -5%, var(--feed-aurora-1) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 95% 105%, var(--feed-aurora-2) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 60% 40%, var(--feed-aurora-3) 0%, transparent 70%);
+}
 .ft-surface { background-color: var(--feed-surface); }
 .ft-card { background-color: var(--feed-card); }
 .ft-sidebar { background-color: var(--feed-sidebar); }
@@ -1568,14 +1616,28 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
 .ft-card-shadow { box-shadow: var(--feed-card-shadow); }
 .ft-glow { box-shadow: var(--feed-glow); }
 
-/* Card hover: lift + glow border */
+.ft-gradient-text {
+  background: var(--feed-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dark island block — used inside light cards for dramatic content */
+.ft-dark-block {
+  background: var(--feed-dark-block);
+  color: var(--feed-dark-text);
+  border-radius: 14px;
+}
+
+/* Card hover: lift + emerald glow border */
 .ft-card-interactive {
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.15s ease;
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease, transform 0.2s ease;
 }
 .ft-card-interactive:hover {
   box-shadow: var(--feed-card-shadow-hover);
-  border-color: var(--feed-border-strong);
-  background-color: var(--feed-card-hover);
+  border-color: rgba(52, 211, 153, 0.28);
+  transform: translateY(-1px);
 }
 
 /* Gradient border technique */
@@ -1647,6 +1709,13 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
 }
 .online-dot { animation: onlinePulse 2.5s ease-in-out infinite; }
 
+/* Feed live dot */
+@keyframes feedLivePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55), 0 0 8px rgba(52, 211, 153, 0.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(52, 211, 153, 0), 0 0 12px rgba(52, 211, 153, 0.2); }
+}
+.ft-live-dot { animation: feedLivePulse 2.5s ease-in-out infinite; }
+
 /* New posts floating pill bounce */
 @keyframes pillFloat {
   0%, 100% { transform: translateX(-50%) translateY(0); }
@@ -1688,7 +1757,8 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
 
 /* Composer pulse on focus */
 .ft-composer-focus:focus-within {
-  box-shadow: 0 0 0 1px var(--feed-border-strong), var(--feed-glow);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.3), var(--feed-glow);
+  border-color: rgba(52, 211, 153, 0.25) !important;
 }
 
 /* Support button ring pulse */

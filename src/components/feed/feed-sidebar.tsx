@@ -6,17 +6,17 @@ import Image from "next/image";
 import { Users, TrendingUp, ArrowRight, Sparkles } from "lucide-react";
 import { UserTypeBadge } from "@/components/user-type-badge";
 
-// BANKGO-matching dark palette
+// Light palette — matches the light feed right panel
 const SB = {
-  card:      "#181c26",
-  cardHover: "#1e2330",
-  border:    "rgba(255,255,255,0.06)",
-  text:      "#eef0f6",
-  textMuted: "#8891a5",
-  textDim:   "#565e72",
-  accent:    "#34d399",
-  accentDim: "rgba(52,211,153,0.12)",
-  inputBg:   "#12151c",
+  card:      "#ffffff",
+  cardHover: "rgba(0,0,0,0.04)",
+  border:    "rgba(0,0,0,0.08)",
+  text:      "#111827",
+  textMuted: "#4b5563",
+  textDim:   "#9ca3af",
+  accent:    "#059669",
+  accentDim: "rgba(5,150,105,0.09)",
+  inputBg:   "#f3f4f6",
 } as const;
 
 type SidebarOrg = {
@@ -46,18 +46,16 @@ function SidebarSkeleton() {
   return (
     <div className="space-y-4 p-4">
       <div className="space-y-3">
-        <div className="space-y-3">
-          <div className="h-4 w-24 rounded-lg animate-pulse" style={{ background: SB.cardHover }} />
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full animate-pulse shrink-0" style={{ background: SB.cardHover }} />
-              <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 w-3/4 rounded animate-pulse" style={{ background: SB.cardHover }} />
-                <div className="h-2.5 w-1/2 rounded animate-pulse" style={{ background: SB.inputBg }} />
-              </div>
+        <div className="ft-skeleton h-4 w-24 rounded-lg" />
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className="ft-skeleton h-9 w-9 rounded-full shrink-0" />
+            <div className="flex-1 space-y-1.5">
+              <div className="ft-skeleton h-3.5 w-3/4 rounded" />
+              <div className="ft-skeleton h-2.5 w-1/2 rounded" />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -294,7 +292,7 @@ export function FeedSidebar() {
               >
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-                  style={{ background: "rgba(14,165,233,0.15)", color: "#38bdf8" }}
+                  style={{ background: SB.accentDim, color: SB.accent }}
                 >
                   {member.name.charAt(0).toUpperCase()}
                 </div>
@@ -310,10 +308,10 @@ export function FeedSidebar() {
         )}
         <Link
           href="/community"
-          className="mt-3 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors"
-          style={{ background: "rgba(14,165,233,0.12)", color: "#38bdf8" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(14,165,233,0.2)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(14,165,233,0.12)"; }}
+          className="mt-3 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-semibold transition-colors"
+          style={{ background: SB.accentDim, color: SB.accent }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.2)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.accentDim; }}
         >
           <Users className="h-3.5 w-3.5" />
           Find &amp; connect with people
@@ -344,7 +342,7 @@ export function FeedSidebar() {
                 >
                   <div
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-                    style={{ background: "rgba(14,165,233,0.15)", color: "#38bdf8" }}
+                    style={{ background: SB.accentDim, color: SB.accent }}
                   >
                     {item.member.name.charAt(0).toUpperCase()}
                   </div>
@@ -360,10 +358,10 @@ export function FeedSidebar() {
           </div>
           <Link
             href="/explore"
-            className="mt-4 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors"
+            className="mt-4 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-semibold transition-colors"
             style={{ background: SB.accentDim, color: SB.accent }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.2)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = SB.accentDim; }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.18)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--feed-badge-bg)"; }}
           >
             <Sparkles className="h-3.5 w-3.5" />
             Explore all
@@ -372,9 +370,10 @@ export function FeedSidebar() {
       )}
 
       {/* Live indicator */}
-      <div className="p-4" style={{ borderTop: `1px solid ${SB.border}` }}>
-        <p className="text-xs" style={{ color: SB.textMuted }}>
-          Feed updates in real time.
+      <div className="flex items-center gap-2 p-4" style={{ borderTop: `1px solid ${SB.border}` }}>
+        <span className="h-1.5 w-1.5 rounded-full ft-live-dot" style={{ background: SB.accent }} />
+        <p className="text-[11px] font-medium" style={{ color: SB.textMuted }}>
+          Feed updates in real time
         </p>
       </div>
     </div>

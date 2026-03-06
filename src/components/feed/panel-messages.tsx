@@ -15,17 +15,17 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 
-// BANKGO-matching dark palette
+// Light palette — matches the light feed right panel
 const SB = {
-  card:      "#181c26",
-  cardHover: "#1e2330",
-  border:    "rgba(255,255,255,0.06)",
-  text:      "#eef0f6",
-  textMuted: "#8891a5",
-  textDim:   "#565e72",
-  accent:    "#34d399",
-  accentDim: "rgba(52,211,153,0.12)",
-  inputBg:   "#12151c",
+  card:      "#ffffff",
+  cardHover: "rgba(0,0,0,0.04)",
+  border:    "rgba(0,0,0,0.08)",
+  text:      "#111827",
+  textMuted: "#4b5563",
+  textDim:   "#9ca3af",
+  accent:    "#059669",
+  accentDim: "rgba(5,150,105,0.09)",
+  inputBg:   "#f3f4f6",
 } as const;
 
 type Thread = {
@@ -93,7 +93,7 @@ function AvatarMini({
     <div className={cn("relative shrink-0", sizePx[size])}>
       <div
         className={cn("h-full w-full rounded-full overflow-hidden", sizePx[size])}
-        style={{ background: `linear-gradient(135deg, ${SB.accentDim}, rgba(13,148,136,0.15))` }}
+        style={{ background: `linear-gradient(135deg, ${SB.accentDim}, rgba(13,148,136,0.08))` }}
       >
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -454,7 +454,7 @@ function CompactConversation({
                   style={
                     fromMe
                       ? { background: "linear-gradient(135deg, #059669, #0d9488)", color: "#fff" }
-                      : { background: SB.cardHover, color: SB.text }
+                      : { background: "#f3f4f6", color: SB.text }
                   }
                 >
                   <p className="whitespace-pre-wrap break-words">{m.content}</p>

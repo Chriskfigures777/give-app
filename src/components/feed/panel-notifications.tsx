@@ -14,17 +14,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// BANKGO-matching dark palette
+// Light palette — matches the light feed right panel
 const SB = {
-  card:      "#181c26",
-  cardHover: "#1e2330",
-  border:    "rgba(255,255,255,0.06)",
-  text:      "#eef0f6",
-  textMuted: "#8891a5",
-  textDim:   "#565e72",
-  accent:    "#34d399",
-  accentDim: "rgba(52,211,153,0.12)",
-  inputBg:   "#12151c",
+  card:      "#ffffff",
+  cardHover: "rgba(0,0,0,0.04)",
+  border:    "rgba(0,0,0,0.08)",
+  text:      "#111827",
+  textMuted: "#4b5563",
+  textDim:   "#9ca3af",
+  accent:    "#059669",
+  accentDim: "rgba(5,150,105,0.09)",
+  inputBg:   "#f3f4f6",
 } as const;
 
 type Notification = {
@@ -66,7 +66,7 @@ function getNotificationIcon(type: string) {
     case "support":
       return { icon: Heart, color: "#fb7185", bg: "rgba(251,113,133,0.15)" };
     default:
-      return { icon: Bell, color: SB.textMuted, bg: "rgba(255,255,255,0.08)" };
+      return { icon: Bell, color: SB.textMuted, bg: "rgba(0,0,0,0.06)" };
   }
 }
 
@@ -212,9 +212,9 @@ export function PanelNotifications() {
                 className={cn(
                   "mb-0.5 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all duration-200"
                 )}
-                style={isUnread ? { background: "rgba(52,211,153,0.05)" } : undefined}
+                style={isUnread ? { background: "rgba(5,150,105,0.06)" } : undefined}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = SB.cardHover; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = isUnread ? "rgba(52,211,153,0.05)" : "transparent"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = isUnread ? "rgba(5,150,105,0.06)" : "transparent"; }}
               >
                 <div
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"

@@ -18,17 +18,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// BANKGO-matching dark palette
+// Light palette — matches the light feed right panel
 const SB = {
-  card:      "#181c26",
-  cardHover: "#1e2330",
-  border:    "rgba(255,255,255,0.06)",
-  text:      "#eef0f6",
-  textMuted: "#8891a5",
-  textDim:   "#565e72",
-  accent:    "#34d399",
-  accentDim: "rgba(52,211,153,0.12)",
-  inputBg:   "#12151c",
+  card:      "#ffffff",
+  cardHover: "rgba(0,0,0,0.04)",
+  border:    "rgba(0,0,0,0.08)",
+  text:      "#111827",
+  textMuted: "#4b5563",
+  textDim:   "#9ca3af",
+  accent:    "#059669",
+  accentDim: "rgba(5,150,105,0.09)",
+  inputBg:   "#f3f4f6",
 } as const;
 
 type PeerConnection = {
@@ -496,7 +496,7 @@ export function PanelPeers() {
                     </div>
                     <span
                       className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2"
-                      style={{ background: "#22c55e", borderColor: SB.card }}
+                      style={{ background: "#22c55e", borderColor: "#ffffff" }}
                     />
                   </div>
                   <div className="min-w-0 flex-1">

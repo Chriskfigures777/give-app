@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Heart,
   MessageCircle,
@@ -14,6 +15,9 @@ import {
   TrendingUp,
   Sparkles,
   Send,
+  MapPin,
+  Loader2,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import type { FeedItemResponse } from "@/app/api/feed/route";
+import { motion, AnimatePresence } from "motion/react";
 
 const PLACEHOLDER_LOGO =
   "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&q=80";
@@ -45,9 +50,9 @@ function formatRelativeTime(iso: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
   if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m`;
-  if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
@@ -88,9 +93,7 @@ export function FeedItemCard({
   onDelete,
 }: Props) {
   const [supportCount, setSupportCount] = useState(item.support_count ?? 0);
-  const [userSupported, setUserSupported] = useState(
-    item.user_supported ?? false
-  );
+  const [userSupported, setUserSupported] = useState(item.user_supported ?? false);
   const [commentCount, setCommentCount] = useState(item.comment_count ?? 0);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -102,9 +105,7 @@ export function FeedItemCard({
   const [shareSubmitting, setShareSubmitting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editContent, setEditContent] = useState(
-    (item.payload?.content as string) ?? ""
-  );
+  const [editContent, setEditContent] = useState((item.payload?.content as string) ?? "");
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteSubmitting, setDeleteSubmitting] = useState(false);
@@ -146,9 +147,7 @@ export function FeedItemCard({
     setSupportAnimating(true);
     setTimeout(() => setSupportAnimating(false), 600);
     try {
-      const res = await fetch(`/api/feed/${item.id}/reactions`, {
-        method: "POST",
-      });
+      const res = await fetch(`/api/feed/${item.id}/reactions`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed");
       const supported = data.supported ?? false;
@@ -262,41 +261,107 @@ export function FeedItemCard({
     }
   };
 
-  /* ── Engagement action bar ── */
+  /* ── Card header (org avatar + name + timestamp) ── */
+  const cardHeader = (nameOverride?: string, subtitle?: React.ReactNode) => (
+    <div className="flex items-start gap-3 px-4 pt-4 pb-1">
+      <div
+        className="relative h-11 w-11 shrink-0 cursor-pointer overflow-hidden rounded-full ring-2 ring-white"
+        style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.08)" }}
+        onClick={(e) => { e.stopPropagation(); router.push(linkHref); }}
+      >
+        <Image
+          src={imageUrl}
+          alt={item.organization_name}
+          fill
+          className="object-cover"
+          sizes="44px"
+        />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-baseline gap-1.5">
+          <span
+            className="text-[14px] font-bold cursor-pointer hover:underline underline-offset-2"
+            style={{ color: "var(--feed-text)" }}
+            onClick={(e) => { e.stopPropagation(); router.push(linkHref); }}
+          >
+            {nameOverride ?? item.organization_name}
+          </span>
+          {subtitle && (
+            <span className="text-[13px]" style={{ color: "var(--feed-text-muted)" }}>
+              {subtitle}
+            </span>
+          )}
+        </div>
+        <p className="text-[12px] mt-0.5" style={{ color: "var(--feed-text-dim)" }}>
+          {formatRelativeTime(item.created_at)}
+        </p>
+      </div>
+    </div>
+  );
+
+  /* ── Action bar ── */
   const actionBar = (
     <div
-      className="flex items-center px-4 py-2"
-      style={{ borderTop: "1px solid var(--feed-border)" }}
+      className="flex items-center gap-1 px-3 py-2"
+      style={{ borderTop: "1px solid var(--feed-border)", background: "rgba(0,0,0,0.015)" }}
       onClick={(e) => e.stopPropagation()}
     >
       <button
         type="button"
         onClick={handleSupportClick}
-        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200 ${supportAnimating ? "feed-glow-pulse" : ""}`}
-        style={{ color: userSupported ? "#f43f5e" : "var(--feed-text-muted)" }}
+        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-semibold transition-all duration-200"
+        style={{
+          color: userSupported ? "#e11d48" : "var(--feed-text-muted)",
+          background: userSupported ? "rgba(225, 29, 72, 0.08)" : "transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!userSupported) (e.currentTarget as HTMLElement).style.background = "rgba(225,29,72,0.06)";
+        }}
+        onMouseLeave={(e) => {
+          if (!userSupported) (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}
       >
         <Heart
-          className="h-[17px] w-[17px] transition-all duration-200"
-          style={userSupported ? { fill: "#f43f5e", color: "#f43f5e", transform: "scale(1.1)" } : {}}
+          className={`h-[16px] w-[16px] transition-all duration-300 ${supportAnimating ? "scale-125" : ""}`}
+          style={userSupported ? { fill: "#e11d48", color: "#e11d48" } : {}}
         />
         <span>{supportCount > 0 ? supportCount : "Support"}</span>
       </button>
+
       <button
         type="button"
         onClick={handleCommentClick}
-        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200"
-        style={{ color: commentsOpen ? "var(--feed-accent)" : "var(--feed-text-muted)" }}
+        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-semibold transition-all duration-200"
+        style={{
+          color: commentsOpen ? "var(--feed-accent-dark)" : "var(--feed-text-muted)",
+          background: commentsOpen ? "var(--feed-badge-bg)" : "transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!commentsOpen) (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.06)";
+        }}
+        onMouseLeave={(e) => {
+          if (!commentsOpen) (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}
       >
-        <MessageCircle className="h-[17px] w-[17px]" />
+        <MessageCircle className="h-[16px] w-[16px]" />
         <span>{commentCount > 0 ? commentCount : "Comment"}</span>
       </button>
+
       <button
         type="button"
         onClick={handleShareClick}
-        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200"
+        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-semibold transition-all duration-200"
         style={{ color: "var(--feed-text-muted)" }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.background = "rgba(0,0,0,0.04)";
+          (e.currentTarget as HTMLElement).style.color = "var(--feed-text)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.background = "transparent";
+          (e.currentTarget as HTMLElement).style.color = "var(--feed-text-muted)";
+        }}
       >
-        <Share2 className="h-[17px] w-[17px]" />
+        <Share2 className="h-[16px] w-[16px]" />
         <span>Share</span>
       </button>
     </div>
@@ -304,155 +369,133 @@ export function FeedItemCard({
 
   /* ── Comments section ── */
   const commentSection = commentsOpen && (
-    <div
-      className="px-4 py-4"
-      style={{
-        borderTop: "1px solid var(--feed-border)",
-        background: "var(--feed-input-bg)",
-      }}
-    >
-      <form onSubmit={handleCommentSubmit} className="mb-4">
-        <div className="flex gap-2.5">
-          <input
-            value={commentInput}
-            onChange={(e) => setCommentInput(e.target.value)}
-            placeholder="Write a comment…"
-            className="flex-1 rounded-lg px-4 py-2.5 text-sm outline-none transition-all duration-200"
-            style={{
-              background: "var(--feed-card)",
-              border: "1px solid var(--feed-border)",
-              color: "var(--feed-text)",
-            }}
-            maxLength={2000}
-          />
-          <button
-            type="submit"
-            disabled={!commentInput.trim() || commentSubmitting}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white disabled:opacity-40 transition-all duration-200"
-            style={{ background: "var(--feed-gradient)" }}
-          >
-            <Send className="h-4 w-4" />
-          </button>
-        </div>
-      </form>
-      {commentsLoading ? (
-        <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="flex gap-2.5">
-              <div className="ft-skeleton h-8 w-8 rounded-full" />
-              <div className="flex-1 space-y-1.5">
-                <div className="ft-skeleton h-3 w-24 rounded" />
-                <div className="ft-skeleton h-3 w-3/4 rounded" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : comments.length > 0 ? (
-        <ul className="space-y-3">
-          {comments.map((c) => (
-            <li key={c.id} className="flex gap-2.5">
-              <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
-                style={{ background: "var(--feed-gradient)" }}
-              >
-                {c.author_name.charAt(0).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div
-                  className="inline-block rounded-2xl rounded-tl-md px-3.5 py-2.5"
-                  style={{
-                    background: "var(--feed-card)",
-                    border: "1px solid var(--feed-border)",
-                  }}
-                >
-                  <span className="text-[13px] font-semibold" style={{ color: "var(--feed-text)" }}>
-                    {c.author_name}
-                  </span>
-                  <p className="text-[13px] leading-relaxed" style={{ color: "var(--feed-text-muted)" }}>
-                    {c.content}
-                  </p>
-                </div>
-                <p className="mt-1 px-1 text-[11px]" style={{ color: "var(--feed-text-dim)" }}>
-                  {formatRelativeTime(c.created_at)}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="py-4 text-center text-sm" style={{ color: "var(--feed-text-dim)" }}>
-          No comments yet. Be the first to share your thoughts!
-        </p>
-      )}
-    </div>
-  );
-
-  /* ── Shared content header (avatar + name + timestamp) ── */
-  const contentHeader = (
-    nameOverride?: string,
-    subtitle?: React.ReactNode
-  ) => (
-    <div className="flex items-start gap-3 px-4 pt-4">
-      <span
-        className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full"
-        style={{ background: "var(--feed-input-bg)" }}
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        className="overflow-hidden"
       >
-        <div className="relative h-full w-full overflow-hidden rounded-full" style={{ background: "var(--feed-card)" }}>
-          <Image
-            src={imageUrl}
-            alt={item.organization_name}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
+        <div
+          className="px-4 py-4"
+          style={{ borderTop: "1px solid var(--feed-border)", background: "var(--feed-input-bg)" }}
+        >
+          <form onSubmit={handleCommentSubmit} className="mb-4">
+            <div className="flex gap-2.5">
+              <input
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+                placeholder="Write a comment…"
+                className="flex-1 rounded-xl px-4 py-2.5 text-[13px] outline-none transition-all duration-200"
+                style={{
+                  background: "var(--feed-card)",
+                  border: "1px solid var(--feed-border-strong)",
+                  color: "var(--feed-text)",
+                }}
+                maxLength={2000}
+              />
+              <button
+                type="submit"
+                disabled={!commentInput.trim() || commentSubmitting}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white disabled:opacity-40 transition-all duration-200"
+                style={{ background: "var(--feed-gradient)", boxShadow: "0 2px 8px rgba(52,211,153,0.3)" }}
+              >
+                {commentSubmitting
+                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                  : <Send className="h-4 w-4" />
+                }
+              </button>
+            </div>
+          </form>
+
+          {commentsLoading ? (
+            <div className="space-y-3">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex gap-2.5">
+                  <div className="ft-skeleton h-8 w-8 rounded-full" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="ft-skeleton h-3 w-24 rounded" />
+                    <div className="ft-skeleton h-3 w-3/4 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : comments.length > 0 ? (
+            <ul className="space-y-3">
+              {comments.map((c) => (
+                <li key={c.id} className="flex gap-2.5">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    style={{ background: "var(--feed-gradient)" }}
+                  >
+                    {c.author_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className="inline-block rounded-2xl rounded-tl-md px-3.5 py-2.5"
+                      style={{
+                        background: "var(--feed-card)",
+                        border: "1px solid var(--feed-border)",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      <span className="text-[13px] font-semibold block" style={{ color: "var(--feed-text)" }}>
+                        {c.author_name}
+                      </span>
+                      <p className="text-[13px] leading-relaxed" style={{ color: "var(--feed-text-muted)" }}>
+                        {c.content}
+                      </p>
+                    </div>
+                    <p className="mt-1 px-1 text-[11px]" style={{ color: "var(--feed-text-dim)" }}>
+                      {formatRelativeTime(c.created_at)}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="py-4 text-center text-sm" style={{ color: "var(--feed-text-dim)" }}>
+              No comments yet — be the first!
+            </p>
+          )}
         </div>
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span
-            className="truncate text-sm font-semibold transition-colors duration-200"
-            style={{ color: "var(--feed-text)" }}
-          >
-            {nameOverride ?? item.organization_name}
-          </span>
-          <span
-            className="shrink-0 text-[12px] tabular-nums"
-            style={{ color: "var(--feed-text-dim)" }}
-          >
-            {formatRelativeTime(item.created_at)}
-          </span>
-        </div>
-        {subtitle && (
-          <div className="mt-0.5 text-[13px]" style={{ color: "var(--feed-text-muted)" }}>{subtitle}</div>
-        )}
-      </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 
-  /* ── Card variants by item type ── */
+  /* ── Card content variants ── */
   let cardContent: React.ReactNode;
 
   switch (item.item_type) {
+    /* ── Donation ── */
     case "donation": {
       const amountCents = (item.payload.amount_cents as number) ?? 0;
       cardContent = (
         <>
-          {contentHeader(undefined, "received a donation")}
-          <div className="px-4 pb-4">
+          {cardHeader(undefined, "received a donation")}
+          <div className="px-4 pb-4 pt-3">
             <div
-              className="flex items-center gap-3 rounded-xl px-4 py-3"
-              style={{ background: "var(--feed-input-bg)" }}
+              className="rounded-2xl px-5 py-5 text-center"
+              style={{
+                background: "var(--feed-donation-bg)",
+                border: "1px solid var(--feed-donation-border)",
+              }}
             >
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-full"
-                style={{ background: "var(--feed-gradient)" }}
+                className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{ background: "rgba(5,150,105,0.12)" }}
               >
-                <Sparkles className="h-4 w-4 text-white" />
+                <Sparkles className="h-5 w-5" style={{ color: "#059669" }} />
               </div>
-              <div>
-                <p className="text-xl font-bold" style={{ color: "var(--feed-accent)" }}>{formatAmount(amountCents)}</p>
-                <p className="text-xs" style={{ color: "var(--feed-text-muted)" }}>donated</p>
-              </div>
+              <p
+                className="text-4xl font-extrabold tabular-nums"
+                style={{ color: "#059669", letterSpacing: "-0.02em" }}
+              >
+                {formatAmount(amountCents)}
+              </p>
+              <p className="mt-1.5 text-[13px]" style={{ color: "var(--feed-text-muted)" }}>
+                donated to their mission
+              </p>
             </div>
           </div>
         </>
@@ -460,30 +503,60 @@ export function FeedItemCard({
       break;
     }
 
+    /* ── Goal progress ── */
     case "goal_progress": {
       const goalPct = (item.payload.goal_pct as number) ?? 0;
       const goalAmountCents = (item.payload.goal_amount_cents as number) ?? 0;
-      const campaignName = (item.payload.campaign_name as string) ?? "goal";
-      const clampedPct = Math.min(100, goalPct);
+      const campaignName = (item.payload.campaign_name as string) ?? "Fundraising Goal";
+      const clampedPct = Math.min(100, Math.max(0, goalPct));
       cardContent = (
         <>
-          {contentHeader(undefined, `Campaign: ${campaignName}`)}
-          <div className="px-4 pb-4">
-            <div className="rounded-xl p-4" style={{ background: "var(--feed-input-bg)" }}>
-              <div className="flex items-baseline justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" style={{ color: "var(--feed-accent)" }} />
-                  <span className="text-xl font-bold" style={{ color: "var(--feed-text)" }}>{Math.round(goalPct)}%</span>
+          {cardHeader(undefined, (
+            <span className="inline-flex items-center gap-1">
+              <TrendingUp className="h-3 w-3" /> {campaignName}
+            </span>
+          ))}
+          <div className="px-4 pb-4 pt-3">
+            <div
+              className="rounded-2xl p-5"
+              style={{
+                background: "var(--feed-goal-bg)",
+                border: "1px solid var(--feed-goal-border)",
+              }}
+            >
+              <div className="mb-4 flex items-end justify-between">
+                <div>
+                  <span
+                    className="text-3xl font-extrabold tabular-nums"
+                    style={{ color: "#0d9488", letterSpacing: "-0.02em" }}
+                  >
+                    {Math.round(goalPct)}
+                    <span className="text-xl">%</span>
+                  </span>
+                  <p className="mt-0.5 text-[12px]" style={{ color: "var(--feed-text-muted)" }}>
+                    of goal reached
+                  </p>
                 </div>
-                <span className="text-sm" style={{ color: "var(--feed-text-muted)" }}>of {formatAmount(goalAmountCents)}</span>
+                <p className="text-[13px] font-medium" style={{ color: "var(--feed-text-muted)" }}>
+                  Goal: {formatAmount(goalAmountCents)}
+                </p>
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ background: "var(--feed-border)" }}>
+              {/* Progress bar */}
+              <div
+                className="h-2.5 w-full overflow-hidden rounded-full"
+                style={{ background: "rgba(14,148,136,0.15)" }}
+              >
                 <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${clampedPct}%`, background: "var(--feed-gradient)" }}
+                  className="h-full rounded-full transition-all duration-700 ease-out"
+                  style={{
+                    width: `${clampedPct}%`,
+                    background: "linear-gradient(90deg, #059669 0%, #0d9488 100%)",
+                  }}
                 />
               </div>
-              <p className="mt-2 text-xs" style={{ color: "var(--feed-text-muted)" }}>Help them reach their goal</p>
+              <p className="mt-2.5 text-[12px]" style={{ color: "var(--feed-text-muted)" }}>
+                Help them reach their fundraising goal
+              </p>
             </div>
           </div>
         </>
@@ -491,33 +564,41 @@ export function FeedItemCard({
       break;
     }
 
+    /* ── New org ── */
     case "new_org": {
       const city = (item.payload.city as string) ?? null;
       const state = (item.payload.state as string) ?? null;
       const location = [city, state].filter(Boolean).join(", ");
       cardContent = (
         <>
-          {contentHeader(undefined, location || "Just joined")}
-          <div className="px-4 pb-4">
+          {cardHeader(undefined, location ? (
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3 w-3" /> {location}
+            </span>
+          ) : "just joined Give")}
+          <div className="px-4 pb-4 pt-3">
             <div
-              className="flex items-center gap-3 rounded-xl px-4 py-3"
-              style={{ background: "var(--feed-input-bg)" }}
+              className="flex items-center gap-3 rounded-2xl px-4 py-4"
+              style={{
+                background: "var(--feed-new-org-bg)",
+                border: "1px solid var(--feed-new-org-border)",
+              }}
             >
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-full"
-                style={{ background: "var(--feed-gradient)" }}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                style={{ background: "rgba(124,58,237,0.12)" }}
               >
-                <Sparkles className="h-4 w-4 text-white" />
+                <Sparkles className="h-5 w-5" style={{ color: "#7c3aed" }} />
               </div>
-              <div>
-                <p className="text-sm font-medium" style={{ color: "var(--feed-text)" }}>{item.organization_name} joined</p>
-                <span
-                  className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium"
-                  style={{ color: "var(--feed-accent-2, var(--feed-accent))" }}
-                >
-                  Visit <ExternalLink className="h-3 w-3" />
-                </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold" style={{ color: "var(--feed-new-org-text)" }}>
+                  Welcome to Give!
+                </p>
+                <p className="text-[13px]" style={{ color: "var(--feed-text-muted)" }}>
+                  {item.organization_name} is now on the platform
+                </p>
               </div>
+              <ExternalLink className="h-4 w-4 shrink-0 opacity-40" style={{ color: "var(--feed-new-org-text)" }} />
             </div>
           </div>
         </>
@@ -525,38 +606,37 @@ export function FeedItemCard({
       break;
     }
 
+    /* ── Post ── */
     case "post": {
       const content = (item.payload.content as string) ?? "";
       const postMediaUrl = (item.payload.media_url as string) ?? null;
-      const mediaType =
-        (item.payload.media_type as "image" | "video" | "link") ?? null;
+      const mediaType = (item.payload.media_type as "image" | "video" | "link") ?? null;
       const postLinkUrl = (item.payload.link_url as string) ?? null;
       const linkTitle = (item.payload.link_title as string) ?? null;
-      const linkDescription =
-        (item.payload.link_description as string) ?? null;
-      const linkThumbnailUrl =
-        (item.payload.link_thumbnail_url as string) ?? null;
-      const authorName =
-        (item.payload.author_name as string) ?? item.organization_name;
+      const linkDescription = (item.payload.link_description as string) ?? null;
+      const linkThumbnailUrl = (item.payload.link_thumbnail_url as string) ?? null;
+      const authorName = (item.payload.author_name as string) ?? item.organization_name;
 
       const inferMediaType = (url: string): "image" | "video" => {
         const ext = url.split(".").pop()?.toLowerCase() ?? "";
         if (["mp4", "webm", "mov", "ogg"].includes(ext)) return "video";
         return "image";
       };
-      const resolvedMediaType =
-        mediaType ?? (postMediaUrl ? inferMediaType(postMediaUrl) : null);
+      const resolvedMediaType = mediaType ?? (postMediaUrl ? inferMediaType(postMediaUrl) : null);
 
       let mediaBlock: React.ReactNode = null;
       if (resolvedMediaType === "image" && postMediaUrl) {
         mediaBlock = (
-          <div className="mt-1 px-4 pb-1">
-            <div className="relative aspect-video w-full overflow-hidden rounded-xl" style={{ background: "var(--feed-input-bg)" }}>
+          <div className="mt-2 overflow-hidden" style={{ marginLeft: "-1px", marginRight: "-1px" }}>
+            <div
+              className="relative aspect-video w-full overflow-hidden"
+              style={{ background: "var(--feed-input-bg)" }}
+            >
               <Image
                 src={postMediaUrl}
                 alt=""
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-300 group-hover/card:scale-[1.01]"
                 sizes="(max-width: 680px) 100vw, 600px"
                 unoptimized
               />
@@ -565,8 +645,11 @@ export function FeedItemCard({
         );
       } else if (resolvedMediaType === "video" && postMediaUrl) {
         mediaBlock = (
-          <div className="mt-1 px-4 pb-1">
-            <div className="aspect-video w-full overflow-hidden rounded-xl" style={{ background: "var(--feed-input-bg)" }}>
+          <div className="mt-2 overflow-hidden px-4">
+            <div
+              className="aspect-video w-full overflow-hidden rounded-2xl"
+              style={{ background: "var(--feed-input-bg)" }}
+            >
               <video
                 src={postMediaUrl}
                 controls
@@ -579,27 +662,27 @@ export function FeedItemCard({
         );
       } else if (mediaType === "link" && postLinkUrl) {
         const domain = (() => {
-          try {
-            return new URL(postLinkUrl).hostname.replace(/^www\./, "");
-          } catch {
-            return "Link";
-          }
+          try { return new URL(postLinkUrl).hostname.replace(/^www\./, ""); }
+          catch { return "Link"; }
         })();
         mediaBlock = (
-          <div className="mt-1 px-4 pb-1">
+          <div className="mt-2 px-4">
             <a
               href={postLinkUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="block overflow-hidden rounded-xl transition-all duration-200"
+              className="block overflow-hidden rounded-xl transition-all duration-200 hover:opacity-90"
               style={{
-                border: "1px solid var(--feed-border)",
+                border: "1px solid var(--feed-border-strong)",
                 background: "var(--feed-input-bg)",
               }}
             >
               {linkThumbnailUrl && (
-                <div className="relative aspect-video w-full overflow-hidden" style={{ background: "var(--feed-border)" }}>
+                <div
+                  className="relative aspect-video w-full overflow-hidden"
+                  style={{ background: "var(--feed-border)" }}
+                >
                   <Image
                     src={linkThumbnailUrl}
                     alt=""
@@ -612,9 +695,7 @@ export function FeedItemCard({
               )}
               <div className="p-3.5">
                 {linkTitle && (
-                  <p className="font-semibold" style={{ color: "var(--feed-text)" }}>
-                    {linkTitle}
-                  </p>
+                  <p className="font-semibold" style={{ color: "var(--feed-text)" }}>{linkTitle}</p>
                 )}
                 {linkDescription && (
                   <p className="mt-1 line-clamp-2 text-sm" style={{ color: "var(--feed-text-muted)" }}>
@@ -633,11 +714,11 @@ export function FeedItemCard({
 
       cardContent = (
         <>
-          {contentHeader(authorName)}
+          {cardHeader(authorName)}
           {content && (
             <div className="px-4 pt-2 pb-1">
               <p
-                className="text-sm leading-relaxed whitespace-pre-wrap"
+                className="text-[14.5px] leading-relaxed whitespace-pre-wrap"
                 style={{ color: "var(--feed-text)" }}
               >
                 {content}
@@ -650,20 +731,23 @@ export function FeedItemCard({
       break;
     }
 
+    /* ── Share ── */
     case "share": {
-      const sharedByName =
-        (item.payload.shared_by_name as string) ?? "Someone";
+      const sharedByName = (item.payload.shared_by_name as string) ?? "Someone";
       const comment = (item.payload.comment as string) ?? null;
       cardContent = (
         <>
-          {contentHeader(sharedByName, (
+          {cardHeader(sharedByName, (
             <span className="inline-flex items-center gap-1">
               <Share2 className="h-3 w-3" /> shared a post
             </span>
           ))}
           {comment && (
-            <div className="px-4 pt-2 pb-1">
-              <p className="text-sm italic leading-relaxed" style={{ color: "var(--feed-text-muted)" }}>
+            <div className="px-4 pt-2 pb-3 mx-4 mt-2 mb-1 rounded-xl" style={{ background: "var(--feed-input-bg)", border: "1px solid var(--feed-border)" }}>
+              <p
+                className="text-[14px] italic leading-relaxed"
+                style={{ color: "var(--feed-text-muted)" }}
+              >
                 &ldquo;{comment}&rdquo;
               </p>
             </div>
@@ -676,7 +760,7 @@ export function FeedItemCard({
     default:
       cardContent = (
         <>
-          {contentHeader()}
+          {cardHeader()}
           <div className="px-4 pt-2 pb-1">
             <p className="text-sm" style={{ color: "var(--feed-text-muted)" }}>Activity update</p>
           </div>
@@ -694,17 +778,9 @@ export function FeedItemCard({
           boxShadow: "var(--feed-card-shadow)",
         }}
       >
-        {/* Accent line */}
-        {item.item_type === "donation" && (
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500" />
-        )}
-        {item.item_type === "new_org" && (
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-500" />
-        )}
-
         {/* More options menu */}
         {canEditDelete && (
-          <div className="absolute top-4 right-4 z-10" ref={menuRef}>
+          <div className="absolute top-3.5 right-3.5 z-10" ref={menuRef}>
             <button
               type="button"
               onClick={(e) => {
@@ -712,11 +788,11 @@ export function FeedItemCard({
                 e.stopPropagation();
                 setMenuOpen((o) => !o);
               }}
-              className="rounded-lg p-1.5 opacity-0 transition-all duration-200 group-hover/card:opacity-100"
-              style={{ color: "var(--feed-text-dim)" }}
+              className="rounded-xl p-2 opacity-0 transition-all duration-200 group-hover/card:opacity-100"
+              style={{ color: "var(--feed-text-dim)", background: "var(--feed-card)" }}
               aria-label="More options"
             >
-              <MoreHorizontal className="h-5 w-5" />
+              <MoreHorizontal className="h-4 w-4" />
             </button>
             {menuOpen && (
               <div
@@ -737,6 +813,8 @@ export function FeedItemCard({
                   }}
                   className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm transition-all duration-150"
                   style={{ color: "var(--feed-text)" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--feed-input-bg)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
                   <Pencil className="h-4 w-4" style={{ color: "var(--feed-text-muted)" }} />
                   Edit post
@@ -748,7 +826,9 @@ export function FeedItemCard({
                     setMenuOpen(false);
                     setDeleteConfirmOpen(true);
                   }}
-                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-red-400 transition-all duration-150"
+                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-red-500 transition-all duration-150"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.06)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
@@ -758,7 +838,7 @@ export function FeedItemCard({
           </div>
         )}
 
-        {/* Card content - clickable div to avoid nested <a> tags */}
+        {/* Card content — clickable to navigate to org */}
         <div
           role="button"
           tabIndex={0}
@@ -774,20 +854,21 @@ export function FeedItemCard({
           {cardContent}
         </div>
 
-        {/* Engagement counts badge row */}
+        {/* Engagement counts */}
         {(supportCount > 0 || commentCount > 0) && (
           <div
-            className="flex items-center gap-4 px-4 py-2 text-xs"
+            className="flex items-center gap-3 px-4 py-2 text-[12px]"
             style={{ color: "var(--feed-text-dim)" }}
+            onClick={(e) => e.stopPropagation()}
           >
             {supportCount > 0 && (
               <span className="flex items-center gap-1">
                 <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
-                {supportCount}
+                <span className="font-medium">{supportCount}</span>
               </span>
             )}
             {commentCount > 0 && (
-              <span style={{ color: "var(--feed-text-dim)" }}>
+              <span>
                 {commentCount} {commentCount === 1 ? "comment" : "comments"}
               </span>
             )}
@@ -798,20 +879,26 @@ export function FeedItemCard({
         {commentSection}
       </div>
 
-      {/* Edit modal — matches feed light theme (portaled to body) */}
+      {/* ── Edit modal ── */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
         <DialogContent
-          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+          className="max-w-md rounded-2xl shadow-2xl border-0"
+          style={{ background: "#0e1117", border: "1px solid rgba(255,255,255,0.08)", color: "#eef0f6" }}
         >
           <DialogHeader>
-            <DialogTitle className="text-[#1a1d24]">Edit post</DialogTitle>
+            <DialogTitle style={{ color: "#eef0f6" }}>Edit post</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               placeholder="What's on your mind?"
-              className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#f1f3f5] px-4 py-3 text-sm text-[#1a1d24] placeholder:text-[#9ca3af] transition-all focus:border-[#059669] focus:outline-none focus:ring-2 focus:ring-[#059669]/20"
+              className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none"
+              style={{
+                background: "#080b12",
+                border: "1px solid rgba(255,255,255,0.08)",
+                color: "#eef0f6",
+              }}
               rows={4}
               maxLength={5000}
             />
@@ -819,14 +906,19 @@ export function FeedItemCard({
               <Button
                 onClick={handleEditSubmit}
                 disabled={!editContent.trim() || editSubmitting}
-                className="rounded-xl bg-[#059669] text-white hover:bg-[#047857]"
+                className="rounded-xl text-white"
+                style={{ background: "linear-gradient(135deg, #34d399 0%, #0d9488 100%)" }}
               >
-                {editSubmitting ? "Saving..." : "Save changes"}
+                {editSubmitting
+                  ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" /> Saving…</>
+                  : <><Check className="h-4 w-4 mr-1.5" /> Save changes</>
+                }
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setEditModalOpen(false)}
-                className="rounded-xl border-[#e5e7eb] text-[#1a1d24] hover:bg-[#f8f9fb]"
+                className="rounded-xl"
+                style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8891a5", background: "transparent" }}
               >
                 Cancel
               </Button>
@@ -835,31 +927,31 @@ export function FeedItemCard({
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirm modal — matches feed light theme */}
+      {/* ── Delete confirm modal ── */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <DialogContent
-          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+          className="max-w-md rounded-2xl shadow-2xl border-0"
+          style={{ background: "#0e1117", border: "1px solid rgba(255,255,255,0.08)", color: "#eef0f6" }}
         >
           <DialogHeader>
-            <DialogTitle className="text-[#1a1d24]">Delete this post?</DialogTitle>
+            <DialogTitle style={{ color: "#eef0f6" }}>Delete this post?</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-[#6b7280]">
-            This action cannot be undone. The post and all its comments will
-            be permanently removed.
+          <p className="text-sm" style={{ color: "#8891a5" }}>
+            This action cannot be undone. The post and all its comments will be permanently removed.
           </p>
           <div className="flex gap-2 mt-4">
             <Button
-              variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteSubmitting}
-              className="rounded-xl"
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
             >
-              {deleteSubmitting ? "Deleting..." : "Delete"}
+              {deleteSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" /> Deleting…</> : "Delete post"}
             </Button>
             <Button
               variant="outline"
               onClick={() => setDeleteConfirmOpen(false)}
-              className="rounded-xl border-[#e5e7eb] text-[#1a1d24] hover:bg-[#f8f9fb]"
+              className="rounded-xl"
+              style={{ borderColor: "rgba(255,255,255,0.1)", color: "#8891a5", background: "transparent" }}
             >
               Cancel
             </Button>
@@ -867,29 +959,39 @@ export function FeedItemCard({
         </DialogContent>
       </Dialog>
 
-      {/* Share modal — matches feed light theme */}
+      {/* ── Share modal ── */}
       <Dialog open={shareModalOpen} onOpenChange={setShareModalOpen}>
         <DialogContent
-          className="max-w-md rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-[#1a1d24] shadow-lg"
+          className="max-w-md rounded-2xl shadow-2xl border-0"
+          style={{ background: "#0e1117", border: "1px solid rgba(255,255,255,0.08)", color: "#eef0f6" }}
         >
           <DialogHeader>
-            <DialogTitle className="text-[#1a1d24]">Share to your feed</DialogTitle>
+            <DialogTitle style={{ color: "#eef0f6" }}>Share to your feed</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <textarea
               value={shareComment}
               onChange={(e) => setShareComment(e.target.value)}
-              placeholder="Add your thoughts (optional)..."
-              className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#f1f3f5] px-4 py-3 text-sm text-[#1a1d24] placeholder:text-[#9ca3af] transition-all focus:border-[#059669] focus:outline-none focus:ring-2 focus:ring-[#059669]/20"
+              placeholder="Add your thoughts (optional)…"
+              className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all resize-none"
+              style={{
+                background: "#080b12",
+                border: "1px solid rgba(255,255,255,0.08)",
+                color: "#eef0f6",
+              }}
               rows={3}
               maxLength={500}
             />
             <Button
               onClick={handleShareSubmit}
               disabled={shareSubmitting}
-              className="rounded-xl bg-[#059669] text-white hover:bg-[#047857]"
+              className="w-full rounded-xl text-white"
+              style={{ background: "linear-gradient(135deg, #34d399 0%, #0d9488 100%)" }}
             >
-              {shareSubmitting ? "Sharing..." : "Share now"}
+              {shareSubmitting
+                ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" /> Sharing…</>
+                : <><Share2 className="h-4 w-4 mr-1.5" /> Share now</>
+              }
             </Button>
           </div>
         </DialogContent>
