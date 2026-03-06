@@ -121,7 +121,6 @@ export function FeedLeftSidebar() {
               style={{
                 background: "var(--feed-input-bg)",
                 border: "1px solid var(--feed-border-strong)",
-                divideColor: "var(--feed-border-strong)",
               }}
             >
               {[
