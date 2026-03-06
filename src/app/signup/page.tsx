@@ -107,7 +107,7 @@ export default async function SignupPage({ searchParams }: Props) {
           <div className="mt-10">
             <SignupForm
               redirectTo={returnToGive ?? "/dashboard"}
-              returnTo={isBanking ? returnTo : undefined}
+              returnTo={isBanking ? (returnTo ?? undefined) : undefined}
               orgSlug={orgSlugStr}
               frequency={frequencyStr}
             />
