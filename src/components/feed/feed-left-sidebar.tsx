@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -26,9 +27,27 @@ const NAV_ITEMS = [
   { href: "/dashboard/settings",     label: "Settings",  icon: Settings      },
 ];
 
+type UserStats = { postCount: number; connectionCount: number; donationTotalCents: number };
+
 export function FeedLeftSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const [stats, setStats] = useState<UserStats | null>(null);
+
+  useEffect(() => {
+    fetch("/api/me?stats=1")
+      .then((r) => r.json())
+      .then((d) => {
+        if (typeof d.postCount === "number") {
+          setStats({
+            postCount: d.postCount,
+            connectionCount: d.connectionCount ?? 0,
+            donationTotalCents: d.donationTotalCents ?? 0,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const name =
     (user?.user_metadata?.full_name as string) ??
@@ -106,9 +125,9 @@ export function FeedLeftSidebar() {
               }}
             >
               {[
-                { label: "Posts",  value: "—" },
-                { label: "Follow", value: "—" },
-                { label: "Impact", value: "—" },
+                { label: "Posts",  value: stats ? String(stats.postCount) : "—" },
+                { label: "Peers",  value: stats ? String(stats.connectionCount) : "—" },
+                { label: "Impact", value: stats ? (stats.donationTotalCents >= 100 ? `$${Math.floor(stats.donationTotalCents / 100)}` : "$0") : "—" },
               ].map((s) => (
                 <div key={s.label} className="py-2.5 text-center">
                   <div
