@@ -32,27 +32,41 @@ export default async function CmsPage() {
   return (
     <div className="min-h-screen bg-dashboard">
       {/* Top bar */}
-      <div className="sticky top-0 z-20 border-b border-dashboard-border bg-dashboard-card/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-3">
+      <div className="sticky top-0 z-20 border-b border-dashboard-border bg-dashboard-card/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-3">
           <Link
             href="/dashboard/pages"
-            className="group inline-flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm font-medium text-dashboard-text-muted transition-all hover:bg-dashboard-card-hover hover:text-dashboard-text"
+            className="group inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-dashboard-text-muted transition-all hover:bg-dashboard-card-hover hover:text-dashboard-text"
           >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
             Website Builder
           </Link>
-          <div className="h-5 w-px bg-dashboard-border" />
+          <span className="text-dashboard-border-light">/</span>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10">
-              <Layers className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10">
+              <Layers className="h-3 w-3 text-emerald-500" />
             </div>
             <span className="text-sm font-semibold text-dashboard-text">Content Manager</span>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <span className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 sm:flex">
+            <span className="hidden items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400 sm:flex">
               <Globe className="h-3 w-3" />
               Connected to Website
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Page header */}
+      <div className="border-b border-dashboard-border bg-dashboard-card/40">
+        <div className="mx-auto max-w-7xl px-6 py-5">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-bold text-dashboard-text tracking-tight">Content Manager</h1>
+              <p className="mt-1 text-sm text-dashboard-text-muted">
+                Manage your website&apos;s media, events, sermons, and more.
+              </p>
+            </div>
           </div>
         </div>
       </div>
