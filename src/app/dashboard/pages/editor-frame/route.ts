@@ -38,16 +38,25 @@ export async function GET(req: NextRequest) {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     /* CMS-bound elements: purple indicator in layers panel (Webflow-style) */
+    [data-has-cms-binding],
     [data-has-cms-binding] .gjs-layer__label,
     [data-has-cms-binding] .gjs-layer-title,
     [data-has-cms-binding].gjs-layer > div,
     .gjs-layer[data-has-cms-binding] .gjs-layer__label,
     .gjs-layer[data-has-cms-binding] .gjs-layer-title,
     [data-has-cms-binding] [class*="layer"],
-    [data-has-cms-binding] [class*="Layer"] { color: #9333ea !important; font-weight: 600; }
+    [data-has-cms-binding] [class*="Layer"],
+    [data-has-cms-binding] [class*="name"],
+    [data-has-cms-binding] [class*="label"],
+    [data-has-cms-binding] [class*="title"] { color: #9333ea !important; font-weight: 600; }
+    /* CMS badge prepended to layer row */
     .gjs-layer[data-has-cms-binding]::before,
     [data-has-cms-binding][class*="layer"]::before,
-    [data-has-cms-binding][class*="Layer"]::before { content: 'CMS'; font-size: 9px; background: #9333ea; color: white; padding: 1px 4px; border-radius: 3px; margin-right: 6px; display: inline-block; vertical-align: middle; }
+    [data-has-cms-binding][class*="Layer"]::before,
+    [data-has-cms-binding][class*="item"]::before,
+    [data-has-cms-binding][class*="row"]::before { content: 'CMS'; font-size: 9px; background: #9333ea; color: white; padding: 1px 4px; border-radius: 3px; margin-right: 6px; display: inline-block; vertical-align: middle; }
+    /* Subtle purple left border on the entire layer row */
+    [data-has-cms-binding] { border-left: 2px solid #9333ea !important; }
     .gjs-cms-btn::before { content: '\\1F4C2'; font-size: 14px; }
     /* Hide GrapesJS Studio branding watermark */
     .gs-banner { display: none !important; }
@@ -637,7 +646,8 @@ export async function GET(req: NextRequest) {
             doc.body.setAttribute('data-gjs-cms-styles-bound', '1');
             var style = doc.createElement('style');
             style.textContent = [
-              '[data-cms-binding]:hover,[data-cms-block]:hover,[data-cms-field]:hover{outline:1px dashed rgba(147,51,234,0.4) !important;outline-offset:1px;}',
+              '[data-cms-binding],[data-cms-block],[data-cms-field]{outline:1px solid rgba(147,51,234,0.4) !important;outline-offset:2px;}',
+              '[data-cms-binding]:hover,[data-cms-block]:hover,[data-cms-field]:hover{outline:2px solid rgba(147,51,234,0.75) !important;outline-offset:2px;}',
               'html,body{background-color:inherit;}',
               '[data-gjs-type="wrapper"]{background:transparent !important;}'
             ].join('');

@@ -302,30 +302,6 @@ export function WebsiteBuilderClient({
           </div>
         )}
       </header>
-      {/* Website form info banner — clarifies which form appears in templates */}
-      {projectState && (
-        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-sm">
-          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-            <CreditCard className="h-4 w-4 shrink-0 text-emerald-600" />
-            <span>
-              The donation forms in your website templates use the form below. Edit amounts, splits, and design here.
-            </span>
-          </div>
-          {formsData ? (
-            <button
-              type="button"
-              onClick={() => setFormPanelOpen(true)}
-              className="shrink-0 font-semibold text-emerald-600 hover:text-emerald-700 underline"
-            >
-              Edit website form
-            </button>
-          ) : (
-            <Link href="/dashboard/custom-forms" className="shrink-0 font-semibold text-emerald-600 hover:text-emerald-700 underline">
-              Custom forms
-            </Link>
-          )}
-        </div>
-      )}
       {/* Publish error banner */}
       {publishError && (
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm">
