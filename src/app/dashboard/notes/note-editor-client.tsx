@@ -162,7 +162,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const Sep = () => <div className="mx-1.5 h-5 w-px bg-dashboard-border" />;
 
   // Horizontal ruler — tick marks every 12px, labels every inch (96px)
-  const Ruler = () => {
+  const HRuler = () => {
     const ticks: { x: number; h: number; label: string | null }[] = [];
     for (let i = 0; i <= 2400; i += 12) {
       const isInch = i % 96 === 0;
@@ -171,15 +171,49 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
     }
     return (
       <div
-        className="sticky top-0 z-[5] w-full select-none overflow-hidden"
-        style={{ height: 24, background: "hsl(var(--dashboard-card))", borderBottom: "1px solid hsl(var(--dashboard-border))" }}
+        className="sticky top-0 z-[6] select-none overflow-hidden"
+        style={{ height: 24, background: "hsl(var(--dashboard-card))", borderBottom: "1px solid hsl(var(--dashboard-border))", display: "flex" }}
       >
-        <svg width="100%" height="24" xmlns="http://www.w3.org/2000/svg">
+        {/* Corner square where rulers meet */}
+        <div style={{ width: 24, flexShrink: 0, borderRight: "1px solid hsl(var(--dashboard-border))" }} />
+        <svg width="100%" height="24" xmlns="http://www.w3.org/2000/svg" style={{ flex: 1 }}>
           {ticks.map((t) => (
             <g key={t.x}>
               <line x1={t.x} y1={24} x2={t.x} y2={24 - t.h} stroke="currentColor" strokeWidth={0.75} className="text-dashboard-text-muted" opacity={0.45} />
               {t.label && (
                 <text x={t.x + 2} y={10} fill="currentColor" fontSize={8} className="text-dashboard-text-muted" opacity={0.5} fontFamily="ui-monospace, monospace">{t.label}</text>
+              )}
+            </g>
+          ))}
+        </svg>
+      </div>
+    );
+  };
+
+  // Vertical ruler — tick marks every 12px, labels every inch (96px)
+  const VRuler = () => {
+    const ticks: { y: number; h: number; label: string | null }[] = [];
+    for (let i = 0; i <= 4000; i += 12) {
+      const isInch = i % 96 === 0;
+      const isHalf = i % 48 === 0 && !isInch;
+      ticks.push({ y: i, h: isInch ? 13 : isHalf ? 8 : 4, label: isInch && i > 0 ? String(i / 96) : null });
+    }
+    return (
+      <div
+        className="sticky left-0 z-[5] shrink-0 select-none overflow-hidden self-stretch"
+        style={{ width: 24, background: "hsl(var(--dashboard-card))", borderRight: "1px solid hsl(var(--dashboard-border))" }}
+      >
+        <svg width="24" height="4000" xmlns="http://www.w3.org/2000/svg">
+          {ticks.map((t) => (
+            <g key={t.y}>
+              <line x1={24} y1={t.y} x2={24 - t.h} y2={t.y} stroke="currentColor" strokeWidth={0.75} className="text-dashboard-text-muted" opacity={0.45} />
+              {t.label && (
+                <text
+                  x={12} y={t.y - 2}
+                  fill="currentColor" fontSize={8} className="text-dashboard-text-muted" opacity={0.5}
+                  fontFamily="ui-monospace, monospace" textAnchor="middle"
+                  transform={`rotate(-90, 12, ${t.y - 2})`}
+                >{t.label}</text>
               )}
             </g>
           ))}
@@ -307,8 +341,11 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       )}
 
       {/* ── Document canvas — Google Docs / Word style ── */}
-      <div className="flex-1 overflow-y-auto" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
-        <Ruler />
+      <div className="flex-1 overflow-y-auto flex flex-col" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
+        <HRuler />
+        <div className="flex flex-1">
+          <VRuler />
+          <div className="flex-1 min-w-0">
         <div className="mx-auto px-6 py-8" style={{ maxWidth: 1000 }}>
 
           {/* Paper page — border like Google Docs, no shadow */}
@@ -375,6 +412,8 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
               )}
             </div>
           )}
+        </div>
+          </div>
         </div>
       </div>
     </div>
