@@ -1773,3 +1773,64 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   border-radius: inherit;
   animation: supportRing 0.6s ease-out forwards;
 }
+
+/* ── TipTap document editor ── */
+.tiptap-doc .ProseMirror {
+  outline: none;
+  min-height: 520px;
+  padding: 56px 72px;
+  font-size: 16px;
+  font-family: var(--font-barlow), sans-serif;
+  line-height: 1.9;
+  color: hsl(var(--dashboard-text));
+  caret-color: #34d399;
+}
+@media (max-width: 640px) {
+  .tiptap-doc .ProseMirror { padding: 32px 28px; }
+}
+.tiptap-doc .ProseMirror:focus { outline: none; }
+.tiptap-doc .ProseMirror > * + * { margin-top: 0.75em; }
+.tiptap-doc .ProseMirror h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; color: hsl(var(--dashboard-text)); margin-top: 2rem; margin-bottom: 0.6rem; }
+.tiptap-doc .ProseMirror h2 { font-size: 1.8rem; font-weight: 700; line-height: 1.25; color: hsl(var(--dashboard-text)); margin-top: 1.75rem; margin-bottom: 0.5rem; }
+.tiptap-doc .ProseMirror h3 { font-size: 1.4rem; font-weight: 600; line-height: 1.35; color: hsl(var(--dashboard-text)); margin-top: 1.5rem; margin-bottom: 0.4rem; }
+.tiptap-doc .ProseMirror p { margin: 0 0 0.8em; }
+.tiptap-doc .ProseMirror p:last-child { margin-bottom: 0; }
+.tiptap-doc .ProseMirror ul { list-style-type: disc; padding-left: 1.75rem; margin: 0.8rem 0; }
+.tiptap-doc .ProseMirror ol { list-style-type: decimal; padding-left: 1.75rem; margin: 0.8rem 0; }
+.tiptap-doc .ProseMirror li { margin: 0.3rem 0; }
+.tiptap-doc .ProseMirror li p { margin: 0; }
+.tiptap-doc .ProseMirror blockquote {
+  border-left: 3px solid #34d399;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: hsl(var(--dashboard-text-muted));
+  margin: 1rem 0;
+  font-style: italic;
+}
+.tiptap-doc .ProseMirror hr {
+  border: none;
+  border-top: 1px solid hsl(var(--dashboard-border));
+  margin: 1.5rem 0;
+}
+.tiptap-doc .ProseMirror strong { font-weight: 700; }
+.tiptap-doc .ProseMirror em { font-style: italic; }
+.tiptap-doc .ProseMirror code {
+  background: hsl(var(--dashboard-card-hover));
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.88em;
+  font-family: ui-monospace, monospace;
+  color: #34d399;
+}
+.tiptap-doc .ProseMirror .is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: hsl(var(--dashboard-text-muted));
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Dashboard fade-in helpers (used by new section pages) */
+.dashboard-fade-in { animation: fadeInUp 0.4s ease both; }
+.dashboard-fade-in-delay-1 { animation: fadeInUp 0.4s ease 0.05s both; }
+.dashboard-fade-in-delay-2 { animation: fadeInUp 0.4s ease 0.1s both; }
+.dashboard-fade-in-delay-3 { animation: fadeInUp 0.4s ease 0.15s both; }
