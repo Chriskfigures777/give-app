@@ -313,28 +313,35 @@ function TagManager({ tags, onClose, onTagsChanged }: TagManagerProps) {
         </div>
         <div className="p-6 space-y-4">
           {/* Create new tag */}
-          <form onSubmit={handleCreate} className="flex gap-2">
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="New tag name…"
-              className="flex-1 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-            />
-            <div className="flex gap-1">
-              {TAG_COLOR_OPTIONS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setNewColor(c)}
-                  className={`h-7 w-7 rounded-full transition-transform ${newColor === c ? "ring-2 ring-white ring-offset-1 ring-offset-dashboard-card scale-110" : ""}`}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
+          <form onSubmit={handleCreate} className="space-y-3">
+            {/* Color picker row */}
+            <div>
+              <p className="mb-2 text-xs font-semibold text-dashboard-text-muted">Tag color</p>
+              <div className="flex flex-wrap gap-2">
+                {TAG_COLOR_OPTIONS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setNewColor(c)}
+                    className={`h-7 w-7 rounded-full transition-transform ${newColor === c ? "ring-2 ring-white ring-offset-2 ring-offset-dashboard-card scale-110" : "opacity-70 hover:opacity-100"}`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
             </div>
-            <Button type="submit" disabled={creating} size="sm" className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white">
-              {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
-            </Button>
+            {/* Name + submit row */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="New tag name…"
+                className="flex-1 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+              />
+              <Button type="submit" disabled={creating} size="sm" className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white px-4">
+                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
+              </Button>
+            </div>
           </form>
           {error && <p className="text-sm text-rose-400">{error}</p>}
 
