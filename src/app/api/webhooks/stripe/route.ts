@@ -10,6 +10,7 @@ import { calculateStripeFeeCents } from "@/lib/fee-calculator";
 type SplitEntry = { percentage: number; accountId?: string };
 import { sendDonationReceived, sendReceiptAttached, sendOrgDonationReceived, sendPayoutProcessed } from "@/lib/email/send-transactional";
 import { createNotification } from "@/lib/notifications";
+import { upsertOrganizationContact } from "@/lib/organization-contacts";
 
 const webhookSecret =
   process.env.STRIPE_WEBHOOK_SECRET ||
@@ -293,6 +294,15 @@ export async function POST(req: NextRequest) {
               metadata: { payment_intent: pi.id, split_mode: "stripe_connect" },
             });
           }
+          if (metadata.donor_email) {
+            upsertOrganizationContact(supabase, {
+              organizationId,
+              email: metadata.donor_email,
+              name: metadata.donor_name ?? null,
+              source: "donation",
+              userId: metadata.user_id ?? null,
+            }).catch((e) => console.error("[webhook] upsertOrganizationContact failed:", e));
+          }
         }
         break;
       }
@@ -352,6 +362,16 @@ export async function POST(req: NextRequest) {
           );
         }
         insertedDonation = inserted as { id: string; created_at: string };
+      }
+
+      if (insertedDonation && metadata.donor_email) {
+        upsertOrganizationContact(supabase, {
+          organizationId,
+          email: metadata.donor_email,
+          name: metadata.donor_name ?? null,
+          source: "donation",
+          userId: metadata.user_id ?? null,
+        }).catch((e) => console.error("[webhook] upsertOrganizationContact failed:", e));
       }
 
       // Internal splits: create payouts to org's connected bank accounts

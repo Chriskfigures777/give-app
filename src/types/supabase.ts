@@ -2907,6 +2907,290 @@ export type Database = {
           },
         ]
       }
+      organization_contacts: {
+        Row: {
+          id: string
+          organization_id: string
+          email: string | null
+          name: string | null
+          phone: string | null
+          source: string
+          user_id: string | null
+          sources_breakdown: Record<string, number>
+          unsubscribed_at: string | null
+          first_seen_at: string
+          last_seen_at: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          email?: string | null
+          name?: string | null
+          phone?: string | null
+          source?: string
+          user_id?: string | null
+          sources_breakdown?: Record<string, number>
+          unsubscribed_at?: string | null
+          first_seen_at?: string
+          last_seen_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          email?: string | null
+          name?: string | null
+          phone?: string | null
+          source?: string
+          user_id?: string | null
+          sources_breakdown?: Record<string, number>
+          unsubscribed_at?: string | null
+          first_seen_at?: string
+          last_seen_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pastor_notes: {
+        Row: {
+          id: string
+          organization_id: string
+          author_user_id: string
+          title: string
+          content: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          author_user_id: string
+          title?: string
+          content?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          author_user_id?: string
+          title?: string
+          content?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pastor_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_usage_log: {
+        Row: {
+          id: string
+          organization_id: string
+          user_id: string | null
+          feature: string
+          units: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          user_id?: string | null
+          feature: string
+          units?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          user_id?: string | null
+          feature?: string
+          units?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_surveys: {
+        Row: {
+          id: string
+          organization_id: string
+          created_by_user_id: string
+          title: string
+          description: string | null
+          questions: unknown[]
+          cover_image_url: string | null
+          theme: unknown
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          created_by_user_id: string
+          title?: string
+          description?: string | null
+          questions?: unknown[]
+          cover_image_url?: string | null
+          theme?: unknown
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          created_by_user_id?: string
+          title?: string
+          description?: string | null
+          questions?: unknown[]
+          cover_image_url?: string | null
+          theme?: unknown
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_surveys_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_survey_responses: {
+        Row: {
+          id: string
+          survey_id: string
+          organization_id: string
+          respondent_email: string | null
+          respondent_name: string | null
+          contact_id: string | null
+          answers: Record<string, string>
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          survey_id: string
+          organization_id: string
+          respondent_email?: string | null
+          respondent_name?: string | null
+          contact_id?: string | null
+          answers?: Record<string, string>
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          survey_id?: string
+          organization_id?: string
+          respondent_email?: string | null
+          respondent_name?: string | null
+          contact_id?: string | null
+          answers?: Record<string, string>
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_survey_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "organization_surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_reminder_sends: {
+        Row: {
+          id: string
+          event_id: string
+          contact_id: string
+          reminder_type: string
+          sent_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          contact_id: string
+          reminder_type: string
+          sent_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          contact_id?: string
+          reminder_type?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_reminder_sends_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcast_log: {
+        Row: {
+          id: string
+          organization_id: string
+          subject: string
+          recipient_count: number
+          sent_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          subject: string
+          recipient_count?: number
+          sent_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          subject?: string
+          recipient_count?: number
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

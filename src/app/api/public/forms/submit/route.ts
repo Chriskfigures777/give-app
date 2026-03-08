@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, DEFAULT_FROM } from "@/lib/email/resend";
+import { upsertOrganizationContact } from "@/lib/organization-contacts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -223,6 +224,17 @@ export async function POST(req: NextRequest) {
     if (inquiryErr || !inquiry) {
       return NextResponse.json({ error: inquiryErr?.message ?? "Failed to store inquiry" }, { status: 500, headers: CORS });
     }
+
+    const contactFormKind =
+      formKind === "member" || formKind === "get_started" ? formKind : null;
+    upsertOrganizationContact(supabase, {
+      organizationId: orgId,
+      email: visitorEmail,
+      name: visitorName ?? null,
+      phone: visitorPhone ?? null,
+      source: "form",
+      formKind: contactFormKind,
+    }).catch((e) => console.error("[forms/submit] upsertOrganizationContact failed:", e));
 
     const messageInsert = await supabase
       .from("website_form_messages")
