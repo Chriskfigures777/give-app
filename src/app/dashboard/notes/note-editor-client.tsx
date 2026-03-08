@@ -215,22 +215,39 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       r.start();
     }
 
-    // Pre-request mic permission via getUserMedia BEFORE starting recognition.
-    // SpeechRecognition races with the browser permission prompt and fires
-    // "not-allowed" before the user even clicks Allow. getUserMedia awaits
-    // the user's decision, so by the time recognition starts permission is set.
     isListeningRef.current = true;
     setIsListening(true);
+
+    // Try to pre-warm mic permission so SpeechRecognition doesn't race with
+    // the browser prompt. If getUserMedia fails for any reason, fall through
+    // and start recognition anyway — it may still work (e.g. on some browsers
+    // getUserMedia and SpeechRecognition use separate permission grants).
+    const tryStart = () => { if (isListeningRef.current) startRecognition(); };
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      // API not available — start directly
+      tryStart();
+      return;
+    }
+
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then((stream) => {
-        // Release the track immediately — we only needed the permission grant
         stream.getTracks().forEach((t) => t.stop());
-        if (isListeningRef.current) startRecognition();
+        tryStart();
       })
-      .catch(() => {
-        isListeningRef.current = false;
-        setIsListening(false);
-        alert("Microphone access was denied. Please allow microphone access in your browser settings, then try again.");
+      .catch((err: unknown) => {
+        // Only hard-stop if the user explicitly denied permission.
+        // For NotFoundError (no mic), NotReadableError (mic in use), or anything
+        // else — still attempt recognition; the browser may handle it differently.
+        const name = (err instanceof Error ? err.name : "") || "";
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+          isListeningRef.current = false;
+          setIsListening(false);
+          alert("Microphone access was denied. Please click the camera/mic icon in your browser address bar and allow access, then try again.");
+        } else {
+          // Best-effort: try recognition even if getUserMedia failed
+          tryStart();
+        }
       });
   }, [editor]);
 
