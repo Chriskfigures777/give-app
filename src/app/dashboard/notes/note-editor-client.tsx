@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SurveyQuestion } from "@/app/api/ai/generate-survey-questions/route";
-import { BiblePanel } from "./bible-panel";
+import { BiblePanel } from "@/app/dashboard/notes/bible-panel";
 
 type Props = {
   noteId: string | null;
@@ -41,13 +41,18 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const [bibleOpen, setBibleOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
-  // Ref so onend/onerror callbacks always read the live "should we be listening" value
   const isListeningRef = useRef(false);
-  // Insertion position for dictation (insertContentAt doesn't rely on focus)
   const dictationPosRef = useRef<number>(0);
+  // Ref used by speech callback to insert text (avoids stale closure / React batching issues)
+  const insertDictationRef = useRef<(text: string) => void>(() => {});
 
   useEffect(() => {
-    return () => { recognitionRef.current?.stop(); };
+    return () => {
+      isListeningRef.current = false;
+      try { recognitionRef.current?.abort?.(); } catch { /* ignore */ }
+      try { recognitionRef.current?.stop?.(); } catch { /* ignore */ }
+      recognitionRef.current = null;
+    };
   }, []);
 
   const FONTS: { label: string; value: string }[] = [
@@ -159,104 +164,118 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   };
 
   const toggleDictation = useCallback(() => {
-    // ── Stop ──
-    if (isListeningRef.current) {
-      isListeningRef.current = false;
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      setInterimText("");
-      return;
-    }
+    const SR = (typeof window !== "undefined" && (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition) ||
+      (typeof window !== "undefined" && (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
 
-    // ── Browser check ──
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
       alert("Voice dictation is not supported in this browser. Please use Chrome or Edge.");
       return;
     }
 
-    // Set insertion position from current cursor so we can use insertContentAt
-    // (doesn't depend on focus when results arrive later).
-    if (editor) {
-      const { from } = editor.state.selection;
-      dictationPosRef.current = from;
+    if (isListeningRef.current) {
+      isListeningRef.current = false;
+      try { recognitionRef.current?.abort?.(); } catch { /* ignore */ }
+      try { recognitionRef.current?.stop?.(); } catch { /* ignore */ }
+      recognitionRef.current = null;
+      setIsListening(false);
+      setInterimText("");
+      return;
     }
 
-    // ── Start recognition directly ──
-    // MDN spec: SpeechRecognition manages its own mic permission — getUserMedia
-    // is not required and causes false denials on some OS/browser combos.
-    function startRecognition() {
-      const r = new SR();
-      r.continuous = true;
-      r.interimResults = true;
-      r.lang = "en-US";
+    if (!editor) return;
+    dictationPosRef.current = editor.state.selection.from;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      r.onresult = (event: any) => {
-        let interim = "";
-        const toInsert: string[] = [];
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
-          const transcript = (result.length ? (result[0]?.transcript ?? (result as any).item?.(0)?.transcript) : "") ?? "";
-          if (result.isFinal && transcript) {
-            toInsert.push(transcript);
-          } else if (!result.isFinal) {
-            interim += transcript;
-          }
-        }
-        setInterimText(interim);
-        // Defer insert so the command runs in the editor's update cycle (Speech API
-        // callback can run in a different tick where TipTap doesn't apply transactions).
-        if (toInsert.length > 0) {
-          const text = toInsert.join(" ") + (toInsert.length ? " " : "");
-          const runInsert = () => {
-            const ed = editorRef.current;
-            if (!ed) return;
-            ed.chain().focus().insertContent(text).run();
-            dictationPosRef.current = ed.state.selection.from;
-          };
-          requestAnimationFrame(() => setTimeout(runInsert, 0));
-        }
-      };
+    // Ref that the speech callback will call to insert text (runs next tick so we're outside the API callback)
+    insertDictationRef.current = (text: string) => {
+      const t = text.trim();
+      if (!t) return;
+      const toInsert = t + (t.endsWith(" ") ? "" : " ");
+      setTimeout(() => {
+        const ed = editorRef.current;
+        if (!ed) return;
+        const pos = dictationPosRef.current;
+        ed.chain().insertContentAt(pos, toInsert, { updateSelection: true }).run();
+        dictationPosRef.current = pos + toInsert.length;
+      }, 0);
+    };
 
-      // Chrome auto-stops after ~7 s of silence — restart transparently
-      r.onend = () => {
-        setInterimText("");
-        if (isListeningRef.current) {
-          try { startRecognition(); } catch {
-            isListeningRef.current = false;
-            setIsListening(false);
+    const onResult = (event: Event) => {
+      const e = event as SpeechRecognitionEvent;
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const result = e.results[i];
+        const alt = result[0];
+        const transcript = (alt?.transcript ?? (result as unknown as { item?(i: number): { transcript?: string } }).item?.(0)?.transcript ?? "") as string;
+        if (!transcript) continue;
+        if (result.isFinal) {
+          if (process.env.NODE_ENV === "development") {
+            console.log("[Dictation] final:", transcript);
           }
+          insertDictationRef.current(transcript);
         } else {
-          setIsListening(false);
+          interim += transcript;
         }
-      };
+      }
+      setInterimText(interim);
+    };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      r.onerror = (e: any) => {
-        console.warn("SpeechRecognition error:", e.error);
-        if (e.error === "not-allowed") {
-          isListeningRef.current = false;
-          setIsListening(false);
-          setInterimText("");
-          alert("Microphone permission is blocked for this site. Click the lock icon in your browser address bar → Microphone → Allow, then reload and try again.");
-        } else if (e.error === "service-not-allowed") {
-          isListeningRef.current = false;
-          setIsListening(false);
-          setInterimText("");
-          alert("Speech recognition service is unavailable. Make sure you are using Chrome or Edge with an internet connection.");
-        }
-        // no-speech, aborted, audio-capture → transient, onend handles restart
-      };
+    const onEnd = () => {
+      setInterimText("");
+      if (!isListeningRef.current) {
+        setIsListening(false);
+        return;
+      }
+      try {
+        recognitionRef.current?.start?.();
+      } catch {
+        isListeningRef.current = false;
+        setIsListening(false);
+      }
+    };
 
-      recognitionRef.current = r;
-      r.start();
-    }
+    const onError = (event: Event) => {
+      const e = event as SpeechRecognitionErrorEvent;
+      if (e.error === "not-allowed") {
+        isListeningRef.current = false;
+        setIsListening(false);
+        setInterimText("");
+        alert("Microphone access was denied. Allow the microphone for this site and try again.");
+      } else if (e.error === "network" || e.error === "service-not-allowed") {
+        isListeningRef.current = false;
+        setIsListening(false);
+        setInterimText("");
+        alert("Speech recognition needs an internet connection. Check your connection and try again.");
+      }
+    };
 
+    const recognition = new (SR as new () => SpeechRecognition)();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.lang = "en-US";
+
+    recognition.addEventListener("result", onResult);
+    recognition.addEventListener("end", onEnd);
+    recognition.addEventListener("error", onError);
+
+    recognitionRef.current = recognition;
     isListeningRef.current = true;
     setIsListening(true);
-    startRecognition();
+
+    // Start on next tick so we're past the click and any permission UI
+    const start = () => {
+      try {
+        recognition.start();
+      } catch (err) {
+        isListeningRef.current = false;
+        setIsListening(false);
+        recognition.removeEventListener("result", onResult);
+        recognition.removeEventListener("end", onEnd);
+        recognition.removeEventListener("error", onError);
+        alert("Could not start voice recognition. Try again or use Chrome/Edge.");
+      }
+    };
+    setTimeout(start, 0);
   }, [editor]);
 
   // Toolbar button
