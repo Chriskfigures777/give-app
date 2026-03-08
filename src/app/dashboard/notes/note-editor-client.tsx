@@ -39,6 +39,8 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const [interimText, setInterimText] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  // Ref so onend/onerror callbacks always read the live "should we be listening" value
+  const isListeningRef = useRef(false);
 
   useEffect(() => {
     return () => { recognitionRef.current?.stop(); };
@@ -150,40 +152,76 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   };
 
   const toggleDictation = useCallback(() => {
-    if (isListening) {
+    // ── Stop ──
+    if (isListeningRef.current) {
+      isListeningRef.current = false;
       recognitionRef.current?.stop();
       setIsListening(false);
       setInterimText("");
       return;
     }
+
+    // ── Browser check ──
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      alert("Voice dictation is not supported in this browser. Try Chrome or Edge.");
+      alert("Voice dictation is not supported in this browser. Please use Chrome or Edge.");
       return;
     }
-    const recognition = new SR();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-    recognition.onresult = (event: { resultIndex: number; results: SpeechRecognitionResultList }) => {
-      let interim = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result.isFinal) {
-          editor?.chain().focus().insertContent(result[0].transcript).run();
-        } else {
-          interim += result[0].transcript;
+
+    // ── Start (with auto-restart on silence) ──
+    function startRecognition() {
+      const r = new SR();
+      r.continuous = true;
+      r.interimResults = true;
+      r.lang = "en-US";
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      r.onresult = (event: any) => {
+        let interim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            // Append a space so words don't run together
+            editor?.chain().focus().insertContent(event.results[i][0].transcript + " ").run();
+          } else {
+            interim += event.results[i][0].transcript;
+          }
         }
-      }
-      setInterimText(interim);
-    };
-    recognition.onend = () => { setIsListening(false); setInterimText(""); };
-    recognition.onerror = () => { setIsListening(false); setInterimText(""); };
-    recognitionRef.current = recognition;
-    recognition.start();
+        setInterimText(interim);
+      };
+
+      // Chrome auto-stops after ~7 s of silence — restart transparently
+      r.onend = () => {
+        setInterimText("");
+        if (isListeningRef.current) {
+          try { startRecognition(); } catch {
+            isListeningRef.current = false;
+            setIsListening(false);
+          }
+        } else {
+          setIsListening(false);
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      r.onerror = (e: any) => {
+        setInterimText("");
+        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+          isListeningRef.current = false;
+          setIsListening(false);
+          alert("Microphone access was denied. Please allow microphone access in your browser settings, then try again.");
+        }
+        // "no-speech" and "aborted" are expected — onend handles the restart
+      };
+
+      recognitionRef.current = r;
+      r.start();
+    }
+
+    isListeningRef.current = true;
     setIsListening(true);
-  }, [isListening, editor]);
+    startRecognition();
+  }, [editor]);
 
   // Toolbar button
   const TB = ({
