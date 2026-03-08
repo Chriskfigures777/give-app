@@ -6,13 +6,13 @@ import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Bold, Italic, List, ListOrdered, Quote,
   Minus, Undo2, Redo2, Sparkles, Loader2, X, ChevronRight,
-  Check, Trash2,
+  Check, Trash2, Mic, MicOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SurveyQuestion } from "@/app/api/ai/generate-survey-questions/route";
@@ -35,6 +35,14 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const [generatedQuestions, setGeneratedQuestions] = useState<SurveyQuestion[] | null>(null);
   const [savedNoteId, setSavedNoteId] = useState<string | null>(noteId);
   const [deleting, setDeleting] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [interimText, setInterimText] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => { recognitionRef.current?.stop(); };
+  }, []);
 
   const FONTS: { label: string; value: string }[] = [
     { label: "Barlow", value: "var(--font-barlow), sans-serif" },
@@ -140,6 +148,42 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       router.push("/dashboard/notes");
     } catch { setDeleting(false); }
   };
+
+  const toggleDictation = useCallback(() => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      setInterimText("");
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      alert("Voice dictation is not supported in this browser. Try Chrome or Edge.");
+      return;
+    }
+    const recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+    recognition.onresult = (event: { resultIndex: number; results: SpeechRecognitionResultList }) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          editor?.chain().focus().insertContent(result[0].transcript).run();
+        } else {
+          interim += result[0].transcript;
+        }
+      }
+      setInterimText(interim);
+    };
+    recognition.onend = () => { setIsListening(false); setInterimText(""); };
+    recognition.onerror = () => { setIsListening(false); setInterimText(""); };
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening, editor]);
 
   // Toolbar button
   const TB = ({
@@ -334,9 +378,30 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           <TB onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Divider">
             <Minus className="h-5 w-5" />
           </TB>
-          <span className="ml-auto text-sm text-dashboard-text-muted">
-            {wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}
-          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); toggleDictation(); }}
+              title={isListening ? "Stop dictation" : "Start voice dictation"}
+              className={[
+                "flex h-9 items-center gap-1.5 rounded px-2.5 text-sm font-medium transition-colors",
+                isListening
+                  ? "bg-rose-500/20 text-rose-400 animate-pulse"
+                  : "text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text",
+              ].join(" ")}
+            >
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              <span className="hidden sm:inline">{isListening ? "Stop" : "Dictate"}</span>
+            </button>
+            {interimText && (
+              <span className="hidden sm:inline max-w-[200px] truncate text-sm italic text-dashboard-text-muted">
+                {interimText}
+              </span>
+            )}
+            <span className="text-sm text-dashboard-text-muted">
+              {wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}
+            </span>
+          </div>
         </div>
       )}
 
