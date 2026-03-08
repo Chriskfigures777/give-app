@@ -87,6 +87,7 @@ function handleSubmit(e){
   var message=findTextarea(form);
   if(!email){alert("Please enter an email address.");return;}
   if(message)fields["Message"]=message;
+  var formKind=(form.getAttribute("data-form-kind")||"").trim()||null;
   var btn=form.querySelector('button[type="submit"],input[type="submit"],button:not([type])');
   var origText=btn?btn.textContent||btn.value:"";
   if(btn){btn.disabled=true;if(btn.tagName==="INPUT")btn.value="Sending...";else btn.textContent="Sending...";}
@@ -99,7 +100,7 @@ function handleSubmit(e){
       visitorEmail:email,
       visitorName:name||null,
       visitorPhone:phone||null,
-      formKind:null,
+      formKind:formKind,
       pagePath:location.href,
       fields:fields
     })

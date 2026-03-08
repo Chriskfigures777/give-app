@@ -8,6 +8,8 @@ const CMS_BLOCKS = [
   "events_grid",
   "events_list",
   "sermon_archive",
+  "member_form",
+  "get_started_form",
 ];
 
 /**

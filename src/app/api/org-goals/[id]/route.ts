@@ -86,6 +86,7 @@ export async function PATCH(
     if (body.name !== undefined) update.name = typeof body.name === "string" ? body.name.trim() : null;
     if (body.description !== undefined) update.description = typeof body.description === "string" ? body.description.trim() || null : null;
     if (body.access !== undefined) update.access = body.access === "private" ? "private" : "workspace";
+    if (body.horizon !== undefined) update.horizon = body.horizon === "1_year" || body.horizon === "3_year" ? body.horizon : "90_day";
     if (body.start_date !== undefined) update.start_date = typeof body.start_date === "string" && body.start_date ? body.start_date : null;
     if (body.end_date !== undefined) update.end_date = typeof body.end_date === "string" && body.end_date ? body.end_date : null;
     if (body.target_value !== undefined) update.target_value = body.target_value === null || body.target_value === "" ? null : Number(body.target_value);

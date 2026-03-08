@@ -2414,6 +2414,7 @@ export type Database = {
           description: string | null
           owner_user_ids: string[]
           access: string
+          horizon: string
           start_date: string | null
           end_date: string | null
           target_value: number | null
@@ -2428,6 +2429,7 @@ export type Database = {
           description?: string | null
           owner_user_ids?: string[]
           access?: string
+          horizon?: string
           start_date?: string | null
           end_date?: string | null
           target_value?: number | null
@@ -2442,6 +2444,7 @@ export type Database = {
           description?: string | null
           owner_user_ids?: string[]
           access?: string
+          horizon?: string
           start_date?: string | null
           end_date?: string | null
           target_value?: number | null

@@ -9,6 +9,7 @@ import {
   renderEventsGrid,
   renderEventsList,
   renderTeamMembers,
+  renderContactForm,
   renderGiveEmbed,
   injectGiveEmbedFallback,
   resolveCmsBinding,
@@ -109,6 +110,12 @@ export async function POST(req: NextRequest) {
     }
     if (out.includes("{{cms:team_members}}")) {
       out = out.replace("{{cms:team_members}}", wrap("team_members", renderTeamMembers(teamMembers ?? [])));
+    }
+    if (out.includes("{{cms:member_form}}")) {
+      out = out.replace("{{cms:member_form}}", wrap("member_form", renderContactForm("member")));
+    }
+    if (out.includes("{{cms:get_started_form}}")) {
+      out = out.replace("{{cms:get_started_form}}", wrap("get_started_form", renderContactForm("get_started")));
     }
 
     const needsSlug =

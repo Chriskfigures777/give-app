@@ -14,7 +14,7 @@ export default async function GoalsPage() {
         <header className="dashboard-fade-in min-w-0">
           <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Goals</h1>
           <p className="mt-1 text-sm text-dashboard-text-muted">
-            90-day rocks and SMART goals for your church or organization. Set targets (e.g. members, active members, dollars), add weekly progress, and watch the bar fill.
+            Set 90-day, one-year, and three-year goals. Track targets and progress so your team stays aligned.
           </p>
         </header>
 

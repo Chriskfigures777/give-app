@@ -377,6 +377,27 @@ export function renderGiveEmbed(
 </div>`;
 }
 
+/** Renders a contact form block (Member or Get Started). Picked up by the forms script via data-form-kind. */
+export function renderContactForm(formKind: "member" | "get_started"): string {
+  const isGetStarted = formKind === "get_started";
+  const title = isGetStarted ? "Get started" : "Join us";
+  const subtitle = isGetStarted
+    ? "New here? Share your info and we'll reach out."
+    : "Connect with us. We'd love to hear from you.";
+  const btnText = isGetStarted ? "Get started" : "Submit";
+  const formClass = "give-contact-form";
+  return `<div class="give-contact-form-wrap" style="max-width:420px;margin:0 auto;padding:24px 0;">
+  <h3 style="font-size:1.35rem;font-weight:700;margin-bottom:8px;color:inherit;">${esc(title)}</h3>
+  <p style="font-size:0.9rem;opacity:0.85;margin-bottom:20px;">${esc(subtitle)}</p>
+  <form data-form-kind="${formKind}" class="${formClass}" action="javascript:void(0)" method="post" style="display:flex;flex-direction:column;gap:14px;">
+    <input type="text" name="name" placeholder="Your name" style="padding:12px 14px;border:1px solid rgba(0,0,0,0.12);border-radius:10px;font-size:1rem;" />
+    <input type="email" name="email" placeholder="Email *" required style="padding:12px 14px;border:1px solid rgba(0,0,0,0.12);border-radius:10px;font-size:1rem;" />
+    <input type="tel" name="phone" placeholder="Phone (optional)" style="padding:12px 14px;border:1px solid rgba(0,0,0,0.12);border-radius:10px;font-size:1rem;" />
+    <button type="submit" style="padding:12px 20px;font-weight:600;border-radius:10px;cursor:pointer;background:#0d9488;color:#fff;border:none;font-size:1rem;">${esc(btnText)}</button>
+  </form>
+</div>`;
+}
+
 export function renderTeamMembers(
   members: Array<{
     name: string;

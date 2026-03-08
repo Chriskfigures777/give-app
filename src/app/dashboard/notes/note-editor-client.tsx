@@ -183,20 +183,25 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
     }
 
     if (!editor) return;
+    editor.chain().focus().run();
     dictationPosRef.current = editor.state.selection.from;
 
-    // Ref that the speech callback will call to insert text (runs next tick so we're outside the API callback)
+    // Ref that the speech callback will call to insert text. Use queueMicrotask so we run
+    // outside the speech API callback and get a fresh editor state. Update position from
+    // editor after each insert so it stays correct (ProseMirror positions shift on insert).
     insertDictationRef.current = (text: string) => {
       const t = text.trim();
       if (!t) return;
       const toInsert = t + (t.endsWith(" ") ? "" : " ");
-      setTimeout(() => {
+      const pos = dictationPosRef.current;
+      queueMicrotask(() => {
         const ed = editorRef.current;
         if (!ed) return;
-        const pos = dictationPosRef.current;
+        // Insert as plain text (no HTML)
         ed.chain().insertContentAt(pos, toInsert, { updateSelection: true }).run();
-        dictationPosRef.current = pos + toInsert.length;
-      }, 0);
+        // Next chunk should go after this one; use actual selection so position is valid
+        dictationPosRef.current = ed.state.selection.to;
+      });
     };
 
     const onResult = (event: Event) => {
@@ -204,8 +209,8 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       let interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const result = e.results[i];
-        const alt = result[0];
-        const transcript = (alt?.transcript ?? (result as unknown as { item?(i: number): { transcript?: string } }).item?.(0)?.transcript ?? "") as string;
+        const alt = result?.length ? result.item?.(0) ?? result[0] : null;
+        const transcript = (alt?.transcript ?? (result as unknown as { transcript?: string }).transcript ?? "") as string;
         if (!transcript) continue;
         if (result.isFinal) {
           if (process.env.NODE_ENV === "development") {
@@ -595,7 +600,13 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           onClose={() => setBibleOpen(false)}
           onInsert={(text) => {
             if (!editor) return;
-            editor.chain().focus().insertContent(`<p>${text}</p>`).run();
+            const escape = (s: string) =>
+              s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            const parts = text.split(/\n\n+/);
+            const cited = parts.length > 1
+              ? `<blockquote><p>${escape(parts[0].trim())}</p><p class="text-sm opacity-80">${escape(parts.slice(1).join(" ").trim())}</p></blockquote>`
+              : `<blockquote><p>${escape(text.trim())}</p></blockquote>`;
+            editor.chain().focus().insertContent(cited).run();
           }}
         />
       )}

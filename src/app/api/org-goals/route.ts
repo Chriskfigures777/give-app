@@ -69,11 +69,13 @@ export async function POST(req: NextRequest) {
     const name = typeof body.name === "string" ? body.name.trim() : "";
     if (!name) return NextResponse.json({ error: "Goal name is required" }, { status: 400 });
 
+    const horizon = body.horizon === "1_year" || body.horizon === "3_year" ? body.horizon : "90_day";
     const insert: Database["public"]["Tables"]["org_goals"]["Insert"] = {
       organization_id: orgId,
       name,
       description: typeof body.description === "string" ? body.description.trim() || null : null,
       access: body.access === "private" ? "private" : "workspace",
+      horizon,
       start_date: typeof body.start_date === "string" && body.start_date ? body.start_date : null,
       end_date: typeof body.end_date === "string" && body.end_date ? body.end_date : null,
       target_value: body.target_value != null && body.target_value !== "" ? Number(body.target_value) : null,

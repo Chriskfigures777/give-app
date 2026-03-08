@@ -9,6 +9,7 @@ import {
   renderEventsGrid,
   renderEventsList,
   renderTeamMembers,
+  renderContactForm,
   injectGiveEmbedFallback,
   resolveCmsBinding,
   APP_URL,
@@ -243,6 +244,12 @@ async function injectCmsContent(
       "{{cms:team_members}}",
       renderTeamMembers(teamMembers ?? [])
     );
+  }
+  if (out.includes("{{cms:member_form}}")) {
+    out = out.replace("{{cms:member_form}}", renderContactForm("member"));
+  }
+  if (out.includes("{{cms:get_started_form}}")) {
+    out = out.replace("{{cms:get_started_form}}", renderContactForm("get_started"));
   }
   // Give embed is handled by injectGiveEmbedFallback (with theme detection)
   // after injectCmsContent returns — do NOT replace here without a theme.
@@ -507,7 +514,11 @@ export async function GET(
       });
       html = (firstWithContent?.component as string) ?? "";
     }
-    if (!html || html.trim().length < 10) {
+    // Dedicated get-started: if slug is get-started and no matching page or no content, serve built-in page
+    if (slugLower === "get-started" && (!page || !html || html.trim().length < 10)) {
+      const orgName = (org as { name?: string } | null)?.name ?? "Us";
+      html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Get started – ${orgName}</title><style>body{font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;} h1{font-size:1.5rem;}</style></head><body><h1>Get started</h1><p>New here? Share your info and we'll reach out.</p>{{cms:get_started_form}}</body></html>`;
+    } else if (!html || html.trim().length < 10) {
       return new NextResponse("Page not found", { status: 404 });
     }
   }

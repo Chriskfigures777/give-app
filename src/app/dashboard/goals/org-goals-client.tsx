@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Flag, Plus, Trash2, Pencil } from "lucide-react";
+import { Flag, Plus, Trash2, Pencil, Target, Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ type OrgGoal = {
   name: string;
   description?: string | null;
   access: string;
+  horizon: string;
   end_date?: string | null;
   start_date?: string | null;
   target_value?: number | null;
@@ -35,6 +36,14 @@ type GoalUpdate = {
   created_at: string;
 };
 
+const HORIZONS = [
+  { id: "90_day", label: "90-day goals", subtitle: "Short-term focus" },
+  { id: "1_year", label: "One-year goals", subtitle: "Annual targets" },
+  { id: "3_year", label: "Three-year goals", subtitle: "Strategic vision" },
+] as const;
+
+type HorizonId = (typeof HORIZONS)[number]["id"];
+
 /** Current progress = latest update's value_number (total as of that date). */
 function getCurrentValue(updates: GoalUpdate[]): number | null {
   if (!updates.length) return null;
@@ -43,6 +52,11 @@ function getCurrentValue(updates: GoalUpdate[]): number | null {
   );
   const v = sorted[0]?.value_number;
   return v != null ? Number(v) : null;
+}
+
+function normalizeHorizon(h: string | undefined): HorizonId {
+  if (h === "1_year" || h === "3_year") return h;
+  return "90_day";
 }
 
 export function OrgGoalsClient() {
@@ -56,6 +70,7 @@ export function OrgGoalsClient() {
   const [goalName, setGoalName] = useState("");
   const [goalDescription, setGoalDescription] = useState("");
   const [goalAccess, setGoalAccess] = useState<"workspace" | "private">("workspace");
+  const [goalHorizon, setGoalHorizon] = useState<HorizonId>("90_day");
   const [goalEndDate, setGoalEndDate] = useState("");
   const [goalTargetValue, setGoalTargetValue] = useState("");
   const [goalTargetUnit, setGoalTargetUnit] = useState("");
@@ -112,8 +127,9 @@ export function OrgGoalsClient() {
       .catch(() => setUpdatesByGoal((prev) => ({ ...prev, [detailModalGoalId]: [] })));
   }, [detailModalGoalId]);
 
-  const openCreateGoal = () => {
+  const openCreateGoal = (horizon: HorizonId) => {
     setEditingGoalId(null);
+    setGoalHorizon(horizon);
     setGoalName("");
     setGoalDescription("");
     setGoalAccess("workspace");
@@ -130,6 +146,7 @@ export function OrgGoalsClient() {
     setGoalName(g.name);
     setGoalDescription(g.description ?? "");
     setGoalAccess((g.access as "workspace" | "private") || "workspace");
+    setGoalHorizon(normalizeHorizon(g.horizon));
     setGoalEndDate(g.end_date ? g.end_date.slice(0, 10) : "");
     setGoalTargetValue(g.target_value != null ? String(g.target_value) : "");
     setGoalTargetUnit(g.target_unit ?? "");
@@ -152,6 +169,7 @@ export function OrgGoalsClient() {
         name: goalName.trim(),
         description: goalDescription.trim() || null,
         access: goalAccess,
+        horizon: goalHorizon,
         end_date: goalEndDate || null,
         target_value: goalTargetValue ? Number(goalTargetValue) : null,
         target_unit: goalTargetUnit.trim() || null,
@@ -231,121 +249,145 @@ export function OrgGoalsClient() {
 
   return (
     <section className="dashboard-fade-in rounded-2xl border border-dashboard-border bg-dashboard-card p-5 shadow-sm min-w-0 overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-2">
-          <Flag className="h-5 w-5 text-emerald-600" />
-          <h2 className="text-base font-bold text-dashboard-text">90-day rocks</h2>
-        </div>
-        <button
-          type="button"
-          onClick={openCreateGoal}
-          className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
-        >
-          <Plus className="h-4 w-4" />
-          Create goal
-        </button>
+      <div className="flex items-center gap-2 mb-4">
+        <Flag className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+        <h2 className="text-base font-bold text-dashboard-text">Goals</h2>
       </div>
-      <p className="text-sm text-dashboard-text-muted mb-4">
-        Set goals (e.g. 1,000 members, 25 active members) and add weekly progress. Enter the <strong>current total</strong> each week (e.g. 10, then 23, then 37 new members). The bar shows where you are. When new members are added in People, we can automatically update member-count goals (coming soon).
+      <p className="text-sm text-dashboard-text-muted mb-6">
+        Set goals by timeframe: <strong>90-day</strong> for immediate focus, <strong>one-year</strong> for the year ahead, and <strong>three-year</strong> for long-term vision. Add targets and track progress with weekly updates.
       </p>
       {error && (
-        <p className="mb-4 text-sm text-red-600" role="alert">
+        <p className="mb-4 text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
       )}
-      {goals.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-dashboard-border bg-dashboard-card-hover/30 p-8 text-center">
-          <p className="text-sm font-medium text-dashboard-text mb-2">No goals yet</p>
-          <p className="text-sm text-dashboard-text-muted mb-4">
-            Create your first 90-day rock. Set a target (e.g. 1,000 members or 25 active members who attend 2–3x/month and complete surveys) and log weekly updates.
-          </p>
-          <button
-            type="button"
-            onClick={openCreateGoal}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-          >
-            <Plus className="h-4 w-4" />
-            Create goal
-          </button>
-        </div>
-      ) : (
-        <ul className="space-y-2">
-          {goals.map((g) => {
-            const updates = updatesByGoal[g.id] ?? [];
-            const current = getCurrentValue(updates);
-            const target = g.target_value != null ? Number(g.target_value) : null;
-            const unit = g.target_unit ?? "units";
-            const percent =
-              target != null && target > 0 && current != null
-                ? Math.min(100, (current / target) * 100)
-                : 0;
-            return (
-              <li
-                key={g.id}
-                className="rounded-xl border border-dashboard-border bg-dashboard-card-hover/30 overflow-hidden"
-              >
-                <div
-                  className="flex items-center gap-2 p-4 cursor-pointer hover:bg-dashboard-card-hover/50"
-                  onClick={() => setDetailModalGoalId(g.id)}
-                >
-                  <div className="min-w-0 flex-1">
-                    <span className="font-medium text-dashboard-text">{g.name}</span>
-                    {(target != null || g.end_date) && (
-                      <p className="mt-0.5 text-sm text-dashboard-text-muted">
-                        {target != null && (
-                          <>
-                            Target: {target.toLocaleString()} {unit}
-                          </>
-                        )}
-                        {target != null && g.end_date && " · "}
-                        {g.end_date && <>By {new Date(g.end_date).toLocaleDateString()}</>}
-                      </p>
-                    )}
-                    {target != null && target > 0 && (
-                      <div className="mt-2">
-                        <div className="flex items-baseline justify-between gap-2 text-sm">
-                          <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                            {current != null ? current.toLocaleString() : "0"} of {target.toLocaleString()} {unit}
-                          </span>
-                          {current != null && (
-                            <span className="text-dashboard-text-muted">{percent.toFixed(0)}%</span>
-                          )}
-                        </div>
-                        <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-dashboard-card-hover/50">
-                          <div
-                            className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                            style={{ width: `${percent}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      onClick={() => openEditGoal(g)}
-                      className="rounded-lg border border-dashboard-border px-2 py-1.5 text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text"
-                      title="Edit goal"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteGoal(g.id)}
-                      className="rounded-lg border border-dashboard-border px-2 py-1.5 text-dashboard-text-muted hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                      title="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
 
-      {/* Goal detail modal: progress bar + add weekly update */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {HORIZONS.map(({ id, label, subtitle }) => {
+          const horizonGoals = goals.filter((g) => normalizeHorizon(g.horizon) === id);
+          return (
+            <div
+              key={id}
+              className="rounded-xl border-2 border-dashboard-border bg-dashboard-card-hover/20 p-4 min-h-[220px] flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-dashboard-text">
+                    {label}
+                  </h3>
+                  <p className="text-xs text-dashboard-text-muted">
+                    {subtitle}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openCreateGoal(id)}
+                  className="rounded-lg border border-dashboard-border px-2 py-1.5 text-xs font-medium text-dashboard-text hover:bg-dashboard-card-hover transition-colors"
+                >
+                  <Plus className="h-3.5 w-3.5 inline mr-1" />
+                  Add
+                </button>
+              </div>
+              <ul className="space-y-2 flex-1">
+                {horizonGoals.map((g) => {
+                  const updates = updatesByGoal[g.id] ?? [];
+                  const current = getCurrentValue(updates);
+                  const target = g.target_value != null ? Number(g.target_value) : null;
+                  const unit = g.target_unit ?? "units";
+                  const percent =
+                    target != null && target > 0 && current != null
+                      ? Math.min(100, (current / target) * 100)
+                      : 0;
+                  return (
+                    <li
+                      key={g.id}
+                      className="group flex items-start gap-2 rounded-lg p-2.5 border border-dashboard-border/50 hover:border-dashboard-border transition-colors"
+                      style={{ borderLeftColor: "var(--emerald-500)", borderLeftWidth: 3 }}
+                    >
+                      <button
+                        type="button"
+                        className="min-w-0 flex-1 text-left"
+                        onClick={() => setDetailModalGoalId(g.id)}
+                      >
+                        <p className="text-sm font-medium text-dashboard-text">{g.name}</p>
+                        {(target != null || g.end_date) && (
+                          <p className="text-xs text-dashboard-text-muted mt-0.5 flex items-center gap-1.5 flex-wrap">
+                            {target != null && (
+                              <span className="inline-flex items-center gap-0.5">
+                                <Target className="h-3 w-3" />
+                                {target.toLocaleString()} {unit}
+                              </span>
+                            )}
+                            {g.end_date && (
+                              <span className="inline-flex items-center gap-0.5">
+                                <Calendar className="h-3 w-3" />
+                                {new Date(g.end_date).toLocaleDateString()}
+                              </span>
+                            )}
+                          </p>
+                        )}
+                        {target != null && target > 0 && (
+                          <div className="mt-1.5">
+                            <div className="flex justify-between text-xs mb-0.5">
+                              <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                                {current != null ? current.toLocaleString() : "0"} / {target.toLocaleString()}
+                              </span>
+                              {current != null && (
+                                <span className="text-dashboard-text-muted">{percent.toFixed(0)}%</span>
+                              )}
+                            </div>
+                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-dashboard-card-hover/50">
+                              <div
+                                className="h-full rounded-full bg-emerald-500 dark:bg-emerald-600 transition-all duration-500"
+                                style={{ width: `${percent}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          onClick={() => openEditGoal(g)}
+                          className="rounded p-1.5 text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text"
+                          title="Edit"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteGoal(g.id)}
+                          className="rounded p-1.5 text-dashboard-text-muted hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              {horizonGoals.length === 0 && (
+                <div className="flex-1 flex items-center justify-center py-4">
+                  <p className="text-xs text-dashboard-text-muted text-center">
+                    No goals yet.
+                    <br />
+                    <button
+                      type="button"
+                      onClick={() => openCreateGoal(id)}
+                      className="mt-1 text-emerald-600 dark:text-emerald-400 font-medium hover:underline"
+                    >
+                      Add one
+                    </button>
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Goal detail modal */}
       {(() => {
         const g = detailModalGoalId ? goals.find((x) => x.id === detailModalGoalId) : null;
         if (!g) return null;
@@ -380,7 +422,7 @@ export function OrgGoalsClient() {
                       setDetailModalGoalId(null);
                       deleteGoal(g.id);
                     }}
-                    className="rounded-lg border border-dashboard-border px-2 py-1.5 text-dashboard-text-muted hover:bg-red-50 hover:text-red-600"
+                    className="rounded-lg border border-dashboard-border px-2 py-1.5 text-dashboard-text-muted hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
                     title="Delete"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -402,14 +444,14 @@ export function OrgGoalsClient() {
                   </div>
                   <div className="h-3 w-full overflow-hidden rounded-full bg-dashboard-card-hover/50">
                     <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                      className="h-full rounded-full bg-emerald-500 dark:bg-emerald-600 transition-all duration-500"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
                 </div>
               )}
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-dashboard-text">Add this week&apos;s progress</h4>
+                <h4 className="text-sm font-medium text-dashboard-text">Add progress</h4>
                 <p className="text-xs text-dashboard-text-muted">
                   Enter the current total (e.g. 10 staff read the Bible this week, or 20 times total so far).
                 </p>
@@ -419,13 +461,13 @@ export function OrgGoalsClient() {
                     placeholder={target != null ? `Current total (e.g. ${unit})` : "Value or note"}
                     value={updateValue}
                     onChange={(e) => setUpdateValue(e.target.value)}
-                    className="rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                    className="rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                   />
                   <input
                     type="date"
                     value={updateRecordedAt}
                     onChange={(e) => setUpdateRecordedAt(e.target.value)}
-                    className="rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                    className="rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                   />
                 </div>
                 <textarea
@@ -433,13 +475,13 @@ export function OrgGoalsClient() {
                   value={updateNote}
                   onChange={(e) => setUpdateNote(e.target.value)}
                   rows={2}
-                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
                 <button
                   type="button"
                   onClick={() => addUpdate(g.id)}
                   disabled={updateSaving || (!updateValue.trim() && !updateNote.trim())}
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 transition-colors"
                 >
                   {updateSaving ? "Saving…" : "Save update"}
                 </button>
@@ -477,12 +519,27 @@ export function OrgGoalsClient() {
         );
       })()}
 
+      {/* Create / Edit goal dialog */}
       <Dialog open={goalDialogOpen} onOpenChange={setGoalDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{editingGoalId ? "Edit goal" : "Create goal"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-dashboard-text mb-1">
+                Timeframe
+              </label>
+              <select
+                value={goalHorizon}
+                onChange={(e) => setGoalHorizon(e.target.value as HorizonId)}
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+              >
+                {HORIZONS.map((h) => (
+                  <option key={h.id} value={h.id}>{h.label}</option>
+                ))}
+              </select>
+            </div>
             <div>
               <label className="block text-sm font-medium text-dashboard-text mb-1">
                 Goal name <span className="text-red-500">*</span>
@@ -492,7 +549,7 @@ export function OrgGoalsClient() {
                 value={goalName}
                 onChange={(e) => setGoalName(e.target.value)}
                 placeholder="e.g. 1,000 members or 25 active members"
-                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               />
             </div>
             <div>
@@ -502,7 +559,7 @@ export function OrgGoalsClient() {
                 value={goalOwner}
                 onChange={(e) => setGoalOwner(e.target.value)}
                 placeholder="Who is responsible?"
-                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               />
             </div>
             <div>
@@ -510,7 +567,7 @@ export function OrgGoalsClient() {
               <select
                 value={goalAccess}
                 onChange={(e) => setGoalAccess(e.target.value as "workspace" | "private")}
-                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               >
                 <option value="workspace">Workspace (everyone in org)</option>
                 <option value="private">Private</option>
@@ -524,7 +581,7 @@ export function OrgGoalsClient() {
                 type="date"
                 value={goalEndDate}
                 onChange={(e) => setGoalEndDate(e.target.value)}
-                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -535,7 +592,7 @@ export function OrgGoalsClient() {
                   value={goalTargetValue}
                   onChange={(e) => setGoalTargetValue(e.target.value)}
                   placeholder="e.g. 1000"
-                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
               <div>
@@ -545,7 +602,7 @@ export function OrgGoalsClient() {
                   value={goalTargetUnit}
                   onChange={(e) => setGoalTargetUnit(e.target.value)}
                   placeholder="e.g. members, dollars"
-                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text"
+                  className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
             </div>
@@ -556,13 +613,13 @@ export function OrgGoalsClient() {
               <textarea
                 value={goalDescription}
                 onChange={(e) => setGoalDescription(e.target.value)}
-                placeholder="e.g. Active = 2–3x/month, complete surveys, engage with content after preaching"
+                placeholder="e.g. Active = 2–3x/month, complete surveys"
                 rows={3}
-                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               />
             </div>
             {goalError && (
-              <p className="text-sm text-red-600" role="alert">
+              <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                 {goalError}
               </p>
             )}
@@ -570,7 +627,7 @@ export function OrgGoalsClient() {
               <button
                 type="button"
                 onClick={() => setGoalDialogOpen(false)}
-                className="rounded-lg border border-dashboard-border px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover"
+                className="rounded-lg border border-dashboard-border px-4 py-2 text-sm font-medium text-dashboard-text hover:bg-dashboard-card-hover transition-colors"
               >
                 Cancel
               </button>
@@ -578,7 +635,7 @@ export function OrgGoalsClient() {
                 type="button"
                 onClick={saveGoal}
                 disabled={goalSaving}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 transition-colors"
               >
                 {goalSaving ? "Saving…" : editingGoalId ? "Save" : "Create"}
               </button>

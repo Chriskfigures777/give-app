@@ -14,12 +14,19 @@ export default function DashboardError({
     console.error(error);
   }, [error]);
 
+  const isDev = process.env.NODE_ENV === "development";
+
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-6">
       <h1 className="text-xl font-semibold text-slate-900">Something went wrong</h1>
       <p className="mt-2 max-w-md text-center text-sm text-slate-600">
         An error occurred in the dashboard. You can try again or go back.
       </p>
+      {isDev && error?.message && (
+        <pre className="mt-4 max-w-2xl overflow-auto rounded bg-slate-100 p-4 text-left text-xs text-red-700">
+          {error.message}
+        </pre>
+      )}
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <button
           type="button"
