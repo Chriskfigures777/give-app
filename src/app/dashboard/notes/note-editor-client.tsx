@@ -69,6 +69,9 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
     editorProps: { attributes: { class: "tiptap-doc-content" } },
   });
 
+  // Keep a ref so dictation callbacks always have the live editor (avoids stale closure)
+  const editorRef = useRef(editor);
+  useEffect(() => { editorRef.current = editor; }, [editor]);
 
   const wordCount = editor?.storage.characterCount.words() ?? 0;
 
@@ -171,6 +174,9 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       return;
     }
 
+    // Focus the editor once before starting so there's a valid cursor position
+    editor?.commands.focus();
+
     // ── Start recognition directly ──
     // MDN spec: SpeechRecognition manages its own mic permission — getUserMedia
     // is not required and causes false denials on some OS/browser combos.
@@ -185,7 +191,10 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         let interim = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            editor?.chain().focus().insertContent(event.results[i][0].transcript + " ").run();
+            // Use editorRef (not editor) so this never has a stale closure.
+            // insertContent without focus() so it types at the current cursor
+            // position rather than jumping to the top of the document.
+            editorRef.current?.commands.insertContent(event.results[i][0].transcript + " ");
           } else {
             interim += event.results[i][0].transcript;
           }
@@ -543,7 +552,6 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           </div>
         </div>
       </div>
-      </div>
       {/* ── Bible panel ── */}
       {bibleOpen && (
         <BiblePanel
@@ -554,6 +562,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           }}
         />
       )}
+      </div>
     </div>
   );
 }
