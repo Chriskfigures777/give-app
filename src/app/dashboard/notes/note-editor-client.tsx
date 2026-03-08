@@ -12,10 +12,11 @@ import Link from "next/link";
 import {
   ArrowLeft, Bold, Italic, List, ListOrdered, Quote,
   Minus, Undo2, Redo2, Sparkles, Loader2, X, ChevronRight,
-  Check, Trash2, Mic, MicOff,
+  Check, Trash2, Mic, MicOff, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SurveyQuestion } from "@/app/api/ai/generate-survey-questions/route";
+import { BiblePanel } from "./bible-panel";
 
 type Props = {
   noteId: string | null;
@@ -37,6 +38,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const [deleting, setDeleting] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [interimText, setInterimText] = useState("");
+  const [bibleOpen, setBibleOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   // Ref so onend/onerror callbacks always read the live "should we be listening" value
@@ -169,7 +171,9 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       return;
     }
 
-    // ── Start (with auto-restart on silence) ──
+    // ── Start recognition directly ──
+    // MDN spec: SpeechRecognition manages its own mic permission — getUserMedia
+    // is not required and causes false denials on some OS/browser combos.
     function startRecognition() {
       const r = new SR();
       r.continuous = true;
@@ -181,7 +185,6 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         let interim = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            // Append a space so words don't run together
             editor?.chain().focus().insertContent(event.results[i][0].transcript + " ").run();
           } else {
             interim += event.results[i][0].transcript;
@@ -205,10 +208,19 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       r.onerror = (e: any) => {
-        // "no-speech" and "aborted" are safe — onend handles the restart
-        if (e.error !== "no-speech" && e.error !== "aborted") {
-          console.warn("SpeechRecognition error:", e.error);
+        console.warn("SpeechRecognition error:", e.error);
+        if (e.error === "not-allowed") {
+          isListeningRef.current = false;
+          setIsListening(false);
+          setInterimText("");
+          alert("Microphone permission is blocked for this site. Click the lock icon in your browser address bar → Microphone → Allow, then reload and try again.");
+        } else if (e.error === "service-not-allowed") {
+          isListeningRef.current = false;
+          setIsListening(false);
+          setInterimText("");
+          alert("Speech recognition service is unavailable. Make sure you are using Chrome or Edge with an internet connection.");
         }
+        // no-speech, aborted, audio-capture → transient, onend handles restart
       };
 
       recognitionRef.current = r;
@@ -217,38 +229,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
     isListeningRef.current = true;
     setIsListening(true);
-
-    // Try to pre-warm mic permission so SpeechRecognition doesn't race with
-    // the browser prompt. If getUserMedia fails for any reason, fall through
-    // and start recognition anyway — it may still work (e.g. on some browsers
-    // getUserMedia and SpeechRecognition use separate permission grants).
-    const tryStart = () => { if (isListeningRef.current) startRecognition(); };
-
-    if (!navigator.mediaDevices?.getUserMedia) {
-      // API not available — start directly
-      tryStart();
-      return;
-    }
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((stream) => {
-        stream.getTracks().forEach((t) => t.stop());
-        tryStart();
-      })
-      .catch((err: unknown) => {
-        // Only hard-stop if the user explicitly denied permission.
-        // For NotFoundError (no mic), NotReadableError (mic in use), or anything
-        // else — still attempt recognition; the browser may handle it differently.
-        const name = (err instanceof Error ? err.name : "") || "";
-        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-          isListeningRef.current = false;
-          setIsListening(false);
-          alert("Microphone access was denied. Please click the camera/mic icon in your browser address bar and allow access, then try again.");
-        } else {
-          // Best-effort: try recognition even if getUserMedia failed
-          tryStart();
-        }
-      });
+    startRecognition();
   }, [editor]);
 
   // Toolbar button
@@ -447,6 +428,20 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           <div className="ml-auto flex items-center gap-2">
             <button
               type="button"
+              onMouseDown={(e) => { e.preventDefault(); setBibleOpen((o) => !o); }}
+              title="Open Bible"
+              className={[
+                "flex h-9 items-center gap-1.5 rounded px-2.5 text-sm font-medium transition-colors",
+                bibleOpen
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : "text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text",
+              ].join(" ")}
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Bible</span>
+            </button>
+            <button
+              type="button"
               onMouseDown={(e) => { e.preventDefault(); toggleDictation(); }}
               title={isListening ? "Stop dictation" : "Start voice dictation"}
               className={[
@@ -472,6 +467,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       )}
 
       {/* ── Document canvas — Google Docs / Word style ── */}
+      <div className="flex-1 flex overflow-hidden">
       <div className="flex-1 overflow-y-auto flex flex-col" style={{ background: "hsl(var(--dashboard-sidebar))" }}>
         <HRuler />
         <div className="flex flex-1">
@@ -547,6 +543,17 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           </div>
         </div>
       </div>
+      </div>
+      {/* ── Bible panel ── */}
+      {bibleOpen && (
+        <BiblePanel
+          onClose={() => setBibleOpen(false)}
+          onInsert={(text) => {
+            if (!editor) return;
+            editor.chain().focus().insertContent(`<p>${text}</p>`).run();
+          }}
+        />
+      )}
     </div>
   );
 }
