@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -38,6 +39,40 @@ export async function requireAuth(): Promise<{
     .single();
   const profile = profileRow as AuthProfile | null;
   return { user, profile: profile ?? null, supabase };
+}
+
+/** Auth for API routes: session (cookies) or Authorization: Bearer <supabase-jwt>. Returns null if unauthenticated (caller should return 401). */
+export async function getAuthForApi(): Promise<{
+  user: NonNullable<Awaited<ReturnType<typeof getSession>>["user"]>;
+  profile: AuthProfile | null;
+  supabase: Awaited<ReturnType<typeof getSession>>["supabase"];
+} | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profileRow } = await supabase
+      .from("user_profiles")
+      .select("id, role, full_name, organization_id, preferred_organization_id, is_missionary, missionary_sponsor_org_id, plans_to_be_missionary")
+      .eq("id", user.id)
+      .single();
+    const profile = profileRow as AuthProfile | null;
+    return { user, profile: profile ?? null, supabase };
+  }
+  const authHeader = (await headers()).get("authorization");
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  if (bearerToken) {
+    const { data: { user: userFromJwt } } = await supabase.auth.getUser(bearerToken);
+    if (userFromJwt) {
+      const { data: profileRow } = await supabase
+        .from("user_profiles")
+        .select("id, role, full_name, organization_id, preferred_organization_id, is_missionary, missionary_sponsor_org_id, plans_to_be_missionary")
+        .eq("id", userFromJwt.id)
+        .single();
+      const profile = profileRow as AuthProfile | null;
+      return { user: userFromJwt, profile: profile ?? null, supabase };
+    }
+  }
+  return null;
 }
 
 /** Require platform_admin role. */

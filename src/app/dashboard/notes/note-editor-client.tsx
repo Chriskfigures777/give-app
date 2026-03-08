@@ -195,23 +195,29 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       r.onresult = (event: any) => {
         let interim = "";
-        const ed = editorRef.current;
+        const toInsert: string[] = [];
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
-          const transcript = result.isFinal ? (result[0]?.transcript ?? "") : "";
-          if (result.isFinal && transcript && ed) {
-            const text = transcript + " ";
-            const pos = dictationPosRef.current;
-            // insertContentAt works without focus; then advance position for next chunk
-            const ok = ed.commands.insertContentAt(pos, text, { updateSelection: true });
-            if (ok) {
-              dictationPosRef.current = ed.state.selection.from;
-            }
+          const transcript = (result.length ? (result[0]?.transcript ?? (result as any).item?.(0)?.transcript) : "") ?? "";
+          if (result.isFinal && transcript) {
+            toInsert.push(transcript);
           } else if (!result.isFinal) {
-            interim += result[0]?.transcript ?? "";
+            interim += transcript;
           }
         }
         setInterimText(interim);
+        // Defer insert so the command runs in the editor's update cycle (Speech API
+        // callback can run in a different tick where TipTap doesn't apply transactions).
+        if (toInsert.length > 0) {
+          const text = toInsert.join(" ") + (toInsert.length ? " " : "");
+          const runInsert = () => {
+            const ed = editorRef.current;
+            if (!ed) return;
+            ed.chain().focus().insertContent(text).run();
+            dictationPosRef.current = ed.state.selection.from;
+          };
+          requestAnimationFrame(() => setTimeout(runInsert, 0));
+        }
       };
 
       // Chrome auto-stops after ~7 s of silence — restart transparently

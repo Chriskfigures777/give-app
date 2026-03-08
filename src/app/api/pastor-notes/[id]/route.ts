@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { profile, supabase } = await requireAuth();
+    const { getAuthForApi } = await import("@/lib/auth");
+    const auth = await getAuthForApi();
+    if (!auth) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const { profile, supabase } = auth;
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
     if (!orgId) return NextResponse.json({ error: "No organization" }, { status: 400 });
 
@@ -36,7 +40,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { profile, supabase } = await requireAuth();
+    const { getAuthForApi } = await import("@/lib/auth");
+    const auth = await getAuthForApi();
+    if (!auth) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const { profile, supabase } = auth;
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
     if (!orgId) return NextResponse.json({ error: "No organization" }, { status: 400 });
 
@@ -83,7 +92,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { profile, supabase } = await requireAuth();
+    const { getAuthForApi } = await import("@/lib/auth");
+    const auth = await getAuthForApi();
+    if (!auth) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const { profile, supabase } = auth;
     const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
     if (!orgId) return NextResponse.json({ error: "No organization" }, { status: 400 });
 
