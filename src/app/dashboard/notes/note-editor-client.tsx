@@ -205,22 +205,33 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       r.onerror = (e: any) => {
-        setInterimText("");
-        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-          isListeningRef.current = false;
-          setIsListening(false);
-          alert("Microphone access was denied. Please allow microphone access in your browser settings, then try again.");
+        // "no-speech" and "aborted" are safe — onend handles the restart
+        if (e.error !== "no-speech" && e.error !== "aborted") {
+          console.warn("SpeechRecognition error:", e.error);
         }
-        // "no-speech" and "aborted" are expected — onend handles the restart
       };
 
       recognitionRef.current = r;
       r.start();
     }
 
+    // Pre-request mic permission via getUserMedia BEFORE starting recognition.
+    // SpeechRecognition races with the browser permission prompt and fires
+    // "not-allowed" before the user even clicks Allow. getUserMedia awaits
+    // the user's decision, so by the time recognition starts permission is set.
     isListeningRef.current = true;
     setIsListening(true);
-    startRecognition();
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then((stream) => {
+        // Release the track immediately — we only needed the permission grant
+        stream.getTracks().forEach((t) => t.stop());
+        if (isListeningRef.current) startRecognition();
+      })
+      .catch(() => {
+        isListeningRef.current = false;
+        setIsListening(false);
+        alert("Microphone access was denied. Please allow microphone access in your browser settings, then try again.");
+      });
   }, [editor]);
 
   // Toolbar button
