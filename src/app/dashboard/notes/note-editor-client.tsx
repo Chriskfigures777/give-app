@@ -43,6 +43,8 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const recognitionRef = useRef<any>(null);
   // Ref so onend/onerror callbacks always read the live "should we be listening" value
   const isListeningRef = useRef(false);
+  // Insertion position for dictation (insertContentAt doesn't rely on focus)
+  const dictationPosRef = useRef<number>(0);
 
   useEffect(() => {
     return () => { recognitionRef.current?.stop(); };
@@ -174,8 +176,12 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       return;
     }
 
-    // Focus the editor once before starting so there's a valid cursor position
-    editor?.commands.focus();
+    // Set insertion position from current cursor so we can use insertContentAt
+    // (doesn't depend on focus when results arrive later).
+    if (editor) {
+      const { from } = editor.state.selection;
+      dictationPosRef.current = from;
+    }
 
     // ── Start recognition directly ──
     // MDN spec: SpeechRecognition manages its own mic permission — getUserMedia
@@ -189,14 +195,20 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       r.onresult = (event: any) => {
         let interim = "";
+        const ed = editorRef.current;
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            // Use editorRef (not editor) so this never has a stale closure.
-            // insertContent without focus() so it types at the current cursor
-            // position rather than jumping to the top of the document.
-            editorRef.current?.commands.insertContent(event.results[i][0].transcript + " ");
-          } else {
-            interim += event.results[i][0].transcript;
+          const result = event.results[i];
+          const transcript = result.isFinal ? (result[0]?.transcript ?? "") : "";
+          if (result.isFinal && transcript && ed) {
+            const text = transcript + " ";
+            const pos = dictationPosRef.current;
+            // insertContentAt works without focus; then advance position for next chunk
+            const ok = ed.commands.insertContentAt(pos, text, { updateSelection: true });
+            if (ok) {
+              dictationPosRef.current = ed.state.selection.from;
+            }
+          } else if (!result.isFinal) {
+            interim += result[0]?.transcript ?? "";
           }
         }
         setInterimText(interim);
@@ -323,7 +335,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   };
 
   return (
-    <div className="-mx-6 -mt-6 flex flex-col" style={{ minHeight: "calc(100vh - 64px)" }}>
+    <div className="-mx-6 -mt-6 flex flex-col overflow-hidden" style={{ height: "calc(100vh - 64px)" }}>
 
       {/* ── Header bar ── */}
       <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-dashboard-border bg-dashboard-card/95 backdrop-blur px-5 py-3">
@@ -484,12 +496,12 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           <div className="flex-1 min-w-0">
         <div className="mx-auto px-6 py-8" style={{ maxWidth: 1000 }}>
 
-          {/* Paper page — border like Google Docs, no shadow */}
+          {/* Paper page — border like Google Docs, no shadow (darker border so paper is clearly visible) */}
           <div
             style={{
               background: "hsl(var(--dashboard-card))",
               minHeight: "calc(100vh - 180px)",
-              border: "1px solid hsl(var(--dashboard-border))",
+              border: "1px solid hsl(var(--dashboard-paper-border, var(--dashboard-border)))",
               borderRadius: 2,
             }}
           >

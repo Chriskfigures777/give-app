@@ -49,6 +49,7 @@ aside[data-sidebar="dark"] {
   --dashboard-card: 225 20% 12%;          /* #181c26 (BANKGO --bg-card) */
   --dashboard-card-hover: 223 22% 15%;    /* #1e2330 (BANKGO --bg-card-hover) */
   --dashboard-border: 223 22% 15%;        /* #1e2330 (BANKGO --border) */
+  --dashboard-paper-border: 223 22% 24%;  /* darker paper edge so typing area is clearly visible */
   --dashboard-border-light: 224 18% 25%;  /* #2a3040 (BANKGO --border-light) scrollbar thumb */
   --dashboard-glass: rgba(14, 17, 24, 0.85);
   background: #0e1118;
@@ -414,6 +415,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
     --dashboard-card: 0 0% 100%;
     --dashboard-card-hover: 220 14% 95%;
     --dashboard-border: 220 15% 92%;
+    --dashboard-paper-border: 220 15% 75%;
     --dashboard-text: 222 47% 11%;
     --dashboard-text-muted: 215 16% 47%;
     --dashboard-accent: 160 84% 39%;
@@ -449,6 +451,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
     --dashboard-card: 217 33% 17%;
     --dashboard-card-hover: 215 28% 22%;
     --dashboard-border: 217 30% 24%;
+    --dashboard-paper-border: 217 30% 35%;
     --dashboard-text: 210 40% 98%;
     --dashboard-text-muted: 215 20% 65%;
     --dashboard-accent: 160 84% 50%;
@@ -470,6 +473,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 0 0% 100%;
   --dashboard-card-hover: 220 14% 95%;
   --dashboard-border: 220 15% 92%;
+  --dashboard-paper-border: 220 15% 75%;
   --dashboard-text: 222 47% 11%;
   --dashboard-text-muted: 215 20% 42%;
   --dashboard-accent: 160 84% 39%;
@@ -486,6 +490,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 217 33% 17%;
   --dashboard-card-hover: 215 28% 22%;
   --dashboard-border: 217 30% 24%;
+  --dashboard-paper-border: 217 30% 35%;
   --dashboard-text: 210 40% 98%;
   --dashboard-text-muted: 215 25% 78%;
   --dashboard-accent: 160 84% 50%;
@@ -502,6 +507,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 263 40% 14%;
   --dashboard-card-hover: 263 35% 18%;
   --dashboard-border: 263 30% 22%;
+  --dashboard-paper-border: 263 30% 32%;
   --dashboard-text: 270 25% 98%;
   --dashboard-text-muted: 270 20% 78%;
   --dashboard-accent: 270 90% 70%;
@@ -518,6 +524,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 0 0% 100%;
   --dashboard-card-hover: 152 20% 93%;
   --dashboard-border: 152 18% 88%;
+  --dashboard-paper-border: 152 18% 72%;
   --dashboard-text: 160 50% 10%;
   --dashboard-text-muted: 160 25% 35%;
   --dashboard-accent: 160 84% 32%;
@@ -534,6 +541,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 220 14% 12%;
   --dashboard-card-hover: 220 12% 16%;
   --dashboard-border: 220 12% 20%;
+  --dashboard-paper-border: 220 12% 28%;
   --dashboard-text: 220 15% 96%;
   --dashboard-text-muted: 220 15% 75%;
   --dashboard-accent: 220 15% 75%;
@@ -550,6 +558,7 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
   --dashboard-card: 217 45% 13%;
   --dashboard-card-hover: 217 40% 17%;
   --dashboard-border: 217 35% 22%;
+  --dashboard-paper-border: 217 35% 32%;
   --dashboard-text: 210 40% 98%;
   --dashboard-text-muted: 217 30% 78%;
   --dashboard-accent: 217 90% 65%;
