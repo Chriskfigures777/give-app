@@ -2406,6 +2406,144 @@ export type Database = {
         }
         Relationships: []
       }
+      org_goals: {
+        Row: {
+          id: string
+          organization_id: string
+          name: string
+          description: string | null
+          owner_user_ids: string[]
+          access: string
+          start_date: string | null
+          end_date: string | null
+          target_value: number | null
+          target_unit: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          name: string
+          description?: string | null
+          owner_user_ids?: string[]
+          access?: string
+          start_date?: string | null
+          end_date?: string | null
+          target_value?: number | null
+          target_unit?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          name?: string
+          description?: string | null
+          owner_user_ids?: string[]
+          access?: string
+          start_date?: string | null
+          end_date?: string | null
+          target_value?: number | null
+          target_unit?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_goals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_goal_updates: {
+        Row: {
+          id: string
+          goal_id: string
+          value_number: number | null
+          value_text: string | null
+          note: string | null
+          recorded_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          goal_id: string
+          value_number?: number | null
+          value_text?: string | null
+          note?: string | null
+          recorded_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          goal_id?: string
+          value_number?: number | null
+          value_text?: string | null
+          note?: string | null
+          recorded_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_goal_updates_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "org_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eisenhower_items: {
+        Row: {
+          id: string
+          organization_id: string
+          quadrant: number
+          title: string
+          content: string | null
+          position_x: number
+          position_y: number
+          color: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          quadrant: number
+          title?: string
+          content?: string | null
+          position_x?: number
+          position_y?: number
+          color?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          quadrant?: number
+          title?: string
+          content?: string | null
+          position_x?: number
+          position_y?: number
+          color?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eisenhower_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           business_description: string | null

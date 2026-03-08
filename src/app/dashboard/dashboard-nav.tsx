@@ -18,6 +18,7 @@ import {
   Target,
   Handshake,
   Layout,
+  LayoutGrid,
   FileStack,
   Share2,
   Receipt,
@@ -27,6 +28,7 @@ import {
   BookOpen,
   ClipboardList,
   Mail,
+  Flag,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -167,7 +169,9 @@ export function DashboardNav({
                 </Link>
               </li>
               {link("/dashboard/events", "Events", <Calendar className={iconClass} />)}
-              {link("/dashboard/goals", "Goals", <Target className={iconClass} />)}
+              {link("/dashboard/campaigns", "Campaigns", <Target className={iconClass} />)}
+              {link("/dashboard/goals", "Goals", <Flag className={iconClass} />)}
+              {link("/dashboard/eisenhower", "Priorities", <LayoutGrid className={iconClass} />)}
               {link("/dashboard/people", "People", <Contact className={iconClass} />)}
               {link("/dashboard/givers", "Givers", <Users className={iconClass} />)}
               {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}

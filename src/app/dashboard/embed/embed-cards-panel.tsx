@@ -1322,7 +1322,7 @@ function CustomFormEditor({
                   <label className={labelClass}>Goal description</label>
                   <textarea value={goalDescription} onChange={(e) => setGoalDescription(e.target.value)} placeholder="Describe what this campaign is about..." rows={2} className={inputClass} />
                 </div>
-                <p className="text-xs text-dashboard-text-muted"><Link href="/dashboard/goals" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Manage campaigns</Link></p>
+                <p className="text-xs text-dashboard-text-muted"><Link href="/dashboard/campaigns" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Manage campaigns</Link></p>
               </>
             )}
           </div>
@@ -1898,7 +1898,7 @@ function CardEditor({
                 <label className={labelClass}>Goal description</label>
                 <textarea value={goalDescription} onChange={(e) => setGoalDescription(e.target.value)} placeholder="Describe what this campaign is about..." rows={3} className={inputClass} />
               </div>
-              <p className="text-sm text-slate-500"><Link href="/dashboard/goals" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Manage campaigns in Goals</Link></p>
+              <p className="text-sm text-slate-500"><Link href="/dashboard/campaigns" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Manage campaigns</Link></p>
             </motion.div>
           )}
           {step === (hasGoalStep ? 3 : 2) + stepOffset && (

@@ -63,7 +63,7 @@ export function CampaignsEditor({ campaigns }: Props) {
     <div className="min-w-0 overflow-hidden">
       <p className="text-[13px] text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">
         Set goal amounts and deadlines for campaigns. Required for goal-style embed cards. Create campaigns in{" "}
-        <Link href="/dashboard/goals" className="font-medium text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors">Goals</Link>.
+        <Link href="/dashboard/campaigns" className="font-medium text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors">Campaigns</Link>.
       </p>
 
       {error && (
@@ -77,7 +77,7 @@ export function CampaignsEditor({ campaigns }: Props) {
           <p className="text-[13px] font-medium text-slate-600 dark:text-slate-300 mb-1">No campaigns yet</p>
           <p className="text-[12px] text-slate-400 dark:text-slate-500 mb-5">Create a campaign to set donation goals.</p>
           <Link
-            href="/dashboard/goals"
+            href="/dashboard/campaigns"
             className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-[13px] font-medium text-white hover:bg-emerald-600 transition-colors shadow-sm"
           >
             Create campaign

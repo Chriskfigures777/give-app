@@ -16,6 +16,7 @@ import {
   Users,
   Target,
   Layout,
+  LayoutGrid,
   FileText,
   CreditCard,
   Church,
@@ -29,6 +30,7 @@ import {
   ShieldCheck,
   BarChart3,
   FileStack,
+  Flag,
 } from "lucide-react";
 
 type DashboardPage = {
@@ -46,7 +48,9 @@ const DASHBOARD_PAGES: DashboardPage[] = [
   { label: "Donations", href: "/dashboard/donations", keywords: "donations received incoming payments", icon: <Wallet className="h-4 w-4" /> },
   { label: "Peers", href: "/dashboard/connections", keywords: "peers connections partners organizations", icon: <Handshake className="h-4 w-4" /> },
   { label: "Events", href: "/dashboard/events", keywords: "events calendar fundraising", icon: <Calendar className="h-4 w-4" /> },
-  { label: "Goals", href: "/dashboard/goals", keywords: "goals targets campaigns fundraising", icon: <Target className="h-4 w-4" /> },
+  { label: "Campaigns", href: "/dashboard/campaigns", keywords: "campaigns fundraising goals donation targets", icon: <Target className="h-4 w-4" /> },
+  { label: "Goals", href: "/dashboard/goals", keywords: "goals 90-day rocks SMART members weekly progress", icon: <Flag className="h-4 w-4" /> },
+  { label: "Priorities", href: "/dashboard/eisenhower", keywords: "priorities eisenhower urgent important whiteboard", icon: <LayoutGrid className="h-4 w-4" /> },
   { label: "Givers", href: "/dashboard/givers", keywords: "givers donors supporters people", icon: <Users className="h-4 w-4" /> },
   { label: "Public page", href: "/dashboard/profile", keywords: "public page profile organization info", icon: <FileText className="h-4 w-4" /> },
   { label: "Website builder", href: "/dashboard/pages", keywords: "website builder pages site design", icon: <Layout className="h-4 w-4" /> },

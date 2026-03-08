@@ -193,10 +193,10 @@ export function DashboardGoalsOverview({ campaigns }: Props) {
         </div>
         <Button variant="outline" size="default" asChild>
           <Link
-            href="/dashboard/goals"
+            href="/dashboard/campaigns"
             className="inline-flex items-center gap-2 text-base font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
-            Manage goals
+            Manage campaigns
             <ArrowRight className="h-5 w-5" />
           </Link>
         </Button>
