@@ -60,6 +60,8 @@ export default async function OrgSurveyPage({
           description={survey.description}
           pages={pages}
           coverImageUrl={survey.cover_image_url}
+          accentColor={(survey.theme?.accent_color as string | undefined) ?? "#10b981"}
+          videoUrl={(survey.theme?.video_url as string | undefined) ?? ""}
         />
       </div>
     </div>

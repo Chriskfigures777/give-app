@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Copy, Check, Pencil, Mail, CheckCircle2, Circle, XCircle,
-  ClipboardList, Users, BarChart3, LinkIcon, ChevronRight, Video,
+  Copy, Check, Pencil, Mail,
+  ClipboardList, Users, BarChart3, LinkIcon, ChevronRight, Video, Eye, X,
 } from "lucide-react";
+import { SurveyResponseForm } from "@/app/survey/org/[surveyId]/survey-response-form";
 
 type SurveyTheme = {
   accent_color?: string;
@@ -64,6 +65,7 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
   const [sendError, setSendError] = useState<string | null>(null);
   const [tab, setTab] = useState<"overview" | "questions" | "responses">("overview");
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const cfg = STATUS[status as keyof typeof STATUS] ?? STATUS.draft;
   const questions = Array.isArray(survey.questions) ? (survey.questions as Array<Record<string, unknown>>) : [];
@@ -210,11 +212,19 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
             </>
           )}
         </div>
-        <Link href={`/dashboard/surveys/${surveyId}/edit`}>
-          <Button variant="secondary" size="sm" className="gap-1.5 h-9">
-            <Pencil className="h-3.5 w-3.5" /> Edit survey
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setPreviewOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-dashboard-border bg-dashboard-card hover:bg-dashboard-card-hover px-3 py-2 text-sm font-medium text-dashboard-text-muted hover:text-dashboard-text transition-all h-9"
+          >
+            <Eye className="h-3.5 w-3.5" /> Preview
+          </button>
+          <Link href={`/dashboard/surveys/${surveyId}/edit`}>
+            <Button variant="secondary" size="sm" className="gap-1.5 h-9">
+              <Pencil className="h-3.5 w-3.5" /> Edit survey
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Send feedback */}
@@ -365,6 +375,74 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
               })}
             </ul>
           )}
+        </div>
+      )}
+
+      {/* ── Preview panel ── */}
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-end"
+          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setPreviewOpen(false); }}
+        >
+          <div
+            className="goal-panel-enter relative flex h-full w-full max-w-lg flex-col overflow-hidden"
+            style={{ background: "hsl(var(--dashboard-bg))" }}
+          >
+            {/* Preview header */}
+            <div
+              className="flex items-center justify-between border-b border-dashboard-border px-5 py-4 shrink-0"
+              style={{ background: "hsl(var(--dashboard-card))" }}
+            >
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="h-8 w-8 rounded-xl flex items-center justify-center"
+                  style={{ background: `${accentColor}20` }}
+                >
+                  <Eye className="h-4 w-4" style={{ color: accentColor }} />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-dashboard-text">Survey Preview</h2>
+                  <p className="text-xs text-dashboard-text-muted">Respondent view — colors match your theme</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPreviewOpen(false)}
+                className="rounded-lg p-1.5 text-dashboard-text-muted hover:bg-white/8 hover:text-dashboard-text transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Preview body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+              <SurveyResponseForm
+                surveyId={surveyId}
+                title={survey.title}
+                description={survey.description}
+                pages={(() => {
+                  const qs = questions as Array<{ id?: string; text: string; type: string; options?: string[]; page?: number }>;
+                  const hasPageAssignments = qs.some((q) => typeof q.page === "number");
+                  if (hasPageAssignments) {
+                    const byPage = new Map<number, typeof qs>();
+                    for (const q of qs) {
+                      const p = typeof q.page === "number" ? q.page : 0;
+                      if (!byPage.has(p)) byPage.set(p, []);
+                      byPage.get(p)!.push(q);
+                    }
+                    return Array.from(byPage.entries()).sort((a, b) => a[0] - b[0]).map(([, pg]) => pg);
+                  }
+                  const out: typeof qs[] = [];
+                  for (let i = 0; i < qs.length; i += 4) out.push(qs.slice(i, i + 4));
+                  return out.length ? out : [[]];
+                })()}
+                coverImageUrl={survey.cover_image_url}
+                accentColor={accentColor}
+                videoUrl={videoUrl}
+                previewMode
+              />
+            </div>
+          </div>
         </div>
       )}
 
