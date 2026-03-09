@@ -298,16 +298,16 @@ export function SurveyBuilder({
                     className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-lg text-[9px] font-black tabular-nums"
                     style={isActive
                       ? { background: accentColor, color: "white" }
-                      : { background: "rgba(255,255,255,0.07)", color: "#8891a5" }
+                      : { background: "rgba(255,255,255,0.10)", color: "#c4cad8" }
                     }
                   >
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold leading-snug line-clamp-2 transition-colors" style={{ color: isActive ? "#eef0f6" : "#8891a5" }}>
-                      {q.text || <span className="italic opacity-40">Untitled</span>}
+                    <p className="text-xs font-semibold leading-snug line-clamp-2 transition-colors" style={{ color: isActive ? "#eef0f6" : "#c4cad8" }}>
+                      {q.text || <span className="italic" style={{ opacity: 0.45 }}>Untitled</span>}
                     </p>
-                    <div className="mt-0.5 flex items-center gap-1 text-[10px] opacity-50" style={{ color: "#8891a5" }}>
+                    <div className="mt-0.5 flex items-center gap-1 text-[10px]" style={{ color: isActive ? accentColor : "#8891a5" }}>
                       {meta?.icon && <span className="[&_svg]:h-3 [&_svg]:w-3">{meta.icon}</span>}
                       {meta?.label}
                     </div>
