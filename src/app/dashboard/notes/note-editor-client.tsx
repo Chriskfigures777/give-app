@@ -57,10 +57,9 @@ export function NoteEditorClient({
   const [coverType, setCoverType] = useState<"image" | "video" | null>(initialCoverType ?? null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const isListeningRef = useRef(false);
-  const dictationPosRef = useRef<number>(0);
-  const insertDictationRef = useRef<(text: string) => void>(() => {});
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -204,8 +203,9 @@ export function NoteEditorClient({
   };
 
   const toggleDictation = useCallback(() => {
-    const SR = (typeof window !== "undefined" && (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition) ||
-      (typeof window !== "undefined" && (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
+    const SR =
+      (typeof window !== "undefined" && (window as unknown as { SpeechRecognition?: new () => SpeechRecognition }).SpeechRecognition) ||
+      (typeof window !== "undefined" && (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition);
 
     if (!SR) {
       alert("Voice dictation is not supported in this browser. Please use Chrome or Edge.");
@@ -214,8 +214,16 @@ export function NoteEditorClient({
 
     if (isListeningRef.current) {
       isListeningRef.current = false;
-      try { recognitionRef.current?.abort?.(); } catch { /* ignore */ }
-      try { recognitionRef.current?.stop?.(); } catch { /* ignore */ }
+      try {
+        recognitionRef.current?.abort?.();
+      } catch {
+        /* ignore */
+      }
+      try {
+        recognitionRef.current?.stop?.();
+      } catch {
+        /* ignore */
+      }
       recognitionRef.current = null;
       setIsListening(false);
       setInterimText("");
@@ -224,39 +232,45 @@ export function NoteEditorClient({
 
     if (!editor) return;
     editor.chain().focus().run();
-    dictationPosRef.current = editor.state.selection.from;
-
-    insertDictationRef.current = (text: string) => {
-      const t = text.trim();
-      if (!t) return;
-      const toInsert = t + (t.endsWith(" ") ? "" : " ");
-      const pos = dictationPosRef.current;
-      queueMicrotask(() => {
-        const ed = editorRef.current;
-        if (!ed) return;
-        ed.chain().insertContentAt(pos, toInsert, { updateSelection: true }).run();
-        dictationPosRef.current = ed.state.selection.to;
-      });
-    };
 
     const onResult = (event: Event) => {
       const e = event as SpeechRecognitionEvent;
+      const results = e.results;
       let interim = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const result = e.results[i];
-        const alt = result?.length ? result.item?.(0) ?? result[0] : null;
-        const transcript = (alt?.transcript ?? (result as unknown as { transcript?: string }).transcript ?? "") as string;
+      // Copy transcript strings immediately; results list is "live" and can change after the event.
+      for (let i = e.resultIndex; i < results.length; i++) {
+        const result = results[i];
+        const first = result?.item?.(0) ?? (result as unknown as { [idx: number]: { transcript?: string } })?.[0];
+        const transcript = (first?.transcript ?? "") as string;
         if (!transcript) continue;
         if (result.isFinal) {
-          insertDictationRef.current(transcript);
+          lastInterim = "";
+          const t = transcript.trim();
+          if (t) {
+            const ed = editorRef.current;
+            if (ed) {
+              const toInsert = t + (t.endsWith(" ") ? "" : " ");
+              ed.chain().focus().insertContent(toInsert).run();
+            }
+          }
         } else {
           interim += transcript;
+          lastInterim = interim;
         }
       }
       setInterimText(interim);
     };
 
+    let lastInterim = "";
     const onEnd = () => {
+      if (lastInterim.trim()) {
+        const ed = editorRef.current;
+        if (ed) {
+          const toInsert = lastInterim.trim() + (lastInterim.endsWith(" ") ? "" : " ");
+          ed.chain().focus().insertContent(toInsert).run();
+        }
+      }
+      lastInterim = "";
       setInterimText("");
       if (!isListeningRef.current) {
         setIsListening(false);
@@ -285,7 +299,7 @@ export function NoteEditorClient({
       }
     };
 
-    const recognition = new (SR as new () => SpeechRecognition)();
+    const recognition = new SR();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
@@ -299,19 +313,17 @@ export function NoteEditorClient({
     isListeningRef.current = true;
     setIsListening(true);
 
-    const start = () => {
-      try {
-        recognition.start();
-      } catch {
-        isListeningRef.current = false;
-        setIsListening(false);
-        recognition.removeEventListener("result", onResult);
-        recognition.removeEventListener("end", onEnd);
-        recognition.removeEventListener("error", onError);
-        alert("Could not start voice recognition. Try again or use Chrome/Edge.");
-      }
-    };
-    setTimeout(start, 0);
+    try {
+      recognition.start();
+    } catch {
+      isListeningRef.current = false;
+      setIsListening(false);
+      recognitionRef.current = null;
+      recognition.removeEventListener("result", onResult);
+      recognition.removeEventListener("end", onEnd);
+      recognition.removeEventListener("error", onError);
+      alert("Could not start voice recognition. Try again or use Chrome/Edge.");
+    }
   }, [editor]);
 
   // Toolbar icon button
@@ -534,10 +546,10 @@ export function NoteEditorClient({
         </div>
       )}
 
-      {/* ── Document canvas ── */}
+      {/* ── Document canvas (two columns when Bible open: notes left, Bible right) ── */}
       <div className="flex-1 flex overflow-hidden">
         <div
-          className="flex-1 overflow-y-auto"
+          className={`overflow-y-auto ${bibleOpen ? "flex-1 min-w-0" : "flex-1"}`}
           style={{ background: "hsl(var(--dashboard-sidebar))" }}
         >
           <div className="mx-auto py-6 px-4" style={{ maxWidth: 860 }}>
@@ -736,11 +748,13 @@ export function NoteEditorClient({
           </div>
         </div>
 
-        {/* ── Bible panel ── */}
+        {/* ── Bible panel (side-by-side when open so pastor can view Bible and type notes) ── */}
         {bibleOpen && (
-          <BiblePanel
-            onClose={() => setBibleOpen(false)}
-            onInsert={(text) => {
+          <div className="flex-shrink-0 overflow-hidden border-l border-dashboard-border">
+            <BiblePanel
+              embedded
+              onClose={() => setBibleOpen(false)}
+              onInsert={(text) => {
               if (!editor) return;
               const escape = (s: string) =>
                 s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -750,7 +764,8 @@ export function NoteEditorClient({
                 : `<blockquote><p>${escape(text.trim())}</p></blockquote>`;
               editor.chain().focus().insertContent(cited).run();
             }}
-          />
+            />
+          </div>
         )}
       </div>
 

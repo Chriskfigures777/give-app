@@ -48,12 +48,14 @@ export async function POST(
     if (surveyErr || !survey) {
       return NextResponse.json({ error: "Survey not found" }, { status: 404 });
     }
-    if ((survey as { status: string }).status !== "published") {
+    type SurveyRow = { organization_id: string; status: string; respondent_category?: string | null };
+    const row = survey as unknown as SurveyRow;
+    if (row.status !== "published") {
       return NextResponse.json({ error: "Survey is not accepting responses" }, { status: 400 });
     }
 
-    const orgId = (survey as { organization_id: string }).organization_id;
-    const respondentCategory = (survey as { respondent_category?: string | null }).respondent_category;
+    const orgId = row.organization_id;
+    const respondentCategory = row.respondent_category;
     const surveyRespondentCategory = (respondentCategory === "member" || respondentCategory === "contact") ? respondentCategory : null;
 
     let body: { respondent_email?: string; respondent_name?: string; answers?: Record<string, unknown> };

@@ -146,11 +146,13 @@ function parseReference(ref: string): { bookId: string; chapter: number; verse?:
 type Props = {
   onClose: () => void;
   onInsert: (text: string) => void;
+  /** When true, render only the panel (no full-screen overlay/blur) so notes stay visible alongside. */
+  embedded?: boolean;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function BiblePanel({ onClose, onInsert }: Props) {
+export function BiblePanel({ onClose, onInsert, embedded = false }: Props) {
   const [translation, setTranslation] = useState("kjv");
   const [bookIndex, setBookIndex] = useState(0);
   const [chapter, setChapter] = useState(1);
@@ -254,17 +256,11 @@ export function BiblePanel({ onClose, onInsert }: Props) {
     if (v) insertVerse(v);
   };
 
-  return (
-    /* Full-screen overlay — same design language as GoalDetailPanel */
-    <div className="fixed inset-0 z-50 flex">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-
-      {/* Panel slides in from right */}
-      <div
-        className="goal-panel-enter relative ml-auto flex flex-col h-full bg-[hsl(var(--dashboard-card))] shadow-2xl overflow-hidden"
-        style={{ width: 420, maxWidth: "95vw", borderLeft: "1px solid rgba(255,255,255,0.08)" }}
-      >
+  const panel = (
+    <div
+      className={embedded ? "relative flex flex-col h-full bg-[hsl(var(--dashboard-card))] shadow-xl overflow-hidden border-l border-dashboard-border" : "goal-panel-enter relative ml-auto flex flex-col h-full bg-[hsl(var(--dashboard-card))] shadow-2xl overflow-hidden"}
+      style={{ width: 420, maxWidth: embedded ? "100%" : "95vw", borderLeft: embedded ? undefined : "1px solid rgba(255,255,255,0.08)" }}
+    >
         {/* ── Hero image header ── */}
         <div className="relative h-44 shrink-0 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -582,6 +578,13 @@ export function BiblePanel({ onClose, onInsert }: Props) {
           </div>
         )}
       </div>
+  );
+
+  if (embedded) return panel;
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
+      {panel}
     </div>
   );
 }

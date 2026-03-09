@@ -62,7 +62,7 @@ export default async function SurveyDetailPage({
       </div>
       <SurveyDetailClient
         surveyId={id}
-        survey={survey as { id: string; title: string; description: string | null; questions: unknown[]; status: string; cover_image_url: string | null; theme: Record<string, unknown> | null; respondent_category: string | null; updated_at: string }}
+        survey={survey as unknown as { id: string; title: string; description: string | null; questions: unknown[]; status: string; cover_image_url: string | null; theme: Record<string, unknown> | null; respondent_category: string | null; updated_at: string }}
         responses={responses as Array<{ id: string; respondent_email: string | null; respondent_name: string | null; answers: Record<string, string>; created_at: string }>}
         surveyLink={surveyLink}
         contactCount={contactCount}
