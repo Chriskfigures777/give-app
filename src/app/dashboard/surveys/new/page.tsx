@@ -16,16 +16,16 @@ export default async function NewSurveyPage({
   const fromNote = params.fromNote ?? null;
 
   return (
-    <div className=”space-y-4 p-2 sm:p-4”>
-      <div className=”flex items-center gap-4”>
+    <div className="space-y-4 p-2 sm:p-4">
+      <div className="flex items-center gap-4">
         <Link
-          href=”/dashboard/surveys”
-          className=”text-sm text-dashboard-text-muted hover:text-dashboard-text”
+          href="/dashboard/surveys"
+          className="text-sm text-dashboard-text-muted hover:text-dashboard-text"
         >
           ← Back to surveys
         </Link>
         {fromNote && (
-          <span className=”text-xs text-dashboard-text-muted”>
+          <span className="text-xs text-dashboard-text-muted">
             Questions generated from your note — edit them below.
           </span>
         )}
