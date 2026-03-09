@@ -1,5 +1,5 @@
 /**
- * Shared data fetching for Website form and Custom forms pages.
+ * Shared data fetching for Website form and Payment forms pages.
  */
 import { SupabaseClient } from "@supabase/supabase-js";
 import { FORM_TEMPLATE_PRESET } from "@/lib/form-template-preset";

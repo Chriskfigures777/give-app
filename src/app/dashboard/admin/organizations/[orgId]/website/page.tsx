@@ -58,7 +58,7 @@ export default async function AdminOrgWebsitePage({
       .eq("id", websiteEmbedCardId)
       .eq("organization_id", orgId)
       .maybeSingle();
-    websiteFormName = (card as { name?: string } | null)?.name ?? "Custom form";
+    websiteFormName = (card as { name?: string } | null)?.name ?? "Payment form";
   }
 
   return (

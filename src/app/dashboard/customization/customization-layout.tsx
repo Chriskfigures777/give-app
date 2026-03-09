@@ -27,9 +27,9 @@ export function CustomizationLayout({
     },
     {
       id: "custom",
-      label: "Custom forms",
+      label: "Payment forms",
       icon: <Code2 className="h-4 w-4" />,
-      description: "Build forms to share with others or embed elsewhere",
+      description: "Build payment forms to share with others or embed elsewhere",
     },
     {
       id: "settings",
@@ -48,7 +48,7 @@ export function CustomizationLayout({
               Forms
             </h1>
             <p className="mt-1 text-sm text-dashboard-text-muted">
-              <strong>Website form</strong> — One form for your website templates. Edit the basics here. <strong>Custom forms</strong> — Create as many forms as you need. Each form has its own embed code and splits. Share with partners or embed elsewhere.
+              <strong>Website form</strong> — One form for your website templates. Edit the basics here. <strong>Payment forms</strong> — Create as many payment forms as you need. Each has its own embed code and splits. Share with partners or embed elsewhere.
             </p>
           </div>
 

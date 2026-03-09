@@ -15,7 +15,11 @@ import {
   convertInchesToTwip,
   WidthType,
   ShadingType,
+  TableLayoutType,
 } from "docx";
+
+// Single column width in twips (1440 twips = 1 inch) so text wraps in Word
+const TABLE_CELL_TWIPS = 8640; // 6 inches
 
 type OrgGoalRow = {
   id: string;
@@ -176,6 +180,7 @@ export async function GET() {
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
+        wordWrap: true,
         children: [
           new TextRun({
             text: orgName,
@@ -204,6 +209,7 @@ export async function GET() {
         new Paragraph({
           heading: HeadingLevel.HEADING_1,
           border: { bottom: STYLE.border.accent },
+          wordWrap: true,
           children: [
             new TextRun({
               text: label,
@@ -228,6 +234,7 @@ export async function GET() {
         // Goal name
         cellParagraphs.push(
           new Paragraph({
+            wordWrap: true,
             children: [
               new TextRun({
                 text: goal.name,
@@ -243,6 +250,7 @@ export async function GET() {
         if (descText) {
           cellParagraphs.push(
             new Paragraph({
+              wordWrap: true,
               children: [
                 new TextRun({
                   text: descText,
@@ -266,6 +274,7 @@ export async function GET() {
           }
           cellParagraphs.push(
             new Paragraph({
+              wordWrap: true,
               children: [
                 new TextRun({
                   text: parts.join("  ·  "),
@@ -297,6 +306,7 @@ export async function GET() {
             const prefix = m.done ? "✓  " : "○  ";
             cellParagraphs.push(
               new Paragraph({
+                wordWrap: true,
                 children: [
                   new TextRun({
                     text: prefix + m.text,
@@ -313,7 +323,9 @@ export async function GET() {
         }
 
         const goalCard = new Table({
-          width: { size: 100, type: WidthType.PERCENTAGE },
+          width: { size: TABLE_CELL_TWIPS, type: WidthType.DXA },
+          columnWidths: [TABLE_CELL_TWIPS],
+          layout: TableLayoutType.FIXED,
           borders: {
             top: STYLE.border.cell,
             bottom: STYLE.border.cell,

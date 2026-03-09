@@ -55,7 +55,7 @@ export default async function WebsiteBuilderPage({
       .eq("id", websiteEmbedCardId)
       .eq("organization_id", orgId)
       .maybeSingle();
-    websiteFormName = (card as { name?: string } | null)?.name ?? "Custom form";
+    websiteFormName = (card as { name?: string } | null)?.name ?? "Payment form";
   }
 
   const resolved = await searchParams;

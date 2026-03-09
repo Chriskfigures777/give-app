@@ -172,7 +172,12 @@ export function NoteEditorClient({
       const res = await fetch("/api/ai/generate-survey-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: plainText, count: 6 }),
+        body: JSON.stringify({
+          content: plainText,
+          count: 6,
+          noteId: id,
+          noteTitle: title.trim() || "Untitled",
+        }),
       });
       const data = await res.json();
       if (!res.ok) {

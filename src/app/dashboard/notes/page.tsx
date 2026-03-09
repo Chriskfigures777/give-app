@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { requireAuth } from "@/lib/auth";
 import { getRemainingCredits } from "@/lib/ai-credits";
-import { Plus, BookOpen, Sparkles } from "lucide-react";
+import { Plus, BookOpen, Sparkles, ArrowRight } from "lucide-react";
 import { NotesGalleryClient, type NoteCard } from "./notes-gallery-client";
 
 export default async function NotesPage() {
@@ -40,7 +40,7 @@ export default async function NotesPage() {
               )}
             </div>
             <p className="text-sm text-dashboard-text-muted">
-              Ministry &amp; sermon notes. Add a cover image or video, cite Scripture, then generate survey questions with AI.
+              Ministry &amp; sermon notes. Add a cover image or video, cite Scripture, then turn your notes into AI survey questions.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -60,6 +60,40 @@ export default async function NotesPage() {
             </Link>
           </div>
         </header>
+
+        {/* Turn notes into AI — callout */}
+        <div className="dashboard-fade-in-delay-1 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                <Sparkles className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-dashboard-text mb-0.5">Turn your notes into AI survey questions</h2>
+                <p className="text-sm text-dashboard-text-muted">
+                  Push any note to AI to generate ready-to-use questions for your surveys. Open a note and use <strong className="text-dashboard-text">AI Questions</strong> to create engagement questions from your sermon or ministry content.
+                </p>
+              </div>
+            </div>
+            {notes.length > 0 ? (
+              <Link
+                href={`/dashboard/notes/${notes[0].id}`}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-500/25 shrink-0"
+              >
+                Push to AI
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard/notes/new"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-500/25 shrink-0"
+              >
+                Create note
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
+        </div>
 
         {notes.length === 0 ? (
           /* Empty state */

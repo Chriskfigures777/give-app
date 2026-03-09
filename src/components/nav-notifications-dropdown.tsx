@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { Check, CheckCheck, Bell, Sparkles, Heart, MessageSquare, DollarSign, Handshake, ArrowRight } from "lucide-react";
+import { Check, CheckCheck, Bell, Sparkles, Heart, MessageSquare, DollarSign, Handshake, ArrowRight, FileQuestion } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { NotificationItem } from "@/app/api/notifications/route";
@@ -120,6 +120,12 @@ function getNotificationIcon(type: string) {
           <DollarSign className="h-4 w-4" />
         </div>
       );
+    case "ai_questions_ready":
+      return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <FileQuestion className="h-4 w-4" />
+        </div>
+      );
     default:
       return (
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
@@ -154,6 +160,8 @@ function getNotificationText(n: NotificationItem): string {
     }
     case "fund_request_fulfilled":
       return "Your fund request has been fulfilled";
+    case "ai_questions_ready":
+      return "Your AI questions are ready";
     default:
       return n.type.replace(/_/g, " ");
   }
@@ -174,6 +182,8 @@ function getNotificationLink(n: NotificationItem): string | null {
       return p.thread_id ? `/dashboard/messages/${p.thread_id as string}` : "/dashboard/messages";
     case "fund_request_fulfilled":
       return "/dashboard/messages";
+    case "ai_questions_ready":
+      return p.note_id ? `/dashboard/notes/${p.note_id as string}` : "/dashboard/notes";
     default:
       return null;
   }

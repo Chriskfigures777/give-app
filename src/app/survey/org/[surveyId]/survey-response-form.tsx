@@ -25,7 +25,18 @@ type Props = {
   buttonShape?: "rounded" | "pill";
   formStyle?: "card" | "minimal" | "bold";
   previewMode?: boolean;
+  prefillName?: string | null;
+  prefillEmail?: string | null;
 };
+
+/** Replace {{name}}, {{first_name}}, {{email}} tokens in question text */
+function interpolate(text: string, name: string, email: string): string {
+  const firstName = name.split(" ")[0] ?? name;
+  return text
+    .replace(/\{\{name\}\}/gi, name)
+    .replace(/\{\{first_name\}\}/gi, firstName)
+    .replace(/\{\{email\}\}/gi, email);
+}
 
 function getYouTubeId(url: string): string | null {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?#]+)/);
@@ -48,11 +59,14 @@ export function SurveyResponseForm({
   buttonShape = "rounded",
   formStyle = "card",
   previewMode = false,
+  prefillName = null,
+  prefillEmail = null,
 }: Props) {
   const [pageIndex, setPageIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState(prefillEmail ?? "");
+  const [name, setName] = useState(prefillName ?? "");
+  const isPrefilled = !!(prefillName || prefillEmail);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -231,60 +245,104 @@ export function SurveyResponseForm({
                 {description}
               </p>
             )}
-            {/* Email / name (not in preview mode) */}
+            {/* Identity: prefilled badge OR manual inputs */}
             {!previewMode && (
-              <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Email (optional)
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                    onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
+              isPrefilled ? (
+                /* Personalized greeting badge */
+                <div
+                  style={{
+                    marginTop: 20,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    background: `${accentColor}12`,
+                    border: `1px solid ${accentColor}30`,
+                    borderRadius: 12,
+                    padding: "12px 16px",
+                  }}
+                >
+                  <span
                     style={{
-                      width: "100%",
-                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                      border: "1.5px solid hsl(var(--dashboard-border))",
-                      borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                      padding: "10px 14px",
-                      fontSize: 14,
-                      color: "hsl(var(--dashboard-text))",
-                      outline: "none",
-                      transition: "border-color 0.15s, box-shadow 0.15s",
-                      boxSizing: "border-box",
+                      flexShrink: 0,
+                      width: 36,
+                      height: 36,
+                      borderRadius: "50%",
+                      background: accentColor,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 15,
+                      fontWeight: 800,
+                      color: "white",
                     }}
-                  />
+                  >
+                    {(prefillName ?? prefillEmail ?? "?")[0]?.toUpperCase()}
+                  </span>
+                  <div>
+                    <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "hsl(var(--dashboard-text))", fontFamily }}>
+                      {prefillName ? `Responding as ${prefillName}` : "Responding anonymously"}
+                    </p>
+                    {prefillEmail && (
+                      <p style={{ margin: 0, fontSize: 12, color: "hsl(var(--dashboard-text-muted))" }}>{prefillEmail}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Name (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your name"
-                    onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                    onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
-                    style={{
-                      width: "100%",
-                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                      border: "1.5px solid hsl(var(--dashboard-border))",
-                      borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                      padding: "10px 14px",
-                      fontSize: 14,
-                      color: "hsl(var(--dashboard-text))",
-                      outline: "none",
-                      transition: "border-color 0.15s, box-shadow 0.15s",
-                      boxSizing: "border-box",
-                    }}
-                  />
+              ) : (
+                <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Name (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
+                      style={{
+                        width: "100%",
+                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                        border: "1.5px solid hsl(var(--dashboard-border))",
+                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                        padding: "10px 14px",
+                        fontSize: 14,
+                        color: "hsl(var(--dashboard-text))",
+                        outline: "none",
+                        transition: "border-color 0.15s, box-shadow 0.15s",
+                        boxSizing: "border-box",
+                        fontFamily,
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Email (optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
+                      style={{
+                        width: "100%",
+                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                        border: "1.5px solid hsl(var(--dashboard-border))",
+                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                        padding: "10px 14px",
+                        fontSize: 14,
+                        color: "hsl(var(--dashboard-text))",
+                        outline: "none",
+                        transition: "border-color 0.15s, box-shadow 0.15s",
+                        boxSizing: "border-box",
+                        fontFamily,
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
+              )
             )}
           </div>
         )}
@@ -334,7 +392,7 @@ export function SurveyResponseForm({
                         fontFamily,
                       }}
                     >
-                      {q.text}
+                      {interpolate(q.text, name, email)}
                     </label>
                   </div>
 

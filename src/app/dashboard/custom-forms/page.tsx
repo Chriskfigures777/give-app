@@ -21,8 +21,8 @@ export default async function CustomFormsPage() {
       return (
         <VerificationGate
           verificationStatus={verificationStatus}
-          featureName="Custom Forms"
-          featureDescription="Create custom donation forms with your branding, splits, and design. You need a verified Stripe Connect account so payments can be processed."
+          featureName="Payment Forms"
+          featureDescription="Create payment forms with your branding, splits, and design. You need a verified Stripe Connect account so payments can be processed."
         />
       );
     }
@@ -39,10 +39,10 @@ export default async function CustomFormsPage() {
     <div className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">
-          Custom forms
+          Payment forms
         </h1>
         <p className="mt-1 text-sm text-dashboard-text-muted">
-          Create as many forms as you need. Each form has its own design, embed code, and payment splits. Share different forms with different partners.
+          Create as many payment forms as you need. Each form has its own design, embed code, and payment splits. Share different forms with different partners.
         </p>
       </div>
 
@@ -63,35 +63,35 @@ export default async function CustomFormsPage() {
         />
 
         {/* Embed instructions */}
-        <section className="rounded-3xl border border-slate-200/80 dark:border-slate-700/50 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
-          <div className="flex items-center gap-4 px-7 py-5 border-b border-slate-100 dark:border-slate-700/30">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-500/10">
-              <Code2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+        <section className="rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
+          <div className="flex items-center gap-4 px-6 py-4 border-b border-dashboard-border">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-dashboard-card-hover">
+              <Code2 className="h-5 w-5 text-dashboard-accent" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-800 dark:text-white">Embed on Webflow & WordPress</h2>
-              <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Add your donation form to external sites</p>
+              <h2 className="text-base font-bold text-dashboard-text">Embed on Webflow & WordPress</h2>
+              <p className="text-sm text-dashboard-text-muted mt-0.5">Add your donation form to external sites</p>
             </div>
           </div>
-          <div className="p-7">
-            <ul className="space-y-5 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+          <div className="p-6">
+            <ul className="space-y-4 text-sm text-dashboard-text-muted leading-relaxed">
               <li className="flex gap-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400">1</span>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-dashboard-card-hover text-xs font-bold text-dashboard-accent">1</span>
                 <div>
-                  <strong className="text-slate-700 dark:text-slate-200 font-semibold">Webflow:</strong>{" "}
+                  <strong className="text-dashboard-text font-semibold">Webflow:</strong>{" "}
                   Add an Embed element, paste the iframe code into the Embed code field, then resize the block (e.g. 100% width, 600px height).
                 </div>
               </li>
               <li className="flex gap-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400">2</span>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-dashboard-card-hover text-xs font-bold text-dashboard-accent">2</span>
                 <div>
-                  <strong className="text-slate-700 dark:text-slate-200 font-semibold">WordPress:</strong>{" "}
+                  <strong className="text-dashboard-text font-semibold">WordPress:</strong>{" "}
                   Add a Custom HTML block and paste the iframe code, or use a plugin like &quot;Insert HTML Snippet&quot; or &quot;Embed Code&quot;.
                 </div>
               </li>
             </ul>
-            <p className="mt-5 text-xs text-slate-400 dark:text-slate-500">
-              Copy embed codes from the forms above.
+            <p className="mt-4 text-xs text-dashboard-text-muted">
+              Copy embed codes from the payment forms above.
             </p>
           </div>
         </section>

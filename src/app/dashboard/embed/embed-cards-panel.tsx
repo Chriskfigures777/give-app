@@ -504,7 +504,7 @@ export function EmbedCardsPanel({
     }
   }, [loading, cards, selectedCardId, hasDefaultForm]);
 
-  /** When hideWebsiteButton (Custom forms page), auto-open editor for first form (Main donation form or first custom form) */
+  /** When hideWebsiteButton (Payment forms page), auto-open editor for first form (Main donation form or first payment form) */
   useEffect(() => {
     if (hideWebsiteButton && !loading && editingId == null && !creating) {
       if (hasDefaultForm) {
@@ -741,10 +741,10 @@ export function EmbedCardsPanel({
       {/* Section header */}
       <div className="flex flex-wrap items-start justify-between gap-6 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-dashboard-text">Custom forms</h2>
+          <h2 className="text-xl font-bold text-dashboard-text">Payment forms</h2>
           <p className="text-sm text-dashboard-text-muted mt-1.5 max-w-lg leading-relaxed">
             {hideWebsiteButton
-              ? "Create as many forms as you need. Each form has its own design, embed code, and payment splits. Share different forms with different partners — configure splits per form for each use case."
+              ? "Create as many payment forms as you need. Each form has its own design, embed code, and payment splits. Share different forms with different partners — configure splits per form for each use case."
               : "Build donation forms for your org page and website. Use the buttons below to assign which form appears where."}
           </p>
         </div>
@@ -752,14 +752,14 @@ export function EmbedCardsPanel({
           type="button"
           onClick={() => setCreating(true)}
           disabled={creating}
-          className="inline-flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:bg-emerald-900/30 dark:border-emerald-700/50 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
+          className="inline-flex items-center gap-2.5 rounded-xl border border-dashboard-border bg-dashboard-card px-5 py-3 text-sm font-semibold text-dashboard-text hover:bg-dashboard-card-hover transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-dashboard-accent/40 focus:ring-offset-2 focus:ring-offset-dashboard-bg"
         >
           <Plus className="h-4 w-4" />
           Add form
         </button>
       </div>
 
-      {/* When hideWebsiteButton (Custom forms page): form selector + editor as main content. Else: tabs. */}
+      {/* When hideWebsiteButton (Payment forms page): form selector + editor as main content. Else: tabs. */}
       {hideWebsiteButton ? (
         <div className="mb-6 flex flex-wrap items-center gap-4">
           {(hasDefaultForm || cards.length > 0) && (
@@ -775,7 +775,7 @@ export function EmbedCardsPanel({
                     setSelectedCardId(id);
                   }
                 }}
-                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-medium text-dashboard-text"
+                className="rounded-xl border border-dashboard-input-border bg-dashboard-card px-4 py-2.5 text-sm font-medium text-dashboard-text"
               >
                 {defaultCard && (
                   <option key={defaultCard.id} value={defaultCard.id}>{defaultCard.name}</option>
@@ -789,7 +789,7 @@ export function EmbedCardsPanel({
         </div>
       ) : (
         <div className="mb-6">
-          <div className="inline-flex items-center gap-1 p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
+          <div className="inline-flex items-center gap-1 p-1 rounded-2xl bg-dashboard-card-hover/80 border border-dashboard-border">
             <button
               type="button"
               onClick={() => setActiveTab("forms")}
@@ -833,7 +833,7 @@ export function EmbedCardsPanel({
 
       {/* Editor content: when hideWebsiteButton always show editor; else only when Edit form tab */}
       {(hideWebsiteButton || activeTab === "edit") && (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+        <div className="rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
           {editingCard ? (
             hideWebsiteButton ? (
               <CustomFormEditor
@@ -862,11 +862,11 @@ export function EmbedCardsPanel({
             )
           ) : hideWebsiteButton && !loading && cards.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-dashboard-text-muted mb-4">Create your first custom form to get started.</p>
+              <p className="text-dashboard-text-muted mb-4">Create your first payment form to get started.</p>
               <button
                 type="button"
                 onClick={() => setCreating(true)}
-                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                className="rounded-xl bg-dashboard-accent px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
               >
                 Create form
               </button>
@@ -877,7 +877,7 @@ export function EmbedCardsPanel({
               <button
                 type="button"
                 onClick={() => setActiveTab("forms")}
-                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                className="rounded-xl bg-dashboard-accent px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
               >
                 Go to My forms
               </button>
@@ -895,19 +895,19 @@ export function EmbedCardsPanel({
         <>
       {/* Empty state */}
       {!loading && displayCards.length === 0 && (
-        <div className="rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 p-12 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-50 dark:bg-emerald-900/30 mx-auto mb-5">
-            <Layout className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+        <div className="rounded-3xl border-2 border-dashed border-dashboard-border bg-dashboard-card/50 p-12 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-dashboard-card-hover mx-auto mb-5">
+            <Layout className="h-7 w-7 text-dashboard-accent" />
           </div>
-          <p className="text-base font-semibold text-dashboard-text mb-2">No custom forms yet</p>
-          <p className="text-sm text-dashboard-text-muted mb-6 max-w-md mx-auto">Create forms with different designs and splits for different partners. Each form gets its own embed code — share with whoever needs it.</p>
+          <p className="text-base font-semibold text-dashboard-text mb-2">No payment forms yet</p>
+          <p className="text-sm text-dashboard-text-muted mb-6 max-w-md mx-auto">Create payment forms with different designs and splits for different partners. Each form gets its own embed code — share with whoever needs it.</p>
           <button
             type="button"
             onClick={() => setCreating(true)}
-            className="inline-flex items-center gap-2.5 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg shadow-emerald-500/20"
+            className="inline-flex items-center gap-2.5 rounded-xl bg-dashboard-accent px-6 py-3 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-dashboard-accent/40 focus:ring-offset-2 focus:ring-offset-dashboard-bg transition-opacity"
           >
             <Plus className="h-4 w-4" />
-            Create your first custom form
+            Create your first payment form
           </button>
         </div>
       )}
@@ -942,16 +942,16 @@ export function EmbedCardsPanel({
                     } else setEditingId(null);
                   }
                 }}
-                className={`group relative w-full rounded-2xl border-2 overflow-hidden transition-all duration-200 cursor-pointer bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-800/80 ${
+                className={`group relative w-full rounded-2xl border-2 overflow-hidden transition-all duration-200 cursor-pointer bg-dashboard-card ${
                   selectedCardId === card.id
-                    ? "border-emerald-500 shadow-lg shadow-emerald-500/10"
-                    : "border-transparent hover:border-slate-200 dark:hover:border-slate-600"
+                    ? "border-dashboard-accent shadow-lg"
+                    : "border-transparent hover:border-dashboard-border"
                 }`}
                 style={{ boxShadow: selectedCardId === card.id ? undefined : "0 1px 3px rgba(0,0,0,0.04)" }}
               >
                 {/* Selection check */}
                 {selectedCardId === card.id && (
-                  <div className="absolute top-2.5 left-2.5 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 shadow-sm">
+                  <div className="absolute top-2.5 left-2.5 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-dashboard-accent shadow-sm">
                     <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   </div>
                 )}
@@ -969,13 +969,13 @@ export function EmbedCardsPanel({
                   {renderCardGridThumb(card)}
                 </div>
                 {/* Label footer */}
-                <div className="px-4 py-3 flex items-center gap-2 border-t border-slate-100 dark:border-slate-700/50">
-                  <Layout className={`h-3.5 w-3.5 shrink-0 ${selectedCardId === card.id ? "text-emerald-600" : "text-slate-400"}`} />
+                <div className="px-4 py-3 flex items-center gap-2 border-t border-dashboard-border">
+                  <Layout className={`h-3.5 w-3.5 shrink-0 ${selectedCardId === card.id ? "text-dashboard-accent" : "text-dashboard-text-muted"}`} />
                   <div className="flex flex-col min-w-0">
-                    <span className={`text-sm font-semibold truncate ${selectedCardId === card.id ? "text-emerald-700 dark:text-emerald-300" : "text-slate-700 dark:text-slate-200"}`}>
+                    <span className={`text-sm font-semibold truncate ${selectedCardId === card.id ? "text-dashboard-accent" : "text-dashboard-text"}`}>
                       {card.name}
                     </span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+                    <span className="text-[10px] text-dashboard-text-muted truncate">
                       {STYLE_LABELS[card.style] ?? card.style}
                     </span>
                   </div>
@@ -986,15 +986,15 @@ export function EmbedCardsPanel({
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); handleCopyIframe(card.id); }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dashboard-accent hover:opacity-90 text-white text-xs font-medium transition-opacity shadow-sm"
                 >
                   {copiedId === card.id ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                   {copiedId === card.id ? "Copied" : "Copy embed"}
                 </button>
                 {card.id !== DEFAULT_FORM_ID && (
                   <>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingId(card.id); setActiveTab("edit"); }} className="p-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); handleDuplicate(card); }} className="p-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Duplicate"><CopyPlus className="h-3.5 w-3.5" /></button>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setEditingId(card.id); setActiveTab("edit"); }} className="p-2 rounded-xl border border-dashboard-border text-dashboard-text-muted hover:bg-dashboard-card-hover transition-colors" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); handleDuplicate(card); }} className="p-2 rounded-xl border border-dashboard-border text-dashboard-text-muted hover:bg-dashboard-card-hover transition-colors" title="Duplicate"><CopyPlus className="h-3.5 w-3.5" /></button>
                     <button type="button" onClick={(e) => { e.stopPropagation(); handleDelete(card.id, card.name); }} className="p-2 rounded-xl border border-red-200 dark:border-red-800/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
                     {(card.page_section ?? "donation") === "donation" && (
                       pageCardId === card.id ? (
@@ -1025,12 +1025,12 @@ export function EmbedCardsPanel({
               type="button"
               onClick={() => setCreating(true)}
               disabled={creating}
-              className="min-h-[160px] rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-emerald-400/60 hover:bg-emerald-50/30 dark:hover:border-emerald-600/40 dark:hover:bg-emerald-900/10 flex flex-col items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50"
+              className="min-h-[160px] rounded-2xl border-2 border-dashed border-dashboard-border bg-dashboard-card/50 hover:border-dashboard-accent/50 hover:bg-dashboard-card-hover/50 flex flex-col items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700">
-                <Plus className="h-6 w-6 text-slate-400 dark:text-slate-500" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-dashboard-card-hover">
+                <Plus className="h-6 w-6 text-dashboard-text-muted" />
               </div>
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Add form</span>
+              <span className="text-sm font-medium text-dashboard-text-muted">Add form</span>
             </button>
           </div>
         </div>
@@ -1038,19 +1038,19 @@ export function EmbedCardsPanel({
         </>
       )}
 
-      {/* Recently deleted — show on both Custom forms page and embed tabs */}
+      {/* Recently deleted — show on both Payment forms page and embed tabs */}
       {deletedCards.length > 0 && (
         <div className="mt-10 rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/20 p-6">
           <p className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-2">Recently deleted</p>
-          <p className="text-xs text-amber-700 dark:text-amber-300 mb-4">Forms you deleted can be restored here. Click Restore to add them back to your custom forms.</p>
+          <p className="text-xs text-amber-700 dark:text-amber-300 mb-4">Forms you deleted can be restored here. Click Restore to add them back to your payment forms.</p>
           <ul className="space-y-2">
             {deletedCards.map((card) => (
-              <li key={card.id} className="flex items-center justify-between rounded-xl border border-amber-200 dark:border-amber-800/50 bg-white dark:bg-slate-900 px-4 py-3">
+              <li key={card.id} className="flex items-center justify-between rounded-xl border border-amber-200 dark:border-amber-800/50 bg-dashboard-card px-4 py-3">
                 <span className="text-sm font-medium text-dashboard-text">{card.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRestore(card.id)}
-                  className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                  className="rounded-xl bg-dashboard-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity shadow-sm"
                 >
                   Restore
                 </button>
@@ -1093,7 +1093,7 @@ export function EmbedCardsPanel({
   );
 }
 
-/** Full panel editor for custom forms — like ThemeFormEditor, not Typeform wizard. */
+/** Full panel editor for payment forms — like ThemeFormEditor, not Typeform wizard. */
 function CustomFormEditor({
   card,
   organizationName,

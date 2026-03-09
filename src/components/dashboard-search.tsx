@@ -56,7 +56,7 @@ const DASHBOARD_PAGES: DashboardPage[] = [
   { label: "Website builder", href: "/dashboard/pages", keywords: "website builder pages site design", icon: <Layout className="h-4 w-4" /> },
   { label: "Website content", href: "/dashboard/pages/cms", keywords: "website content cms pages blog articles", icon: <FileStack className="h-4 w-4" /> },
   { label: "Website form", href: "/dashboard/pages?openForm=1", keywords: "website form form design donation form customization branding colors logo", icon: <Palette className="h-4 w-4" /> },
-  { label: "Custom forms", href: "/dashboard/custom-forms", keywords: "custom forms embed forms donation form embed webflow wordpress", icon: <Code2 className="h-4 w-4" /> },
+  { label: "Payment forms", href: "/dashboard/custom-forms", keywords: "payment forms custom forms embed forms donation form embed webflow wordpress", icon: <Code2 className="h-4 w-4" /> },
   { label: "My Profile", href: "/dashboard/account", keywords: "my profile account personal info name photo", icon: <UserCircle className="h-4 w-4" /> },
   { label: "Settings", href: "/dashboard/settings", keywords: "settings preferences configuration domain", icon: <Settings className="h-4 w-4" /> },
   { label: "Plan & billing", href: "/dashboard/billing", keywords: "plan billing subscription pricing upgrade", icon: <Receipt className="h-4 w-4" /> },

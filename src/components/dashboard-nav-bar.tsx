@@ -24,7 +24,7 @@ const TITLE_MAP: Record<string, string> = {
   "/dashboard/profile": "Public Page",
   "/dashboard/pages": "Website Builder",
   "/dashboard/pages/cms": "Website Content",
-  "/dashboard/custom-forms": "Custom Forms",
+  "/dashboard/custom-forms": "Payment Forms",
   "/dashboard/account": "My Profile",
   "/dashboard/settings": "Settings",
   "/dashboard/billing": "Plan & Billing",

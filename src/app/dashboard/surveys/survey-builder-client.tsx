@@ -260,7 +260,7 @@ export function SurveyBuilder({
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <p className="text-xs font-bold text-dashboard-text tracking-tight">
+            <p className="text-sm font-bold text-white tracking-tight">
               Questions
               {questions.length > 0 && (
                 <span className="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold" style={{ background: `${accentColor}22`, color: accentColor }}>
@@ -288,27 +288,27 @@ export function SurveyBuilder({
                   key={i}
                   type="button"
                   onClick={() => setActiveQ(i)}
-                  className="group w-full flex items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-all border"
+                  className="group w-full flex items-start gap-2.5 rounded-xl px-3 py-3 text-left transition-all border"
                   style={isActive
                     ? { borderColor: `${accentColor}30`, background: `${accentColor}12` }
                     : { borderColor: "transparent", background: "transparent" }
                   }
                 >
                   <span
-                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-lg text-[9px] font-black tabular-nums"
+                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[10px] font-black tabular-nums"
                     style={isActive
                       ? { background: accentColor, color: "white" }
-                      : { background: "rgba(255,255,255,0.10)", color: "#c4cad8" }
+                      : { background: "rgba(255,255,255,0.13)", color: "#dde1ec" }
                     }
                   >
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold leading-snug line-clamp-2 transition-colors" style={{ color: isActive ? "#eef0f6" : "#c4cad8" }}>
-                      {q.text || <span className="italic" style={{ opacity: 0.45 }}>Untitled</span>}
+                    <p className="text-sm font-semibold leading-snug line-clamp-2 transition-colors" style={{ color: isActive ? "#ffffff" : "#dde1ec" }}>
+                      {q.text || <span className="italic font-normal" style={{ opacity: 0.5 }}>Untitled</span>}
                     </p>
-                    <div className="mt-0.5 flex items-center gap-1 text-[10px]" style={{ color: isActive ? accentColor : "#8891a5" }}>
-                      {meta?.icon && <span className="[&_svg]:h-3 [&_svg]:w-3">{meta.icon}</span>}
+                    <div className="mt-1 flex items-center gap-1 text-xs" style={{ color: isActive ? accentColor : "#9aa0b2" }}>
+                      {meta?.icon && <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">{meta.icon}</span>}
                       {meta?.label}
                     </div>
                   </div>

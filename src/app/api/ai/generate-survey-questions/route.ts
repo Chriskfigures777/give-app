@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { requireAuth } from "@/lib/auth";
 import { getRemainingCredits, recordUsage } from "@/lib/ai-credits";
+import { createNotification } from "@/lib/notifications";
 
 export type SurveyQuestion = { id?: string; text: string; type: "multiple_choice" | "short_answer"; options?: string[] };
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let body: { noteId?: string; content?: string; count?: number };
+    let body: { noteId?: string; noteTitle?: string; content?: string; count?: number };
     try {
       body = await req.json();
     } catch {
@@ -29,17 +30,20 @@ export async function POST(req: NextRequest) {
     }
 
     let content = typeof body.content === "string" ? body.content.trim() : "";
+    let noteTitle: string | undefined = typeof body.noteTitle === "string" ? body.noteTitle.trim() || undefined : undefined;
     if (body.noteId && !content) {
       const { data: note, error } = await supabase
         .from("pastor_notes")
-        .select("content")
+        .select("content, title")
         .eq("id", body.noteId)
         .eq("organization_id", orgId)
         .single();
       if (error || !note) {
         return NextResponse.json({ error: "Note not found" }, { status: 404 });
       }
-      content = (note as { content: string }).content?.trim() ?? "";
+      const row = note as { content: string; title?: string };
+      content = row.content?.trim() ?? "";
+      if (!noteTitle && row.title) noteTitle = row.title.trim() || undefined;
     }
 
     if (!content) {
@@ -88,6 +92,18 @@ ${content.slice(0, 25000)}
     }
 
     await recordUsage(orgId, user.id, 1);
+
+    // Notify the user that AI questions are ready (shows in dashboard notification bell)
+    if (body.noteId) {
+      await createNotification({
+        userId: user.id,
+        type: "ai_questions_ready",
+        payload: {
+          note_id: body.noteId,
+          note_title: noteTitle ?? "Untitled",
+        },
+      });
+    }
 
     return NextResponse.json({ questions });
   } catch (e) {

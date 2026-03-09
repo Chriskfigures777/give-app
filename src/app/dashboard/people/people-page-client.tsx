@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Users, TrendingUp, Heart, FileText, ClipboardList,
   UserCircle, UserPlus, X, Loader2, Search, Tag, Send,
-  Mail, MessageSquare, Settings2, ChevronDown,
+  Mail, MessageSquare, Settings2, ChevronDown, SlidersHorizontal,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -30,13 +31,9 @@ type EngagementFilter = "all" | "green" | "yellow" | "red" | "none";
 // ─── Engagement helpers ────────────────────────────────────────────────────────
 
 const THRESHOLD_KEY = "give_people_engagement_threshold_v1";
-
 type EngagementLevel = "green" | "yellow" | "red" | "none";
 
-function calcEngagement(
-  responseCount: number,
-  threshold: number
-): EngagementLevel {
+function calcEngagement(responseCount: number, threshold: number): EngagementLevel {
   if (threshold <= 0) return "none";
   if (responseCount >= threshold) return "green";
   if (responseCount >= Math.max(1, Math.ceil(threshold / 2))) return "yellow";
@@ -44,29 +41,14 @@ function calcEngagement(
   return "none";
 }
 
-const ENGAGEMENT_CFG: Record<EngagementLevel, { label: string; color: string; bg: string; border: string; emoji: string }> = {
-  green:  { label: "Active",    emoji: "🟢", color: "#10b981", bg: "rgba(16,185,129,0.12)",  border: "rgba(16,185,129,0.35)" },
-  yellow: { label: "Engaged",   emoji: "🟡", color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  border: "rgba(245,158,11,0.35)" },
-  red:    { label: "Inactive",  emoji: "🔴", color: "#ef4444", bg: "rgba(239,68,68,0.12)",   border: "rgba(239,68,68,0.35)" },
-  none:   { label: "No data",   emoji: "⚫", color: "#6b7280", bg: "rgba(107,114,128,0.1)",  border: "rgba(107,114,128,0.2)" },
+const ENGAGEMENT_CFG: Record<EngagementLevel, { label: string; color: string; bg: string; border: string; dot: string }> = {
+  green:  { label: "Active",   dot: "🟢", color: "#10b981", bg: "rgba(16,185,129,0.12)",  border: "rgba(16,185,129,0.35)" },
+  yellow: { label: "Engaged",  dot: "🟡", color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  border: "rgba(245,158,11,0.35)" },
+  red:    { label: "Inactive", dot: "🔴", color: "#ef4444", bg: "rgba(239,68,68,0.12)",   border: "rgba(239,68,68,0.35)" },
+  none:   { label: "No data",  dot: "⚫", color: "#6b7280", bg: "rgba(107,114,128,0.1)",  border: "rgba(107,114,128,0.2)" },
 };
 
-function EngagementBadge({ level, count, threshold }: { level: EngagementLevel; count: number; threshold: number }) {
-  if (level === "none" && count === 0) return null;
-  const cfg = ENGAGEMENT_CFG[level];
-  return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap"
-      style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}
-      title={`${count} surveys in last 30 days (threshold: ${threshold})`}
-    >
-      {cfg.emoji} {cfg.label}
-      {count > 0 && <span className="opacity-70 ml-0.5">({count})</span>}
-    </span>
-  );
-}
-
-// ─── Avatars & source tags ─────────────────────────────────────────────────────
+// ─── Avatars ──────────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
   "bg-blue-500/20 text-blue-400",
@@ -94,33 +76,92 @@ function initials(name: string | null, email: string | null) {
 }
 
 function getSourceTags(source: string, breakdown: Record<string, number>) {
-  const tags: { label: string; color: string; icon: React.ReactNode }[] = [];
+  const tags: { label: string; color: string }[] = [];
   if ((breakdown.donation ?? 0) > 0)
-    tags.push({ label: "Giver", color: "bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/20", icon: <Heart className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Giver",      color: "bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/20" });
   if ((breakdown.member ?? 0) > 0)
-    tags.push({ label: "Member", color: "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20", icon: <UserCircle className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Member",     color: "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20" });
   if ((breakdown.get_started ?? 0) > 0)
-    tags.push({ label: "Get started", color: "bg-teal-500/15 text-teal-400 ring-1 ring-teal-500/20", icon: <TrendingUp className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Get started",color: "bg-teal-500/15 text-teal-400 ring-1 ring-teal-500/20" });
   if ((breakdown.form ?? 0) > 0 && tags.length === 0)
-    tags.push({ label: "Form", color: "bg-violet-500/15 text-violet-400 ring-1 ring-violet-500/20", icon: <FileText className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Form",       color: "bg-violet-500/15 text-violet-400 ring-1 ring-violet-500/20" });
   if ((breakdown.survey ?? 0) > 0)
-    tags.push({ label: "Survey", color: "bg-orange-500/15 text-orange-400 ring-1 ring-orange-500/20", icon: <ClipboardList className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Survey",     color: "bg-orange-500/15 text-orange-400 ring-1 ring-orange-500/20" });
   if (source === "manual" || (breakdown.manual ?? 0) > 0)
-    tags.push({ label: "Manual", color: "bg-slate-500/15 text-slate-400 ring-1 ring-slate-500/20", icon: <UserPlus className="h-2.5 w-2.5" /> });
+    tags.push({ label: "Manual",     color: "bg-slate-500/15 text-slate-400 ring-1 ring-slate-500/20" });
   if (tags.length === 0)
-    tags.push({ label: source, color: "bg-slate-500/15 text-slate-400 ring-1 ring-slate-500/20", icon: <Users className="h-2.5 w-2.5" /> });
+    tags.push({ label: source,       color: "bg-slate-500/15 text-slate-400 ring-1 ring-slate-500/20" });
   return tags;
+}
+
+// ─── Dropdown ─────────────────────────────────────────────────────────────────
+
+function FilterDropdown<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: T;
+  options: { value: T; label: string; count?: number }[];
+  onChange: (v: T) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = options.find((o) => o.value === value);
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
+  const isFiltered = value !== options[0].value;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={[
+          "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-all whitespace-nowrap",
+          isFiltered
+            ? "border-emerald-500/40 bg-emerald-500/8 text-emerald-400"
+            : "border-dashboard-border bg-dashboard-card text-dashboard-text-muted hover:text-dashboard-text hover:border-dashboard-border/80",
+        ].join(" ")}
+      >
+        <span className="text-xs text-dashboard-text-muted font-medium">{label}:</span>
+        <span className={isFiltered ? "text-emerald-400 font-semibold" : "text-dashboard-text font-medium"}>{selected?.label}</span>
+        <ChevronDown className={`h-3.5 w-3.5 opacity-50 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 z-30 mt-1.5 min-w-[180px] rounded-xl border border-dashboard-border bg-dashboard-card shadow-2xl overflow-hidden">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 text-sm text-left hover:bg-dashboard-card-hover transition-colors"
+            >
+              <span className={opt.value === value ? "text-emerald-400 font-semibold" : "text-dashboard-text"}>{opt.label}</span>
+              <div className="flex items-center gap-2">
+                {opt.count !== undefined && (
+                  <span className="text-xs font-medium text-dashboard-text-muted tabular-nums">{opt.count}</span>
+                )}
+                {opt.value === value && <Check className="h-3.5 w-3.5 text-emerald-400" />}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── Broadcast Modal ──────────────────────────────────────────────────────────
 
-type BroadcastModalProps = {
-  contacts: ContactRow[];
-  tags: CrmTag[];
-  onClose: () => void;
-};
-
-function BroadcastModal({ contacts, tags, onClose }: BroadcastModalProps) {
+function BroadcastModal({ contacts, tags, onClose }: { contacts: ContactRow[]; tags: CrmTag[]; onClose: () => void }) {
   const [channel, setChannel] = useState<"email" | "sms">("email");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -282,86 +323,6 @@ function TagManager({ tags, onClose, onTagsChanged }: { tags: CrmTag[]; onClose:
   );
 }
 
-// ─── Engagement Threshold Widget ──────────────────────────────────────────────
-
-function EngagementThresholdWidget({
-  threshold,
-  onChange,
-  counts,
-}: {
-  threshold: number;
-  onChange: (v: number) => void;
-  counts: { green: number; yellow: number; red: number; none: number; total: number };
-}) {
-  const [editing, setEditing] = useState(false);
-  const [localVal, setLocalVal] = useState(String(threshold));
-
-  const applyEdit = () => {
-    const n = Math.max(1, Number(localVal) || threshold);
-    onChange(n);
-    setEditing(false);
-  };
-
-  return (
-    <div
-      className="rounded-2xl p-4 dashboard-fade-in-delay-1 flex flex-wrap gap-4 items-center justify-between"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      {/* Tiers */}
-      <div className="flex items-center gap-4 flex-wrap">
-        {(["green", "yellow", "red", "none"] as const).map((k) => {
-          const cfg = ENGAGEMENT_CFG[k];
-          return (
-            <div key={k} className="flex items-center gap-1.5 text-sm">
-              <span>{cfg.emoji}</span>
-              <span className="font-bold" style={{ color: cfg.color }}>{counts[k]}</span>
-              <span className="text-dashboard-text-muted text-xs">{cfg.label}</span>
-            </div>
-          );
-        })}
-        {/* Engagement bar */}
-        {counts.total > 0 && (
-          <div className="flex gap-0.5 h-2 w-32 rounded-full overflow-hidden">
-            {(["green", "yellow", "red"] as const).map((k) => (
-              <div key={k} className="rounded-full" style={{ width: `${(counts[k] / counts.total) * 100}%`, background: ENGAGEMENT_CFG[k].color }} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Threshold control */}
-      <div className="flex items-center gap-2 text-sm">
-        <Settings2 className="h-3.5 w-3.5 text-dashboard-text-muted shrink-0" />
-        <span className="text-dashboard-text-muted text-xs">Active threshold:</span>
-        {editing ? (
-          <div className="flex items-center gap-1">
-            <input
-              type="number"
-              min={1}
-              value={localVal}
-              onChange={(e) => setLocalVal(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && applyEdit()}
-              className="w-14 rounded-lg border border-dashboard-border bg-dashboard-card px-2 py-1 text-xs text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-              autoFocus
-            />
-            <span className="text-xs text-dashboard-text-muted">surveys/mo</span>
-            <button onClick={applyEdit} className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 px-1">Save</button>
-          </div>
-        ) : (
-          <button
-            onClick={() => { setLocalVal(String(threshold)); setEditing(true); }}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-dashboard-text hover:bg-dashboard-card-hover transition-colors"
-            style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            {threshold} surveys/mo
-            <ChevronDown className="h-3 w-3 opacity-60" />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function PeoplePageClient({
@@ -378,6 +339,8 @@ export function PeoplePageClient({
   const [engagementFilter, setEngagementFilter] = useState<EngagementFilter>("all");
   const [search, setSearch] = useState("");
   const [threshold, setThreshold] = useState(4);
+  const [editingThreshold, setEditingThreshold] = useState(false);
+  const [localThreshold, setLocalThreshold] = useState("4");
   const [showAdd, setShowAdd] = useState(false);
   const [showBroadcast, setShowBroadcast] = useState(false);
   const [showTagManager, setShowTagManager] = useState(false);
@@ -385,20 +348,30 @@ export function PeoplePageClient({
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+  const thresholdRef = useRef<HTMLDivElement>(null);
 
-  // Persist threshold
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (thresholdRef.current && !thresholdRef.current.contains(e.target as Node)) {
+        setEditingThreshold(false);
+      }
+    }
+    if (editingThreshold) document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [editingThreshold]);
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem(THRESHOLD_KEY);
       if (saved) setThreshold(Math.max(1, Number(saved)));
     } catch {}
   }, []);
+
   const setAndSaveThreshold = useCallback((v: number) => {
     setThreshold(v);
     try { localStorage.setItem(THRESHOLD_KEY, String(v)); } catch {}
   }, []);
 
-  // Compute engagement for every contact
   const engagementMap = useMemo<Record<string, EngagementLevel>>(() => {
     const map: Record<string, EngagementLevel> = {};
     for (const c of contacts) {
@@ -409,7 +382,6 @@ export function PeoplePageClient({
     return map;
   }, [contacts, surveyResponseCounts, threshold]);
 
-  // Engagement counts
   const engagementCounts = useMemo(() => {
     const counts = { green: 0, yellow: 0, red: 0, none: 0, total: contacts.length };
     for (const level of Object.values(engagementMap)) counts[level]++;
@@ -422,13 +394,21 @@ export function PeoplePageClient({
   const totalSurvey  = contacts.filter((c) => (c.sources_breakdown?.survey ?? 0) > 0).length;
   const totalManual  = contacts.filter((c) => c.source === "manual" || (c.sources_breakdown?.manual ?? 0) > 0).length;
 
-  const tabDefs: { id: Tab; label: string; count: number; icon: React.ReactNode; color: string }[] = [
-    { id: "all",     label: "All",            count: contacts.length, icon: <Users className="h-3.5 w-3.5" />,        color: "text-dashboard-text" },
-    { id: "givers",  label: "Givers",         count: totalDonors,     icon: <Heart className="h-3.5 w-3.5" />,        color: "text-blue-400" },
-    { id: "members", label: "Members",        count: totalMembers,    icon: <UserCircle className="h-3.5 w-3.5" />,   color: "text-emerald-400" },
-    { id: "form",    label: "Form",           count: totalForm,       icon: <FileText className="h-3.5 w-3.5" />,     color: "text-violet-400" },
-    { id: "survey",  label: "Survey",         count: totalSurvey,     icon: <ClipboardList className="h-3.5 w-3.5" />,color: "text-orange-400" },
-    { id: "manual",  label: "Added manually", count: totalManual,     icon: <UserPlus className="h-3.5 w-3.5" />,     color: "text-slate-400" },
+  const sourceOptions: { value: Tab; label: string; count: number }[] = [
+    { value: "all",     label: "All contacts",   count: contacts.length },
+    { value: "givers",  label: "Givers",          count: totalDonors },
+    { value: "members", label: "Members",         count: totalMembers },
+    { value: "form",    label: "Form",            count: totalForm },
+    { value: "survey",  label: "Survey",          count: totalSurvey },
+    { value: "manual",  label: "Added manually",  count: totalManual },
+  ];
+
+  const engagementOptions: { value: EngagementFilter; label: string; count: number }[] = [
+    { value: "all",    label: "All engagement",   count: contacts.length },
+    { value: "green",  label: "🟢 Active",         count: engagementCounts.green },
+    { value: "yellow", label: "🟡 Engaged",        count: engagementCounts.yellow },
+    { value: "red",    label: "🔴 Inactive",       count: engagementCounts.red },
+    { value: "none",   label: "⚫ No data",        count: engagementCounts.none },
   ];
 
   const visible = useMemo(() => {
@@ -458,6 +438,8 @@ export function PeoplePageClient({
     return list;
   }, [contacts, tab, engagementFilter, search, engagementMap]);
 
+  const activeFilters = (tab !== "all" ? 1 : 0) + (engagementFilter !== "all" ? 1 : 0) + (search.trim() ? 1 : 0);
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setAddError(null);
@@ -480,192 +462,314 @@ export function PeoplePageClient({
     } catch {}
   }, []);
 
+  function applyThreshold() {
+    const n = Math.max(1, Number(localThreshold) || threshold);
+    setAndSaveThreshold(n);
+    setEditingThreshold(false);
+  }
+
   return (
-    <div className="space-y-5 p-3 sm:p-5">
-      {/* Header */}
-      <div className="dashboard-fade-in flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-xl bg-violet-500/15 flex items-center justify-center">
-              <Users className="h-4 w-4 text-violet-400" />
-            </div>
-            <h1 className="text-2xl font-black tracking-tight text-dashboard-text">People</h1>
-            {contacts.length > 0 && (
-              <span className="rounded-full bg-violet-500/15 text-violet-400 text-xs font-bold px-2.5 py-0.5">
+    <div className="flex flex-col h-full">
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-5 pt-5 pb-4 border-b border-dashboard-border">
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 rounded-xl bg-violet-500/15 flex items-center justify-center shrink-0">
+            <Users className="h-4 w-4 text-violet-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-dashboard-text">People</h1>
+              <span className="rounded-full bg-dashboard-card-hover px-2 py-0.5 text-xs font-semibold text-dashboard-text-muted">
                 {contacts.length}
               </span>
-            )}
+            </div>
+            <p className="text-xs text-dashboard-text-muted leading-tight">
+              Your CRM — engagement from survey responses (last 30 days)
+            </p>
           </div>
-          <p className="text-sm text-dashboard-text-muted">
-            Your CRM — everyone connected to your organization. Engagement based on survey responses (last 30 days).
-          </p>
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
-          <Button onClick={() => setShowTagManager(true)} variant="secondary" size="sm" className="gap-1.5"><Tag className="h-3.5 w-3.5" /> Tags</Button>
-          <Button onClick={() => setShowBroadcast(true)} variant="secondary" size="sm" className="gap-1.5"><Send className="h-3.5 w-3.5" /> Broadcast</Button>
-          <Button onClick={() => setShowAdd(true)} className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white" size="sm"><UserPlus className="h-4 w-4" /> Add person</Button>
+          <Button onClick={() => setShowTagManager(true)} variant="secondary" size="sm" className="gap-1.5 text-xs">
+            <Tag className="h-3.5 w-3.5" /> Tags
+          </Button>
+          <Button onClick={() => setShowBroadcast(true)} variant="secondary" size="sm" className="gap-1.5 text-xs">
+            <Send className="h-3.5 w-3.5" /> Broadcast
+          </Button>
+          <Button onClick={() => setShowAdd(true)} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs" size="sm">
+            <UserPlus className="h-3.5 w-3.5" /> Add person
+          </Button>
         </div>
       </div>
 
-      {/* Engagement widget */}
-      <EngagementThresholdWidget
-        threshold={threshold}
-        onChange={setAndSaveThreshold}
-        counts={engagementCounts}
-      />
-
-      {/* Stats row */}
-      <div className="dashboard-fade-in-delay-1 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {tabDefs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => { setTab(t.id); setEngagementFilter("all"); }}
-            className={["rounded-xl border p-4 text-left transition-all shadow-sm", tab === t.id && engagementFilter === "all" ? "border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/20" : "border-dashboard-border bg-dashboard-card hover:border-dashboard-border/80 hover:bg-dashboard-card-hover"].join(" ")}
-          >
-            <div className={`mb-2 inline-flex rounded-lg p-1.5 ${tab === t.id ? "bg-emerald-500/15" : "bg-dashboard-card-hover"} ${t.color}`}>{t.icon}</div>
-            <p className={`text-2xl font-bold tabular-nums ${t.color}`}>{t.count}</p>
-            <p className="mt-0.5 text-xs text-dashboard-text-muted">{t.label}</p>
-          </button>
-        ))}
-      </div>
-
-      {/* Engagement filter chips */}
-      <div className="flex flex-wrap gap-2 dashboard-fade-in-delay-2">
-        <span className="text-xs text-dashboard-text-muted self-center">Engagement:</span>
-        {(["all", "green", "yellow", "red", "none"] as EngagementFilter[]).map((e) => {
-          const isAll = e === "all";
-          const cfg = isAll ? null : ENGAGEMENT_CFG[e];
-          const count = isAll
-            ? contacts.length
-            : Object.values(engagementMap).filter((v) => v === e).length;
-          const active = engagementFilter === e;
-          return (
-            <button
-              key={e}
-              type="button"
-              onClick={() => setEngagementFilter(e)}
-              className="rounded-xl px-3 py-1.5 text-xs font-medium transition-all"
-              style={active ? {
-                background: cfg ? cfg.bg : "rgba(255,255,255,0.1)",
-                color: cfg ? cfg.color : "hsl(var(--dashboard-text))",
-                border: `1px solid ${cfg ? cfg.border : "rgba(255,255,255,0.15)"}`,
-              } : {
-                color: "hsl(var(--dashboard-text-muted))",
-                border: "1px solid transparent",
-              }}
-            >
-              {isAll ? `All (${count})` : `${cfg!.emoji} ${cfg!.label} (${count})`}
+      {/* ── Filter toolbar ───────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2.5 px-5 py-3.5 border-b border-dashboard-border bg-dashboard-card/40">
+        {/* Search */}
+        <div className="relative min-w-[220px] flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-dashboard-text-muted pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, email, or phone…"
+            className="w-full rounded-lg border border-dashboard-border bg-dashboard-card pl-9 pr-4 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted hover:text-dashboard-text">
+              <X className="h-3.5 w-3.5" />
             </button>
-          );
-        })}
-      </div>
+          )}
+        </div>
 
-      {/* Table */}
-      <div className="dashboard-fade-in-delay-2 rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
-        <div className="border-b border-dashboard-border px-5 py-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-dashboard-text-muted pointer-events-none" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, email, phone…"
-              className="w-full rounded-lg border border-dashboard-border bg-dashboard-card-hover pl-9 pr-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-            />
-          </div>
-          <span className="rounded-full bg-dashboard-card-hover px-2.5 py-0.5 text-xs text-dashboard-text-muted">
+        {/* Source filter */}
+        <FilterDropdown<Tab>
+          label="Source"
+          value={tab}
+          options={sourceOptions}
+          onChange={(v) => setTab(v)}
+        />
+
+        {/* Engagement filter */}
+        <FilterDropdown<EngagementFilter>
+          label="Engagement"
+          value={engagementFilter}
+          options={engagementOptions}
+          onChange={(v) => setEngagementFilter(v)}
+        />
+
+        {/* Threshold popover */}
+        <div ref={thresholdRef} className="relative">
+          <button
+            onClick={() => { setLocalThreshold(String(threshold)); setEditingThreshold((v) => !v); }}
+            className={[
+              "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-all whitespace-nowrap",
+              editingThreshold
+                ? "border-emerald-500/40 bg-emerald-500/8 text-emerald-400"
+                : "border-dashboard-border bg-dashboard-card text-dashboard-text-muted hover:text-dashboard-text hover:border-dashboard-border/80",
+            ].join(" ")}
+          >
+            <Settings2 className="h-3.5 w-3.5 opacity-70" />
+            <span className="text-xs text-dashboard-text-muted font-medium">Active threshold:</span>
+            <span className="font-semibold text-dashboard-text">≥{threshold} surveys/mo</span>
+          </button>
+          {editingThreshold && (
+            <div className="absolute top-full left-0 z-30 mt-2 w-72 rounded-xl border border-dashboard-border bg-dashboard-card shadow-2xl p-4">
+              <p className="text-sm font-semibold text-dashboard-text mb-1">Set active threshold</p>
+              <p className="text-xs text-dashboard-text-muted mb-4 leading-relaxed">
+                Members who complete this many or more surveys per month are counted as <span className="text-emerald-400 font-medium">Active</span>.
+              </p>
+              <div className="flex items-center gap-2 mb-4">
+                <input
+                  type="number"
+                  min={1}
+                  value={localThreshold}
+                  onChange={(e) => setLocalThreshold(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") applyThreshold(); if (e.key === "Escape") setEditingThreshold(false); }}
+                  className="w-20 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                  autoFocus
+                />
+                <span className="text-sm text-dashboard-text-muted">surveys per month</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={applyThreshold}
+                  className="flex-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setEditingThreshold(false)}
+                  className="flex-1 rounded-lg border border-dashboard-border text-dashboard-text text-sm py-2 hover:bg-dashboard-card-hover transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clear filters */}
+        {activeFilters > 0 && (
+          <button
+            onClick={() => { setTab("all"); setEngagementFilter("all"); setSearch(""); }}
+            className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/8 px-3 py-2 text-sm font-medium text-rose-400 hover:bg-rose-500/12 transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+            Clear {activeFilters} filter{activeFilters > 1 ? "s" : ""}
+          </button>
+        )}
+
+        {/* Count */}
+        <div className="ml-auto">
+          <span className="rounded-full bg-dashboard-card-hover px-3 py-1 text-xs font-semibold text-dashboard-text-muted">
             {visible.length} {visible.length === 1 ? "person" : "people"}
           </span>
         </div>
+      </div>
 
+      {/* ── Engagement summary bar ────────────────────────────────────────────── */}
+      {contacts.length > 0 && (
+        <div className="flex items-center gap-4 px-5 py-2 border-b border-dashboard-border/50 bg-dashboard-card/20">
+          {(["green", "yellow", "red", "none"] as const).map((k) => {
+            const cfg = ENGAGEMENT_CFG[k];
+            const count = engagementCounts[k];
+            const pct = contacts.length > 0 ? Math.round((count / contacts.length) * 100) : 0;
+            return (
+              <button
+                key={k}
+                onClick={() => setEngagementFilter(engagementFilter === k ? "all" : k)}
+                className={`flex items-center gap-1.5 text-sm transition-opacity ${engagementFilter !== "all" && engagementFilter !== k ? "opacity-40" : ""}`}
+              >
+                <span className="text-xs">{cfg.dot}</span>
+                <span className="font-semibold" style={{ color: cfg.color }}>{count}</span>
+                <span className="text-dashboard-text-muted">{cfg.label}</span>
+                <span className="text-dashboard-text-muted opacity-60">({pct}%)</span>
+              </button>
+            );
+          })}
+          {contacts.length > 0 && (
+            <div className="ml-auto flex gap-0.5 h-1.5 w-24 rounded-full overflow-hidden">
+              {(["green", "yellow", "red"] as const).map((k) => (
+                <div
+                  key={k}
+                  className="transition-all rounded-full"
+                  style={{ width: `${(engagementCounts[k] / contacts.length) * 100}%`, background: ENGAGEMENT_CFG[k].color }}
+                />
+              ))}
+              <div className="flex-1 rounded-full bg-dashboard-border" />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Table ─────────────────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-auto">
         {visible.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-            <div className="mb-4 rounded-2xl bg-violet-500/10 p-4"><Users className="h-8 w-8 text-violet-400" /></div>
+          <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+            <div className="mb-4 rounded-2xl bg-violet-500/10 p-4">
+              <Users className="h-8 w-8 text-violet-400" />
+            </div>
             <h3 className="text-base font-semibold text-dashboard-text">
               {contacts.length === 0 ? "No contacts yet" : search ? "No results found" : "No contacts match these filters"}
             </h3>
             <p className="mt-1.5 max-w-xs text-sm text-dashboard-text-muted">
               {contacts.length === 0
                 ? "Add someone manually or contacts appear when someone gives or fills a form."
-                : "Try a different filter combination."}
+                : "Try adjusting your filters."}
             </p>
-            {!search && engagementFilter === "all" && (
+            {contacts.length === 0 && (
               <Button onClick={() => setShowAdd(true)} className="mt-4 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white" size="sm">
                 <UserPlus className="h-4 w-4" /> Add person
               </Button>
             )}
+            {activeFilters > 0 && (
+              <button
+                onClick={() => { setTab("all"); setEngagementFilter("all"); setSearch(""); }}
+                className="mt-3 text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-dashboard-border bg-dashboard-card-hover/30">
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Name</th>
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Email</th>
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted hidden sm:table-cell">Phone</th>
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Groups</th>
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Engagement</th>
-                  <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted hidden md:table-cell">Last activity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((c) => {
-                  const stags    = getSourceTags(c.source, c.sources_breakdown ?? {});
-                  const init     = initials(c.name, c.email);
-                  const aColor   = avatarColor(c.id);
-                  const level    = engagementMap[c.id] ?? "none";
-                  const emailKey = c.email?.toLowerCase().trim() ?? "";
-                  const count    = emailKey ? (surveyResponseCounts[emailKey] ?? 0) : 0;
-                  const engBorder = level !== "none"
-                    ? ENGAGEMENT_CFG[level].color + "40"
-                    : "transparent";
+          <table className="w-full text-sm border-collapse">
+            <thead className="sticky top-0 z-10">
+              <tr style={{ background: "var(--dashboard-card-hover, rgba(255,255,255,0.04))" }}>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border w-[220px]">
+                  Name
+                </th>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                  Email
+                </th>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border hidden sm:table-cell">
+                  Phone
+                </th>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                  Source
+                </th>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                  Engagement
+                </th>
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border hidden md:table-cell">
+                  Last seen
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((c, i) => {
+                const stags    = getSourceTags(c.source, c.sources_breakdown ?? {});
+                const init     = initials(c.name, c.email);
+                const aColor   = avatarColor(c.id);
+                const level    = engagementMap[c.id] ?? "none";
+                const emailKey = c.email?.toLowerCase().trim() ?? "";
+                const count    = emailKey ? (surveyResponseCounts[emailKey] ?? 0) : 0;
+                const cfg      = ENGAGEMENT_CFG[level];
 
-                  return (
-                    <tr
-                      key={c.id}
-                      className="border-t border-dashboard-border transition-colors hover:bg-dashboard-card-hover/40"
-                      style={{ borderLeft: `3px solid ${engBorder}` }}
-                    >
-                      <td className="p-3">
-                        <Link href={`/dashboard/people/${c.id}`} className="flex items-center gap-2.5">
-                          <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${aColor}`}
-                            style={level !== "none" ? { boxShadow: `0 0 0 2px ${ENGAGEMENT_CFG[level].color}40` } : {}}
-                          >
-                            {init}
-                          </div>
-                          <span className="font-medium text-dashboard-text hover:underline">
-                            {c.name?.trim() || <span className="text-dashboard-text-muted italic">No name</span>}
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="p-3 text-dashboard-text-muted">
-                        <Link href={`/dashboard/people/${c.id}`} className="hover:underline">{c.email ?? "—"}</Link>
-                      </td>
-                      <td className="p-3 text-dashboard-text-muted hidden sm:table-cell">{c.phone?.trim() || "—"}</td>
-                      <td className="p-3">
-                        <div className="flex flex-wrap gap-1">
-                          {stags.map((t) => (
-                            <span key={t.label} className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${t.color}`}>{t.icon}{t.label}</span>
-                          ))}
+                return (
+                  <tr
+                    key={c.id}
+                    className="border-b border-dashboard-border/50 hover:bg-dashboard-card-hover/30 transition-colors group"
+                  >
+                    {/* Name */}
+                    <td className="px-4 py-2.5">
+                      <Link href={`/dashboard/people/${c.id}`} className="flex items-center gap-2.5">
+                        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${aColor}`}>
+                          {init}
                         </div>
-                      </td>
-                      <td className="p-3">
-                        <EngagementBadge level={level} count={count} threshold={threshold} />
-                      </td>
-                      <td className="p-3 text-dashboard-text-muted hidden md:table-cell">
-                        {c.last_seen_at ? new Date(c.last_seen_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        <span className="font-medium text-dashboard-text group-hover:text-emerald-400 transition-colors text-[13px]">
+                          {c.name?.trim() || <span className="text-dashboard-text-muted italic font-normal">No name</span>}
+                        </span>
+                      </Link>
+                    </td>
+
+                    {/* Email */}
+                    <td className="px-4 py-2.5">
+                      <Link href={`/dashboard/people/${c.id}`} className="text-[13px] text-dashboard-text-muted hover:text-dashboard-text transition-colors">
+                        {c.email ?? <span className="opacity-30">—</span>}
+                      </Link>
+                    </td>
+
+                    {/* Phone */}
+                    <td className="px-4 py-2.5 text-[13px] text-dashboard-text-muted hidden sm:table-cell">
+                      {c.phone?.trim() || <span className="opacity-30">—</span>}
+                    </td>
+
+                    {/* Source tags */}
+                    <td className="px-4 py-2.5">
+                      <div className="flex flex-wrap gap-1">
+                        {stags.map((t) => (
+                          <span key={t.label} className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${t.color}`}>
+                            {t.label}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+
+                    {/* Engagement */}
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px]">{cfg.dot}</span>
+                        <span className="text-[11px] font-semibold" style={{ color: cfg.color }}>{cfg.label}</span>
+                        {count > 0 && (
+                          <span className="text-[10px] text-dashboard-text-muted">({count})</span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Last seen */}
+                    <td className="px-4 py-2.5 text-[12px] text-dashboard-text-muted hidden md:table-cell">
+                      {c.last_seen_at
+                        ? new Date(c.last_seen_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+                        : <span className="opacity-30">—</span>}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         )}
       </div>
 
-      {/* Add person modal */}
+      {/* ── Add person modal ──────────────────────────────────────────────────── */}
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-dashboard-border bg-dashboard-card shadow-2xl">
@@ -689,7 +793,10 @@ export function PeoplePageClient({
               {addError && <p className="text-sm text-rose-400">{addError}</p>}
               <div className="flex gap-3 pt-1">
                 <Button type="button" variant="secondary" onClick={() => { setShowAdd(false); setAddError(null); }} className="flex-1">Cancel</Button>
-                <Button type="submit" disabled={adding} className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">{adding && <Loader2 className="h-4 w-4 animate-spin" />}{adding ? "Adding…" : "Add person"}</Button>
+                <Button type="submit" disabled={adding} className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                  {adding && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {adding ? "Adding…" : "Add person"}
+                </Button>
               </div>
             </form>
           </div>

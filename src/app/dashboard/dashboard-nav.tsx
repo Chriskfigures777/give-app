@@ -179,7 +179,7 @@ export function DashboardNav({
               {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}
               {link("/dashboard/pages", "Website builder", <Layout className={iconClass} />)}
               {link("/dashboard/pages/cms", "Website content", <FileStack className={iconClass} />)}
-              {link("/dashboard/custom-forms", "Custom forms", <Code2 className={iconClass} />)}
+              {link("/dashboard/custom-forms", "Payment forms", <Code2 className={iconClass} />)}
               {link("/dashboard/notes", "Notes", <BookOpen className={iconClass} />)}
               {link("/dashboard/surveys", "Surveys", <ClipboardList className={iconClass} />)}
               {link("/dashboard/broadcast", "Send message", <Mail className={iconClass} />)}
