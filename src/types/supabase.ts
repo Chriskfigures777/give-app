@@ -3188,6 +3188,7 @@ export type Database = {
           cover_image_url: string | null
           theme: unknown
           status: string
+          respondent_category: string | null
           created_at: string
           updated_at: string
         }
@@ -3201,6 +3202,7 @@ export type Database = {
           cover_image_url?: string | null
           theme?: unknown
           status?: string
+          respondent_category?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -3214,6 +3216,7 @@ export type Database = {
           cover_image_url?: string | null
           theme?: unknown
           status?: string
+          respondent_category?: string | null
           created_at?: string
           updated_at?: string
         }

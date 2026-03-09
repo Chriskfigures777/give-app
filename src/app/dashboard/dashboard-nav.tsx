@@ -29,7 +29,6 @@ import {
   ClipboardList,
   Mail,
   Flag,
-  Phone,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -173,7 +172,6 @@ export function DashboardNav({
               {link("/dashboard/campaigns", "Campaigns", <Target className={iconClass} />)}
               {link("/dashboard/goals", "Goals", <Flag className={iconClass} />)}
               {link("/dashboard/eisenhower", "Priorities", <LayoutGrid className={iconClass} />)}
-              {link("/dashboard/private-calls", "Private Calls", <Phone className={iconClass} />)}
               {link("/dashboard/people", "People", <Contact className={iconClass} />)}
               {link("/dashboard/givers", "Givers", <Users className={iconClass} />)}
               {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}

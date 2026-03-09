@@ -92,7 +92,7 @@ type Props = {
 
 // ── Section label ─────────────────────────────────────────────────────────────
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-bold uppercase tracking-widest text-dashboard-text-muted/60 mb-3">
+  <p className="text-xs font-bold uppercase tracking-widest text-dashboard-text-muted mb-3">
     {children}
   </p>
 );
@@ -253,17 +253,17 @@ export function SurveyBuilder({
       {/* ══════════ THREE-COLUMN LAYOUT ══════════ */}
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 520 }}>
 
-        {/* ── LEFT: Question list ── */}
+        {/* ── LEFT: Question list (dark panel, dashboard-style) ── */}
         <div
-          className="flex flex-col shrink-0 border-r border-dashboard-border/60"
-          style={{ width: 220, background: "rgba(0,0,0,0.18)" }}
+          className="flex flex-col shrink-0 border-r border-dashboard-border bg-dashboard-card"
+          style={{ width: 240 }}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <p className="text-sm font-bold text-white tracking-tight">
+            <p className="text-base font-bold text-dashboard-text tracking-tight">
               Questions
               {questions.length > 0 && (
-                <span className="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold" style={{ background: `${accentColor}22`, color: accentColor }}>
+                <span className="ml-2 rounded-full px-2 py-0.5 text-xs font-bold bg-dashboard-card-hover text-dashboard-text-muted">
                   {questions.length}
                 </span>
               )}
@@ -271,13 +271,13 @@ export function SurveyBuilder({
           </div>
 
           {/* List */}
-          <div className="flex-1 overflow-y-auto space-y-0.5 px-2 pb-2">
+          <div className="flex-1 overflow-y-auto space-y-1 px-2 pb-2">
             {questions.length === 0 && (
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-2" style={{ background: `${accentColor}12` }}>
-                  <AlignLeft className="h-5 w-5" style={{ color: accentColor }} />
+                <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-3 bg-dashboard-card-hover">
+                  <AlignLeft className="h-6 w-6 text-dashboard-text-muted" />
                 </div>
-                <p className="text-xs text-dashboard-text-muted">No questions yet</p>
+                <p className="text-sm text-dashboard-text-muted">No questions yet</p>
               </div>
             )}
             {questions.map((q, i) => {
@@ -290,24 +290,24 @@ export function SurveyBuilder({
                   onClick={() => setActiveQ(i)}
                   className="group w-full flex items-start gap-2.5 rounded-xl px-3 py-3 text-left transition-all border"
                   style={isActive
-                    ? { borderColor: `${accentColor}30`, background: `${accentColor}12` }
+                    ? { borderColor: `${accentColor}50`, background: `${accentColor}18` }
                     : { borderColor: "transparent", background: "transparent" }
                   }
                 >
                   <span
-                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[10px] font-black tabular-nums"
+                    className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black tabular-nums"
                     style={isActive
                       ? { background: accentColor, color: "white" }
-                      : { background: "rgba(255,255,255,0.13)", color: "#dde1ec" }
+                      : { background: "hsl(var(--dashboard-card-hover))", color: "hsl(var(--dashboard-text-muted))" }
                     }
                   >
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold leading-snug line-clamp-2 transition-colors" style={{ color: isActive ? "#ffffff" : "#dde1ec" }}>
-                      {q.text || <span className="italic font-normal" style={{ opacity: 0.5 }}>Untitled</span>}
+                    <p className="text-sm font-semibold leading-snug line-clamp-2 text-dashboard-text">
+                      {q.text || <span className="italic font-normal text-dashboard-text-muted">Untitled</span>}
                     </p>
-                    <div className="mt-1 flex items-center gap-1 text-xs" style={{ color: isActive ? accentColor : "#9aa0b2" }}>
+                    <div className="mt-1 flex items-center gap-1 text-xs text-dashboard-text-muted">
                       {meta?.icon && <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">{meta.icon}</span>}
                       {meta?.label}
                     </div>
@@ -317,35 +317,34 @@ export function SurveyBuilder({
             })}
           </div>
 
-          {/* Add button */}
+          {/* Add button — always readable: dark bg, light text, accent border */}
           <button
             type="button"
             onClick={addQuestion}
-            className="mx-2 mb-3 flex items-center justify-center gap-2 rounded-xl border border-dashed py-2.5 text-xs font-semibold transition-all hover:opacity-80"
-            style={{ borderColor: `${accentColor}40`, color: accentColor, background: `${accentColor}08` }}
+            className="mx-2 mb-3 flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold text-dashboard-text bg-dashboard-card-hover border-dashboard-border hover:border-dashboard-border-light hover:bg-dashboard-border/40 transition-all"
           >
-            <Plus className="h-3.5 w-3.5" /> Add question
+            <Plus className="h-4 w-4 text-dashboard-text-muted" /> Add question
           </button>
         </div>
 
         {/* ── CENTER: Question editor ── */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-[hsl(var(--dashboard-card))]">
           {activeQ === null || !activeQuestion ? (
             /* Empty state */
             <div className="flex h-full flex-col items-center justify-center gap-5 text-center py-16">
-              <div className="h-16 w-16 rounded-2xl flex items-center justify-center" style={{ background: `${accentColor}14`, border: `1.5px solid ${accentColor}25` }}>
-                <AlignLeft className="h-7 w-7" style={{ color: accentColor }} />
+              <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-dashboard-card-hover border border-dashboard-border">
+                <AlignLeft className="h-7 w-7 text-dashboard-text-muted" />
               </div>
               <div>
-                <p className="text-base font-bold text-dashboard-text">Start building your survey</p>
-                <p className="mt-1.5 text-sm text-dashboard-text-muted max-w-xs leading-relaxed">
+                <p className="text-lg font-bold text-dashboard-text">Start building your survey</p>
+                <p className="mt-2 text-base text-dashboard-text-muted max-w-sm leading-relaxed">
                   Add questions on the left. Each question gets its own editor with a live preview.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={addQuestion}
-                className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="flex items-center gap-2 rounded-xl px-6 py-3 text-base font-bold text-white shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: accentColor, boxShadow: `0 4px 20px ${accentColor}40` }}
               >
                 <Plus className="h-4 w-4" /> Add first question
@@ -358,12 +357,12 @@ export function SurveyBuilder({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black text-white"
+                    className="flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black text-white"
                     style={{ background: accentColor }}
                   >
                     {(activeQ ?? 0) + 1}
                   </span>
-                  <span className="text-sm font-bold text-dashboard-text">
+                  <span className="text-base font-bold text-dashboard-text">
                     Question {(activeQ ?? 0) + 1}
                     <span className="ml-1 text-dashboard-text-muted font-normal">of {questions.length}</span>
                   </span>
@@ -371,15 +370,15 @@ export function SurveyBuilder({
                 <button
                   type="button"
                   onClick={() => removeQuestion(activeQ!)}
-                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-dashboard-text-muted/60 hover:bg-rose-500/12 hover:text-rose-400 transition-all"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-dashboard-text-muted hover:bg-rose-500/12 hover:text-rose-400 transition-all"
                 >
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
+                  <Trash2 className="h-4 w-4" /> Delete
                 </button>
               </div>
 
               {/* Question text */}
               <div>
-                <label className="mb-2 flex items-center gap-1.5 text-xs font-bold text-dashboard-text">
+                <label className="mb-2 flex items-center gap-1.5 text-sm font-bold text-dashboard-text">
                   Question text
                 </label>
                 <textarea
@@ -387,19 +386,15 @@ export function SurveyBuilder({
                   onChange={(e) => updateQuestion(activeQ!, { text: e.target.value })}
                   placeholder="What would you like to ask?"
                   rows={2}
-                  className="w-full resize-none rounded-2xl border-2 px-5 py-4 text-base font-semibold text-dashboard-text placeholder:text-dashboard-text-muted/30 focus:outline-none transition-all"
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    borderColor: "hsl(var(--dashboard-border))",
-                  }}
-                  onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.background = `${accentColor}06`; }}
-                  onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.background = "rgba(255,255,255,0.03)"; }}
+                  className="w-full resize-none rounded-2xl border-2 px-5 py-4 text-base font-semibold text-dashboard-text placeholder:text-dashboard-text-muted/50 focus:outline-none transition-all bg-dashboard-card-hover border-dashboard-border"
+                  onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.background = `hsl(var(--dashboard-card-hover))`; }}
+                  onBlur={(e) => { e.target.style.borderColor = ""; e.target.style.background = ""; }}
                 />
               </div>
 
               {/* Answer type — 2x2 grid of visual cards */}
               <div>
-                <label className="mb-3 flex items-center gap-1.5 text-xs font-bold text-dashboard-text">
+                <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-dashboard-text">
                   Answer type
                 </label>
                 <div className="grid grid-cols-2 gap-2.5">
@@ -418,25 +413,25 @@ export function SurveyBuilder({
                         className="relative flex items-center gap-3 rounded-2xl border-2 px-4 py-3.5 text-left transition-all hover:scale-[1.01]"
                         style={sel ? {
                           borderColor: accentColor,
-                          background: `${accentColor}12`,
-                          boxShadow: `0 0 0 3px ${accentColor}18`,
+                          background: `${accentColor}18`,
+                          boxShadow: `0 0 0 3px ${accentColor}25`,
                         } : {
-                          borderColor: "hsl(var(--dashboard-border)/0.7)",
-                          background: "rgba(255,255,255,0.02)",
+                          borderColor: "hsl(var(--dashboard-border))",
+                          background: "hsl(var(--dashboard-card-hover))",
                         }}
                       >
                         <span
                           className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center [&_svg]:h-4.5 [&_svg]:w-4.5"
                           style={sel
                             ? { background: accentColor, color: "white" }
-                            : { background: "rgba(255,255,255,0.06)", color: "#8891a5" }
+                            : { background: "hsl(var(--dashboard-border))", color: "hsl(var(--dashboard-text-muted))" }
                           }
                         >
                           {t.icon}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold" style={{ color: sel ? "hsl(var(--dashboard-text))" : "#8891a5" }}>{t.label}</p>
-                          <p className="text-[11px]" style={{ color: sel ? accentColor : "#8891a5", opacity: sel ? 0.8 : 0.5 }}>{t.desc}</p>
+                          <p className="text-sm font-bold text-dashboard-text">{t.label}</p>
+                          <p className="text-xs text-dashboard-text-muted">{t.desc}</p>
                         </div>
                         {sel && (
                           <span className="absolute top-2 right-2 h-4 w-4 rounded-full flex items-center justify-center" style={{ background: accentColor }}>
@@ -452,15 +447,14 @@ export function SurveyBuilder({
               {/* Answer options editor */}
               {activeQuestion.type === "multiple_choice" && (
                 <div>
-                  <label className="mb-3 flex items-center gap-1.5 text-xs font-bold text-dashboard-text">
+                  <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-dashboard-text">
                     Answer choices
                   </label>
                   <div className="space-y-2">
                     {(activeQuestion.options ?? []).map((opt, oi) => (
                       <div key={oi} className="flex items-center gap-3">
                         <span
-                          className="shrink-0 h-5 w-5 rounded-full border-2 flex items-center justify-center text-[9px] font-bold"
-                          style={{ borderColor: `${accentColor}50`, color: accentColor }}
+                          className="shrink-0 h-6 w-6 rounded-full border-2 flex items-center justify-center text-xs font-bold border-dashboard-border-light text-dashboard-text-muted"
                         >
                           {String.fromCharCode(65 + oi)}
                         </span>
@@ -469,12 +463,12 @@ export function SurveyBuilder({
                           value={opt}
                           onChange={(e) => setOption(activeQ!, oi, e.target.value)}
                           placeholder={`Choice ${oi + 1}`}
-                          className="flex-1 rounded-xl border border-dashboard-border/60 bg-white/3 px-4 py-2.5 text-sm font-medium text-dashboard-text placeholder:text-dashboard-text-muted/30 focus:outline-none transition-all"
-                          onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.background = `${accentColor}06`; }}
+                          className="flex-1 rounded-xl border border-dashboard-border bg-dashboard-card-hover px-4 py-2.5 text-sm font-medium text-dashboard-text placeholder:text-dashboard-text-muted/50 focus:outline-none transition-all"
+                          onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.background = `hsl(var(--dashboard-card-hover))`; }}
                           onBlur={(e) => { e.target.style.borderColor = ""; e.target.style.background = ""; }}
                         />
                         {(activeQuestion.options ?? []).length > 2 && (
-                          <button type="button" onClick={() => removeOption(activeQ!, oi)} className="shrink-0 rounded-lg p-1 text-dashboard-text-muted/40 hover:bg-rose-500/12 hover:text-rose-400 transition-all">
+                          <button type="button" onClick={() => removeOption(activeQ!, oi)} className="shrink-0 rounded-lg p-1.5 text-dashboard-text-muted hover:bg-rose-500/12 hover:text-rose-400 transition-all">
                             <Trash2 className="h-4 w-4" />
                           </button>
                         )}
@@ -483,10 +477,9 @@ export function SurveyBuilder({
                     <button
                       type="button"
                       onClick={() => addOption(activeQ!)}
-                      className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-all hover:opacity-80"
-                      style={{ color: accentColor, background: `${accentColor}10` }}
+                      className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-dashboard-text bg-dashboard-card-hover border border-dashboard-border hover:border-dashboard-border-light transition-all"
                     >
-                      <Plus className="h-3.5 w-3.5" /> Add choice
+                      <Plus className="h-4 w-4 text-dashboard-text-muted" /> Add choice
                     </button>
                   </div>
                 </div>
@@ -495,13 +488,13 @@ export function SurveyBuilder({
               {/* Yes/No preview */}
               {activeQuestion.type === "yes_no" && (
                 <div>
-                  <label className="mb-3 text-xs font-bold text-dashboard-text block">Preview</label>
+                  <label className="mb-3 text-sm font-bold text-dashboard-text block">Preview</label>
                   <div className="flex gap-3">
                     {["👍 Yes", "👎 No"].map((label, i) => (
                       <div key={i} className="flex items-center gap-2 rounded-2xl border-2 px-6 py-3 text-sm font-semibold"
                         style={i === 0
-                          ? { borderColor: accentColor, background: `${accentColor}12`, color: accentColor }
-                          : { borderColor: "hsl(var(--dashboard-border))", background: "transparent", color: "hsl(var(--dashboard-text-muted))" }
+                          ? { borderColor: accentColor, background: `${accentColor}18`, color: accentColor }
+                          : { borderColor: "hsl(var(--dashboard-border))", background: "hsl(var(--dashboard-card-hover))", color: "hsl(var(--dashboard-text-muted))" }
                         }
                       >
                         {label}
@@ -514,12 +507,12 @@ export function SurveyBuilder({
               {/* Short answer / paragraph preview */}
               {(activeQuestion.type === "short_answer" || activeQuestion.type === "paragraph") && (
                 <div>
-                  <label className="mb-3 text-xs font-bold text-dashboard-text block">Preview</label>
+                  <label className="mb-3 text-sm font-bold text-dashboard-text block">Preview</label>
                   <div
-                    className="rounded-2xl border-2 border-dashed px-5 py-4 flex items-start"
-                    style={{ borderColor: `${accentColor}25`, minHeight: activeQuestion.type === "paragraph" ? 96 : 48 }}
+                    className="rounded-2xl border-2 border-dashed border-dashboard-border px-5 py-4 flex items-start bg-dashboard-card-hover/50"
+                    style={{ minHeight: activeQuestion.type === "paragraph" ? 96 : 48 }}
                   >
-                    <span className="text-sm text-dashboard-text-muted/30 italic">
+                    <span className="text-sm text-dashboard-text-muted italic">
                       {activeQuestion.type === "paragraph" ? "Respondent's long answer…" : "Respondent's short answer…"}
                     </span>
                   </div>
@@ -528,12 +521,12 @@ export function SurveyBuilder({
 
               {/* Navigation hint */}
               {questions.length > 1 && (
-                <div className="flex items-center justify-between border-t border-dashboard-border/40 pt-4">
+                <div className="flex items-center justify-between border-t border-dashboard-border pt-4">
                   <button
                     type="button"
                     onClick={() => setActiveQ(Math.max(0, (activeQ ?? 0) - 1))}
                     disabled={activeQ === 0}
-                    className="text-xs font-semibold text-dashboard-text-muted hover:text-dashboard-text disabled:opacity-0 transition-colors"
+                    className="text-sm font-semibold text-dashboard-text-muted hover:text-dashboard-text disabled:opacity-0 transition-colors"
                   >
                     ← Previous
                   </button>
@@ -541,10 +534,10 @@ export function SurveyBuilder({
                     type="button"
                     onClick={() => setActiveQ(Math.min(questions.length - 1, (activeQ ?? 0) + 1))}
                     disabled={activeQ === questions.length - 1}
-                    className="flex items-center gap-1 text-xs font-semibold transition-colors"
+                    className="flex items-center gap-1 text-sm font-semibold transition-colors"
                     style={{ color: accentColor }}
                   >
-                    Next <ChevronRight className="h-3.5 w-3.5" />
+                    Next <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               )}
@@ -552,22 +545,22 @@ export function SurveyBuilder({
           )}
         </div>
 
-        {/* ── RIGHT: Design panel ── */}
+        {/* ── RIGHT: Design panel (dark, dashboard-style) ── */}
         <div
-          className="flex flex-col shrink-0 border-l border-dashboard-border/60 overflow-y-auto"
-          style={{ width: 256, background: "rgba(0,0,0,0.14)" }}
+          className="flex flex-col shrink-0 border-l border-dashboard-border overflow-y-auto bg-dashboard-card"
+          style={{ width: 280 }}
         >
           {/* Panel tabs */}
-          <div className="flex border-b border-dashboard-border/60 shrink-0">
+          <div className="flex border-b border-dashboard-border shrink-0">
             {[
-              { id: "design" as const, label: "Design", icon: <Palette className="h-3.5 w-3.5" /> },
-              { id: "cover" as const, label: "Cover", icon: <ImageIcon className="h-3.5 w-3.5" /> },
+              { id: "design" as const, label: "Design", icon: <Palette className="h-4 w-4" /> },
+              { id: "cover" as const, label: "Cover", icon: <ImageIcon className="h-4 w-4" /> },
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
                 onClick={() => setDesignTab(tab.id)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-bold transition-all border-b-2"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold transition-all border-b-2 border-b-transparent"
                 style={designTab === tab.id
                   ? { borderBottomColor: accentColor, color: "hsl(var(--dashboard-text))" }
                   : { borderBottomColor: "transparent", color: "hsl(var(--dashboard-text-muted))" }
@@ -588,7 +581,7 @@ export function SurveyBuilder({
                   <SectionLabel>Theme color</SectionLabel>
                   {/* Preview swatch */}
                   <div
-                    className="mb-3 h-12 w-full rounded-xl flex items-center justify-center text-xs font-bold text-white shadow-sm"
+                    className="mb-3 h-12 w-full rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-sm"
                     style={{ background: accentColor, boxShadow: `0 4px 16px ${accentColor}40` }}
                   >
                     {ACCENT_COLORS.find(c => c.value === accentColor)?.name ?? "Custom"}
@@ -624,7 +617,7 @@ export function SurveyBuilder({
                       onBlur={applyHex}
                       onKeyDown={(e) => e.key === "Enter" && applyHex()}
                       placeholder="#8b5cf6"
-                      className="flex-1 rounded-lg border border-dashboard-border/60 bg-white/4 px-3 py-1.5 text-xs font-mono text-dashboard-text focus:outline-none transition-colors"
+                      className="flex-1 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm font-mono text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none transition-colors"
                       style={{ letterSpacing: "0.05em" }}
                     />
                   </div>
@@ -643,15 +636,15 @@ export function SurveyBuilder({
                           onClick={() => setFontStyle(f)}
                           className="rounded-xl border-2 py-3 text-center transition-all"
                           style={{
-                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border)/0.6)",
-                            background: sel ? `${accentColor}12` : "rgba(255,255,255,0.02)",
+                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border))",
+                            background: sel ? `${accentColor}18` : "hsl(var(--dashboard-card-hover))",
                             fontFamily: f === "serif" ? "Georgia, serif" : "inherit",
                           }}
                         >
-                          <p className="text-base font-bold" style={{ color: sel ? accentColor : "hsl(var(--dashboard-text))", fontFamily: f === "serif" ? "Georgia, serif" : "inherit" }}>
+                          <p className="text-base font-bold text-dashboard-text" style={{ fontFamily: f === "serif" ? "Georgia, serif" : "inherit" }}>
                             Aa
                           </p>
-                          <p className="text-[10px] font-semibold mt-0.5" style={{ color: sel ? accentColor : "hsl(var(--dashboard-text-muted))" }}>
+                          <p className="text-xs font-semibold mt-0.5 text-dashboard-text-muted">
                             {f === "sans" ? "Modern" : "Classic"}
                           </p>
                         </button>
@@ -671,24 +664,24 @@ export function SurveyBuilder({
                           key={s}
                           type="button"
                           onClick={() => setButtonShape(s)}
-                          className="flex flex-col items-center gap-2 py-3 border-2 transition-all"
+                          className="flex flex-col items-center gap-2 py-3 border-2 transition-all rounded-xl"
                           style={{
                             borderRadius: s === "pill" ? 20 : 12,
-                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border)/0.6)",
-                            background: sel ? `${accentColor}12` : "rgba(255,255,255,0.02)",
+                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border))",
+                            background: sel ? `${accentColor}18` : "hsl(var(--dashboard-card-hover))",
                           }}
                         >
                           {/* Mini button preview */}
                           <div
-                            className="h-5 w-14 text-white text-[9px] font-bold flex items-center justify-center"
+                            className="h-5 w-14 text-white text-xs font-bold flex items-center justify-center"
                             style={{
-                              background: sel ? accentColor : "#8891a5",
+                              background: sel ? accentColor : "hsl(var(--dashboard-text-muted))",
                               borderRadius: s === "pill" ? 999 : 4,
                             }}
                           >
                             Submit
                           </div>
-                          <p className="text-[10px] font-semibold" style={{ color: sel ? accentColor : "hsl(var(--dashboard-text-muted))" }}>
+                          <p className="text-xs font-semibold text-dashboard-text-muted">
                             {s === "rounded" ? "Rounded" : "Pill"}
                           </p>
                         </button>
@@ -712,21 +705,21 @@ export function SurveyBuilder({
                           onClick={() => setFormStyle(s)}
                           className="w-full flex items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition-all"
                           style={{
-                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border)/0.5)",
-                            background: sel ? `${accentColor}10` : "rgba(255,255,255,0.02)",
+                            borderColor: sel ? accentColor : "hsl(var(--dashboard-border))",
+                            background: sel ? `${accentColor}18` : "hsl(var(--dashboard-card-hover))",
                           }}
                         >
                           <span
                             className="shrink-0 h-8 w-8 rounded-lg flex items-center justify-center"
-                            style={sel ? { background: accentColor, color: "white" } : { background: "rgba(255,255,255,0.06)", color: "#8891a5" }}
+                            style={sel ? { background: accentColor, color: "white" } : { background: "hsl(var(--dashboard-border))", color: "hsl(var(--dashboard-text-muted))" }}
                           >
-                            <Sliders className="h-3.5 w-3.5" />
+                            <Sliders className="h-4 w-4" />
                           </span>
                           <div>
-                            <p className="text-xs font-bold" style={{ color: sel ? "hsl(var(--dashboard-text))" : "#8891a5" }}>{labels[s]}</p>
-                            <p className="text-[10px]" style={{ color: sel ? accentColor : "#8891a5", opacity: sel ? 0.75 : 0.5 }}>{descs[s]}</p>
+                            <p className="text-sm font-bold text-dashboard-text">{labels[s]}</p>
+                            <p className="text-xs text-dashboard-text-muted">{descs[s]}</p>
                           </div>
-                          {sel && <Check className="ml-auto shrink-0 h-3.5 w-3.5" style={{ color: accentColor }} />}
+                          {sel && <Check className="ml-auto shrink-0 h-4 w-4" style={{ color: accentColor }} />}
                         </button>
                       );
                     })}
@@ -747,16 +740,16 @@ export function SurveyBuilder({
                         key={i}
                         type="button"
                         onClick={() => { setCoverUrl(img); setVideoUrl(""); setVideoInput(""); }}
-                        className="relative h-16 rounded-xl overflow-hidden border-2 transition-all hover:scale-105"
+                        className="relative h-16 rounded-xl overflow-hidden border-2 border-dashboard-border transition-all hover:scale-105 hover:border-dashboard-border-light"
                         style={{
-                          borderColor: coverUrl === img && !hasVideo ? "white" : "transparent",
-                          boxShadow: coverUrl === img && !hasVideo ? "0 0 0 2px rgba(255,255,255,0.2)" : "none",
+                          borderColor: coverUrl === img && !hasVideo ? "hsl(var(--dashboard-border-light))" : undefined,
+                          boxShadow: coverUrl === img && !hasVideo ? "0 0 0 2px hsl(var(--dashboard-border-light) / 0.5)" : undefined,
                         }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
                         {coverUrl === img && !hasVideo && (
-                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.3)" }}>
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                             <Check className="h-5 w-5 text-white" />
                           </div>
                         )}
@@ -770,14 +763,14 @@ export function SurveyBuilder({
                       value={customUrlInput}
                       onChange={(e) => setCustomUrlInput(e.target.value)}
                       placeholder="Custom image URL…"
-                      className="flex-1 rounded-lg border border-dashboard-border/60 bg-white/4 px-3 py-1.5 text-xs text-dashboard-text placeholder:text-dashboard-text-muted/40 focus:outline-none"
+                      className="flex-1 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => { if (customUrlInput.trim()) { setCoverUrl(customUrlInput.trim()); setVideoUrl(""); setVideoInput(""); setCustomUrlInput(""); } }}
                       disabled={!customUrlInput.trim()}
-                      className="rounded-lg px-2.5 py-1.5 text-xs font-bold transition-all disabled:opacity-30"
-                      style={{ background: `${accentColor}20`, color: accentColor }}
+                      className="rounded-lg px-3 py-2 text-sm font-bold text-white transition-all disabled:opacity-30"
+                      style={{ background: accentColor }}
                     >
                       Use
                     </button>
@@ -790,7 +783,7 @@ export function SurveyBuilder({
                     Video embed
                     {hasVideo && <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />}
                   </SectionLabel>
-                  <p className="text-[11px] text-dashboard-text-muted/70 mb-2 leading-relaxed">
+                  <p className="text-sm text-dashboard-text-muted mb-2 leading-relaxed">
                     YouTube or Vimeo. Replaces cover image at the top of your survey.
                   </p>
                   <input
@@ -798,15 +791,15 @@ export function SurveyBuilder({
                     value={videoInput}
                     onChange={(e) => setVideoInput(e.target.value)}
                     placeholder="Paste YouTube or Vimeo URL…"
-                    className="w-full rounded-xl border border-dashboard-border/60 bg-white/4 px-3 py-2 text-xs text-dashboard-text placeholder:text-dashboard-text-muted/35 focus:outline-none mb-2"
+                    className="w-full rounded-xl border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none mb-2"
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setVideoUrl(videoInput.trim())}
                       disabled={!videoInput.trim()}
-                      className="flex-1 rounded-lg py-2 text-xs font-bold transition-all disabled:opacity-30"
-                      style={{ background: `${accentColor}20`, color: accentColor }}
+                      className="flex-1 rounded-lg py-2.5 text-sm font-bold text-white transition-all disabled:opacity-30"
+                      style={{ background: accentColor }}
                     >
                       Set video
                     </button>
@@ -814,17 +807,17 @@ export function SurveyBuilder({
                       <button
                         type="button"
                         onClick={() => { setVideoUrl(""); setVideoInput(""); }}
-                        className="rounded-lg px-3 py-2 text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 transition-colors"
+                        className="rounded-lg px-3 py-2.5 text-sm font-bold text-rose-400 bg-rose-500/15 hover:bg-rose-500/25 transition-colors"
                       >
                         Remove
                       </button>
                     )}
                   </div>
                   {videoInput && !getYouTubeId(videoInput) && !getVimeoId(videoInput) && videoInput.trim() && (
-                    <p className="mt-2 text-[11px] text-amber-400">Could not detect a valid YouTube or Vimeo URL.</p>
+                    <p className="mt-2 text-sm text-amber-400">Could not detect a valid YouTube or Vimeo URL.</p>
                   )}
                   {(getYouTubeId(videoInput) || getVimeoId(videoInput)) && (
-                    <p className="mt-2 text-[11px] text-emerald-400 flex items-center gap-1.5">
+                    <p className="mt-2 text-sm text-emerald-400 flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
                       Video detected
                     </p>
@@ -838,8 +831,8 @@ export function SurveyBuilder({
 
       {/* ══════════ BOTTOM ERROR BAR ══════════ */}
       {questions.length === 0 && !error && (
-        <div className="border-t border-dashboard-border/40 px-5 py-3 flex items-center gap-2" style={{ background: "rgba(0,0,0,0.1)" }}>
-          <span className="text-xs text-dashboard-text-muted">Add at least one question to save this survey.</span>
+        <div className="border-t border-dashboard-border px-5 py-3 flex items-center gap-2 bg-dashboard-card-hover">
+          <span className="text-sm text-dashboard-text-muted">Add at least one question to save this survey.</span>
         </div>
       )}
     </div>

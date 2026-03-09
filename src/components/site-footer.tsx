@@ -91,7 +91,13 @@ function FooterLink({ href, label, isForm }: FooterLinkItem) {
 const SOCIAL_LINKS = [
   { href: "https://twitter.com", icon: Twitter, label: "Twitter" },
   { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://github.com", icon: Github, label: "GitHub" },
+  {
+    href: typeof process.env.NEXT_PUBLIC_GITHUB_URL === "string" && process.env.NEXT_PUBLIC_GITHUB_URL
+      ? process.env.NEXT_PUBLIC_GITHUB_URL
+      : "https://github.com",
+    icon: Github,
+    label: "GitHub",
+  },
 ];
 
 export function SiteFooter() {
