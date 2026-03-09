@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, DEFAULT_FROM } from "@/lib/email/resend";
 
-/** Send survey link to all contacts with email (who have not unsubscribed). Uses Resend; messages sent via the platform. */
+/** Send a personalized survey link to each contact (with ?name=...&email=... prefill). */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +16,7 @@ export async function POST(
 
     const { data: survey, error: surveyErr } = await supabase
       .from("organization_surveys")
-      .select("id, title, status")
+      .select("id, title, description, status, cover_image_url, theme")
       .eq("id", surveyId)
       .eq("organization_id", orgId)
       .single();
@@ -29,57 +29,136 @@ export async function POST(
     }
 
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
-    const surveyLink = appUrl ? `${appUrl}/survey/org/${surveyId}` : "";
-    if (!surveyLink) return NextResponse.json({ error: "App URL not configured" }, { status: 500 });
+    const baseSurveyUrl = appUrl ? `${appUrl}/survey/org/${surveyId}` : "";
+    if (!baseSurveyUrl) return NextResponse.json({ error: "App URL not configured" }, { status: 500 });
 
     const { data: contacts } = await supabase
       .from("organization_contacts")
-      .select("id, email")
+      .select("id, email, name")
       .eq("organization_id", orgId)
       .not("email", "is", null)
       .is("unsubscribed_at", null);
 
-    const emails = [...new Set(
-      (contacts ?? [])
-        .filter((c) => c.email?.trim())
-        .map((c) => c.email!.trim().toLowerCase())
-    )];
+    const validContacts = (contacts ?? []).filter((c) => c.email?.trim());
 
-    if (emails.length === 0) {
+    if (validContacts.length === 0) {
       return NextResponse.json({ error: "No recipients (contacts with email who have not unsubscribed)" }, { status: 400 });
     }
 
-    const title = (survey as { title: string }).title || "Our survey";
-    const subject = `Take our survey: ${title}`;
-    const html = `
-      <p>Hi,</p>
-      <p>We'd love your feedback. Please take a moment to complete this short survey:</p>
-      <p><a href="${surveyLink}" style="color:#0d9488;font-weight:600;">Open survey</a></p>
-      <p>Or copy this link: ${surveyLink}</p>
-      <p style="margin-top:24px;font-size:12px;color:#64748b;">You received this because you're in our organization's contact list. <a href="${appUrl}/unsubscribe">Unsubscribe</a> from these emails.</p>
-    `;
+    const s = survey as { title: string; description: string | null; cover_image_url: string | null; theme: Record<string, unknown> | null };
+    const title = s.title || "Our survey";
+    const accentColor = (s.theme?.accent_color as string | undefined) ?? "#8b5cf6";
+    const description = s.description ?? "";
 
     let sent = 0;
-    const batchSize = 50;
-    for (let i = 0; i < emails.length; i += batchSize) {
-      const batch = emails.slice(i, i + batchSize);
+
+    for (const contact of validContacts) {
+      const email = contact.email!.trim();
+      const fullName = (contact.name ?? "").trim();
+      const firstName = fullName.split(/\s+/)[0] ?? "";
+
+      // Build personalized link with prefill params
+      const params = new URLSearchParams();
+      if (fullName) params.set("name", fullName);
+      params.set("email", email);
+      const surveyLink = `${baseSurveyUrl}?${params.toString()}`;
+
+      const greeting = firstName ? `Hi ${firstName},` : "Hi,";
+      const subject = `${greeting.replace(",", "")} — ${title}`;
+
+      const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="margin:0;padding:0;background:#0e1118;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0e1118;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+
+          <!-- Accent bar -->
+          <tr>
+            <td style="height:4px;background:${accentColor};border-radius:4px 4px 0 0;"></td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background:#161b27;border:1px solid rgba(255,255,255,0.08);border-top:none;border-radius:0 0 16px 16px;padding:36px 36px 32px;">
+
+              <!-- Greeting -->
+              <p style="margin:0 0 8px;font-size:20px;font-weight:700;color:#eef0f6;">${greeting}</p>
+              <p style="margin:0 0 24px;font-size:15px;color:#8891a5;line-height:1.6;">
+                We'd love to hear from you. Please take a moment to share your feedback:
+              </p>
+
+              <!-- Survey card -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#1e2435;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;margin-bottom:28px;">
+                <tr>
+                  <td style="height:3px;background:${accentColor};"></td>
+                </tr>
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <p style="margin:0 0 6px;font-size:17px;font-weight:700;color:#eef0f6;">${title}</p>
+                    ${description ? `<p style="margin:0 0 0;font-size:14px;color:#8891a5;line-height:1.55;">${description}</p>` : ""}
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td align="center" style="border-radius:12px;background:${accentColor};">
+                    <a href="${surveyLink}"
+                      style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;letter-spacing:0.01em;">
+                      Open survey →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Fallback link -->
+              <p style="margin:0 0 24px;font-size:12px;color:#8891a5;">
+                Or copy this link:<br/>
+                <a href="${surveyLink}" style="color:${accentColor};word-break:break-all;">${surveyLink}</a>
+              </p>
+
+              <!-- Footer -->
+              <hr style="border:none;border-top:1px solid rgba(255,255,255,0.07);margin:0 0 20px;" />
+              <p style="margin:0;font-size:11px;color:#4b5468;line-height:1.6;">
+                You received this because you're in our contact list.
+                <a href="${appUrl}/unsubscribe" style="color:#4b5468;">Unsubscribe</a>
+              </p>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+      `.trim();
+
       const result = await sendEmail({
-        to: batch,
+        to: [email],
         subject,
         html,
         from: DEFAULT_FROM,
       });
-      if (result.ok) sent += batch.length;
+      if (result.ok) sent++;
     }
 
     const serviceClient = createServiceClient();
     await serviceClient.from("broadcast_log").insert({
       organization_id: orgId,
-      subject,
+      subject: title,
       recipient_count: sent,
     });
 
-    return NextResponse.json({ ok: true, sent, total: emails.length });
+    return NextResponse.json({ ok: true, sent, total: validContacts.length });
   } catch (e) {
     console.error("surveys send-link POST:", e);
     return NextResponse.json(
