@@ -4,6 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 
 type Question = { id?: string; text: string; type: string; options?: string[] };
+
+export type SurveyFormTheme = {
+  accent_color?: string;
+  video_url?: string;
+  font_style?: "sans" | "serif";
+  button_shape?: "rounded" | "pill";
+  form_style?: "card" | "minimal" | "bold";
+};
+
 type Props = {
   surveyId: string;
   title: string;
@@ -12,6 +21,9 @@ type Props = {
   coverImageUrl: string | null;
   accentColor?: string;
   videoUrl?: string;
+  fontStyle?: "sans" | "serif";
+  buttonShape?: "rounded" | "pill";
+  formStyle?: "card" | "minimal" | "bold";
   previewMode?: boolean;
 };
 
@@ -32,6 +44,9 @@ export function SurveyResponseForm({
   coverImageUrl,
   accentColor = "#10b981",
   videoUrl = "",
+  fontStyle = "sans",
+  buttonShape = "rounded",
+  formStyle = "card",
   previewMode = false,
 }: Props) {
   const [pageIndex, setPageIndex] = useState(0);
@@ -45,6 +60,7 @@ export function SurveyResponseForm({
   const currentPage = pages[pageIndex] ?? [];
   const isLastPage = pageIndex === pages.length - 1;
   const isFirstPage = pageIndex === 0;
+  const totalPages = pages.length;
 
   const ytId = videoUrl ? getYouTubeId(videoUrl) : null;
   const vimeoId = videoUrl ? getVimeoId(videoUrl) : null;
@@ -59,16 +75,12 @@ export function SurveyResponseForm({
       if (!isLastPage) setPageIndex((i) => i + 1);
       return;
     }
-    if (isLastPage) {
-      submit();
-    } else {
-      setPageIndex((i) => i + 1);
-    }
+    if (isLastPage) submit();
+    else setPageIndex((i) => i + 1);
   };
 
   const back = () => {
-    if (isFirstPage) return;
-    setPageIndex((i) => i - 1);
+    if (!isFirstPage) setPageIndex((i) => i - 1);
   };
 
   const submit = async () => {
@@ -94,26 +106,56 @@ export function SurveyResponseForm({
     }
   };
 
+  const btnRadius = buttonShape === "pill" ? "9999px" : "12px";
+  const fontFamily = fontStyle === "serif" ? "Georgia, 'Times New Roman', serif" : "inherit";
+
+  // Card style: how the outer wrapper looks
+  const cardStyles: Record<string, React.CSSProperties> = {
+    card: {
+      background: "hsl(var(--dashboard-card))",
+      border: "1px solid hsl(var(--dashboard-border))",
+      borderRadius: 20,
+      overflow: "hidden",
+      boxShadow: "0 8px 40px rgba(0,0,0,0.28)",
+    },
+    minimal: {
+      background: "transparent",
+      border: "none",
+    },
+    bold: {
+      background: "hsl(var(--dashboard-card))",
+      border: `2px solid ${accentColor}40`,
+      borderRadius: 20,
+      overflow: "hidden",
+      boxShadow: `0 8px 48px ${accentColor}18`,
+    },
+  };
+
   if (done) {
     return (
-      <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-8 text-center shadow-sm">
+      <div style={{ ...cardStyles[formStyle], padding: "3rem 2rem", textAlign: "center", fontFamily }}>
         <div
-          className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full text-2xl"
-          style={{ background: `${accentColor}20` }}
+          className="mx-auto mb-5 flex h-16 w-16 items-center justify-center text-2xl"
+          style={{ background: `${accentColor}18`, borderRadius: buttonShape === "pill" ? 9999 : 16, border: `2px solid ${accentColor}30` }}
         >
           ✓
         </div>
-        <h2 className="text-xl font-bold text-dashboard-text">Thank you!</h2>
-        <p className="mt-2 text-dashboard-text-muted">Your response has been recorded.</p>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "hsl(var(--dashboard-text))", marginBottom: 8 }}>
+          Thank you!
+        </h2>
+        <p style={{ fontSize: 15, color: "hsl(var(--dashboard-text-muted))" }}>
+          Your response has been recorded.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
-      {/* Cover media */}
+    <div style={{ ...cardStyles[formStyle], fontFamily }}>
+
+      {/* ── Cover media (first page only) ── */}
       {pageIndex === 0 && (hasVideo || coverImageUrl) && (
-        <div className="relative h-44 w-full bg-dashboard-card-hover overflow-hidden">
+        <div className="relative w-full overflow-hidden" style={{ height: 260 }}>
           {hasVideo ? (
             <div className="absolute inset-0 bg-black">
               {ytId && (
@@ -136,54 +178,120 @@ export function SurveyResponseForm({
               )}
             </div>
           ) : coverImageUrl ? (
-            <Image src={coverImageUrl} alt="" fill className="object-cover" />
+            <>
+              <Image src={coverImageUrl} alt="" fill className="object-cover" />
+              {/* gradient overlay for legibility */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%)" }}
+              />
+            </>
           ) : null}
           {/* Accent strip */}
           <div className="absolute bottom-0 inset-x-0 h-1" style={{ background: accentColor }} />
         </div>
       )}
 
-      <div className="p-6 sm:p-8">
+      {/* ── Progress bar (multi-page) ── */}
+      {totalPages > 1 && (
+        <div className="px-7 pt-5" style={{ background: formStyle === "minimal" ? "transparent" : undefined }}>
+          <div className="flex items-center gap-1.5">
+            {pages.map((_, p) => (
+              <div
+                key={p}
+                className="h-1 flex-1 rounded-full transition-all duration-500"
+                style={{ background: p <= pageIndex ? accentColor : `${accentColor}22` }}
+              />
+            ))}
+          </div>
+          <p style={{ fontSize: 11, color: "hsl(var(--dashboard-text-muted))", marginTop: 6 }}>
+            Page {pageIndex + 1} of {totalPages}
+          </p>
+        </div>
+      )}
+
+      {/* ── Body ── */}
+      <div style={{ padding: formStyle === "minimal" ? "2rem 0" : "2rem 1.75rem 1.75rem" }}>
+
+        {/* Header (first page) */}
         {pageIndex === 0 && (
-          <>
-            <h1 className="text-2xl font-bold text-dashboard-text">{title}</h1>
-            {description ? (
-              <p className="mt-2 text-dashboard-text-muted">{description}</p>
-            ) : null}
+          <div style={{ marginBottom: 28 }}>
+            <h1 style={{
+              fontSize: 26,
+              fontWeight: 800,
+              color: "hsl(var(--dashboard-text))",
+              lineHeight: 1.2,
+              marginBottom: description ? 10 : 0,
+              fontFamily,
+            }}>
+              {title}
+            </h1>
+            {description && (
+              <p style={{ fontSize: 15, color: "hsl(var(--dashboard-text-muted))", lineHeight: 1.6 }}>
+                {description}
+              </p>
+            )}
+            {/* Email / name (not in preview mode) */}
             {!previewMode && (
-              <div className="mt-6 space-y-4">
+              <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
                 <div>
-                  <label className="block text-sm font-medium text-dashboard-text mb-1">Your email (optional)</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Email (optional)
+                  </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2.5 text-dashboard-text focus:outline-none transition-colors"
-                    style={{ "--focus-color": accentColor } as React.CSSProperties}
-                    onFocus={(e) => { e.target.style.borderColor = `${accentColor}60`; }}
-                    onBlur={(e) => { e.target.style.borderColor = ""; }}
-                    placeholder="email@example.com"
+                    placeholder="your@email.com"
+                    onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                    onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
+                    style={{
+                      width: "100%",
+                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                      border: "1.5px solid hsl(var(--dashboard-border))",
+                      borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                      padding: "10px 14px",
+                      fontSize: 14,
+                      color: "hsl(var(--dashboard-text))",
+                      outline: "none",
+                      transition: "border-color 0.15s, box-shadow 0.15s",
+                      boxSizing: "border-box",
+                    }}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-dashboard-text mb-1">Your name (optional)</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Name (optional)
+                  </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2.5 text-dashboard-text focus:outline-none transition-colors"
-                    onFocus={(e) => { e.target.style.borderColor = `${accentColor}60`; }}
-                    onBlur={(e) => { e.target.style.borderColor = ""; }}
-                    placeholder="Name"
+                    placeholder="Your name"
+                    onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                    onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
+                    style={{
+                      width: "100%",
+                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                      border: "1.5px solid hsl(var(--dashboard-border))",
+                      borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                      padding: "10px 14px",
+                      fontSize: 14,
+                      color: "hsl(var(--dashboard-text))",
+                      outline: "none",
+                      transition: "border-color 0.15s, box-shadow 0.15s",
+                      boxSizing: "border-box",
+                    }}
                   />
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
 
+        {/* Questions */}
         {currentPage.length > 0 && (
-          <div className="mt-6 space-y-6">
+          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
             {currentPage.map((q, i) => {
               const qId = (q.id ?? `q-${i}`) as string;
               const isYesNo =
@@ -193,20 +301,46 @@ export function SurveyResponseForm({
                   q.options[0] === "Yes" &&
                   q.options[1] === "No");
 
+              const globalIdx = pageIndex === 0 ? i : pageIndex * 4 + i;
+
               return (
                 <div key={qId}>
-                  <label className="block text-base font-semibold text-dashboard-text mb-3">
+                  {/* Question label with number */}
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 14 }}>
                     <span
-                      className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
-                      style={{ background: `${accentColor}20`, color: accentColor }}
+                      style={{
+                        flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: 26,
+                        height: 26,
+                        borderRadius: buttonShape === "pill" ? 9999 : 8,
+                        background: `${accentColor}20`,
+                        color: accentColor,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        marginTop: 2,
+                      }}
                     >
-                      {(pageIndex === 0 ? i : (pageIndex * 4 + i)) + 1}
+                      {globalIdx + 1}
                     </span>
-                    {q.text}
-                  </label>
+                    <label
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "hsl(var(--dashboard-text))",
+                        lineHeight: 1.4,
+                        fontFamily,
+                      }}
+                    >
+                      {q.text}
+                    </label>
+                  </div>
 
+                  {/* Answer area */}
                   {isYesNo ? (
-                    <div className="flex gap-3">
+                    <div style={{ display: "flex", gap: 12, paddingLeft: 36 }}>
                       {["Yes", "No"].map((opt) => {
                         const sel = answers[qId] === opt;
                         return (
@@ -214,49 +348,79 @@ export function SurveyResponseForm({
                             key={opt}
                             type="button"
                             onClick={() => setAnswer(qId, opt)}
-                            className="flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium transition-all"
-                            style={sel ? {
-                              borderColor: accentColor,
-                              background: `${accentColor}18`,
-                              color: accentColor,
-                              boxShadow: `0 0 0 1px ${accentColor}40`,
-                            } : {}}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
+                              borderRadius: btnRadius,
+                              padding: "10px 22px",
+                              fontSize: 15,
+                              fontWeight: 600,
+                              cursor: "pointer",
+                              transition: "all 0.15s",
+                              background: sel ? `${accentColor}18` : "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                              color: sel ? accentColor : "hsl(var(--dashboard-text))",
+                              boxShadow: sel ? `0 0 0 3px ${accentColor}15` : "none",
+                              fontFamily,
+                            }}
                           >
-                            <span>{opt === "Yes" ? "👍" : "👎"}</span>
+                            <span style={{ fontSize: 18 }}>{opt === "Yes" ? "👍" : "👎"}</span>
                             {opt}
                           </button>
                         );
                       })}
                     </div>
                   ) : q.type === "multiple_choice" && q.options?.length ? (
-                    <div className="space-y-2">
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingLeft: 36 }}>
                       {q.options.map((opt) => {
                         const sel = answers[qId] === opt;
                         return (
                           <label
                             key={opt}
-                            className="flex items-center gap-3 cursor-pointer rounded-xl border px-4 py-3 transition-all"
-                            style={sel ? {
-                              borderColor: accentColor,
-                              background: `${accentColor}12`,
-                            } : {}}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 12,
+                              cursor: "pointer",
+                              border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
+                              borderRadius: btnRadius,
+                              padding: "11px 16px",
+                              transition: "all 0.15s",
+                              background: sel ? `${accentColor}12` : "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                              boxShadow: sel ? `0 0 0 3px ${accentColor}15` : "none",
+                            }}
                           >
+                            {/* Custom radio */}
                             <span
-                              className="h-4 w-4 shrink-0 rounded-full border-2 transition-colors"
-                              style={sel ? {
-                                borderColor: accentColor,
-                                background: accentColor,
-                              } : { borderColor: "hsl(var(--dashboard-border))" }}
-                            />
+                              style={{
+                                flexShrink: 0,
+                                width: 18,
+                                height: 18,
+                                borderRadius: "50%",
+                                border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
+                                background: sel ? accentColor : "transparent",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                transition: "all 0.15s",
+                              }}
+                            >
+                              {sel && (
+                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "white" }} />
+                              )}
+                            </span>
                             <input
                               type="radio"
                               name={qId}
                               value={opt}
                               checked={sel}
                               onChange={() => setAnswer(qId, opt)}
-                              className="sr-only"
+                              style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
                             />
-                            <span className="text-dashboard-text">{opt}</span>
+                            <span style={{ fontSize: 14, fontWeight: 500, color: "hsl(var(--dashboard-text))", fontFamily }}>
+                              {opt}
+                            </span>
                           </label>
                         );
                       })}
@@ -266,20 +430,49 @@ export function SurveyResponseForm({
                       value={answers[qId] ?? ""}
                       onChange={(e) => setAnswer(qId, e.target.value)}
                       rows={4}
-                      className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2.5 text-dashboard-text placeholder:text-dashboard-text-muted/40 focus:outline-none resize-none transition-colors"
-                      onFocus={(e) => { e.target.style.borderColor = `${accentColor}60`; }}
-                      onBlur={(e) => { e.target.style.borderColor = ""; }}
+                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
                       placeholder="Your answer…"
+                      style={{
+                        width: "100%",
+                        marginLeft: 36,
+                        maxWidth: "calc(100% - 36px)",
+                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                        border: "1.5px solid hsl(var(--dashboard-border))",
+                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                        padding: "12px 14px",
+                        fontSize: 14,
+                        color: "hsl(var(--dashboard-text))",
+                        outline: "none",
+                        resize: "none",
+                        transition: "border-color 0.15s, box-shadow 0.15s",
+                        boxSizing: "border-box",
+                        fontFamily,
+                      }}
                     />
                   ) : (
                     <input
                       type="text"
                       value={answers[qId] ?? ""}
                       onChange={(e) => setAnswer(qId, e.target.value)}
-                      className="w-full rounded-lg border border-dashboard-border bg-dashboard-card px-4 py-2.5 text-dashboard-text placeholder:text-dashboard-text-muted/40 focus:outline-none transition-colors"
-                      onFocus={(e) => { e.target.style.borderColor = `${accentColor}60`; }}
-                      onBlur={(e) => { e.target.style.borderColor = ""; }}
+                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
+                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
                       placeholder="Your answer…"
+                      style={{
+                        width: "100%",
+                        marginLeft: 36,
+                        maxWidth: "calc(100% - 36px)",
+                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                        border: "1.5px solid hsl(var(--dashboard-border))",
+                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
+                        padding: "10px 14px",
+                        fontSize: 14,
+                        color: "hsl(var(--dashboard-text))",
+                        outline: "none",
+                        transition: "border-color 0.15s, box-shadow 0.15s",
+                        boxSizing: "border-box",
+                        fontFamily,
+                      }}
                     />
                   )}
                 </div>
@@ -288,30 +481,46 @@ export function SurveyResponseForm({
           </div>
         )}
 
+        {/* Error */}
         {error && (
-          <p className="mt-4 text-sm text-rose-400">{error}</p>
+          <p style={{ marginTop: 16, fontSize: 13, color: "#f87171", background: "rgba(239,68,68,0.1)", borderRadius: 10, padding: "10px 14px" }}>
+            {error}
+          </p>
         )}
 
-        <div className="mt-8 flex justify-between items-center">
+        {/* Navigation */}
+        <div style={{ marginTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <button
             type="button"
             onClick={back}
             disabled={isFirstPage}
-            className="text-sm text-dashboard-text-muted hover:text-dashboard-text disabled:opacity-0 transition-colors"
+            style={{
+              fontSize: 14,
+              fontWeight: 500,
+              color: isFirstPage ? "transparent" : "hsl(var(--dashboard-text-muted))",
+              background: "none",
+              border: "none",
+              cursor: isFirstPage ? "default" : "pointer",
+              padding: 0,
+              fontFamily,
+            }}
           >
             ← Back
           </button>
 
-          {/* Page indicator */}
-          {pages.length > 1 && (
-            <div className="flex gap-1">
+          {/* Dot indicators (compact) */}
+          {totalPages > 1 && (
+            <div style={{ display: "flex", gap: 6 }}>
               {pages.map((_, p) => (
                 <span
                   key={p}
-                  className="h-1.5 rounded-full transition-all"
                   style={{
-                    width: p === pageIndex ? 20 : 6,
+                    display: "block",
+                    width: p === pageIndex ? 18 : 6,
+                    height: 6,
+                    borderRadius: 3,
                     background: p === pageIndex ? accentColor : `${accentColor}30`,
+                    transition: "all 0.3s",
                   }}
                 />
               ))}
@@ -322,17 +531,40 @@ export function SurveyResponseForm({
             type="button"
             onClick={next}
             disabled={submitting}
-            className="rounded-xl px-6 py-2.5 font-medium text-white disabled:opacity-50 transition-all hover:opacity-90"
-            style={{ background: accentColor }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: accentColor,
+              color: "white",
+              border: "none",
+              borderRadius: btnRadius,
+              padding: "11px 24px",
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+              transition: "opacity 0.15s, transform 0.1s",
+              boxShadow: `0 4px 16px ${accentColor}40`,
+              fontFamily,
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.88"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
           >
-            {previewMode
-              ? (isLastPage ? "Preview complete" : "Next →")
-              : (submitting ? "Submitting…" : isLastPage ? "Submit" : "Next →")}
+            {submitting ? (
+              "Submitting…"
+            ) : previewMode ? (
+              isLastPage ? "Preview done ✓" : "Next →"
+            ) : (
+              isLastPage ? "Submit response" : "Next →"
+            )}
           </button>
         </div>
 
         {previewMode && (
-          <p className="mt-3 text-center text-xs text-dashboard-text-muted/60">Preview mode — responses are not saved</p>
+          <p style={{ marginTop: 12, textAlign: "center", fontSize: 11, color: "hsl(var(--dashboard-text-muted))", opacity: 0.6 }}>
+            Preview mode — responses are not saved
+          </p>
         )}
       </div>
     </div>

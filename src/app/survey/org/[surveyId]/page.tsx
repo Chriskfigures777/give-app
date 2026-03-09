@@ -62,6 +62,9 @@ export default async function OrgSurveyPage({
           coverImageUrl={survey.cover_image_url}
           accentColor={(survey.theme?.accent_color as string | undefined) ?? "#10b981"}
           videoUrl={(survey.theme?.video_url as string | undefined) ?? ""}
+          fontStyle={(survey.theme?.font_style as "sans" | "serif" | undefined) ?? "sans"}
+          buttonShape={(survey.theme?.button_shape as "rounded" | "pill" | undefined) ?? "rounded"}
+          formStyle={(survey.theme?.form_style as "card" | "minimal" | "bold" | undefined) ?? "card"}
         />
       </div>
     </div>

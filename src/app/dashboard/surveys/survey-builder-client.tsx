@@ -19,6 +19,9 @@ export type QuestionRow = {
 export type SurveyTheme = {
   accent_color?: string;
   video_url?: string;
+  font_style?: "sans" | "serif";
+  button_shape?: "rounded" | "pill";
+  form_style?: "card" | "minimal" | "bold";
 };
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -108,10 +111,14 @@ export function SurveyBuilder({
   const [coverUrl, setCoverUrl] = useState<string>(initialCoverUrl ?? COVER_IMAGES[0]);
   const [accentColor, setAccentColor] = useState(initialTheme.accent_color ?? "#8b5cf6");
   const [videoUrl, setVideoUrl] = useState(initialTheme.video_url ?? "");
+  const [fontStyle, setFontStyle] = useState<"sans" | "serif">(initialTheme.font_style ?? "sans");
+  const [buttonShape, setButtonShape] = useState<"rounded" | "pill">(initialTheme.button_shape ?? "rounded");
+  const [formStyle, setFormStyle] = useState<"card" | "minimal" | "bold">(initialTheme.form_style ?? "card");
 
   // Panel state
   const [mediaPanel, setMediaPanel] = useState<"closed" | "image" | "video">("closed");
   const [colorPanelOpen, setColorPanelOpen] = useState(false);
+  const [stylePanel, setStylePanel] = useState(false);
   const [customUrlInput, setCustomUrlInput] = useState("");
   const [videoInput, setVideoInput] = useState(initialTheme.video_url ?? "");
 
@@ -178,7 +185,13 @@ export function SurveyBuilder({
       description,
       questions,
       cover_image_url: hasVideo ? null : coverUrl,
-      theme: { accent_color: accentColor, video_url: videoUrl || undefined },
+      theme: {
+        accent_color: accentColor,
+        video_url: videoUrl || undefined,
+        font_style: fontStyle,
+        button_shape: buttonShape,
+        form_style: formStyle,
+      },
     });
   };
 
@@ -277,11 +290,23 @@ export function SurveyBuilder({
         {/* Color button */}
         <button
           type="button"
-          onClick={() => { setColorPanelOpen(!colorPanelOpen); setMediaPanel("closed"); }}
+          onClick={() => { setColorPanelOpen(!colorPanelOpen); setMediaPanel("closed"); setStylePanel(false); }}
           className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium text-dashboard-text-muted hover:text-dashboard-text hover:bg-white/6 transition-all"
         >
           <span className="h-3.5 w-3.5 rounded-full border border-white/20 shrink-0" style={{ background: accentColor }} />
-          Accent
+          Color
+        </button>
+
+        {/* Style button */}
+        <button
+          type="button"
+          onClick={() => { setStylePanel(!stylePanel); setColorPanelOpen(false); setMediaPanel("closed"); }}
+          className={[
+            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+            stylePanel ? "bg-white/12 text-white" : "text-dashboard-text-muted hover:text-dashboard-text hover:bg-white/6",
+          ].join(" ")}
+        >
+          ✦ Style
         </button>
 
         <div className="flex-1" />
@@ -428,6 +453,93 @@ export function SurveyBuilder({
                 }}
               />
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─────────── STYLE PANEL ─────────── */}
+      {stylePanel && (
+        <div
+          className="border-b border-dashboard-border/50 p-4 space-y-4"
+          style={{ background: "rgba(0,0,0,0.18)" }}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Font */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-dashboard-text-muted mb-2">Font</p>
+              <div className="flex gap-2">
+                {(["sans", "serif"] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFontStyle(f)}
+                    className="flex-1 rounded-lg border py-2.5 text-sm font-medium transition-all"
+                    style={fontStyle === f ? {
+                      borderColor: accentColor,
+                      background: `${accentColor}15`,
+                      color: accentColor,
+                      fontFamily: f === "serif" ? "Georgia, serif" : "inherit",
+                    } : {
+                      borderColor: "hsl(var(--dashboard-border))",
+                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                      color: "hsl(var(--dashboard-text-muted))",
+                      fontFamily: f === "serif" ? "Georgia, serif" : "inherit",
+                    }}
+                  >
+                    {f === "sans" ? "Sans" : "Serif"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Button shape */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-dashboard-text-muted mb-2">Button shape</p>
+              <div className="flex gap-2">
+                {(["rounded", "pill"] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setButtonShape(s)}
+                    className="flex-1 py-2.5 text-sm font-medium transition-all border"
+                    style={{
+                      borderRadius: s === "pill" ? 9999 : 10,
+                      borderColor: buttonShape === s ? accentColor : "hsl(var(--dashboard-border))",
+                      background: buttonShape === s ? `${accentColor}15` : "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                      color: buttonShape === s ? accentColor : "hsl(var(--dashboard-text-muted))",
+                    }}
+                  >
+                    {s === "rounded" ? "Rounded" : "Pill"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Form style */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-dashboard-text-muted mb-2">Card style</p>
+              <div className="flex gap-2">
+                {(["card", "bold", "minimal"] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setFormStyle(s)}
+                    className="flex-1 rounded-lg border py-2.5 text-xs font-medium transition-all capitalize"
+                    style={formStyle === s ? {
+                      borderColor: accentColor,
+                      background: `${accentColor}15`,
+                      color: accentColor,
+                    } : {
+                      borderColor: "hsl(var(--dashboard-border))",
+                      background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
+                      color: "hsl(var(--dashboard-text-muted))",
+                    }}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

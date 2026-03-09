@@ -12,6 +12,9 @@ import { SurveyResponseForm } from "@/app/survey/org/[surveyId]/survey-response-
 type SurveyTheme = {
   accent_color?: string;
   video_url?: string;
+  font_style?: "sans" | "serif";
+  button_shape?: "rounded" | "pill";
+  form_style?: "card" | "minimal" | "bold";
 };
 
 type Survey = {
@@ -72,6 +75,9 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
   const theme = survey.theme ?? {};
   const accentColor = theme.accent_color ?? "#8b5cf6";
   const videoUrl = theme.video_url ?? "";
+  const fontStyle = theme.font_style ?? "sans";
+  const buttonShape = theme.button_shape ?? "rounded";
+  const formStyle = theme.form_style ?? "card";
   const ytId = videoUrl ? getYouTubeId(videoUrl) : null;
   const vimeoId = videoUrl ? getVimeoId(videoUrl) : null;
   const hasVideo = !!(ytId || vimeoId);
@@ -439,6 +445,9 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                 coverImageUrl={survey.cover_image_url}
                 accentColor={accentColor}
                 videoUrl={videoUrl}
+                fontStyle={fontStyle}
+                buttonShape={buttonShape}
+                formStyle={formStyle}
                 previewMode
               />
             </div>
