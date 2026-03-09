@@ -17,28 +17,35 @@ export default async function SurveyEditPage({
 
   const { data: survey, error } = await supabase
     .from("organization_surveys")
-    .select("id, title, description, questions, status")
+    .select("id, title, description, questions, status, cover_image_url, theme")
     .eq("id", id)
     .eq("organization_id", orgId)
     .single();
 
   if (error || !survey) notFound();
 
+  const s = survey as {
+    title: string;
+    description: string | null;
+    questions: Array<{ id?: string; text: string; type: string; options?: string[]; page?: number }>;
+    cover_image_url: string | null;
+    theme: { accent_color?: string; video_url?: string } | null;
+  };
+
   return (
-    <div className="space-y-6 p-2 sm:p-4">
+    <div className="space-y-4 p-2 sm:p-4">
       <div className="flex items-center gap-4">
         <Link href={`/dashboard/surveys/${id}`} className="text-sm text-dashboard-text-muted hover:text-dashboard-text">
           ← Back to survey
         </Link>
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">Edit survey</h1>
       <SurveyEditClient
         surveyId={id}
-        initialTitle={(survey as { title: string }).title ?? ""}
-        initialDescription={(survey as { description: string | null }).description ?? ""}
+        initialTitle={s.title ?? ""}
+        initialDescription={s.description ?? ""}
         initialQuestions={
-          Array.isArray((survey as { questions: unknown }).questions)
-            ? (survey as { questions: Array<{ id?: string; text: string; type: string; options?: string[]; page?: number }> }).questions.map((q) => ({
+          Array.isArray(s.questions)
+            ? s.questions.map((q) => ({
                 id: q.id,
                 text: q.text,
                 type: (["short_answer", "multiple_choice", "yes_no", "paragraph"].includes(q.type)
@@ -49,6 +56,8 @@ export default async function SurveyEditPage({
               }))
             : []
         }
+        initialCoverUrl={s.cover_image_url}
+        initialTheme={s.theme ?? {}}
       />
     </div>
   );

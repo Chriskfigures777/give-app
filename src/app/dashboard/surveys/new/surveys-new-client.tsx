@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SurveyBuilder, type QuestionRow } from "../survey-builder-client";
+import { SurveyBuilder, type QuestionRow, type SurveyTheme } from "../survey-builder-client";
 
 type Props = { fromNoteId: string | null };
 
@@ -60,7 +60,13 @@ export function SurveysNewClient({ fromNoteId }: Props) {
       .finally(() => setLoadingFromNote(false));
   }, [fromNoteId]);
 
-  const handleSave = async (data: { title: string; description: string; questions: QuestionRow[] }) => {
+  const handleSave = async (data: {
+    title: string;
+    description: string;
+    questions: QuestionRow[];
+    cover_image_url: string | null;
+    theme: SurveyTheme;
+  }) => {
     setError(null);
     setSaving(true);
     try {
@@ -83,6 +89,8 @@ export function SurveysNewClient({ fromNoteId }: Props) {
           title: data.title.trim() || "Untitled survey",
           description: data.description.trim() || null,
           questions: payload,
+          cover_image_url: data.cover_image_url,
+          theme: data.theme,
         }),
       });
       if (!res.ok) {

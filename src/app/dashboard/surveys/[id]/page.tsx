@@ -47,8 +47,8 @@ export default async function SurveyDetailPage({
   const surveyLink = appUrl ? `${appUrl.replace(/\/$/, "")}/survey/org/${id}` : "";
 
   return (
-    <div className="space-y-6 p-2 sm:p-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="space-y-4 p-2 sm:p-4">
+      <div className="flex items-center gap-4">
         <Link href="/dashboard/surveys" className="text-sm text-dashboard-text-muted hover:text-dashboard-text">
           ← Back to surveys
         </Link>

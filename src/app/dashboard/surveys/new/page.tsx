@@ -16,25 +16,18 @@ export default async function NewSurveyPage({
   const fromNote = params.fromNote ?? null;
 
   return (
-    <div className="space-y-6 p-2 sm:p-4">
-      <div className="flex items-center gap-4">
+    <div className=”space-y-4 p-2 sm:p-4”>
+      <div className=”flex items-center gap-4”>
         <Link
-          href="/dashboard/surveys"
-          className="text-sm text-dashboard-text-muted hover:text-dashboard-text"
+          href=”/dashboard/surveys”
+          className=”text-sm text-dashboard-text-muted hover:text-dashboard-text”
         >
           ← Back to surveys
         </Link>
-      </div>
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-dashboard-text">New survey</h1>
-        {fromNote ? (
-          <p className="mt-1 text-sm text-dashboard-text-muted">
-            Loading questions generated from your note. You can edit them below before creating the survey.
-          </p>
-        ) : (
-          <p className="mt-1 text-sm text-dashboard-text-muted">
-            Build your survey from scratch by adding questions, or <Link href="/dashboard/notes" className="text-emerald-600 hover:underline">create a note</Link> and use “Save and generate questions” to get AI suggestions first.
-          </p>
+        {fromNote && (
+          <span className=”text-xs text-dashboard-text-muted”>
+            Questions generated from your note — edit them below.
+          </span>
         )}
       </div>
       <SurveysNewClient fromNoteId={fromNote} />
