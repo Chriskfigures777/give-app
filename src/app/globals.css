@@ -1843,3 +1843,135 @@ aside[data-sidebar="dark"] ::-webkit-scrollbar-thumb {
 .dashboard-fade-in-delay-1 { animation: fadeInUp 0.4s ease 0.05s both; }
 .dashboard-fade-in-delay-2 { animation: fadeInUp 0.4s ease 0.1s both; }
 .dashboard-fade-in-delay-3 { animation: fadeInUp 0.4s ease 0.15s both; }
+
+/* ── Goals Gallery — animations & effects ── */
+
+/* Confetti particle fall */
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg) scale(1);   opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(120px) rotate(720deg) scale(0.3); opacity: 0; }
+}
+.animate-confetti {
+  animation: confettiFall 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Milestone checkbox bounce on complete */
+@keyframes milestoneCheck {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.animate-milestone-check {
+  animation: milestoneCheck 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Celebration burst for goal 100% */
+@keyframes celebratePop {
+  0%   { transform: scale(0.8); opacity: 0; }
+  50%  { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-celebrate {
+  animation: celebratePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Goal card hover lift */
+.goal-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease,
+              border-color 0.2s ease;
+  will-change: transform;
+}
+.goal-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Goal card image zoom on hover */
+.goal-card-img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.goal-card:hover .goal-card-img {
+  transform: scale(1.08);
+}
+
+/* Horizon filter tab indicator slide */
+@keyframes tabSlide {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+.tab-indicator {
+  animation: tabSlide 0.2s ease both;
+  transform-origin: left;
+}
+
+/* Progress ring stroke animation */
+@keyframes ringFill {
+  from { stroke-dashoffset: var(--ring-circ); }
+  to   { stroke-dashoffset: var(--ring-offset); }
+}
+.ring-animate {
+  animation: ringFill 1.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: 0.3s;
+}
+
+/* Slide-in panel from right */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+.goal-panel-enter {
+  animation: slideInRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Stagger card grid entrance */
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.goal-card-enter {
+  animation: cardEntrance 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.goal-card-enter:nth-child(1)  { animation-delay: 0.04s; }
+.goal-card-enter:nth-child(2)  { animation-delay: 0.09s; }
+.goal-card-enter:nth-child(3)  { animation-delay: 0.14s; }
+.goal-card-enter:nth-child(4)  { animation-delay: 0.19s; }
+.goal-card-enter:nth-child(5)  { animation-delay: 0.24s; }
+.goal-card-enter:nth-child(6)  { animation-delay: 0.29s; }
+.goal-card-enter:nth-child(7)  { animation-delay: 0.34s; }
+.goal-card-enter:nth-child(8)  { animation-delay: 0.39s; }
+.goal-card-enter:nth-child(9)  { animation-delay: 0.44s; }
+
+/* Pulse ring on 100% complete */
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70%  { box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.pulse-complete {
+  animation: pulseRing 1.5s ease-out infinite;
+}
+
+/* Goals print layout */
+@media print {
+  .goals-print-hide { display: none !important; }
+  .goals-print-page {
+    padding: 2rem;
+    background: white !important;
+    color: black !important;
+  }
+  .goals-print-card {
+    break-inside: avoid;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+}
