@@ -7,7 +7,7 @@ import {
   CheckCircle2, Circle, X, Printer, Sparkles,
   Lock, Globe2, TrendingUp, Users, ChevronRight,
   Image as ImageIcon, Award, Zap, BarChart3,
-  CheckCheck, Clock, Star,
+  CheckCheck, Clock, Star, FileDown,
 } from "lucide-react";
 import {
   Dialog,
@@ -824,91 +824,6 @@ function GoalDetailPanel({
   );
 }
 
-// ─── Active Member Widget ─────────────────────────────────────────────────────
-
-function ActiveMemberWidget() {
-  const [threshold, setThreshold] = useState(4);
-  const [unit, setUnit] = useState("surveys per month");
-  const [editing, setEditing] = useState(false);
-
-  const tiers = [
-    { label: "Active", color: "#10b981", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.3)", icon: "🟢", desc: `≥ ${threshold} ${unit}`, pct: 42 },
-    { label: "Engaged", color: "#f59e0b", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.3)", icon: "🟡", desc: `${Math.max(1, Math.floor(threshold / 2))}–${threshold - 1} ${unit}`, pct: 35 },
-    { label: "Inactive", color: "#ef4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.3)", icon: "🔴", desc: `< ${Math.max(1, Math.floor(threshold / 2))} ${unit}`, pct: 23 },
-  ];
-
-  return (
-    <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5 dashboard-fade-in">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-emerald-400" />
-          <h3 className="text-sm font-semibold text-dashboard-text">Member Engagement</h3>
-        </div>
-        <button
-          type="button"
-          onClick={() => setEditing(!editing)}
-          className="text-xs text-dashboard-text-muted hover:text-dashboard-text transition-colors flex items-center gap-1"
-        >
-          <Pencil className="h-3 w-3" />
-          {editing ? "Done" : "Configure"}
-        </button>
-      </div>
-      <p className="text-xs text-dashboard-text-muted mb-4">
-        Track engagement levels based on survey completion. Set your own &ldquo;active&rdquo; threshold.
-      </p>
-
-      {editing && (
-        <div className="mb-4 rounded-xl border border-dashboard-border p-3 space-y-2 bg-dashboard-card-hover/30">
-          <label className="block text-xs font-medium text-dashboard-text">Active threshold</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={1}
-              value={threshold}
-              onChange={(e) => setThreshold(Math.max(1, Number(e.target.value)))}
-              className="w-16 rounded-lg border border-dashboard-border bg-dashboard-card px-2 py-1.5 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-            />
-            <input
-              type="text"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              placeholder="e.g. surveys per month"
-              className="flex-1 rounded-lg border border-dashboard-border bg-dashboard-card px-2 py-1.5 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-            />
-          </div>
-          <p className="text-xs text-dashboard-text-muted">
-            Members who complete ≥ {threshold} {unit} are counted as Active (green).
-          </p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-3 gap-2">
-        {tiers.map((t) => (
-          <div
-            key={t.label}
-            className="rounded-xl p-3 text-center"
-            style={{ background: t.bg, border: `1px solid ${t.border}` }}
-          >
-            <div className="text-base mb-1">{t.icon}</div>
-            <div className="text-lg font-black" style={{ color: t.color }}>{t.pct}%</div>
-            <div className="text-xs font-semibold text-dashboard-text">{t.label}</div>
-            <div className="text-[10px] text-dashboard-text-muted mt-0.5 leading-tight">{t.desc}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-3 flex gap-1 h-2 rounded-full overflow-hidden">
-        {tiers.map((t) => (
-          <div key={t.label} className="rounded-full transition-all duration-700" style={{ width: `${t.pct}%`, background: t.color }} />
-        ))}
-      </div>
-      <p className="text-[10px] text-dashboard-text-muted mt-1.5 text-center">
-        Connect surveys to auto-update these numbers
-      </p>
-    </div>
-  );
-}
-
 // ─── Empty State ──────────────────────────────────────────────────────────────
 
 function EmptyState({ horizon, onAdd }: { horizon: HorizonId | "all"; onAdd: () => void }) {
@@ -953,6 +868,7 @@ export function OrgGoalsClient() {
   const [activeHorizon, setActiveHorizon] = useState<HorizonId | "all">("all");
   const [detailGoalId, setDetailGoalId] = useState<string | null>(null);
   const [goalDialogOpen, setGoalDialogOpen] = useState(false);
+  const [exportingDocx, setExportingDocx] = useState(false);
 
   // Form state
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
@@ -1117,6 +1033,31 @@ export function OrgGoalsClient() {
   const filteredGoals = getFilteredGoals();
   const detailGoal = detailGoalId ? goals.find((g) => g.id === detailGoalId) ?? null : null;
 
+  const handleExportDocx = async () => {
+    setExportingDocx(true);
+    try {
+      const res = await fetch("/api/org-goals/export/docx");
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error ?? "Export failed");
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition");
+      const match = disposition?.match(/filename="?([^";\n]+)"?/);
+      const filename = match?.[1] ?? "goals-and-priorities.docx";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Failed to export");
+    } finally {
+      setExportingDocx(false);
+    }
+  };
+
   const tabs: { id: HorizonId | "all"; label: string }[] = [
     { id: "all", label: "All Goals" },
     ...HORIZONS.map((h) => ({ id: h.id as HorizonId | "all", label: h.longLabel })),
@@ -1153,22 +1094,31 @@ export function OrgGoalsClient() {
             Set 90-day, one-year, and three-year goals. Track milestones, log progress, and build momentum.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => openCreate(activeHorizon === "all" ? "90_day" : activeHorizon)}
-          className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[.98]"
-        >
-          <Plus className="h-4 w-4" />
-          New Goal
-        </button>
+        <div className="shrink-0 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleExportDocx}
+            disabled={exportingDocx}
+            className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-2.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-colors disabled:opacity-50"
+            title="Export goals and priorities to share with members and community"
+          >
+            <FileDown className="h-4 w-4" />
+            {exportingDocx ? "Exporting…" : "Export"}
+          </button>
+          <button
+            type="button"
+            onClick={() => openCreate(activeHorizon === "all" ? "90_day" : activeHorizon)}
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[.98]"
+          >
+            <Plus className="h-4 w-4" />
+            New Goal
+          </button>
+        </div>
       </div>
 
       {error && (
         <p className="text-sm text-red-400 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">{error}</p>
       )}
-
-      {/* Active Member Widget */}
-      <ActiveMemberWidget />
 
       {/* Horizon Filter Tabs */}
       <div className="dashboard-fade-in-delay-1">
