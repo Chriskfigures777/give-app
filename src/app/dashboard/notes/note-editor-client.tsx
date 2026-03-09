@@ -85,7 +85,7 @@ export function NoteEditorClient({
       StarterKit,
       TextStyle,
       FontFamily,
-      Placeholder.configure({ placeholder: "Paste or type your sermon or ministry notes here…" }),
+      Placeholder.configure({ placeholder: "Paste or type your notes here…" }),
       CharacterCount,
     ],
     content: initialContent || "",
@@ -521,10 +521,10 @@ export function NoteEditorClient({
               <span className="hidden sm:inline">Bible</span>
             </button>
 
-            {/* Dictation button */}
+            {/* Dictation button - use onClick so browser gets a clear user gesture (required for SpeechRecognition.start()) */}
             <button
               type="button"
-              onMouseDown={(e) => { e.preventDefault(); toggleDictation(); }}
+              onClick={() => toggleDictation()}
               title={isListening ? "Stop dictation" : "Start voice dictation"}
               className={[
                 "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-all",
@@ -586,17 +586,20 @@ export function NoteEditorClient({
                   style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%)" }}
                 />
 
-                {/* Title over image */}
+                {/* Title over image — inline editable */}
                 <div className="absolute bottom-0 left-0 right-0 px-8 py-6">
                   <div className="flex items-end gap-3">
                     <div className="h-10 w-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-sm flex items-center justify-center shrink-0">
                       <BookOpen className="h-5 w-5 text-emerald-400" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-emerald-400/90 uppercase tracking-wider mb-1">Ministry Notes</p>
-                      <h1 className="text-2xl font-black text-white leading-tight line-clamp-1 drop-shadow-lg">
-                        {title || "Untitled"}
-                      </h1>
+                      <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Note title"
+                        className="block w-full bg-transparent text-2xl font-black text-white leading-tight placeholder:text-white/50 focus:outline-none drop-shadow-lg"
+                      />
                     </div>
                     {/* Cover controls — shown on hover */}
                     <div className="flex items-center gap-1.5 opacity-0 group-hover/cover:opacity-100 transition-opacity">
@@ -634,11 +637,14 @@ export function NoteEditorClient({
                   <div className="h-10 w-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center shrink-0">
                     <BookOpen className="h-5 w-5 text-emerald-400" />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-wider mb-0.5">Ministry Notes</p>
-                    <h1 className="text-xl font-black text-dashboard-text leading-tight line-clamp-1">
-                      {title || "Untitled"}
-                    </h1>
+                  <div className="min-w-0 flex-1">
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Note title"
+                      className="block w-full bg-transparent text-xl font-black text-dashboard-text leading-tight placeholder:text-dashboard-text-muted/50 focus:outline-none"
+                    />
                   </div>
                 </div>
                 {/* Add cover button */}
