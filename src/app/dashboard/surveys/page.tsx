@@ -58,7 +58,7 @@ export default async function SurveysPage() {
         </div>
         <Link
           href="/dashboard/surveys/new"
-          className="flex shrink-0 items-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
         >
           <Plus className="h-4 w-4" />
           New survey
@@ -179,8 +179,8 @@ export default async function SurveysPage() {
         </div>
       ) : (
         <div className="dashboard-fade-in-delay-1 flex flex-col items-center justify-center rounded-2xl border border-dashed border-dashboard-border bg-dashboard-card/50 py-16 text-center">
-          <div className="mb-4 rounded-2xl bg-violet-500/10 p-4">
-            <ClipboardList className="h-8 w-8 text-violet-400" />
+          <div className="mb-4 rounded-2xl bg-emerald-500/10 p-4">
+            <ClipboardList className="h-8 w-8 text-emerald-400" />
           </div>
           <h3 className="text-base font-semibold text-dashboard-text">No surveys yet</h3>
           <p className="mt-1.5 max-w-xs text-sm text-dashboard-text-muted">
@@ -188,7 +188,7 @@ export default async function SurveysPage() {
           </p>
           <Link
             href="/dashboard/surveys/new"
-            className="mt-5 flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+            className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
           >
             <Plus className="h-4 w-4" />
             Create first survey

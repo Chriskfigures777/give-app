@@ -57,6 +57,9 @@ export async function PATCH(
     if (typeof body.cover_image_url === "string") updates.cover_image_url = body.cover_image_url;
     if (body.theme && typeof body.theme === "object") updates.theme = body.theme;
     if (body.status === "draft" || body.status === "published" || body.status === "closed") updates.status = body.status;
+    if (body.respondent_category === null || body.respondent_category === "member" || body.respondent_category === "contact") {
+      updates.respondent_category = body.respondent_category;
+    }
 
     const { data, error } = await supabase
       .from("organization_surveys")

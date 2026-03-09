@@ -3,7 +3,13 @@ import { requireAuth } from "@/lib/auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, DEFAULT_FROM } from "@/lib/email/resend";
 
-/** Send a personalized survey link to each contact (with ?name=...&email=... prefill). */
+/** Send a personalized survey link (with ?name=...&email=... prefill).
+ * Body: { sendTo?: 'all' | 'members' | 'contacts' | 'selected', contactIds?: string[] }
+ * - all: everyone with email (default)
+ * - members: people with member or get_started in sources_breakdown
+ * - contacts: all contacts (same as all for now; distinct from members-only)
+ * - selected: only contactIds
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -32,14 +38,33 @@ export async function POST(
     const baseSurveyUrl = appUrl ? `${appUrl}/survey/org/${surveyId}` : "";
     if (!baseSurveyUrl) return NextResponse.json({ error: "App URL not configured" }, { status: 500 });
 
+    let body: { sendTo?: string; contactIds?: string[] } = {};
+    try {
+      body = await req.json();
+    } catch {
+      // no body is fine; default to "all"
+    }
+    const sendTo = (body.sendTo === "members" || body.sendTo === "contacts" || body.sendTo === "selected") ? body.sendTo : "all";
+    const contactIds = Array.isArray(body.contactIds) ? body.contactIds.filter((id): id is string => typeof id === "string") : undefined;
+
     const { data: contacts } = await supabase
       .from("organization_contacts")
-      .select("id, email, name")
+      .select("id, email, name, sources_breakdown")
       .eq("organization_id", orgId)
       .not("email", "is", null)
       .is("unsubscribed_at", null);
 
-    const validContacts = (contacts ?? []).filter((c) => c.email?.trim());
+    let validContacts = (contacts ?? []).filter((c) => c.email?.trim()) as Array<{ id: string; email: string; name: string | null; sources_breakdown?: Record<string, number> | null }>;
+
+    if (sendTo === "members") {
+      validContacts = validContacts.filter((c) => {
+        const b = c.sources_breakdown ?? {};
+        return (b.member ?? 0) > 0 || (b.get_started ?? 0) > 0;
+      });
+    } else if (sendTo === "selected" && contactIds?.length) {
+      const idSet = new Set(contactIds);
+      validContacts = validContacts.filter((c) => idSet.has(c.id));
+    }
 
     if (validContacts.length === 0) {
       return NextResponse.json({ error: "No recipients (contacts with email who have not unsubscribed)" }, { status: 400 });

@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Copy, Check, Pencil, Mail,
-  ClipboardList, Users, BarChart3, LinkIcon, ChevronRight, Video, Eye, X,
+  Copy, Check, Pencil, Mail, ChevronDown,
+  ClipboardList, Users, BarChart3, LinkIcon, ChevronRight, Video, Eye, X, UserCheck,
 } from "lucide-react";
 import { SurveyResponseForm } from "@/app/survey/org/[surveyId]/survey-response-form";
 
@@ -25,6 +25,7 @@ type Survey = {
   status: string;
   cover_image_url: string | null;
   theme: SurveyTheme | null;
+  respondent_category: string | null;
   updated_at: string;
 };
 type ResponseRow = {
@@ -34,12 +35,15 @@ type ResponseRow = {
   answers: Record<string, string>;
   created_at: string;
 };
+type ContactRow = { id: string; email: string | null; name: string | null };
 type Props = {
   surveyId: string;
   survey: Survey;
   responses: ResponseRow[];
   surveyLink: string;
   contactCount: number;
+  membersCount: number;
+  contacts: ContactRow[];
 };
 
 const DEFAULT_COVER = "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&q=80";
@@ -60,7 +64,9 @@ function getVimeoId(url: string): string | null {
   return m?.[1] ?? null;
 }
 
-export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, contactCount }: Props) {
+type SendToOption = "all" | "members" | "contacts" | "selected";
+
+export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, contactCount, membersCount, contacts }: Props) {
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState(survey.status);
   const [sending, setSending] = useState(false);
@@ -69,6 +75,12 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
   const [tab, setTab] = useState<"overview" | "questions" | "responses">("overview");
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [sendDropdownOpen, setSendDropdownOpen] = useState(false);
+  const [sendTo, setSendTo] = useState<SendToOption>("all");
+  const [recipientPickerOpen, setRecipientPickerOpen] = useState(false);
+  const [selectedContactIds, setSelectedContactIds] = useState<Set<string>>(new Set());
+  const [respondentCategory, setRespondentCategory] = useState<string | null>(survey.respondent_category ?? null);
+  const [savingCategory, setSavingCategory] = useState(false);
 
   const cfg = STATUS[status as keyof typeof STATUS] ?? STATUS.draft;
   const questions = Array.isArray(survey.questions) ? (survey.questions as Array<Record<string, unknown>>) : [];
@@ -100,12 +112,20 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
     if (res.ok) setStatus(newStatus);
   };
 
-  const sendLinkToContacts = async () => {
+  const sendLinkToContacts = async (option: SendToOption, contactIds?: string[]) => {
     setSendError(null);
     setSendResult(null);
+    setSendDropdownOpen(false);
+    setRecipientPickerOpen(false);
     setSending(true);
     try {
-      const res = await fetch(`/api/surveys/${surveyId}/send-link`, { method: "POST" });
+      const body: { sendTo: SendToOption; contactIds?: string[] } = { sendTo: option };
+      if (option === "selected" && contactIds?.length) body.contactIds = contactIds;
+      const res = await fetch(`/api/surveys/${surveyId}/send-link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error((data as { error?: string }).error ?? "Failed to send");
       setSendResult({ sent: (data as { sent: number }).sent, total: (data as { total: number }).total });
@@ -115,6 +135,30 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
       setSending(false);
     }
   };
+
+  const saveRespondentCategory = async (value: string | null) => {
+    setSavingCategory(true);
+    try {
+      const res = await fetch(`/api/surveys/${surveyId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ respondent_category: value }),
+      });
+      if (res.ok) setRespondentCategory(value);
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  const canSend = contactCount > 0;
+  const sendToLabel =
+    sendTo === "members"
+      ? `Send to members (${membersCount})`
+      : sendTo === "selected"
+        ? `Send to selected (${selectedContactIds.size})`
+        : sendTo === "contacts"
+          ? "Send to contacts"
+          : `Send to all (${contactCount})`;
 
   const TABS = [
     { id: "overview"  as const, label: "Overview",                         icon: <BarChart3 className="h-3.5 w-3.5" /> },
@@ -203,17 +247,58 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
               <Button variant="secondary" size="sm" onClick={() => setSurveyStatus("closed")} className="h-9">
                 Close survey
               </Button>
-              {contactCount > 0 && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={sendLinkToContacts}
-                  disabled={sending}
-                  className="h-9 gap-1.5"
-                >
-                  <Mail className="h-3.5 w-3.5" />
-                  {sending ? "Sending…" : "Send to contacts"}
-                </Button>
+              {canSend && (
+                <div className="relative">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setSendDropdownOpen((o) => !o)}
+                    disabled={sending}
+                    className="h-9 gap-1.5 border border-dashboard-border bg-dashboard-card hover:bg-dashboard-card-hover text-dashboard-text"
+                  >
+                    <Mail className="h-3.5 w-3.5" />
+                    {sending ? "Sending…" : sendToLabel}
+                    <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+                  </Button>
+                  {sendDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setSendDropdownOpen(false)} aria-hidden />
+                      <div
+                        className="absolute left-0 top-full z-50 mt-1 min-w-[220px] rounded-xl border border-dashboard-border bg-dashboard-card py-1 shadow-lg"
+                        style={{ background: "hsl(var(--dashboard-card))" }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => { setSendTo("all"); sendLinkToContacts("all"); }}
+                          className="w-full px-4 py-2.5 text-left text-sm text-dashboard-text hover:bg-dashboard-card-hover"
+                        >
+                          Send to all ({contactCount})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSendTo("members"); sendLinkToContacts("members"); }}
+                          className="w-full px-4 py-2.5 text-left text-sm text-dashboard-text hover:bg-dashboard-card-hover"
+                        >
+                          Send to members ({membersCount})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSendTo("contacts"); sendLinkToContacts("contacts"); }}
+                          className="w-full px-4 py-2.5 text-left text-sm text-dashboard-text hover:bg-dashboard-card-hover"
+                        >
+                          Send to contacts ({contactCount})
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSendDropdownOpen(false); setRecipientPickerOpen(true); }}
+                          className="w-full px-4 py-2.5 text-left text-sm text-dashboard-text hover:bg-dashboard-card-hover flex items-center gap-2"
+                        >
+                          <UserCheck className="h-3.5 w-3.5" /> Send to selected…
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
             </>
           )}
@@ -232,6 +317,69 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
           </Link>
         </div>
       </div>
+
+      {/* Recipient picker modal (Send to selected) */}
+      {recipientPickerOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
+          onClick={(e) => e.target === e.currentTarget && setRecipientPickerOpen(false)}
+        >
+          <div
+            className="rounded-2xl border border-dashboard-border bg-dashboard-card shadow-xl max-h-[80vh] w-full max-w-md flex flex-col"
+            style={{ background: "hsl(var(--dashboard-card))" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-dashboard-border px-5 py-4">
+              <h3 className="text-sm font-semibold text-dashboard-text">Send survey to selected people</h3>
+              <button type="button" onClick={() => setRecipientPickerOpen(false)} className="rounded-lg p-1.5 text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {contacts.length === 0 ? (
+                <p className="text-sm text-dashboard-text-muted">No contacts with email.</p>
+              ) : (
+                contacts.map((c) => (
+                  <label
+                    key={c.id}
+                    className="flex items-center gap-3 rounded-lg border border-dashboard-border bg-dashboard-card-hover/50 px-3 py-2 cursor-pointer hover:bg-dashboard-card-hover"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedContactIds.has(c.id)}
+                      onChange={() => {
+                        setSelectedContactIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(c.id)) next.delete(c.id);
+                          else next.add(c.id);
+                          return next;
+                        });
+                      }}
+                      className="rounded border-dashboard-border text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <span className="text-sm text-dashboard-text truncate">{c.name || c.email || c.id}</span>
+                    {c.email && <span className="text-xs text-dashboard-text-muted truncate ml-auto">{c.email}</span>}
+                  </label>
+                ))
+              )}
+            </div>
+            <div className="flex justify-end gap-2 border-t border-dashboard-border px-5 py-4">
+              <Button variant="secondary" size="sm" onClick={() => setRecipientPickerOpen(false)} className="h-9">
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => sendLinkToContacts("selected", Array.from(selectedContactIds))}
+                disabled={sending || selectedContactIds.size === 0}
+                className="h-9 bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                {sending ? "Sending…" : `Send to ${selectedContactIds.size} selected`}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Send feedback */}
       {sendError && <p className="mt-2 px-1 text-sm text-rose-400">{sendError}</p>}
@@ -273,10 +421,16 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
               <p className="text-2xl font-bold" style={{ color: accentColor }}>{responses.length}</p>
             </div>
             {contactCount > 0 && (
-              <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4 shadow-sm">
-                <p className="text-xs text-dashboard-text-muted mb-1">Contacts</p>
-                <p className="text-2xl font-bold text-dashboard-text">{contactCount}</p>
-              </div>
+              <>
+                <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4 shadow-sm">
+                  <p className="text-xs text-dashboard-text-muted mb-1">Contacts</p>
+                  <p className="text-2xl font-bold text-dashboard-text">{contactCount}</p>
+                </div>
+                <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4 shadow-sm">
+                  <p className="text-xs text-dashboard-text-muted mb-1">Members</p>
+                  <p className="text-2xl font-bold text-dashboard-text">{membersCount}</p>
+                </div>
+              </>
             )}
           </div>
 
@@ -288,7 +442,7 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                 <h3 className="text-sm font-semibold text-dashboard-text">Survey link</h3>
               </div>
               <p className="text-xs text-dashboard-text-muted mb-3">
-                Share this link with your people or click &ldquo;Send to contacts&rdquo; to email them.
+                Share this link with your people or use &ldquo;Send to…&rdquo; to email members or contacts. When someone fills this survey on your website, they are added to People automatically.
               </p>
               <div className="flex flex-wrap items-center gap-2">
                 <code className="min-w-0 flex-1 truncate rounded-lg bg-dashboard-card-hover px-3 py-2 text-xs font-mono text-dashboard-text">
@@ -298,6 +452,34 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                   {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   {copied ? "Copied" : "Copy"}
                 </Button>
+              </div>
+              {/* Respondent category: when someone fills on public page, add to People as… */}
+              <div className="mt-5 pt-5 border-t border-dashboard-border">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-dashboard-text-muted mb-2">
+                  When someone fills this survey on your website, add them to People as
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(["none", "member", "contact"] as const).map((value) => {
+                    const v = value === "none" ? null : value;
+                    const label = value === "none" ? "Just survey (no category)" : value === "member" ? "Member" : "Contact";
+                    const isActive = respondentCategory === v;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => { setRespondentCategory(v); saveRespondentCategory(v); }}
+                        disabled={savingCategory}
+                        className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                          isActive
+                            ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400"
+                            : "border-dashboard-border bg-dashboard-card-hover text-dashboard-text-muted hover:text-dashboard-text"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}

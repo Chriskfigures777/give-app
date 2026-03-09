@@ -41,7 +41,7 @@ export async function POST(
 
     const { data: survey, error: surveyErr } = await supabase
       .from("organization_surveys")
-      .select("id, organization_id, status")
+      .select("id, organization_id, status, respondent_category")
       .eq("id", surveyId)
       .single();
 
@@ -53,6 +53,8 @@ export async function POST(
     }
 
     const orgId = (survey as { organization_id: string }).organization_id;
+    const respondentCategory = (survey as { respondent_category?: string | null }).respondent_category;
+    const surveyRespondentCategory = (respondentCategory === "member" || respondentCategory === "contact") ? respondentCategory : null;
 
     let body: { respondent_email?: string; respondent_name?: string; answers?: Record<string, unknown> };
     try {
@@ -88,6 +90,7 @@ export async function POST(
         email: respondentEmail,
         name: respondentName ?? null,
         source: "survey",
+        surveyRespondentCategory: surveyRespondentCategory ?? undefined,
       }).catch((e) => console.error("[survey response] upsertOrganizationContact failed:", e));
 
       const { data: contact } = await supabase

@@ -9,6 +9,9 @@ export type ContactSource = "donation" | "form" | "survey";
 /** When source is "form", optional form kind for CRM label (e.g. "member", "get_started"). */
 export type FormKind = "member" | "get_started" | null;
 
+/** When source is "survey", also add respondent as member or contact in People. */
+export type SurveyRespondentCategory = "member" | "contact" | null;
+
 export async function upsertOrganizationContact(
   supabase: SupabaseClient,
   params: {
@@ -20,9 +23,11 @@ export async function upsertOrganizationContact(
     userId?: string | null;
     /** When source is "form", store so CRM can show "Member" or "Get started". */
     formKind?: FormKind;
+    /** When source is "survey", also increment this in sources_breakdown so they show in Members/Contacts. */
+    surveyRespondentCategory?: SurveyRespondentCategory;
   }
 ): Promise<void> {
-  const { organizationId, email, name, phone, source, userId, formKind } = params;
+  const { organizationId, email, name, phone, source, userId, formKind, surveyRespondentCategory } = params;
   const now = new Date().toISOString();
 
   if (!email || !email.trim()) {
@@ -44,6 +49,10 @@ export async function upsertOrganizationContact(
   if (source === "form" && formKind && (formKind === "member" || formKind === "get_started")) {
     const kindCount = typeof newBreakdown[formKind] === "number" ? newBreakdown[formKind] + 1 : 1;
     newBreakdown[formKind] = kindCount;
+  }
+  if (source === "survey" && surveyRespondentCategory && (surveyRespondentCategory === "member" || surveyRespondentCategory === "contact")) {
+    const kindCount = typeof newBreakdown[surveyRespondentCategory] === "number" ? newBreakdown[surveyRespondentCategory] + 1 : 1;
+    newBreakdown[surveyRespondentCategory] = kindCount;
   }
 
   if (existing) {

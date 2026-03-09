@@ -18,7 +18,7 @@ export default async function SurveyDetailPage({
 
   const { data: survey, error } = await supabase
     .from("organization_surveys")
-    .select("id, title, description, questions, status, cover_image_url, theme, created_at, updated_at")
+    .select("id, title, description, questions, status, cover_image_url, theme, respondent_category, created_at, updated_at")
     .eq("id", id)
     .eq("organization_id", orgId)
     .single();
@@ -27,7 +27,7 @@ export default async function SurveyDetailPage({
 
   const [
     { data: responsesData },
-    { count: contactCount },
+    { data: contactsData },
   ] = await Promise.all([
     supabase
       .from("organization_survey_responses")
@@ -36,13 +36,20 @@ export default async function SurveyDetailPage({
       .order("created_at", { ascending: false }),
     supabase
       .from("organization_contacts")
-      .select("id", { count: "exact", head: true })
+      .select("id, email, name, sources_breakdown")
       .eq("organization_id", orgId)
       .not("email", "is", null)
-      .is("unsubscribed_at", null),
+      .is("unsubscribed_at", null)
+      .order("last_seen_at", { ascending: false }),
   ]);
 
   const responses = responsesData ?? [];
+  const contacts = (contactsData ?? []) as Array<{ id: string; email: string | null; name: string | null; sources_breakdown?: Record<string, number> | null }>;
+  const contactCount = contacts.length;
+  const membersCount = contacts.filter((c) => {
+    const b = c.sources_breakdown ?? {};
+    return (b.member ?? 0) > 0 || (b.get_started ?? 0) > 0;
+  }).length;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const surveyLink = appUrl ? `${appUrl.replace(/\/$/, "")}/survey/org/${id}` : "";
 
@@ -55,10 +62,12 @@ export default async function SurveyDetailPage({
       </div>
       <SurveyDetailClient
         surveyId={id}
-        survey={survey as { id: string; title: string; description: string | null; questions: unknown[]; status: string; cover_image_url: string | null; theme: Record<string, unknown> | null; updated_at: string }}
+        survey={survey as { id: string; title: string; description: string | null; questions: unknown[]; status: string; cover_image_url: string | null; theme: Record<string, unknown> | null; respondent_category: string | null; updated_at: string }}
         responses={responses as Array<{ id: string; respondent_email: string | null; respondent_name: string | null; answers: Record<string, string>; created_at: string }>}
         surveyLink={surveyLink}
-        contactCount={contactCount ?? 0}
+        contactCount={contactCount}
+        membersCount={membersCount}
+        contacts={contacts}
       />
     </div>
   );
