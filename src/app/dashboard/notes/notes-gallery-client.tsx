@@ -112,10 +112,9 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
   );
 
   return (
-    <div className="dashboard-fade-in-delay-1 flex flex-col gap-4">
-
-      {/* ── Toolbar ── */}
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border/80 bg-dashboard-card overflow-hidden shadow-sm">
+      {/* Toolbar — inside the notes card so header and list feel unified */}
+      <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5 sm:py-4 border-b border-dashboard-border/60">
         {/* Search */}
         <div className="relative flex-1 min-w-[180px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-dashboard-text-muted pointer-events-none" />
@@ -124,7 +123,7 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
             placeholder="Search notes…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-dashboard-border bg-dashboard-card pl-9 pr-9 py-2.5 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
+            className="w-full rounded-xl border border-dashboard-border/60 bg-dashboard-card-hover/50 pl-9 pr-9 py-2.5 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
           />
           {search && (
             <button
@@ -137,7 +136,7 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
         </div>
 
         {/* Type filter pills */}
-        <div className="flex items-center gap-1 p-1 rounded-xl border border-dashboard-border bg-dashboard-card">
+        <div className="flex items-center gap-1 p-1 rounded-xl border border-dashboard-border/60 bg-dashboard-card-hover/50">
           <Filter className="h-3.5 w-3.5 text-dashboard-text-muted ml-2 mr-1 shrink-0" />
           {(["all", "image", "video", "text"] as TypeFilter[]).map(t => (
             <button
@@ -162,15 +161,11 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
         </span>
       </div>
 
-      {/* ── Table ── */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ border: "1.5px solid rgba(255,255,255,0.07)" }}
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1.5px solid rgba(255,255,255,0.07)" }}>
+      {/* Table — same card, no extra border; header reads as part of notes section */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-dashboard-border/60 bg-dashboard-card-hover/20">
                 <th className="w-8 px-4 py-3" />
                 {colHeader("Title", "title", "min-w-[200px]")}
                 <th className="px-4 py-3 text-left">
@@ -200,10 +195,7 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
                 return (
                   <tr
                     key={note.id}
-                    className="group transition-colors"
-                    style={{
-                      borderBottom: idx < rows.length - 1 ? "1px solid rgba(255,255,255,0.05)" : undefined,
-                    }}
+                    className="group transition-colors border-b border-dashboard-border/40 last:border-b-0"
                   >
                     {/* Color dot */}
                     <td className="px-4 py-3.5">
@@ -272,13 +264,11 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
               })}
             </tbody>
           </table>
-        </div>
-
-        {/* Row hover highlight — via CSS in the table itself */}
-        <style>{`
-          tbody tr:hover { background: rgba(255,255,255,0.025); }
-        `}</style>
       </div>
+      {/* Row hover highlight */}
+      <style>{`
+        tbody tr:hover { background: hsl(var(--dashboard-card-hover) / 0.4); }
+      `}</style>
     </div>
   );
 }
