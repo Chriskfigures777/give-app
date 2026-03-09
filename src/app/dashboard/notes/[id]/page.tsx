@@ -24,12 +24,13 @@ export default async function EditNotePage({
   if (error || !note) notFound();
 
   const credits = await getRemainingCredits(orgId);
+  const n = note as { title: string; content: string };
 
   return (
     <NoteEditorClient
       noteId={id}
-      initialTitle={(note as { title: string }).title ?? ""}
-      initialContent={(note as { content: string }).content ?? ""}
+      initialTitle={n.title ?? ""}
+      initialContent={n.content ?? ""}
       creditsRemaining={credits.remaining}
       creditsCap={credits.cap}
     />

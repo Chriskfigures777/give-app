@@ -13,38 +13,31 @@ import {
   ArrowLeft, Bold, Italic, List, ListOrdered, Quote,
   Minus, Undo2, Redo2, Sparkles, Loader2, X, ChevronRight,
   Check, Trash2, Mic, MicOff, BookOpen, FileText, Image as ImageIcon,
+  Video, LayoutTemplate,
 } from "lucide-react";
 import type { SurveyQuestion } from "@/app/api/ai/generate-survey-questions/route";
 import { BiblePanel } from "@/app/dashboard/notes/bible-panel";
-
-// Curated cover images (same set as gallery page, deterministic)
-const NOTE_COVER_IMAGES = [
-  "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&q=80",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80",
-  "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&q=80",
-  "https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=1200&q=80",
-  "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
-  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-  "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80",
-  "https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=1200&q=80",
-  "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&q=80",
-  "https://images.unsplash.com/photo-1548407260-da850faa41e3?w=1200&q=80",
-  "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=1200&q=80",
-];
-
-function hashId(id: string): number {
-  return id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-}
+import { PexelsMediaPicker } from "@/components/pexels-media-picker";
 
 type Props = {
   noteId: string | null;
   initialTitle: string;
   initialContent: string;
+  initialCoverUrl?: string | null;
+  initialCoverType?: "image" | "video" | null;
   creditsRemaining: number;
   creditsCap: number;
 };
 
-export function NoteEditorClient({ noteId, initialTitle, initialContent, creditsRemaining, creditsCap }: Props) {
+export function NoteEditorClient({
+  noteId,
+  initialTitle,
+  initialContent,
+  initialCoverUrl,
+  initialCoverType,
+  creditsRemaining,
+  creditsCap,
+}: Props) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle);
   const [saving, setSaving] = useState(false);
@@ -57,15 +50,18 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
   const [isListening, setIsListening] = useState(false);
   const [interimText, setInterimText] = useState("");
   const [bibleOpen, setBibleOpen] = useState(false);
-  const [coverImg, setCoverImg] = useState<string>(() => {
-    if (noteId) return NOTE_COVER_IMAGES[hashId(noteId) % NOTE_COVER_IMAGES.length];
-    return NOTE_COVER_IMAGES[0];
-  });
+  const [pexelsOpen, setPexelsOpen] = useState(false);
+
+  // Cover state — null means no cover (text-only header)
+  const [coverUrl, setCoverUrl] = useState<string | null>(initialCoverUrl ?? null);
+  const [coverType, setCoverType] = useState<"image" | "video" | null>(initialCoverType ?? null);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const isListeningRef = useRef(false);
   const dictationPosRef = useRef<number>(0);
   const insertDictationRef = useRef<(text: string) => void>(() => {});
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     return () => {
@@ -102,13 +98,20 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
   const wordCount = editor?.storage.characterCount.words() ?? 0;
 
-  const saveNote = useCallback(async (): Promise<string | null> => {
+  const saveNote = useCallback(async (overrideCover?: { url: string | null; type: "image" | "video" | null }): Promise<string | null> => {
     if (!editor) return null;
     setSaving(true);
     setSaveStatus("idle");
+    const effectiveCoverUrl = overrideCover !== undefined ? overrideCover.url : coverUrl;
+    const effectiveCoverType = overrideCover !== undefined ? overrideCover.type : coverType;
     try {
       const html = editor.getHTML();
-      const body = { title: title.trim() || "Untitled", content: html };
+      const body = {
+        title: title.trim() || "Untitled",
+        content: html,
+        cover_url: effectiveCoverUrl,
+        cover_type: effectiveCoverType,
+      };
       if (savedNoteId) {
         const res = await fetch(`/api/pastor-notes/${savedNoteId}`, {
           method: "PATCH",
@@ -129,7 +132,6 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         const data = await res.json();
         const newId = (data as { id: string }).id;
         setSavedNoteId(newId);
-        setCoverImg(NOTE_COVER_IMAGES[hashId(newId) % NOTE_COVER_IMAGES.length]);
         router.replace(`/dashboard/notes/${newId}`);
         setSaveStatus("saved");
         setTimeout(() => setSaveStatus("idle"), 2500);
@@ -142,7 +144,21 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
     } finally {
       setSaving(false);
     }
-  }, [editor, title, savedNoteId, router]);
+  }, [editor, title, savedNoteId, router, coverUrl, coverType]);
+
+  const handlePexelsSelect = useCallback((url: string, type: "image" | "video") => {
+    setCoverUrl(url);
+    setCoverType(type);
+    setPexelsOpen(false);
+    // Auto-save the new cover
+    saveNote({ url, type });
+  }, [saveNote]);
+
+  const handleRemoveCover = useCallback(() => {
+    setCoverUrl(null);
+    setCoverType(null);
+    saveNote({ url: null, type: null });
+  }, [saveNote]);
 
   const handleGenerate = async () => {
     if (!editor) return;
@@ -227,9 +243,6 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         const transcript = (alt?.transcript ?? (result as unknown as { transcript?: string }).transcript ?? "") as string;
         if (!transcript) continue;
         if (result.isFinal) {
-          if (process.env.NODE_ENV === "development") {
-            console.log("[Dictation] final:", transcript);
-          }
           insertDictationRef.current(transcript);
         } else {
           interim += transcript;
@@ -386,7 +399,7 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
 
         {/* Save */}
         <button
-          onClick={saveNote}
+          onClick={() => saveNote()}
           disabled={saving}
           className="shrink-0 flex items-center gap-1.5 rounded-lg border border-dashboard-border/60 bg-white/5 hover:bg-white/10 px-3 py-1.5 text-xs font-semibold text-dashboard-text transition-all"
         >
@@ -524,50 +537,104 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
         >
           <div className="mx-auto py-6 px-4" style={{ maxWidth: 860 }}>
 
-            {/* ── Cover image card ── */}
-            <div
-              className="relative rounded-2xl overflow-hidden mb-0"
-              style={{ height: 220 }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={coverImg}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-              {/* Gradient overlay */}
+            {/* ── Cover hero — only shown when a cover is set ── */}
+            {coverUrl ? (
               <div
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%)" }}
-              />
-              {/* Title over image */}
-              <div className="absolute bottom-0 left-0 right-0 px-8 py-6">
-                <div className="flex items-end gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-sm flex items-center justify-center shrink-0">
+                className="relative rounded-2xl overflow-hidden mb-0 group/cover"
+                style={{ height: 220 }}
+              >
+                {/* Video cover */}
+                {coverType === "video" ? (
+                  <video
+                    ref={videoRef}
+                    src={coverUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={coverUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                )}
+
+                {/* Gradient overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%)" }}
+                />
+
+                {/* Title over image */}
+                <div className="absolute bottom-0 left-0 right-0 px-8 py-6">
+                  <div className="flex items-end gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-sm flex items-center justify-center shrink-0">
+                      <BookOpen className="h-5 w-5 text-emerald-400" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-emerald-400/90 uppercase tracking-wider mb-1">Ministry Notes</p>
+                      <h1 className="text-2xl font-black text-white leading-tight line-clamp-1 drop-shadow-lg">
+                        {title || "Untitled"}
+                      </h1>
+                    </div>
+                    {/* Cover controls — shown on hover */}
+                    <div className="flex items-center gap-1.5 opacity-0 group-hover/cover:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        onClick={() => setPexelsOpen(true)}
+                        title="Change cover"
+                        className="flex items-center gap-1.5 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-white/10 px-2.5 py-1.5 text-xs text-white/80 hover:text-white transition-all"
+                      >
+                        {coverType === "video" ? <Video className="h-3 w-3" /> : <ImageIcon className="h-3 w-3" />}
+                        <span className="hidden sm:inline">Change</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCover}
+                        title="Remove cover"
+                        className="flex items-center gap-1 rounded-lg bg-black/50 hover:bg-rose-500/30 backdrop-blur-sm border border-white/10 px-2 py-1.5 text-xs text-white/60 hover:text-rose-300 transition-all"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* ── Text-only header (no cover) ── */
+              <div
+                className="rounded-2xl mb-0 px-8 py-6 flex items-center justify-between gap-4"
+                style={{
+                  background: "hsl(var(--dashboard-card))",
+                  border: "1px solid hsl(var(--dashboard-border))",
+                }}
+              >
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center shrink-0">
                     <BookOpen className="h-5 w-5 text-emerald-400" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-emerald-400/90 uppercase tracking-wider mb-1">Ministry Notes</p>
-                    <h1 className="text-2xl font-black text-white leading-tight line-clamp-1 drop-shadow-lg">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-semibold text-emerald-400/80 uppercase tracking-wider mb-0.5">Ministry Notes</p>
+                    <h1 className="text-xl font-black text-dashboard-text leading-tight line-clamp-1">
                       {title || "Untitled"}
                     </h1>
                   </div>
-                  {/* Change cover button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const current = NOTE_COVER_IMAGES.indexOf(coverImg);
-                      setCoverImg(NOTE_COVER_IMAGES[(current + 1) % NOTE_COVER_IMAGES.length]);
-                    }}
-                    title="Change cover image"
-                    className="shrink-0 flex items-center gap-1.5 rounded-lg bg-black/40 hover:bg-black/60 backdrop-blur-sm border border-white/10 px-2.5 py-1.5 text-xs text-white/70 hover:text-white transition-all"
-                  >
-                    <ImageIcon className="h-3 w-3" />
-                    <span className="hidden sm:inline">Cover</span>
-                  </button>
                 </div>
+                {/* Add cover button */}
+                <button
+                  type="button"
+                  onClick={() => setPexelsOpen(true)}
+                  className="shrink-0 flex items-center gap-1.5 rounded-lg border border-dashed border-dashboard-border/60 hover:border-emerald-500/40 bg-white/3 hover:bg-emerald-500/5 px-3 py-2 text-xs text-dashboard-text-muted hover:text-emerald-400 transition-all"
+                >
+                  <LayoutTemplate className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Add cover</span>
+                </button>
               </div>
-            </div>
+            )}
 
             {/* ── Paper page ── */}
             <div
@@ -681,6 +748,15 @@ export function NoteEditorClient({ noteId, initialTitle, initialContent, credits
           />
         )}
       </div>
+
+      {/* ── Pexels picker modal ── */}
+      {pexelsOpen && (
+        <PexelsMediaPicker
+          mode="both"
+          onSelect={handlePexelsSelect}
+          onClose={() => setPexelsOpen(false)}
+        />
+      )}
     </div>
   );
 }

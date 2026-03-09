@@ -15,6 +15,8 @@ export default async function NewNotePage() {
       noteId={null}
       initialTitle=""
       initialContent=""
+      initialCoverUrl={null}
+      initialCoverType={null}
       creditsRemaining={credits.remaining}
       creditsCap={credits.cap}
     />

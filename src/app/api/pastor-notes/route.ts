@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("pastor_notes")
-      .select("id, title, content, created_at, updated_at, author_user_id")
+      .select("id, title, content, cover_url, cover_type, created_at, updated_at, author_user_id")
       .eq("organization_id", orgId)
       .order("updated_at", { ascending: false });
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No organization" }, { status: 400 });
     }
 
-    let body: { title?: string; content?: string };
+    let body: { title?: string; content?: string; cover_url?: string | null; cover_type?: string | null };
     try {
       body = await req.json();
     } catch {
@@ -63,8 +63,10 @@ export async function POST(req: NextRequest) {
         author_user_id: user.id,
         title: title || "Untitled",
         content: content ?? "",
+        cover_url: body.cover_url ?? null,
+        cover_type: body.cover_type ?? null,
       })
-      .select("id, title, content, created_at, updated_at")
+      .select("id, title, content, cover_url, cover_type, created_at, updated_at")
       .single();
 
     if (error) {

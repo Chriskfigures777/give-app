@@ -17,7 +17,7 @@ export async function GET(
     const { id } = await params;
     const { data, error } = await supabase
       .from("pastor_notes")
-      .select("id, title, content, created_at, updated_at, author_user_id")
+      .select("id, title, content, cover_url, cover_type, created_at, updated_at, author_user_id")
       .eq("id", id)
       .eq("organization_id", orgId)
       .single();
@@ -50,25 +50,27 @@ export async function PATCH(
     if (!orgId) return NextResponse.json({ error: "No organization" }, { status: 400 });
 
     const { id } = await params;
-    let body: { title?: string; content?: string };
+    let body: { title?: string; content?: string; cover_url?: string | null; cover_type?: string | null };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const updates: { title?: string; content?: string; updated_at: string } = {
+    const updates: { title?: string; content?: string; cover_url?: string | null; cover_type?: string | null; updated_at: string } = {
       updated_at: new Date().toISOString(),
     };
     if (typeof body.title === "string") updates.title = body.title.trim() || "Untitled";
     if (typeof body.content === "string") updates.content = body.content;
+    if ("cover_url" in body) updates.cover_url = body.cover_url ?? null;
+    if ("cover_type" in body) updates.cover_type = body.cover_type ?? null;
 
     const { data, error } = await supabase
       .from("pastor_notes")
       .update(updates)
       .eq("id", id)
       .eq("organization_id", orgId)
-      .select("id, title, content, created_at, updated_at")
+      .select("id, title, content, cover_url, cover_type, created_at, updated_at")
       .single();
 
     if (error) {
