@@ -5,7 +5,6 @@ import "./globals.css";
 import { MeProvider } from "@/lib/use-me";
 import { PricingModalProvider } from "@/lib/use-pricing-modal";
 import { NavWrapper } from "@/components/nav-wrapper";
-import { Auth0Provider } from "@/components/auth0-provider";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -29,14 +28,12 @@ export default function RootLayout({
     <html lang="en" className={barlow.variable} suppressHydrationWarning>
       <body className={`${barlow.className} min-h-screen bg-white text-slate-900 antialiased`}>
         <div id="root-app" className="min-h-screen">
-          <Auth0Provider>
-            <MeProvider>
-              <PricingModalProvider>
-                <NavWrapper />
-                {children}
-              </PricingModalProvider>
-            </MeProvider>
-          </Auth0Provider>
+          <MeProvider>
+            <PricingModalProvider>
+              <NavWrapper />
+              {children}
+            </PricingModalProvider>
+          </MeProvider>
         </div>
         <Toaster position="top-right" richColors closeButton />
       </body>

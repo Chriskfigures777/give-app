@@ -91,7 +91,7 @@ import { useUnitTokenAuth0 } from "@/hooks/use-unit-token-auth0";
 
 const UNIT_UI_BASE = process.env.NEXT_PUBLIC_UNIT_SANDBOX !== "false" ? "https://ui.s.unit.sh" : "https://ui.unit.co";
 const DEFAULT_SCRIPT = `${UNIT_UI_BASE}/release/latest/components-extended.js`;
-const USE_AUTH0 = !!(process.env.NEXT_PUBLIC_AUTH0_DOMAIN && process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID);
+const USE_AUTH0 = false;
 
 const UNIT_SETTINGS = {
   global: {
