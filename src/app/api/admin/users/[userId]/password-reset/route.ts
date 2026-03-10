@@ -27,7 +27,7 @@ export async function POST(
     type: "recovery",
     email,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/recovery`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? ""}/auth/recovery`,
     },
   });
 

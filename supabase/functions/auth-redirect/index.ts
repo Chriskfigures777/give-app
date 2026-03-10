@@ -3,9 +3,9 @@
 // Do not call exchangeCodeForSession here — BankGO does it so the code is used only once.
 
 const BANKING_APP_URL =
-  Deno.env.get("BANKING_APP_URL") ?? "https://excahnge-bankinkg.vercel.app";
+  Deno.env.get("BANKING_APP_URL") ?? "";
 const EXCHANGE_APP_URL =
-  Deno.env.get("EXCHANGE_APP_URL") ?? "https://give-app78.vercel.app";
+  Deno.env.get("EXCHANGE_APP_URL") ?? "https://theexchangeapp.church";
 const BANKING_CALLBACK_PATH = "/auth/callback";
 const DEFAULT_NEXT = "/dashboard";
 

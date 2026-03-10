@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         ? origin
         : process.env.NEXT_PUBLIC_APP_URL ||
           process.env.DOMAIN ||
-          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
     const baseTrimmed = base.replace(/\/$/, "");
     const slug = (org as { slug: string }).slug;
 

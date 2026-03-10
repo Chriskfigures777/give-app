@@ -3,7 +3,7 @@
  * Allowlisted banking callback only; safe relative paths for `next` to prevent open redirects.
  */
 
-const DEFAULT_BANKING_APP_URL = "https://excahnge-bankinkg.vercel.app";
+const DEFAULT_BANKING_APP_URL = "";
 const BANKING_CALLBACK_PATH = "/auth/callback";
 const DEFAULT_NEXT = "/dashboard";
 

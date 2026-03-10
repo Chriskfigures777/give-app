@@ -61,7 +61,7 @@ const REGISTRAR_GUIDES: Record<string, { name: string; url: string }> = {
 };
 
 const CF_DOMAIN = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN || "";
-const CNAME_TARGET = CF_DOMAIN || process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "give-app78.vercel.app";
+const CNAME_TARGET = CF_DOMAIN || process.env.NEXT_PUBLIC_SITE_CNAME_TARGET || "theexchangeapp.church";
 const VERCEL_IP = "76.76.21.21";
 const USE_CLOUDFRONT = !!CF_DOMAIN;
 

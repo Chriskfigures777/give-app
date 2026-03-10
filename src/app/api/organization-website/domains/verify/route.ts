@@ -32,7 +32,7 @@ async function canAccessOrg(
 }
 
 const cnameTarget = () =>
-  process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+  process.env.SITE_CNAME_TARGET || "theexchangeapp.church";
 const cfDomain = () => process.env.AWS_CLOUDFRONT_DOMAIN || "";
 const VERCEL_IP = "76.76.21.21";
 

@@ -8,10 +8,10 @@ This guide covers enabling Supabase as an OAuth 2.1 identity provider so third-p
 2. Enable the OAuth server
 3. Configure:
    - **Authorization Path**: `/oauth/consent`
-   - **Site URL**: `https://give-app78.vercel.app` (no trailing slash)
+   - **Site URL**: `https://theexchangeapp.church` (no trailing slash)
    - **Allow Dynamic OAuth Apps**: Optional, for programmatic client registration
 
-**Important:** Use Site URL without a trailing slash. Otherwise the preview URL will show `https://give-app78.vercel.app//oauth/consent` (double slash).
+**Important:** Use Site URL without a trailing slash. Otherwise the preview URL will show `https://theexchangeapp.church//oauth/consent` (double slash).
 
 ## 2. Implemented Routes
 
@@ -23,7 +23,7 @@ This guide covers enabling Supabase as an OAuth 2.1 identity provider so third-p
 ## 3. Flow
 
 1. Third-party app redirects user to Supabase Auth's `/oauth/authorize` with PKCE params
-2. Supabase validates and redirects to `https://give-app78.vercel.app/oauth/consent?authorization_id=...`
+2. Supabase validates and redirects to `https://theexchangeapp.church/oauth/consent?authorization_id=...`
 3. If not logged in, user is redirected to `/login?redirect=...` and returned after sign-in
 4. User sees consent screen with app name, redirect URI, and requested scopes
 5. User clicks Approve or Deny → form POSTs to `/api/oauth/decision`

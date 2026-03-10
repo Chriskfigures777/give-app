@@ -19,7 +19,7 @@ window.location.replace(${JSON.stringify(origin + "/")});
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  const origin = req.nextUrl.origin || process.env.DOMAIN || "http://localhost:3000";
+  const origin = req.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "";
 
   // Redirect via HTML so we can clear Unit White-Label App tokens before navigation.
   // Per Unit docs: unitCustomerToken and unitVerifiedCustomerToken must be cleared on logout.
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  const origin = req.nextUrl.origin || process.env.DOMAIN || "http://localhost:3000";
+  const origin = req.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "";
 
   return new NextResponse(signOutHtml(origin), {
     status: 200,

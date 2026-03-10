@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cfDomain = cloudfrontDomain();
-    const cnameTarget = cfDomain || process.env.SITE_CNAME_TARGET || "give-app78.vercel.app";
+    const cnameTarget = cfDomain || process.env.SITE_CNAME_TARGET || "theexchangeapp.church";
     const vercelIp = "76.76.21.21";
     const isWww = domain.startsWith("www.");
     const recordName = isWww ? "www" : "@";

@@ -49,7 +49,7 @@ NEXT_PUBLIC_AUTH0_BANKING_AUDIENCE=https://unit-banking
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-For production, set `NEXT_PUBLIC_APP_URL` to your production URL (e.g. `https://give-app78.vercel.app`).
+For production, set `NEXT_PUBLIC_APP_URL` to your production URL (e.g. `https://theexchangeapp.church`).
 
 ---
 
@@ -62,7 +62,7 @@ In **Auth0 Dashboard → Applications → [Your App] → Application URIs**, con
 Auth0 redirects here after login. **Must include `/auth/auth0-callback`.**
 
 ```
-http://localhost:3000/auth/auth0-callback, https://give-app78.vercel.app/auth/auth0-callback
+http://localhost:3000/auth/auth0-callback, https://theexchangeapp.church/auth/auth0-callback
 ```
 
 ### Allowed Logout URLs
@@ -70,7 +70,7 @@ http://localhost:3000/auth/auth0-callback, https://give-app78.vercel.app/auth/au
 Auth0 redirects here after logout. Include both the base URL and the signout endpoint.
 
 ```
-http://localhost:3000, http://localhost:3000/api/auth/signout, https://give-app78.vercel.app, https://give-app78.vercel.app/api/auth/signout
+http://localhost:3000, http://localhost:3000/api/auth/signout, https://theexchangeapp.church, https://theexchangeapp.church/api/auth/signout
 ```
 
 ### Allowed Web Origins
@@ -78,7 +78,7 @@ http://localhost:3000, http://localhost:3000/api/auth/signout, https://give-app7
 Required for CORS and silent token renewal. **Include both localhost and production.**
 
 ```
-http://localhost:3000, https://give-app78.vercel.app
+http://localhost:3000, https://theexchangeapp.church
 ```
 
 ### Application Type

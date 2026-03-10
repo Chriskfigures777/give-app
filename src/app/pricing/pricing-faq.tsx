@@ -8,7 +8,7 @@ const FAQ_ITEMS = [
   {
     question: "What does the Free Forever plan include?",
     answer:
-      "The Free Forever plan includes: unlimited donations (no cap), unlimited donation forms, embeddable forms and embed cards, QR codes, shareable donation links, recurring and one-time gifts, basic dashboard with real-time stats, donation analytics and history, year-end tax receipts, give.app subdomain, up to 2 split recipients, connections and chat with other orgs, Eventbrite integration, Feed and Explore, goals and donation campaigns, givers list and management, form customization (colors, amounts, images), anonymous giving option, endowment fund selection, Stripe Connect payouts, and a realtime donation feed. The goal: get as many churches in the door as possible. Revenue comes from a 1% platform fee + Stripe processing. No credit card required.",
+      "The Free Forever plan includes: unlimited donations (no cap), unlimited donation forms, embeddable forms and embed cards, QR codes, shareable donation links, recurring and one-time gifts, basic dashboard with real-time stats, donation analytics and history, year-end tax receipts, theexchangeapp.church subdomain, up to 2 split recipients, connections and chat with other orgs, Eventbrite integration, Feed and Explore, goals and donation campaigns, givers list and management, form customization (colors, amounts, images), anonymous giving option, endowment fund selection, Stripe Connect payouts, and a realtime donation feed. The goal: get as many churches in the door as possible. Revenue comes from a 1% platform fee + Stripe processing. No credit card required.",
   },
   {
     question: "What is the 14-day trial for paid plans?",

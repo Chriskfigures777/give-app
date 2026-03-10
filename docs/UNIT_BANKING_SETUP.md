@@ -43,7 +43,7 @@ Without this, Unit cannot recognize your users' JWTs and will reject them or sho
 When a user's application is approved, Unit sends `customer.created`. We must receive it to save `unit_customer_id` to the database.
 
 1. Go to **Developer → Webhooks → Create**
-2. **URL**: `https://give-app78.vercel.app/api/webhooks/unit` (or your production URL)
+2. **URL**: `https://theexchangeapp.church/api/webhooks/unit` (or your production URL)
 3. **Token**: Use the same value as `UNIT_WEBHOOK_SECRET` in your env
 4. **Content Type**: Json or JsonAPI
 5. **Delivery Mode**: At least once (recommended)
@@ -67,10 +67,10 @@ Configure in Unit Dashboard → Settings → Callback Endpoints:
 
 | Endpoint | URL |
 |----------|-----|
-| Application Prefill | `https://give-app78.vercel.app/api/unit/application-prefill` |
-| User Management | `https://give-app78.vercel.app/api/unit/user-management` |
-| Banking Page URL | `https://give-app78.vercel.app/banking` |
-| Reactivation Billpay | `https://give-app78.vercel.app/banking/billpay` |
+| Application Prefill | `https://theexchangeapp.church/api/unit/application-prefill` |
+| User Management | `https://theexchangeapp.church/api/unit/user-management` |
+| Banking Page URL | `https://theexchangeapp.church/banking` |
+| Reactivation Billpay | `https://theexchangeapp.church/banking/billpay` |
 
 ## 5. Supabase JWT Hook (Supabase auth only)
 

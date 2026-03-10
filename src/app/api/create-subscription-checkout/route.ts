@@ -93,7 +93,7 @@ export async function POST(req: Request) {
 
     const totalCents = calculateChargeAmountCents(amountCents, feeCoverage);
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
     const successUrl = `${baseUrl}/give/complete${slug ? `?slug=${encodeURIComponent(slug)}` : ""}`;
     const cancelUrl = `${baseUrl}/give/${slug || organizationId}${frequency ? `?frequency=${encodeURIComponent(frequency)}` : ""}`;
 

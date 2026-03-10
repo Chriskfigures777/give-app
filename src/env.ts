@@ -34,6 +34,6 @@ export const env = {
     domain: () =>
       process.env.NEXT_PUBLIC_APP_URL ||
       process.env.DOMAIN ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""),
   },
 } as const;

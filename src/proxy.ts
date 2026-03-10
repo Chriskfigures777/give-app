@@ -5,7 +5,7 @@ import { createFetchWithTimeout } from "@/lib/supabase/fetch-with-timeout-edge";
 
 function isAppDomain(host: string): boolean {
   if (host.startsWith("localhost")) return true;
-  const appDomains = (process.env.SITE_APP_DOMAIN ?? "give.app,www.give.app")
+  const appDomains = (process.env.SITE_APP_DOMAIN ?? "theexchangeapp.church,www.theexchangeapp.church")
     .split(",")
     .map((d) => d.trim().toLowerCase());
   const h = host.toLowerCase();
@@ -75,7 +75,7 @@ export async function proxy(req: NextRequest) {
   const siteRewrite = getSiteRewrite(req);
   if (siteRewrite) return siteRewrite;
 
-  // Skip custom domain lookup for app domain (localhost, give.app) — always null
+  // Skip custom domain lookup for app domain (localhost, theexchangeapp.church) — always null
   const host = (req.headers.get("host") ?? "").split(":")[0];
   const customRewrite = isAppDomain(host) ? null : await getCustomDomainRewrite(req);
   if (customRewrite) return customRewrite;

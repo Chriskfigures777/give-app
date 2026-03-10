@@ -22,7 +22,7 @@ function getResend(): Resend | null {
 
 const DEFAULT_FROM =
   process.env.RESEND_FROM_EMAIL?.trim() || "Give <onboarding@resend.dev>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.DOMAIN || "";
 
 export { DEFAULT_FROM, APP_URL };
 

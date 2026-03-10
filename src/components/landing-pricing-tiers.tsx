@@ -42,7 +42,7 @@ const FREE_FEATURES = [
   { icon: Repeat, label: "Recurring & one-time gifts" },
   { icon: BarChart3, label: "Basic dashboard with real-time stats" },
   { icon: FileText, label: "Year-end tax receipts" },
-  { icon: Globe, label: "give.app subdomain" },
+  { icon: Globe, label: "theexchangeapp.church subdomain" },
   { icon: Split, label: "Up to 2 split recipients" },
   { icon: Users, label: "Connections & chat with other orgs" },
   { icon: CalendarDays, label: "Eventbrite integration" },

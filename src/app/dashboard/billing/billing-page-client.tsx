@@ -41,7 +41,7 @@ const PLAN_DATA = [
     price: "$0",
     period: "/month",
     description:
-      "Full-featured donation platform. Unlimited donations, forms, embeds, QR codes, recurring giving, basic dashboard, tax receipts, give.app subdomain, up to 2 split recipients, connections & chat, Eventbrite integration, feed. No credit card required.",
+      "Full-featured donation platform. Unlimited donations, forms, embeds, QR codes, recurring giving, basic dashboard, tax receipts, theexchangeapp.church subdomain, up to 2 split recipients, connections & chat, Eventbrite integration, feed. No credit card required.",
     features: [
       "Unlimited donations — no cap",
       "Unlimited donation forms",
@@ -50,7 +50,7 @@ const PLAN_DATA = [
       "Recurring & one-time gifts",
       "Basic dashboard with real-time stats",
       "Year-end tax receipts",
-      "give.app subdomain",
+      "theexchangeapp.church subdomain",
       "Up to 2 split recipients",
       "Connections & chat",
       "Eventbrite integration",
