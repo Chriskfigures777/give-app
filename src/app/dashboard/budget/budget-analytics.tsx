@@ -42,8 +42,8 @@ function fmtFull(val: number) {
 }
 
 const CATEGORY_COLORS = [
-  "#34d399", "#60a5fa", "#f97316", "#a78bfa", "#f59e0b",
-  "#ec4899", "#14b8a6", "#f87171", "#38bdf8", "#a3e635",
+  "#60a5fa", "#34d399", "#8892a4", "#a78bfa", "#38bdf8",
+  "#6ee7b7", "#93c5fd", "#c4b5fd", "#67e8f9", "#86efac",
 ];
 
 // ─── types ────────────────────────────────────────────────────────────────────
@@ -64,19 +64,20 @@ type CategoryDataPoint = {
 // ─── sub-components ───────────────────────────────────────────────────────────
 
 const tooltipStyle = {
-  backgroundColor: "var(--bg-card, #1a1f2e)",
-  border: "1px solid var(--border, #2a3042)",
-  borderRadius: 8,
+  backgroundColor: "#181c26",
+  border: "1px solid #1e2330",
+  borderRadius: 10,
   color: "#eef0f6",
   fontSize: 12,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
 };
 
-function StatCard({ label, value, sub, color = "#34d399" }: { label: string; value: string; sub?: string; color?: string }) {
+function StatCard({ label, value, sub, color = "#eef0f6" }: { label: string; value: string; sub?: string; color?: string }) {
   return (
-    <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4">
-      <p className="text-[10px] uppercase tracking-wider text-dashboard-text-muted mb-1">{label}</p>
+    <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-4">
+      <p className="text-[10px] uppercase tracking-wider text-dashboard-text-muted/70 mb-2">{label}</p>
       <p className="text-xl font-bold tabular-nums" style={{ color }}>{value}</p>
-      {sub && <p className="text-xs text-dashboard-text-muted mt-0.5">{sub}</p>}
+      {sub && <p className="text-xs text-dashboard-text-muted mt-1">{sub}</p>}
     </div>
   );
 }
@@ -178,7 +179,7 @@ export function BudgetAnalytics({
           label="Total Expenses"
           value={fmtFull(totalExpenses)}
           sub={`Fixed: ${fmtFull(totalFixed)}`}
-          color="#f97316"
+          color="#eef0f6"
         />
         <StatCard
           label="Net Cash Flow"
@@ -190,15 +191,14 @@ export function BudgetAnalytics({
           label="Avg Monthly Income"
           value={fmtFull(avgMonthlyIncome)}
           sub={`${sheets.length} month${sheets.length !== 1 ? "s" : ""} tracked`}
-          color="#60a5fa"
+          color="#eef0f6"
         />
       </div>
 
       {/* ── Monthly Income vs Expenses Bar Chart ───────────────────── */}
-      <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4">
-        <h3 className="text-sm font-semibold text-dashboard-text mb-4">
-          Monthly Income vs Expenses — {year}
-        </h3>
+      <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
+        <h3 className="text-sm font-semibold text-dashboard-text mb-1">Monthly Income vs Expenses</h3>
+        <p className="text-xs text-dashboard-text-muted mb-4">{year} — all 12 months</p>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={monthlyData} margin={{ top: 4, right: 8, left: -10, bottom: 0 }} barGap={2}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
@@ -211,8 +211,8 @@ export function BudgetAnalytics({
             />
             <Legend wrapperStyle={{ fontSize: 11, color: "#8892a4" }} />
             <Bar dataKey="income" name="Income" fill="#34d399" radius={[3, 3, 0, 0]} maxBarSize={28} />
-            <Bar dataKey="fixed" name="Fixed Exp." fill="#f97316" radius={[3, 3, 0, 0]} maxBarSize={28} />
-            <Bar dataKey="variable" name="Variable Exp." fill="#a78bfa" radius={[3, 3, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="fixed" name="Fixed Exp." fill="#60a5fa" radius={[3, 3, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="variable" name="Variable Exp." fill="#8892a4" radius={[3, 3, 0, 0]} maxBarSize={28} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -220,8 +220,9 @@ export function BudgetAnalytics({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* ── Top Spending Categories ──────────────────────────────── */}
         {categoryData.length > 0 && (
-          <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4">
-            <h3 className="text-sm font-semibold text-dashboard-text mb-4">Top Spending Categories</h3>
+          <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
+            <h3 className="text-sm font-semibold text-dashboard-text mb-1">Top Spending Categories</h3>
+            <p className="text-xs text-dashboard-text-muted mb-4">By amount spent across all months</p>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <ResponsiveContainer width={160} height={160}>
                 <PieChart>
@@ -261,7 +262,7 @@ export function BudgetAnalytics({
         )}
 
         {/* ── Net Cash Flow Trend ──────────────────────────────────── */}
-        <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-4">
+        <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
           <h3 className="text-sm font-semibold text-dashboard-text mb-1">
             Net Cash Flow
             {prevYearSheets && <span className="text-dashboard-text-muted font-normal"> — {year} vs {year - 1}</span>}
