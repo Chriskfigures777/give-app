@@ -29,6 +29,7 @@ import {
   ClipboardList,
   Mail,
   Flag,
+  TableProperties,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -121,6 +122,7 @@ export function DashboardNav({
       <NavSection title="Overview">
         {link("/dashboard", "Overview", <LayoutDashboard className={iconClass} />, true)}
         {link("/dashboard/my-donations", "My gifts", <Heart className={iconClass} />)}
+        {link("/dashboard/budget", "Budget", <TableProperties className={iconClass} />)}
         {(isMissionary || profileRole === "missionary" || plansToBeMissionary) &&
           link("/dashboard/missionary", "My embed", <Share2 className={iconClass} />)}
         {!orgId && !isPlatformAdmin && (

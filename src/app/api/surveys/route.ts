@@ -49,16 +49,17 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("organization_surveys")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .insert({
         organization_id: orgId,
         created_by_user_id: user.id,
         title: typeof body.title === "string" ? body.title.trim() || "Untitled survey" : "Untitled survey",
         description: typeof body.description === "string" ? body.description : null,
-        questions: questionsWithPages,
+        questions: questionsWithPages as any,
         cover_image_url: typeof body.cover_image_url === "string" ? body.cover_image_url : null,
-        theme: body.theme && typeof body.theme === "object" ? body.theme : {},
+        theme: (body.theme && typeof body.theme === "object" ? body.theme : {}) as any,
         status: "draft",
-      })
+      } as any)
       .select("id, title, description, questions, cover_image_url, theme, status, created_at, updated_at")
       .single();
 

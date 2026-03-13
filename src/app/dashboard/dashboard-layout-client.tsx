@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { DashboardNavBar } from "@/components/dashboard-nav-bar";
 
-const AUTO_COLLAPSE_PATHS = ["/dashboard/custom-forms", "/dashboard/notes"];
+const AUTO_COLLAPSE_PATHS = ["/dashboard/custom-forms", "/dashboard/notes", "/dashboard/budget"];
 const SIDEBAR_OPEN_WIDTH = 260;
 const SIDEBAR_CLOSED_WIDTH = 72;
 

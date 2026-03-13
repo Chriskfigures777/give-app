@@ -24,7 +24,7 @@ export default async function SurveyEditPage({
 
   if (error || !survey) notFound();
 
-  const s = survey as {
+  const s = survey as unknown as {
     title: string;
     description: string | null;
     questions: Array<{ id?: string; text: string; type: string; options?: string[]; page?: number }>;
