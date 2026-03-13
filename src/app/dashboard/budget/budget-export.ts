@@ -227,20 +227,20 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
   const netBudgeted     = incomeTotal.budgeted - totalExpBudget;
   const netActual       = incomeTotal.actual   - totalExpPaid;
 
-  // Summary rows
+  // Summary rows — NO separator rows (they share a row index with section totals
+  // on shorter months and would collapse that row to height=6, hiding content).
+  // Instead we use thick top-borders on the "Net" rows to visually divide groups.
   const summaryRows = [
-    ["Total Budgeted Income",      incomeTotal.budgeted],
-    ["Total Fixed Expenses",       fixedTotal.budget],
-    ["Total Variable Expenses",    varTotal.budget],
-    ["Net Budgeted Cash Flow",     netBudgeted],
-    ["─────────────────────", ""],
-    ["Total Actual Income",        incomeTotal.actual],
-    ["Total Fixed Paid",           fixedTotal.paid],
-    ["Total Variable Paid",        varTotal.paid],
-    ["Net Actual Cash Flow",       netActual],
-    ["─────────────────────", ""],
-    ["Variance (Actual vs Budget)", netActual - netBudgeted],
-  ] as [string, number | string][];
+    { label: "Total Budgeted Income",      val: incomeTotal.budgeted,          bold: false, thickTop: false },
+    { label: "Total Fixed Expenses",       val: fixedTotal.budget,             bold: false, thickTop: false },
+    { label: "Total Variable Expenses",    val: varTotal.budget,               bold: false, thickTop: false },
+    { label: "Net Budgeted Cash Flow",     val: netBudgeted,                   bold: true,  thickTop: true  },
+    { label: "Total Actual Income",        val: incomeTotal.actual,            bold: false, thickTop: true  },
+    { label: "Total Fixed Paid",           val: fixedTotal.paid,               bold: false, thickTop: false },
+    { label: "Total Variable Paid",        val: varTotal.paid,                 bold: false, thickTop: false },
+    { label: "Net Actual Cash Flow",       val: netActual,                     bold: true,  thickTop: true  },
+    { label: "Variance (Actual vs Budget)", val: netActual - netBudgeted,      bold: true,  thickTop: true  },
+  ];
 
   // Determine how many data rows each section needs (+1 for total row)
   const incRows = sheet.income.length;
@@ -389,34 +389,34 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
 
     // ── Summary ───────────────────────────────────────────────────────────
     if (di < smRows) {
-      const [smLabel, smVal] = summaryRows[di];
-      const isSumTotal = smLabel.startsWith("Net") || smLabel.startsWith("Variance");
-      const isSumSep   = smLabel.startsWith("───");
-
+      const { label: smLabel, val: smVal, bold: smBold, thickTop } = summaryRows[di];
       const lblCell = wsRow.getCell(C.SUM_LBL);
       const amtCell = wsRow.getCell(C.SUM_AMT);
+      const numVal  = typeof smVal === "number" ? smVal : 0;
 
-      if (isSumSep) {
-        lblCell.value = "";
-        applyFill(lblCell, "FFF0F4F8");
-        ws.mergeCells(DATA_START + di, C.SUM_LBL, DATA_START + di, C.SUM_AMT);
-        wsRow.height = 6;
-      } else if (isSumTotal) {
-        lblCell.value = smLabel as ExcelJS.CellValue;
-        amtCell.value = smVal as ExcelJS.CellValue;
-        const numVal = typeof smVal === "number" ? smVal : 0;
+      if (smBold) {
         styleTotalCell(lblCell, COLORS.sumTotal);
         styleTotalCell(amtCell, COLORS.sumTotal);
-        amtCell.numFmt = USD_FMT;
-        amtCell.alignment = { horizontal: "right" };
-        if (numVal < 0) amtCell.font = { bold: true, size: 10, color: { argb: COLORS.negRed } };
       } else {
-        lblCell.value = smLabel as ExcelJS.CellValue;
-        amtCell.value = smVal as ExcelJS.CellValue;
         styleDataCell(lblCell, even);
         styleDataCell(amtCell, even);
-        amtCell.numFmt = USD_FMT;
-        amtCell.alignment = { horizontal: "right" };
+      }
+
+      lblCell.value  = smLabel as ExcelJS.CellValue;
+      amtCell.value  = smVal   as ExcelJS.CellValue;
+      amtCell.numFmt = USD_FMT;
+      amtCell.alignment = { horizontal: "right" };
+
+      if (smBold && numVal < 0) {
+        amtCell.font = { bold: true, size: 10, color: { argb: COLORS.negRed } };
+      }
+
+      // Thick top border visually separates groups without collapsing the row
+      if (thickTop) {
+        const thickBorderColor = { argb: COLORS.black };
+        for (const c of [lblCell, amtCell]) {
+          c.border = { ...c.border, top: { style: "medium", color: thickBorderColor } };
+        }
       }
     }
   }
