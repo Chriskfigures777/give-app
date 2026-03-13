@@ -466,12 +466,17 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
     if (ySheets.length === 0) return;
     setExporting(true);
     try {
-      const bytes = await exportBudgetToExcel(
+      const base64 = await exportBudgetToExcel(
         ySheets,
         selectedYear,
         budgetType === "church" ? (orgName ?? "Church") : "Personal"
       );
-      const blob = new Blob([bytes.buffer as ArrayBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      // Decode base64 → binary → Blob (server actions serialize binary as JSON,
+      // so we return base64 and decode here)
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

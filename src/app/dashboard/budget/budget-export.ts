@@ -587,7 +587,7 @@ export async function exportBudgetToExcel(
   sheets: BudgetSheet[],
   year: number,
   label: string
-): Promise<Uint8Array> {
+): Promise<string> {  // returns base64-encoded xlsx
   const wb = new ExcelJS.Workbook();
   wb.creator   = "Exchange App";
   wb.created   = new Date();
@@ -608,5 +608,7 @@ export async function exportBudgetToExcel(
   }
 
   const buffer = await wb.xlsx.writeBuffer();
-  return new Uint8Array(buffer);
+  // Server actions serialize return values as JSON, so binary Uint8Array would be
+  // corrupted. Return base64 instead; the client decodes it back to binary.
+  return Buffer.from(buffer).toString("base64");
 }
