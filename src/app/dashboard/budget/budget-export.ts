@@ -97,13 +97,25 @@ function styleDataCell(cell: ExcelJS.Cell, rowEven: boolean) {
   applyBorder(cell, "hair");
 }
 
+// Light-tinted total — used only for summary section rows
 function styleTotalCell(cell: ExcelJS.Cell, bgArgb: string) {
   applyFill(cell, bgArgb);
-  cell.font = { bold: true, size: 10 };
+  cell.font = { bold: true, size: 10, color: { argb: COLORS.black } };
   cell.border = {
     top:    { style: "medium", color: { argb: COLORS.black } },
     bottom: { style: "thin",   color: { argb: "FFB0BEC5" } },
   };
+}
+
+// Strong total row — dark section color + white text, clearly stands out
+function styleSectionTotal(cell: ExcelJS.Cell, bgArgb: string) {
+  applyFill(cell, bgArgb);
+  cell.font = { bold: true, size: 10, color: { argb: COLORS.white } };
+  cell.border = {
+    top:    { style: "medium", color: { argb: COLORS.black } },
+    bottom: { style: "medium", color: { argb: COLORS.black } },
+  };
+  cell.alignment = { vertical: "middle" };
 }
 
 // ─── Number formatting ────────────────────────────────────────────────────────
@@ -278,6 +290,7 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
         }
       }
     } else if (isIncTotal) {
+      wsRow.height = 18;
       const cells: [number, string | number][] = [
         [C.INC_LBL, "TOTAL INCOME"],
         [C.INC_BDG, incomeTotal.budgeted],
@@ -286,10 +299,10 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
       for (const [col, val] of cells) {
         const cell = wsRow.getCell(col);
         cell.value = val as ExcelJS.CellValue;
-        styleTotalCell(cell, COLORS.incTotal);
+        styleSectionTotal(cell, COLORS.incSubHeader);
         if (col !== C.INC_LBL) {
           cell.numFmt = USD_FMT;
-          cell.alignment = { horizontal: "right" };
+          cell.alignment = { horizontal: "right", vertical: "middle" };
         }
       }
     }
@@ -323,6 +336,7 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
       // so we just skip remaining for Fixed
       void rem; // suppress unused warning
     } else if (isFxTotal) {
+      wsRow.height = 18;
       const cells: [number, string | number][] = [
         [C.FX_LBL, "TOTAL FIXED EXPENSES"],
         [C.FX_BDG, fixedTotal.budget],
@@ -332,10 +346,10 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
       for (const [col, val] of cells) {
         const cell = wsRow.getCell(col);
         cell.value = val as ExcelJS.CellValue;
-        styleTotalCell(cell, COLORS.fxTotal);
+        styleSectionTotal(cell, COLORS.fxSubHeader);
         if (col === C.FX_BDG || col === C.FX_PAD) {
           cell.numFmt = USD_FMT;
-          cell.alignment = { horizontal: "right" };
+          cell.alignment = { horizontal: "right", vertical: "middle" };
         }
       }
     }
@@ -368,6 +382,7 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
         if (col === C.VR_DUE) cell.alignment = { horizontal: "center" };
       }
     } else if (isVrTotal) {
+      wsRow.height = 18;
       const rem = varTotal.budget - varTotal.paid;
       const cells: [number, string | number][] = [
         [C.VR_LBL, "TOTAL VARIABLE EXPENSES"],
@@ -379,10 +394,14 @@ function buildMonthSheet(wb: ExcelJS.Workbook, sheet: BudgetSheet, tabLabel: str
       for (const [col, val] of cells) {
         const cell = wsRow.getCell(col);
         cell.value = val as ExcelJS.CellValue;
-        styleTotalCell(cell, COLORS.vrTotal);
+        styleSectionTotal(cell, COLORS.vrSubHeader);
         if (col === C.VR_BDG || col === C.VR_PAD || col === C.VR_REM) {
           cell.numFmt = USD_FMT;
-          cell.alignment = { horizontal: "right" };
+          cell.alignment = { horizontal: "right", vertical: "middle" };
+        }
+        // Remaining in red when over budget, but keep white text on dark bg
+        if (col === C.VR_REM && rem < 0) {
+          cell.font = { bold: true, size: 10, color: { argb: "FFFFAAAA" } };
         }
       }
     }
