@@ -693,28 +693,28 @@ export function PeoplePageClient({
             )}
           </div>
         ) : (
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm border-collapse border border-dashboard-border">
             <thead className="sticky top-0 z-10">
               <tr style={{ background: "var(--dashboard-card-hover, rgba(255,255,255,0.04))" }}>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border w-[220px]">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border w-[220px]">
                   Name
                 </th>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border">
                   Email
                 </th>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border hidden sm:table-cell">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border hidden sm:table-cell">
                   Phone
                 </th>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border">
                   Source
                 </th>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border">
                   Engagement
                 </th>
-                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border hidden md:table-cell">
+                <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border hidden md:table-cell">
                   Last seen
                 </th>
-                <th className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                <th className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border border-dashboard-border">
                   Member
                 </th>
               </tr>
@@ -732,10 +732,10 @@ export function PeoplePageClient({
                 return (
                   <tr
                     key={c.id}
-                    className="border-b border-dashboard-border/50 hover:bg-dashboard-card-hover/30 transition-colors group"
+                    className={`hover:bg-dashboard-card-hover/40 transition-colors group ${i % 2 === 1 ? "bg-white/[0.02]" : ""}`}
                   >
                     {/* Name */}
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 border border-dashboard-border">
                       <Link href={`/dashboard/people/${c.id}`} className="flex items-center gap-2.5">
                         <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${aColor}`}>
                           {init}
@@ -747,19 +747,19 @@ export function PeoplePageClient({
                     </td>
 
                     {/* Email */}
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 border border-dashboard-border">
                       <Link href={`/dashboard/people/${c.id}`} className="text-[13px] text-dashboard-text-muted hover:text-dashboard-text transition-colors">
                         {c.email ?? <span className="opacity-30">—</span>}
                       </Link>
                     </td>
 
                     {/* Phone */}
-                    <td className="px-4 py-2.5 text-[13px] text-dashboard-text-muted hidden sm:table-cell">
+                    <td className="px-4 py-2.5 text-[13px] text-dashboard-text-muted border border-dashboard-border hidden sm:table-cell">
                       {c.phone?.trim() || <span className="opacity-30">—</span>}
                     </td>
 
                     {/* Source tags */}
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 border border-dashboard-border">
                       <div className="flex flex-wrap gap-1">
                         {stags.map((t) => (
                           <span key={t.label} className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${t.color}`}>
@@ -770,7 +770,7 @@ export function PeoplePageClient({
                     </td>
 
                     {/* Engagement */}
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 border border-dashboard-border">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[11px]">{cfg.dot}</span>
                         <span className="text-[11px] font-semibold" style={{ color: cfg.color }}>{cfg.label}</span>
@@ -781,14 +781,14 @@ export function PeoplePageClient({
                     </td>
 
                     {/* Last seen */}
-                    <td className="px-4 py-2.5 text-[12px] text-dashboard-text-muted hidden md:table-cell">
+                    <td className="px-4 py-2.5 text-[12px] text-dashboard-text-muted border border-dashboard-border hidden md:table-cell">
                       {c.last_seen_at
                         ? new Date(c.last_seen_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
                         : <span className="opacity-30">—</span>}
                     </td>
 
                     {/* Member toggle */}
-                    <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-4 py-2.5 text-right border border-dashboard-border" onClick={(e) => e.stopPropagation()}>
                       {(() => {
                         const isMember = (c.sources_breakdown?.member ?? 0) > 0;
                         const state = memberState[c.id];
