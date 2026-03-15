@@ -127,7 +127,7 @@ function EventCard({
         className="flex flex-col flex-1 p-4 gap-2"
         style={{ background: "hsl(var(--dashboard-card))" }}
       >
-        <h3 className="text-sm font-semibold text-dashboard-text leading-snug line-clamp-2 group-hover:text-white transition-colors">
+        <h3 className="text-sm font-semibold text-dashboard-text leading-snug line-clamp-2">
           {event.name}
         </h3>
         {event.organizations && (

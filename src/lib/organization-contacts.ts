@@ -6,8 +6,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type ContactSource = "donation" | "form" | "survey";
 
-/** When source is "form", optional form kind for CRM label (e.g. "member", "get_started"). */
-export type FormKind = "member" | "get_started" | null;
+/** When source is "form", optional form kind for CRM label (e.g. "member", "get_started", "connect_card"). */
+export type FormKind = "member" | "get_started" | "connect_card" | null;
 
 /** When source is "survey", also add respondent as member or contact in People. */
 export type SurveyRespondentCategory = "member" | "contact" | null;
@@ -46,7 +46,7 @@ export async function upsertOrganizationContact(
   const breakdown = (existing?.sources_breakdown as Record<string, number> | null) ?? {};
   const count = typeof breakdown[source] === "number" ? breakdown[source] + 1 : 1;
   const newBreakdown = { ...breakdown, [source]: count };
-  if (source === "form" && formKind && (formKind === "member" || formKind === "get_started")) {
+  if (source === "form" && formKind && (formKind === "member" || formKind === "get_started" || formKind === "connect_card")) {
     const kindCount = typeof newBreakdown[formKind] === "number" ? newBreakdown[formKind] + 1 : 1;
     newBreakdown[formKind] = kindCount;
   }

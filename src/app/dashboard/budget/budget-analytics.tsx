@@ -68,16 +68,17 @@ const tooltipStyle = {
   border: "1px solid #1e2330",
   borderRadius: 10,
   color: "#eef0f6",
-  fontSize: 12,
+  fontSize: 14,
+  fontWeight: 500,
   boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
 };
 
 function StatCard({ label, value, sub, color = "#eef0f6" }: { label: string; value: string; sub?: string; color?: string }) {
   return (
     <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-4">
-      <p className="text-[10px] uppercase tracking-wider text-dashboard-text-muted/70 mb-2">{label}</p>
-      <p className="text-xl font-bold tabular-nums" style={{ color }}>{value}</p>
-      {sub && <p className="text-xs text-dashboard-text-muted mt-1">{sub}</p>}
+      <p className="text-xs font-bold uppercase tracking-wider text-dashboard-text-muted mb-2">{label}</p>
+      <p className="text-2xl font-bold tabular-nums" style={{ color }}>{value}</p>
+      {sub && <p className="text-sm font-medium text-dashboard-text-muted mt-1">{sub}</p>}
     </div>
   );
 }
@@ -197,8 +198,8 @@ export function BudgetAnalytics({
 
       {/* ── Monthly Income vs Expenses Bar Chart ───────────────────── */}
       <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
-        <h3 className="text-sm font-semibold text-dashboard-text mb-1">Monthly Income vs Expenses</h3>
-        <p className="text-xs text-dashboard-text-muted mb-4">{year} — all 12 months</p>
+        <h3 className="text-base font-bold text-dashboard-text mb-1">Monthly Income vs Expenses</h3>
+        <p className="text-sm font-medium text-dashboard-text-muted mb-4">{year} — all 12 months</p>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={monthlyData} margin={{ top: 4, right: 8, left: -10, bottom: 0 }} barGap={2}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
@@ -221,8 +222,8 @@ export function BudgetAnalytics({
         {/* ── Top Spending Categories ──────────────────────────────── */}
         {categoryData.length > 0 && (
           <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
-            <h3 className="text-sm font-semibold text-dashboard-text mb-1">Top Spending Categories</h3>
-            <p className="text-xs text-dashboard-text-muted mb-4">By amount spent across all months</p>
+            <h3 className="text-base font-bold text-dashboard-text mb-1">Top Spending Categories</h3>
+            <p className="text-sm font-medium text-dashboard-text-muted mb-4">By amount spent across all months</p>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <ResponsiveContainer width={160} height={160}>
                 <PieChart>
@@ -250,8 +251,8 @@ export function BudgetAnalytics({
                       className="h-2.5 w-2.5 rounded-full flex-shrink-0"
                       style={{ background: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }}
                     />
-                    <span className="text-[11px] text-dashboard-text-muted truncate flex-1">{cat.name}</span>
-                    <span className="text-[11px] font-semibold text-dashboard-text tabular-nums flex-shrink-0">
+                    <span className="text-sm font-medium text-dashboard-text-muted truncate flex-1">{cat.name}</span>
+                    <span className="text-sm font-bold text-dashboard-text tabular-nums flex-shrink-0">
                       {fmtFull(cat.value)}
                     </span>
                   </div>
@@ -263,11 +264,11 @@ export function BudgetAnalytics({
 
         {/* ── Net Cash Flow Trend ──────────────────────────────────── */}
         <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-5">
-          <h3 className="text-sm font-semibold text-dashboard-text mb-1">
+          <h3 className="text-base font-bold text-dashboard-text mb-1">
             Net Cash Flow
-            {prevYearSheets && <span className="text-dashboard-text-muted font-normal"> — {year} vs {year - 1}</span>}
+            {prevYearSheets && <span className="text-dashboard-text-muted font-medium"> — {year} vs {year - 1}</span>}
           </h3>
-          <p className="text-xs text-dashboard-text-muted mb-4">Month-by-month surplus or deficit</p>
+          <p className="text-sm font-medium text-dashboard-text-muted mb-4">Month-by-month surplus or deficit</p>
           <ResponsiveContainer width="100%" height={160}>
             {prevYearSheets && yoyData.length > 0 ? (
               <LineChart data={yoyData} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>

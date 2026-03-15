@@ -45,6 +45,49 @@ export async function POST(req: NextRequest) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
 
+      // ── AI credits one-time purchase ────────────────────────────────────
+      if (session.metadata?.type === "ai_credits_purchase") {
+        const orgId = session.metadata?.org_id;
+        const creditsStr = session.metadata?.credits;
+        const credits = creditsStr ? parseInt(creditsStr, 10) : 0;
+        if (!orgId || !credits || isNaN(credits)) break;
+
+        if (session.payment_status === "paid") {
+          // Atomically add credits to the org's purchased balance.
+          const { data: orgData } = await supabase
+            .from("organizations")
+            .select("ai_credits_purchased")
+            .eq("id", orgId)
+            .single();
+
+          const current = (orgData as { ai_credits_purchased?: number } | null)?.ai_credits_purchased ?? 0;
+
+          await supabase
+            .from("organizations")
+            // @ts-ignore
+            .update({
+              ai_credits_purchased: current + credits,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", orgId);
+
+          // Notify the org admin in-app.
+          const userId = session.metadata?.user_id;
+          if (userId) {
+            await createNotification({
+              userId,
+              type: "ai_credits_purchased",
+              payload: {
+                credits,
+                org_id: orgId,
+                bundle_id: session.metadata?.bundle_id,
+              },
+            });
+          }
+        }
+        break;
+      }
+
       // Handle platform plan subscriptions separately from donation subscriptions
       if (session.metadata?.type === "platform_plan") {
         const orgId = session.metadata?.org_id;
@@ -200,12 +243,18 @@ export async function POST(req: NextRequest) {
 
         const { data: orgRow } = await supabase
           .from("organizations")
-          .select("stripe_connect_account_id")
+          .select("stripe_connect_account_id, name, owner_user_id")
           .eq("id", organizationId)
           .single();
-        const formOwnerConnectId = (orgRow as { stripe_connect_account_id: string | null } | null)
-          ?.stripe_connect_account_id;
+        const formOwnerOrg = orgRow as {
+          stripe_connect_account_id: string | null;
+          name: string;
+          owner_user_id: string | null;
+        } | null;
+        const formOwnerConnectId = formOwnerOrg?.stripe_connect_account_id;
         if (!formOwnerConnectId) break;
+
+        const formOwnerOrgName = formOwnerOrg?.name ?? "Organization";
 
         const applicationFeeCents = parseInt(metadata.application_fee_cents ?? "0", 10);
         const stripeFeeCents = calculateStripeFeeCents(pi.amount);
@@ -213,6 +262,24 @@ export async function POST(req: NextRequest) {
         const stripeSplits = splits.filter((s) => s.accountId);
         const peerPctSum = stripeSplits.reduce((s, e) => s + (e.percentage ?? 0), 0);
         const formOwnerPct = Math.max(0, 100 - peerPctSum);
+        const formOwnerAmt = formOwnerPct >= 0.01 ? Math.round((formOwnerPct / 100) * netAmount) : 0;
+
+        // Resolve peer org info from DB (keyed by Stripe Connect account ID)
+        type PeerOrgInfo = { id: string; name: string; owner_user_id: string | null };
+        const peerOrgInfoMap = new Map<string, PeerOrgInfo>();
+        await Promise.all(
+          stripeSplits.map(async (entry) => {
+            if (!entry.accountId) return;
+            const { data: peerOrg } = await supabase
+              .from("organizations")
+              .select("id, name, owner_user_id")
+              .eq("stripe_connect_account_id", entry.accountId)
+              .maybeSingle();
+            if (peerOrg) {
+              peerOrgInfoMap.set(entry.accountId, peerOrg as PeerOrgInfo);
+            }
+          })
+        );
 
         const transferPromises: Promise<unknown>[] = [];
 
@@ -224,19 +291,16 @@ export async function POST(req: NextRequest) {
         };
 
         // Form owner's share (no stripeAccount = transfer from platform)
-        if (formOwnerPct >= 0.01) {
-          const amt = Math.round((formOwnerPct / 100) * netAmount);
-          if (amt >= 1) {
-            transferPromises.push(
-              stripe.transfers.create({
-                amount: amt,
-                currency: (pi.currency as "usd") ?? "usd",
-                destination: formOwnerConnectId,
-                ...transferParams,
-                description: `Split share for donation ${pi.id}`,
-              })
-            );
-          }
+        if (formOwnerAmt >= 1) {
+          transferPromises.push(
+            stripe.transfers.create({
+              amount: formOwnerAmt,
+              currency: (pi.currency as "usd") ?? "usd",
+              destination: formOwnerConnectId,
+              ...transferParams,
+              description: `Split share for donation ${pi.id}`,
+            })
+          );
         }
 
         // Peer shares
@@ -267,18 +331,49 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        // Create donation record for split payments (receipts, campaign tracking, etc.)
-        if (organizationId && pi.id) {
-          const { data: existingDonation } = await supabase
+        // Build split breakdown so the receipt can display each org's share
+        const splitsBreakdown = [
+          {
+            organization_id: organizationId,
+            organization_name: formOwnerOrgName,
+            percentage: formOwnerPct,
+            amount_cents: formOwnerAmt,
+          },
+          ...stripeSplits.map((entry) => {
+            const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+            const amt = Math.round((entry.percentage! / 100) * netAmount);
+            return {
+              organization_id: peerOrg?.id ?? null,
+              organization_name: peerOrg?.name ?? `Account ${entry.accountId}`,
+              percentage: entry.percentage ?? 0,
+              amount_cents: amt,
+            };
+          }),
+        ];
+
+        // Create main donation record for the form owner org
+        const donationAmountCents =
+          parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+
+        let mainDonation: { id: string; created_at: string; receipt_token: string | null } | null = null;
+        const { data: existingDonation } = await supabase
+          .from("donations")
+          .select("id, created_at, receipt_token")
+          .eq("stripe_payment_intent_id", pi.id)
+          .eq("organization_id", organizationId)
+          .maybeSingle();
+
+        if (existingDonation) {
+          mainDonation = existingDonation as {
+            id: string;
+            created_at: string;
+            receipt_token: string | null;
+          };
+        } else {
+          const receiptToken = randomUUID();
+          const { data: inserted } = await supabase
             .from("donations")
-            .select("id")
-            .eq("stripe_payment_intent_id", pi.id)
-            .maybeSingle();
-          if (!existingDonation) {
-            const donationAmountCents =
-              parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
-            const receiptToken = randomUUID();
-            await supabase.from("donations").insert({
+            .insert({
               amount_cents: donationAmountCents,
               currency: pi.currency ?? "usd",
               donor_email: metadata.donor_email || null,
@@ -291,19 +386,194 @@ export async function POST(req: NextRequest) {
               campaign_id: metadata.campaign_id || null,
               user_id: metadata.user_id || null,
               receipt_token: receiptToken,
-              metadata: { payment_intent: pi.id, split_mode: "stripe_connect" },
-            });
-          }
+              metadata: {
+                payment_intent: pi.id,
+                split_mode: "stripe_connect",
+                splits_breakdown: splitsBreakdown,
+              },
+            })
+            .select("id, created_at, receipt_token")
+            .single();
+          mainDonation = inserted as {
+            id: string;
+            created_at: string;
+            receipt_token: string | null;
+          } | null;
+        }
+
+        if (metadata.donor_email) {
+          upsertOrganizationContact(supabase, {
+            organizationId,
+            email: metadata.donor_email,
+            name: metadata.donor_name ?? null,
+            source: "donation",
+            userId: metadata.user_id ?? null,
+          }).catch((e) => console.error("[webhook] upsertOrganizationContact failed:", e));
+        }
+
+        if (mainDonation) {
+          const d = mainDonation;
+          const receiptToken = d.receipt_token ?? randomUUID();
+
+          // Donor confirmation + receipt emails
           if (metadata.donor_email) {
-            upsertOrganizationContact(supabase, {
-              organizationId,
-              email: metadata.donor_email,
-              name: metadata.donor_name ?? null,
-              source: "donation",
-              userId: metadata.user_id ?? null,
-            }).catch((e) => console.error("[webhook] upsertOrganizationContact failed:", e));
+            sendDonationReceived({
+              supabase,
+              donationId: d.id,
+              donorEmail: metadata.donor_email,
+              donorName: metadata.donor_name || null,
+              amountCents: donationAmountCents,
+              currency: pi.currency ?? "usd",
+              organizationName: formOwnerOrgName,
+              createdAt: d.created_at,
+            }).catch((e) => console.error("[email] split donation_received failed:", e));
+            sendReceiptAttached({
+              supabase,
+              donationId: d.id,
+              donorEmail: metadata.donor_email,
+              donorName: metadata.donor_name || null,
+              amountCents: donationAmountCents,
+              currency: pi.currency ?? "usd",
+              organizationName: formOwnerOrgName,
+              createdAt: d.created_at,
+              receiptToken,
+            }).catch((e) => console.error("[email] split receipt_attached failed:", e));
+          }
+
+          // Notify form owner org admin with their split share
+          if (formOwnerOrg?.owner_user_id) {
+            const { data: ownerProfile } = await supabase
+              .from("user_profiles")
+              .select("email")
+              .eq("id", formOwnerOrg.owner_user_id)
+              .single();
+            const ownerEmail = (ownerProfile as { email: string | null } | null)?.email;
+            if (ownerEmail) {
+              sendOrgDonationReceived({
+                supabase,
+                donationId: d.id,
+                organizationId,
+                organizationName: formOwnerOrgName,
+                amountCents: formOwnerAmt,
+                currency: pi.currency ?? "usd",
+                donorName: metadata.donor_name || null,
+                donorEmail: metadata.donor_email || null,
+                createdAt: d.created_at,
+                adminEmail: ownerEmail,
+              }).catch((e) =>
+                console.error("[email] split org_donation_received (form owner) failed:", e)
+              );
+            }
+            createNotification({
+              userId: formOwnerOrg.owner_user_id,
+              type: "donation_received",
+              payload: {
+                donation_id: d.id,
+                amount_cents: formOwnerAmt,
+                currency: pi.currency ?? "usd",
+                donor_name: metadata.donor_name || null,
+                donor_email: metadata.donor_email || null,
+                organization_id: organizationId,
+                is_split: true,
+              },
+            }).catch(() => {});
+          }
+
+          // Create per-org donation records for peer orgs and notify their admins
+          for (const entry of stripeSplits) {
+            const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+            if (!peerOrg?.id) continue;
+            const peerAmt = Math.round((entry.percentage! / 100) * netAmount);
+            if (peerAmt < 1) continue;
+
+            const { data: existingPeerDonation } = await supabase
+              .from("donations")
+              .select("id")
+              .eq("stripe_payment_intent_id", pi.id)
+              .eq("organization_id", peerOrg.id)
+              .maybeSingle();
+
+            let peerDonationId = (existingPeerDonation as { id: string } | null)?.id;
+
+            if (!existingPeerDonation) {
+              const { data: peerInserted } = await supabase
+                .from("donations")
+                .insert({
+                  amount_cents: peerAmt,
+                  currency: pi.currency ?? "usd",
+                  donor_email: metadata.donor_email || null,
+                  donor_name: metadata.donor_name || null,
+                  stripe_payment_intent_id: pi.id,
+                  stripe_charge_id: chargeId,
+                  status: "succeeded",
+                  organization_id: peerOrg.id,
+                  campaign_id: null,
+                  user_id: metadata.user_id || null,
+                  receipt_token: null,
+                  metadata: {
+                    payment_intent: pi.id,
+                    split_mode: "stripe_connect_peer",
+                    parent_donation_id: d.id,
+                    split_percentage: entry.percentage,
+                  },
+                })
+                .select("id")
+                .single();
+              peerDonationId = (peerInserted as { id: string } | null)?.id;
+
+              if (metadata.donor_email) {
+                upsertOrganizationContact(supabase, {
+                  organizationId: peerOrg.id,
+                  email: metadata.donor_email,
+                  name: metadata.donor_name ?? null,
+                  source: "donation",
+                  userId: metadata.user_id ?? null,
+                }).catch((e) =>
+                  console.error("[webhook] upsertOrganizationContact (peer) failed:", e)
+                );
+              }
+            }
+
+            if (peerOrg.owner_user_id && peerDonationId) {
+              const { data: peerOwnerProfile } = await supabase
+                .from("user_profiles")
+                .select("email")
+                .eq("id", peerOrg.owner_user_id)
+                .single();
+              const peerOwnerEmail = (peerOwnerProfile as { email: string | null } | null)?.email;
+              if (peerOwnerEmail) {
+                sendOrgDonationReceived({
+                  supabase,
+                  donationId: peerDonationId,
+                  organizationId: peerOrg.id,
+                  organizationName: peerOrg.name,
+                  amountCents: peerAmt,
+                  currency: pi.currency ?? "usd",
+                  donorName: metadata.donor_name || null,
+                  donorEmail: metadata.donor_email || null,
+                  createdAt: d.created_at,
+                  adminEmail: peerOwnerEmail,
+                }).catch((e) =>
+                  console.error("[email] split org_donation_received (peer) failed:", e)
+                );
+              }
+              createNotification({
+                userId: peerOrg.owner_user_id,
+                type: "donation_received",
+                payload: {
+                  donation_id: peerDonationId,
+                  amount_cents: peerAmt,
+                  currency: pi.currency ?? "usd",
+                  donor_name: metadata.donor_name || null,
+                  donor_email: metadata.donor_email || null,
+                  organization_id: peerOrg.id,
+                  is_split: true,
+                },
+              }).catch(() => {});
+            }
           }
         }
+
         break;
       }
 
@@ -812,10 +1082,10 @@ export async function POST(req: NextRequest) {
         (account.requirements?.currently_due?.length ?? 0) > 0 ||
         (account.requirements?.eventually_due?.length ?? 0) > 0;
       const detailsSubmitted = account.details_submitted === true;
-      // Actions required: set incomplete so nav shows "Complete verification"
-      const onboardingCompleted = hasRequirements
-        ? false
-        : chargesEnabled || payoutsEnabled || detailsSubmitted;
+      const verified = chargesEnabled || payoutsEnabled;
+      // verified (charges/payouts enabled) always wins — eventually_due items on live
+      // accounts must not override an already-working account back to incomplete.
+      const onboardingCompleted = verified || (!hasRequirements && detailsSubmitted);
       await supabase
         .from("organizations")
         .update({

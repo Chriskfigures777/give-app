@@ -500,7 +500,7 @@ export function InlinePageEditor({
           <div className="mt-6 rounded-xl border border-dashboard-border overflow-hidden bg-dashboard-card-hover/50">
             <iframe
               key={previewKey}
-              src={`${orgUrl}${orgUrl.includes("?") ? "&" : "?"}v=${previewKey}`}
+              src={`/org/${profile.slug}?v=${previewKey}`}
               title={`Preview: ${profile.name}`}
               className="w-full"
               style={{ height: "min(500px, 60vh)" }}

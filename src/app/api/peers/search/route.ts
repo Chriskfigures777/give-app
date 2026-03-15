@@ -17,16 +17,16 @@ export async function GET(req: NextRequest) {
       name: string;
       slug?: string;
       role?: string;
+      avatar_url?: string | null;
     }[] = [];
 
-    // 1. Search organizations (only if caller has an org context OR is searching broadly)
+    // 1. Search organizations
     let orgQuery = supabase
       .from("organizations")
-      .select("id, name, slug")
+      .select("id, name, slug, logo_url")
       .not("stripe_connect_account_id", "is", null)
       .limit(limit);
 
-    // Exclude caller's own org
     if (orgId) {
       orgQuery = orgQuery.neq("id", orgId);
     }
@@ -38,15 +38,21 @@ export async function GET(req: NextRequest) {
 
     const { data: orgs } = await orgQuery;
     for (const o of orgs ?? []) {
-      const org = o as { id: string; name: string; slug: string };
-      results.push({ id: org.id, type: "organization", name: org.name, slug: org.slug });
+      const org = o as { id: string; name: string; slug: string; logo_url: string | null };
+      results.push({
+        id: org.id,
+        type: "organization",
+        name: org.name,
+        slug: org.slug,
+        avatar_url: org.logo_url,
+      });
     }
 
-    // 2. Search individual users (donors, members, missionaries)
+    // 2. Search individual users (donors, members, missionaries, org admins)
     let userQuery = supabase
       .from("user_profiles")
-      .select("id, full_name, email, role")
-      .neq("id", user.id) // exclude self
+      .select("id, full_name, email, role, avatar_url")
+      .neq("id", user.id)
       .limit(limit);
 
     if (q.length >= 2) {
@@ -56,7 +62,13 @@ export async function GET(req: NextRequest) {
 
     const { data: users } = await userQuery;
     for (const u of users ?? []) {
-      const up = u as { id: string; full_name: string | null; email: string | null; role: string };
+      const up = u as {
+        id: string;
+        full_name: string | null;
+        email: string | null;
+        role: string;
+        avatar_url: string | null;
+      };
       const displayName = up.full_name?.trim() || up.email?.split("@")[0] || null;
       if (!displayName) continue;
       results.push({
@@ -64,6 +76,7 @@ export async function GET(req: NextRequest) {
         type: "user",
         name: displayName,
         role: up.role,
+        avatar_url: up.avatar_url,
       });
     }
 

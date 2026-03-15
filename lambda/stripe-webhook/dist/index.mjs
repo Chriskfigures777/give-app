@@ -33,7 +33,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.es6.mjs
+// node_modules/tslib/tslib.es6.mjs
 var tslib_es6_exports = {};
 __export(tslib_es6_exports, {
   __addDisposableResource: () => __addDisposableResource,
@@ -472,7 +472,7 @@ function __rewriteRelativeImportExtension(path, preserveJsx) {
 }
 var extendStatics, __assign, __createBinding, __setModuleDefault, ownKeys, _SuppressedError, tslib_es6_default;
 var init_tslib_es6 = __esm({
-  "node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.es6.mjs"() {
+  "node_modules/tslib/tslib.es6.mjs"() {
     extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -558,9 +558,9 @@ var init_tslib_es6 = __esm({
   }
 });
 
-// node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/helper.js
+// node_modules/@supabase/functions-js/dist/main/helper.js
 var require_helper = __commonJS({
-  "node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/helper.js"(exports) {
+  "node_modules/@supabase/functions-js/dist/main/helper.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.resolveFetch = void 0;
@@ -574,9 +574,9 @@ var require_helper = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/types.js
+// node_modules/@supabase/functions-js/dist/main/types.js
 var require_types = __commonJS({
-  "node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/types.js"(exports) {
+  "node_modules/@supabase/functions-js/dist/main/types.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FunctionRegion = exports.FunctionsHttpError = exports.FunctionsRelayError = exports.FunctionsFetchError = exports.FunctionsError = void 0;
@@ -627,9 +627,9 @@ var require_types = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/FunctionsClient.js
+// node_modules/@supabase/functions-js/dist/main/FunctionsClient.js
 var require_FunctionsClient = __commonJS({
-  "node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/FunctionsClient.js"(exports) {
+  "node_modules/@supabase/functions-js/dist/main/FunctionsClient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FunctionsClient = void 0;
@@ -778,9 +778,9 @@ var require_FunctionsClient = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/index.js
+// node_modules/@supabase/functions-js/dist/main/index.js
 var require_main = __commonJS({
-  "node_modules/.pnpm/@supabase+functions-js@2.95.3/node_modules/@supabase/functions-js/dist/main/index.js"(exports) {
+  "node_modules/@supabase/functions-js/dist/main/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FunctionRegion = exports.FunctionsRelayError = exports.FunctionsHttpError = exports.FunctionsFetchError = exports.FunctionsError = exports.FunctionsClient = void 0;
@@ -807,9 +807,9 @@ var require_main = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/websocket-factory.js
+// node_modules/@supabase/realtime-js/dist/main/lib/websocket-factory.js
 var require_websocket_factory = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/websocket-factory.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/websocket-factory.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketFactory = void 0;
@@ -931,19 +931,19 @@ Suggested solution: ${env.workaround}`;
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/version.js
+// node_modules/@supabase/realtime-js/dist/main/lib/version.js
 var require_version = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/version.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/version.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.version = void 0;
-    exports.version = "2.95.3";
+    exports.version = "2.99.1";
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/constants.js
+// node_modules/@supabase/realtime-js/dist/main/lib/constants.js
 var require_constants = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/constants.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/constants.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CONNECTION_STATE = exports.TRANSPORTS = exports.CHANNEL_EVENTS = exports.CHANNEL_STATES = exports.SOCKET_STATES = exports.MAX_PUSH_BUFFER_SIZE = exports.WS_CLOSE_NORMAL = exports.DEFAULT_TIMEOUT = exports.VERSION = exports.DEFAULT_VSN = exports.VSN_2_0_0 = exports.VSN_1_0_0 = exports.DEFAULT_VERSION = void 0;
@@ -994,9 +994,9 @@ var require_constants = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/serializer.js
+// node_modules/@supabase/realtime-js/dist/main/lib/serializer.js
 var require_serializer = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/serializer.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/serializer.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Serializer = class {
@@ -1141,9 +1141,9 @@ var require_serializer = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/timer.js
+// node_modules/@supabase/realtime-js/dist/main/lib/timer.js
 var require_timer = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/timer.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/timer.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Timer = class {
@@ -1173,9 +1173,9 @@ var require_timer = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/transformers.js
+// node_modules/@supabase/realtime-js/dist/main/lib/transformers.js
 var require_transformers = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/transformers.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/transformers.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.httpEndpointURL = exports.toTimestampString = exports.toArray = exports.toJson = exports.toNumber = exports.toBoolean = exports.convertCell = exports.convertColumn = exports.convertChangeData = exports.PostgresTypes = void 0;
@@ -1352,9 +1352,9 @@ var require_transformers = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/push.js
+// node_modules/@supabase/realtime-js/dist/main/lib/push.js
 var require_push = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/lib/push.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/lib/push.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var constants_1 = require_constants();
@@ -1459,9 +1459,9 @@ var require_push = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimePresence.js
+// node_modules/@supabase/realtime-js/dist/main/RealtimePresence.js
 var require_RealtimePresence = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimePresence.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/RealtimePresence.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.REALTIME_PRESENCE_LISTEN_EVENTS = void 0;
@@ -1699,9 +1699,9 @@ var require_RealtimePresence = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimeChannel.js
+// node_modules/@supabase/realtime-js/dist/main/RealtimeChannel.js
 var require_RealtimeChannel = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimeChannel.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/RealtimeChannel.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.REALTIME_CHANNEL_STATES = exports.REALTIME_SUBSCRIBE_STATES = exports.REALTIME_LISTEN_TYPES = exports.REALTIME_POSTGRES_CHANGES_LISTEN_EVENT = void 0;
@@ -2311,9 +2311,9 @@ var require_RealtimeChannel = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js
+// node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js
 var require_RealtimeClient = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
@@ -2508,9 +2508,6 @@ Option 2: Install and provide the "ws" package:
        */
       async removeChannel(channel) {
         const status = await channel.unsubscribe();
-        if (status === "ok") {
-          this._remove(channel);
-        }
         if (this.channels.length === 0) {
           this.disconnect();
         }
@@ -2829,6 +2826,18 @@ Option 2: Install and provide the "ws" package:
         this.log("transport", `connected to ${this.endpointURL()}`);
         const authPromise = this._authPromise || (this.accessToken && !this.accessTokenValue ? this.setAuth() : Promise.resolve());
         authPromise.then(() => {
+          if (this.accessTokenValue) {
+            this.channels.forEach((channel) => {
+              channel.updateJoinPayload({ access_token: this.accessTokenValue });
+            });
+            this.sendBuffer = [];
+            this.channels.forEach((channel) => {
+              if (channel._isJoining()) {
+                channel.joinPush.sent = false;
+                channel.joinPush.send();
+              }
+            });
+          }
           this.flushSendBuffer();
         }).catch((e) => {
           this.log("error", "error waiting for auth on connect", e);
@@ -3086,9 +3095,9 @@ Option 2: Install and provide the "ws" package:
   }
 });
 
-// node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/index.js
+// node_modules/@supabase/realtime-js/dist/main/index.js
 var require_main2 = __commonJS({
-  "node_modules/.pnpm/@supabase+realtime-js@2.95.3/node_modules/@supabase/realtime-js/dist/main/index.js"(exports) {
+  "node_modules/@supabase/realtime-js/dist/main/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketFactory = exports.REALTIME_CHANNEL_STATES = exports.REALTIME_SUBSCRIBE_STATES = exports.REALTIME_PRESENCE_LISTEN_EVENTS = exports.REALTIME_POSTGRES_CHANGES_LISTEN_EVENT = exports.REALTIME_LISTEN_TYPES = exports.RealtimeClient = exports.RealtimeChannel = exports.RealtimePresence = void 0;
@@ -3119,19 +3128,19 @@ var require_main2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/version.js
+// node_modules/@supabase/auth-js/dist/main/lib/version.js
 var require_version2 = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/version.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/version.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.version = void 0;
-    exports.version = "2.95.3";
+    exports.version = "2.99.1";
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/constants.js
+// node_modules/@supabase/auth-js/dist/main/lib/constants.js
 var require_constants2 = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/constants.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/constants.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.JWKS_TTL = exports.BASE64URL_REGEX = exports.API_VERSIONS = exports.API_VERSION_HEADER_NAME = exports.NETWORK_FAILURE = exports.DEFAULT_HEADERS = exports.AUDIENCE = exports.STORAGE_KEY = exports.GOTRUE_URL = exports.EXPIRY_MARGIN_MS = exports.AUTO_REFRESH_TICK_THRESHOLD = exports.AUTO_REFRESH_TICK_DURATION_MS = void 0;
@@ -3160,9 +3169,9 @@ var require_constants2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/errors.js
+// node_modules/@supabase/auth-js/dist/main/lib/errors.js
 var require_errors = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/errors.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/errors.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AuthInvalidJwtError = exports.AuthWeakPasswordError = exports.AuthRetryableFetchError = exports.AuthPKCECodeVerifierMissingError = exports.AuthPKCEGrantCodeExchangeError = exports.AuthImplicitGrantRedirectError = exports.AuthInvalidCredentialsError = exports.AuthInvalidTokenResponseError = exports.AuthSessionMissingError = exports.CustomAuthError = exports.AuthUnknownError = exports.AuthApiError = exports.AuthError = void 0;
@@ -3307,9 +3316,9 @@ var require_errors = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/base64url.js
+// node_modules/@supabase/auth-js/dist/main/lib/base64url.js
 var require_base64url = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/base64url.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/base64url.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.byteToBase64URL = byteToBase64URL;
@@ -3497,9 +3506,9 @@ var require_base64url = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/helpers.js
+// node_modules/@supabase/auth-js/dist/main/lib/helpers.js
 var require_helpers = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/helpers.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/helpers.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Deferred = exports.removeItemAsync = exports.getItemAsync = exports.setItemAsync = exports.looksLikeFetchResponse = exports.resolveFetch = exports.supportsLocalStorage = exports.isBrowser = void 0;
@@ -3813,9 +3822,9 @@ var require_helpers = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/fetch.js
+// node_modules/@supabase/auth-js/dist/main/lib/fetch.js
 var require_fetch = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/fetch.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/fetch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.handleError = handleError2;
@@ -3968,9 +3977,9 @@ var require_fetch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/types.js
+// node_modules/@supabase/auth-js/dist/main/lib/types.js
 var require_types2 = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/types.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/types.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SIGN_OUT_SCOPES = void 0;
@@ -3978,9 +3987,9 @@ var require_types2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/GoTrueAdminApi.js
+// node_modules/@supabase/auth-js/dist/main/GoTrueAdminApi.js
 var require_GoTrueAdminApi = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/GoTrueAdminApi.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/GoTrueAdminApi.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
@@ -4017,6 +4026,13 @@ var require_GoTrueAdminApi = __commonJS({
           updateClient: this._updateOAuthClient.bind(this),
           deleteClient: this._deleteOAuthClient.bind(this),
           regenerateClientSecret: this._regenerateOAuthClientSecret.bind(this)
+        };
+        this.customProviders = {
+          listProviders: this._listCustomProviders.bind(this),
+          createProvider: this._createCustomProvider.bind(this),
+          getProvider: this._getCustomProvider.bind(this),
+          updateProvider: this._updateCustomProvider.bind(this),
+          deleteProvider: this._deleteCustomProvider.bind(this)
         };
       }
       /**
@@ -4179,9 +4195,34 @@ var require_GoTrueAdminApi = __commonJS({
       /**
        * Updates the user data. Changes are applied directly without confirmation flows.
        *
+       * @param uid The user's unique identifier
        * @param attributes The data you want to update.
        *
        * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       *
+       * @remarks
+       * **Important:** This is a server-side operation and does **not** trigger client-side
+       * `onAuthStateChange` listeners. The admin API has no connection to client state.
+       *
+       * To sync changes to the client after calling this method:
+       * 1. On the client, call `supabase.auth.refreshSession()` to fetch the updated user data
+       * 2. This will trigger the `TOKEN_REFRESHED` event and notify all listeners
+       *
+       * @example
+       * ```typescript
+       * // Server-side (Edge Function)
+       * const { data, error } = await supabase.auth.admin.updateUserById(
+       *   userId,
+       *   { user_metadata: { preferences: { theme: 'dark' } } }
+       * )
+       *
+       * // Client-side (to sync the changes)
+       * const { data, error } = await supabase.auth.refreshSession()
+       * // onAuthStateChange listeners will now be notified with updated user
+       * ```
+       *
+       * @see {@link GoTrueClient.refreshSession} for syncing admin changes to the client
+       * @see {@link GoTrueClient.updateUser} for client-side user updates (triggers listeners automatically)
        */
       async updateUserById(uid, attributes) {
         (0, helpers_1.validateUUID)(uid);
@@ -4402,14 +4443,132 @@ var require_GoTrueAdminApi = __commonJS({
           throw error;
         }
       }
+      /**
+       * Lists all custom providers with optional type filter.
+       *
+       * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       */
+      async _listCustomProviders(params) {
+        try {
+          const query = {};
+          if (params === null || params === void 0 ? void 0 : params.type) {
+            query.type = params.type;
+          }
+          return await (0, fetch_1._request)(this.fetch, "GET", `${this.url}/admin/custom-providers`, {
+            headers: this.headers,
+            query,
+            xform: (data) => {
+              var _a;
+              return { data: { providers: (_a = data === null || data === void 0 ? void 0 : data.providers) !== null && _a !== void 0 ? _a : [] }, error: null };
+            }
+          });
+        } catch (error) {
+          if ((0, errors_1.isAuthError)(error)) {
+            return { data: { providers: [] }, error };
+          }
+          throw error;
+        }
+      }
+      /**
+       * Creates a new custom OIDC/OAuth provider.
+       *
+       * For OIDC providers, the server fetches and validates the OpenID Connect discovery document
+       * from the issuer's well-known endpoint (or the provided `discovery_url`) at creation time.
+       * This may return a validation error (`error_code: "validation_failed"`) if the discovery
+       * document is unreachable, not valid JSON, missing required fields, or if the issuer
+       * in the document does not match the expected issuer.
+       *
+       * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       */
+      async _createCustomProvider(params) {
+        try {
+          return await (0, fetch_1._request)(this.fetch, "POST", `${this.url}/admin/custom-providers`, {
+            body: params,
+            headers: this.headers,
+            xform: (provider) => {
+              return { data: provider, error: null };
+            }
+          });
+        } catch (error) {
+          if ((0, errors_1.isAuthError)(error)) {
+            return { data: null, error };
+          }
+          throw error;
+        }
+      }
+      /**
+       * Gets details of a specific custom provider by identifier.
+       *
+       * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       */
+      async _getCustomProvider(identifier) {
+        try {
+          return await (0, fetch_1._request)(this.fetch, "GET", `${this.url}/admin/custom-providers/${identifier}`, {
+            headers: this.headers,
+            xform: (provider) => {
+              return { data: provider, error: null };
+            }
+          });
+        } catch (error) {
+          if ((0, errors_1.isAuthError)(error)) {
+            return { data: null, error };
+          }
+          throw error;
+        }
+      }
+      /**
+       * Updates an existing custom provider.
+       *
+       * When `issuer` or `discovery_url` is changed on an OIDC provider, the server re-fetches and
+       * validates the discovery document before persisting. This may return a validation error
+       * (`error_code: "validation_failed"`) if the discovery document is unreachable, invalid, or
+       * the issuer does not match.
+       *
+       * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       */
+      async _updateCustomProvider(identifier, params) {
+        try {
+          return await (0, fetch_1._request)(this.fetch, "PUT", `${this.url}/admin/custom-providers/${identifier}`, {
+            body: params,
+            headers: this.headers,
+            xform: (provider) => {
+              return { data: provider, error: null };
+            }
+          });
+        } catch (error) {
+          if ((0, errors_1.isAuthError)(error)) {
+            return { data: null, error };
+          }
+          throw error;
+        }
+      }
+      /**
+       * Deletes a custom provider.
+       *
+       * This function should only be called on a server. Never expose your `service_role` key in the browser.
+       */
+      async _deleteCustomProvider(identifier) {
+        try {
+          await (0, fetch_1._request)(this.fetch, "DELETE", `${this.url}/admin/custom-providers/${identifier}`, {
+            headers: this.headers,
+            noResolveJson: true
+          });
+          return { data: null, error: null };
+        } catch (error) {
+          if ((0, errors_1.isAuthError)(error)) {
+            return { data: null, error };
+          }
+          throw error;
+        }
+      }
     };
     exports.default = GoTrueAdminApi;
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/local-storage.js
+// node_modules/@supabase/auth-js/dist/main/lib/local-storage.js
 var require_local_storage = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/local-storage.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/local-storage.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.memoryLocalStorageAdapter = memoryLocalStorageAdapter;
@@ -4429,9 +4588,9 @@ var require_local_storage = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/locks.js
+// node_modules/@supabase/auth-js/dist/main/lib/locks.js
 var require_locks = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/locks.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/locks.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ProcessLockAcquireTimeoutError = exports.NavigatorLockAcquireTimeoutError = exports.LockAcquireTimeoutError = exports.internals = void 0;
@@ -4470,82 +4629,133 @@ var require_locks = __commonJS({
           }
         }, acquireTimeout);
       }
-      return await Promise.resolve().then(() => globalThis.navigator.locks.request(name, acquireTimeout === 0 ? {
-        mode: "exclusive",
-        ifAvailable: true
-      } : {
-        mode: "exclusive",
-        signal: abortController.signal
-      }, async (lock) => {
-        if (lock) {
-          if (exports.internals.debug) {
-            console.log("@supabase/gotrue-js: navigatorLock: acquired", name, lock.name);
-          }
-          try {
-            return await fn();
-          } finally {
+      await Promise.resolve();
+      try {
+        return await globalThis.navigator.locks.request(name, acquireTimeout === 0 ? {
+          mode: "exclusive",
+          ifAvailable: true
+        } : {
+          mode: "exclusive",
+          signal: abortController.signal
+        }, async (lock) => {
+          if (lock) {
             if (exports.internals.debug) {
-              console.log("@supabase/gotrue-js: navigatorLock: released", name, lock.name);
+              console.log("@supabase/gotrue-js: navigatorLock: acquired", name, lock.name);
             }
-          }
-        } else {
-          if (acquireTimeout === 0) {
-            if (exports.internals.debug) {
-              console.log("@supabase/gotrue-js: navigatorLock: not immediately available", name);
-            }
-            throw new NavigatorLockAcquireTimeoutError(`Acquiring an exclusive Navigator LockManager lock "${name}" immediately failed`);
-          } else {
-            if (exports.internals.debug) {
-              try {
-                const result = await globalThis.navigator.locks.query();
-                console.log("@supabase/gotrue-js: Navigator LockManager state", JSON.stringify(result, null, "  "));
-              } catch (e) {
-                console.warn("@supabase/gotrue-js: Error when querying Navigator LockManager state", e);
+            try {
+              return await fn();
+            } finally {
+              if (exports.internals.debug) {
+                console.log("@supabase/gotrue-js: navigatorLock: released", name, lock.name);
               }
             }
-            console.warn("@supabase/gotrue-js: Navigator LockManager returned a null lock when using #request without ifAvailable set to true, it appears this browser is not following the LockManager spec https://developer.mozilla.org/en-US/docs/Web/API/LockManager/request");
-            return await fn();
+          } else {
+            if (acquireTimeout === 0) {
+              if (exports.internals.debug) {
+                console.log("@supabase/gotrue-js: navigatorLock: not immediately available", name);
+              }
+              throw new NavigatorLockAcquireTimeoutError(`Acquiring an exclusive Navigator LockManager lock "${name}" immediately failed`);
+            } else {
+              if (exports.internals.debug) {
+                try {
+                  const result = await globalThis.navigator.locks.query();
+                  console.log("@supabase/gotrue-js: Navigator LockManager state", JSON.stringify(result, null, "  "));
+                } catch (e) {
+                  console.warn("@supabase/gotrue-js: Error when querying Navigator LockManager state", e);
+                }
+              }
+              console.warn("@supabase/gotrue-js: Navigator LockManager returned a null lock when using #request without ifAvailable set to true, it appears this browser is not following the LockManager spec https://developer.mozilla.org/en-US/docs/Web/API/LockManager/request");
+              return await fn();
+            }
           }
+        });
+      } catch (e) {
+        if ((e === null || e === void 0 ? void 0 : e.name) === "AbortError" && acquireTimeout > 0) {
+          if (exports.internals.debug) {
+            console.log("@supabase/gotrue-js: navigatorLock: acquire timeout, recovering by stealing lock", name);
+          }
+          console.warn(`@supabase/gotrue-js: Lock "${name}" was not released within ${acquireTimeout}ms. This may indicate an orphaned lock from a component unmount (e.g., React Strict Mode). Forcefully acquiring the lock to recover.`);
+          return await Promise.resolve().then(() => globalThis.navigator.locks.request(name, {
+            mode: "exclusive",
+            steal: true
+          }, async (lock) => {
+            if (lock) {
+              if (exports.internals.debug) {
+                console.log("@supabase/gotrue-js: navigatorLock: recovered (stolen)", name, lock.name);
+              }
+              try {
+                return await fn();
+              } finally {
+                if (exports.internals.debug) {
+                  console.log("@supabase/gotrue-js: navigatorLock: released (stolen)", name, lock.name);
+                }
+              }
+            } else {
+              console.warn("@supabase/gotrue-js: Navigator LockManager returned null lock even with steal: true");
+              return await fn();
+            }
+          }));
         }
-      }));
+        throw e;
+      }
     }
     var PROCESS_LOCKS = {};
     async function processLock(name, acquireTimeout, fn) {
       var _a;
       const previousOperation = (_a = PROCESS_LOCKS[name]) !== null && _a !== void 0 ? _a : Promise.resolve();
-      const currentOperation = Promise.race([
-        previousOperation.catch(() => {
-          return null;
-        }),
-        acquireTimeout >= 0 ? new Promise((_, reject) => {
-          setTimeout(() => {
-            console.warn(`@supabase/gotrue-js: Lock "${name}" acquisition timed out after ${acquireTimeout}ms. This may be caused by another operation holding the lock. Consider increasing lockAcquireTimeout or checking for stuck operations.`);
-            reject(new ProcessLockAcquireTimeoutError(`Acquiring process lock with name "${name}" timed out`));
-          }, acquireTimeout);
-        }) : null
-      ].filter((x) => x)).catch((e) => {
-        if (e && e.isAcquireTimeout) {
-          throw e;
-        }
-        return null;
-      }).then(async () => {
-        return await fn();
-      });
-      PROCESS_LOCKS[name] = currentOperation.catch(async (e) => {
-        if (e && e.isAcquireTimeout) {
+      const previousOperationHandled = (async () => {
+        try {
           await previousOperation;
           return null;
+        } catch (e) {
+          return null;
         }
-        throw e;
-      });
+      })();
+      const currentOperation = (async () => {
+        let timeoutId = null;
+        try {
+          const timeoutPromise = acquireTimeout >= 0 ? new Promise((_, reject) => {
+            timeoutId = setTimeout(() => {
+              console.warn(`@supabase/gotrue-js: Lock "${name}" acquisition timed out after ${acquireTimeout}ms. This may be caused by another operation holding the lock. Consider increasing lockAcquireTimeout or checking for stuck operations.`);
+              reject(new ProcessLockAcquireTimeoutError(`Acquiring process lock with name "${name}" timed out`));
+            }, acquireTimeout);
+          }) : null;
+          await Promise.race([previousOperationHandled, timeoutPromise].filter((x) => x));
+          if (timeoutId !== null) {
+            clearTimeout(timeoutId);
+          }
+        } catch (e) {
+          if (timeoutId !== null) {
+            clearTimeout(timeoutId);
+          }
+          if (e && e.isAcquireTimeout) {
+            throw e;
+          }
+        }
+        return await fn();
+      })();
+      PROCESS_LOCKS[name] = (async () => {
+        try {
+          return await currentOperation;
+        } catch (e) {
+          if (e && e.isAcquireTimeout) {
+            try {
+              await previousOperation;
+            } catch (prevError) {
+            }
+            return null;
+          }
+          throw e;
+        }
+      })();
       return await currentOperation;
     }
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/polyfills.js
+// node_modules/@supabase/auth-js/dist/main/lib/polyfills.js
 var require_polyfills = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/polyfills.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/polyfills.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.polyfillGlobalThis = polyfillGlobalThis;
@@ -4570,9 +4780,9 @@ var require_polyfills = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/web3/ethereum.js
+// node_modules/@supabase/auth-js/dist/main/lib/web3/ethereum.js
 var require_ethereum = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/web3/ethereum.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/web3/ethereum.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getAddress = getAddress;
@@ -4648,9 +4858,9 @@ ${suffix}`;
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/webauthn.errors.js
+// node_modules/@supabase/auth-js/dist/main/lib/webauthn.errors.js
 var require_webauthn_errors = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/webauthn.errors.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/webauthn.errors.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebAuthnUnknownError = exports.WebAuthnError = void 0;
@@ -4832,9 +5042,9 @@ var require_webauthn_errors = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/webauthn.js
+// node_modules/@supabase/auth-js/dist/main/lib/webauthn.js
 var require_webauthn = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/lib/webauthn.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/lib/webauthn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebAuthnApi = exports.DEFAULT_REQUEST_OPTIONS = exports.DEFAULT_CREATION_OPTIONS = exports.webAuthnAbortService = exports.WebAuthnAbortService = exports.identifyAuthenticationError = exports.identifyRegistrationError = exports.isWebAuthnError = exports.WebAuthnError = void 0;
@@ -5390,9 +5600,9 @@ var require_webauthn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/GoTrueClient.js
+// node_modules/@supabase/auth-js/dist/main/GoTrueClient.js
 var require_GoTrueClient = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/GoTrueClient.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/GoTrueClient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
@@ -5420,8 +5630,9 @@ var require_GoTrueClient = __commonJS({
       debug: false,
       hasCustomAuthorizationHeader: false,
       throwOnError: false,
-      lockAcquireTimeout: 1e4
-      // 10 seconds
+      lockAcquireTimeout: 5e3,
+      // 5 seconds
+      skipAutoInitialize: false
     };
     async function lockNoOp(name, acquireTimeout, fn) {
       return await fn();
@@ -5568,9 +5779,11 @@ var require_GoTrueClient = __commonJS({
             }
           });
         }
-        this.initialize().catch((error) => {
-          this._debug("#initialize()", "error", error);
-        });
+        if (!settings.skipAutoInitialize) {
+          this.initialize().catch((error) => {
+            this._debug("#initialize()", "error", error);
+          });
+        }
       }
       /**
        * Returns whether error throwing mode is enabled for this client.
@@ -5714,6 +5927,173 @@ var require_GoTrueClient = __commonJS({
        *
        * @returns A logged-in session if the server has "autoconfirm" ON
        * @returns A user if the server has "autoconfirm" OFF
+       *
+       * @category Auth
+       *
+       * @remarks
+       * - By default, the user needs to verify their email address before logging in. To turn this off, disable **Confirm email** in [your project](/dashboard/project/_/auth/providers).
+       * - **Confirm email** determines if users need to confirm their email address after signing up.
+       *   - If **Confirm email** is enabled, a `user` is returned but `session` is null.
+       *   - If **Confirm email** is disabled, both a `user` and a `session` are returned.
+       * - When the user confirms their email address, they are redirected to the [`SITE_URL`](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls) by default. You can modify your `SITE_URL` or add additional redirect URLs in [your project](/dashboard/project/_/auth/url-configuration).
+       * - If signUp() is called for an existing confirmed user:
+       *   - When both **Confirm email** and **Confirm phone** (even when phone provider is disabled) are enabled in [your project](/dashboard/project/_/auth/providers), an obfuscated/fake user object is returned.
+       *   - When either **Confirm email** or **Confirm phone** (even when phone provider is disabled) is disabled, the error message, `User already registered` is returned.
+       * - To fetch the currently logged-in user, refer to [`getUser()`](/docs/reference/javascript/auth-getuser).
+       *
+       * @example Sign up with an email and password
+       * ```js
+       * const { data, error } = await supabase.auth.signUp({
+       *   email: 'example@email.com',
+       *   password: 'example-password',
+       * })
+       * ```
+       *
+       * @exampleResponse Sign up with an email and password
+       * ```json
+       * // Some fields may be null if "confirm email" is enabled.
+       * {
+       *   "data": {
+       *     "user": {
+       *       "id": "11111111-1111-1111-1111-111111111111",
+       *       "aud": "authenticated",
+       *       "role": "authenticated",
+       *       "email": "example@email.com",
+       *       "email_confirmed_at": "2024-01-01T00:00:00Z",
+       *       "phone": "",
+       *       "last_sign_in_at": "2024-01-01T00:00:00Z",
+       *       "app_metadata": {
+       *         "provider": "email",
+       *         "providers": [
+       *           "email"
+       *         ]
+       *       },
+       *       "user_metadata": {},
+       *       "identities": [
+       *         {
+       *           "identity_id": "22222222-2222-2222-2222-222222222222",
+       *           "id": "11111111-1111-1111-1111-111111111111",
+       *           "user_id": "11111111-1111-1111-1111-111111111111",
+       *           "identity_data": {
+       *             "email": "example@email.com",
+       *             "email_verified": false,
+       *             "phone_verified": false,
+       *             "sub": "11111111-1111-1111-1111-111111111111"
+       *           },
+       *           "provider": "email",
+       *           "last_sign_in_at": "2024-01-01T00:00:00Z",
+       *           "created_at": "2024-01-01T00:00:00Z",
+       *           "updated_at": "2024-01-01T00:00:00Z",
+       *           "email": "example@email.com"
+       *         }
+       *       ],
+       *       "created_at": "2024-01-01T00:00:00Z",
+       *       "updated_at": "2024-01-01T00:00:00Z"
+       *     },
+       *     "session": {
+       *       "access_token": "<ACCESS_TOKEN>",
+       *       "token_type": "bearer",
+       *       "expires_in": 3600,
+       *       "expires_at": 1700000000,
+       *       "refresh_token": "<REFRESH_TOKEN>",
+       *       "user": {
+       *         "id": "11111111-1111-1111-1111-111111111111",
+       *         "aud": "authenticated",
+       *         "role": "authenticated",
+       *         "email": "example@email.com",
+       *         "email_confirmed_at": "2024-01-01T00:00:00Z",
+       *         "phone": "",
+       *         "last_sign_in_at": "2024-01-01T00:00:00Z",
+       *         "app_metadata": {
+       *           "provider": "email",
+       *           "providers": [
+       *             "email"
+       *           ]
+       *         },
+       *         "user_metadata": {},
+       *         "identities": [
+       *           {
+       *             "identity_id": "22222222-2222-2222-2222-222222222222",
+       *             "id": "11111111-1111-1111-1111-111111111111",
+       *             "user_id": "11111111-1111-1111-1111-111111111111",
+       *             "identity_data": {
+       *               "email": "example@email.com",
+       *               "email_verified": false,
+       *               "phone_verified": false,
+       *               "sub": "11111111-1111-1111-1111-111111111111"
+       *             },
+       *             "provider": "email",
+       *             "last_sign_in_at": "2024-01-01T00:00:00Z",
+       *             "created_at": "2024-01-01T00:00:00Z",
+       *             "updated_at": "2024-01-01T00:00:00Z",
+       *             "email": "example@email.com"
+       *           }
+       *         ],
+       *         "created_at": "2024-01-01T00:00:00Z",
+       *         "updated_at": "2024-01-01T00:00:00Z"
+       *       }
+       *     }
+       *   },
+       *   "error": null
+       * }
+       * ```
+       *
+       * @example Sign up with a phone number and password (SMS)
+       * ```js
+       * const { data, error } = await supabase.auth.signUp({
+       *   phone: '123456789',
+       *   password: 'example-password',
+       *   options: {
+       *     channel: 'sms'
+       *   }
+       * })
+       * ```
+       *
+       * @exampleDescription Sign up with a phone number and password (whatsapp)
+       * The user will be sent a WhatsApp message which contains a OTP. By default, a given user can only request a OTP once every 60 seconds. Note that a user will need to have a valid WhatsApp account that is linked to Twilio in order to use this feature.
+       *
+       * @example Sign up with a phone number and password (whatsapp)
+       * ```js
+       * const { data, error } = await supabase.auth.signUp({
+       *   phone: '123456789',
+       *   password: 'example-password',
+       *   options: {
+       *     channel: 'whatsapp'
+       *   }
+       * })
+       * ```
+       *
+       * @example Sign up with additional user metadata
+       * ```js
+       * const { data, error } = await supabase.auth.signUp(
+       *   {
+       *     email: 'example@email.com',
+       *     password: 'example-password',
+       *     options: {
+       *       data: {
+       *         first_name: 'John',
+       *         age: 27,
+       *       }
+       *     }
+       *   }
+       * )
+       * ```
+       *
+       * @exampleDescription Sign up with a redirect URL
+       * - See [redirect URLs and wildcards](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls) to add additional redirect URLs to your project.
+       *
+       * @example Sign up with a redirect URL
+       * ```js
+       * const { data, error } = await supabase.auth.signUp(
+       *   {
+       *     email: 'example@email.com',
+       *     password: 'example-password',
+       *     options: {
+       *       emailRedirectTo: 'https://example.com/welcome'
+       *     }
+       *   }
+       * )
+       * ```
        */
       async signUp(credentials) {
         var _a, _b, _c;
@@ -7961,9 +8341,9 @@ var require_GoTrueClient = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/AuthAdminApi.js
+// node_modules/@supabase/auth-js/dist/main/AuthAdminApi.js
 var require_AuthAdminApi = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/AuthAdminApi.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/AuthAdminApi.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
@@ -7973,9 +8353,9 @@ var require_AuthAdminApi = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/AuthClient.js
+// node_modules/@supabase/auth-js/dist/main/AuthClient.js
 var require_AuthClient = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/AuthClient.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/AuthClient.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
@@ -7985,9 +8365,9 @@ var require_AuthClient = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/index.js
+// node_modules/@supabase/auth-js/dist/main/index.js
 var require_main3 = __commonJS({
-  "node_modules/.pnpm/@supabase+auth-js@2.95.3/node_modules/@supabase/auth-js/dist/main/index.js"(exports) {
+  "node_modules/@supabase/auth-js/dist/main/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.processLock = exports.lockInternals = exports.NavigatorLockAcquireTimeoutError = exports.navigatorLock = exports.AuthClient = exports.AuthAdminApi = exports.GoTrueClient = exports.GoTrueAdminApi = void 0;
@@ -8018,9 +8398,9 @@ var require_main3 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationIn.js
+// node_modules/svix/dist/models/applicationIn.js
 var require_applicationIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationIn.js"(exports) {
+  "node_modules/svix/dist/models/applicationIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApplicationInSerializer = void 0;
@@ -8045,9 +8425,9 @@ var require_applicationIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationOut.js
+// node_modules/svix/dist/models/applicationOut.js
 var require_applicationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationOut.js"(exports) {
+  "node_modules/svix/dist/models/applicationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApplicationOutSerializer = void 0;
@@ -8078,9 +8458,9 @@ var require_applicationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationPatch.js
+// node_modules/svix/dist/models/applicationPatch.js
 var require_applicationPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationPatch.js"(exports) {
+  "node_modules/svix/dist/models/applicationPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApplicationPatchSerializer = void 0;
@@ -8105,9 +8485,9 @@ var require_applicationPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseApplicationOut.js
+// node_modules/svix/dist/models/listResponseApplicationOut.js
 var require_listResponseApplicationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseApplicationOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseApplicationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseApplicationOutSerializer = void 0;
@@ -8133,9 +8513,9 @@ var require_listResponseApplicationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/util.js
+// node_modules/svix/dist/util.js
 var require_util = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/util.js"(exports) {
+  "node_modules/svix/dist/util.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApiException = void 0;
@@ -8155,43 +8535,43 @@ Headers: ${JSON.stringify(headers)}`);
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/max.js
+// node_modules/uuid/dist/esm-node/max.js
 var max_default;
 var init_max = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/max.js"() {
+  "node_modules/uuid/dist/esm-node/max.js"() {
     max_default = "ffffffff-ffff-ffff-ffff-ffffffffffff";
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/nil.js
+// node_modules/uuid/dist/esm-node/nil.js
 var nil_default;
 var init_nil = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/nil.js"() {
+  "node_modules/uuid/dist/esm-node/nil.js"() {
     nil_default = "00000000-0000-0000-0000-000000000000";
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/regex.js
+// node_modules/uuid/dist/esm-node/regex.js
 var regex_default;
 var init_regex = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/regex.js"() {
+  "node_modules/uuid/dist/esm-node/regex.js"() {
     regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/validate.js
+// node_modules/uuid/dist/esm-node/validate.js
 function validate(uuid) {
   return typeof uuid === "string" && regex_default.test(uuid);
 }
 var validate_default;
 var init_validate = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/validate.js"() {
+  "node_modules/uuid/dist/esm-node/validate.js"() {
     init_regex();
     validate_default = validate;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/parse.js
+// node_modules/uuid/dist/esm-node/parse.js
 function parse(uuid) {
   if (!validate_default(uuid)) {
     throw TypeError("Invalid UUID");
@@ -8218,13 +8598,13 @@ function parse(uuid) {
 }
 var parse_default;
 var init_parse = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/parse.js"() {
+  "node_modules/uuid/dist/esm-node/parse.js"() {
     init_validate();
     parse_default = parse;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/stringify.js
+// node_modules/uuid/dist/esm-node/stringify.js
 function unsafeStringify(arr, offset = 0) {
   return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
@@ -8237,7 +8617,7 @@ function stringify(arr, offset = 0) {
 }
 var byteToHex, stringify_default;
 var init_stringify = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/stringify.js"() {
+  "node_modules/uuid/dist/esm-node/stringify.js"() {
     init_validate();
     byteToHex = [];
     for (let i = 0; i < 256; ++i) {
@@ -8247,7 +8627,7 @@ var init_stringify = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/rng.js
+// node_modules/uuid/dist/esm-node/rng.js
 import crypto4 from "node:crypto";
 function rng() {
   if (poolPtr > rnds8Pool.length - 16) {
@@ -8258,13 +8638,13 @@ function rng() {
 }
 var rnds8Pool, poolPtr;
 var init_rng = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/rng.js"() {
+  "node_modules/uuid/dist/esm-node/rng.js"() {
     rnds8Pool = new Uint8Array(256);
     poolPtr = rnds8Pool.length;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v1.js
+// node_modules/uuid/dist/esm-node/v1.js
 function v1(options, buf, offset) {
   let i = buf && offset || 0;
   const b = buf || new Array(16);
@@ -8330,7 +8710,7 @@ function v1(options, buf, offset) {
 }
 var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
 var init_v1 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v1.js"() {
+  "node_modules/uuid/dist/esm-node/v1.js"() {
     init_rng();
     init_stringify();
     _lastMSecs = 0;
@@ -8339,7 +8719,7 @@ var init_v1 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v1ToV6.js
+// node_modules/uuid/dist/esm-node/v1ToV6.js
 function v1ToV6(uuid) {
   const v1Bytes = typeof uuid === "string" ? parse_default(uuid) : uuid;
   const v6Bytes = _v1ToV6(v1Bytes);
@@ -8349,13 +8729,13 @@ function _v1ToV6(v1Bytes, randomize = false) {
   return Uint8Array.of((v1Bytes[6] & 15) << 4 | v1Bytes[7] >> 4 & 15, (v1Bytes[7] & 15) << 4 | (v1Bytes[4] & 240) >> 4, (v1Bytes[4] & 15) << 4 | (v1Bytes[5] & 240) >> 4, (v1Bytes[5] & 15) << 4 | (v1Bytes[0] & 240) >> 4, (v1Bytes[0] & 15) << 4 | (v1Bytes[1] & 240) >> 4, (v1Bytes[1] & 15) << 4 | (v1Bytes[2] & 240) >> 4, 96 | v1Bytes[2] & 15, v1Bytes[3], v1Bytes[8], v1Bytes[9], v1Bytes[10], v1Bytes[11], v1Bytes[12], v1Bytes[13], v1Bytes[14], v1Bytes[15]);
 }
 var init_v1ToV6 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v1ToV6.js"() {
+  "node_modules/uuid/dist/esm-node/v1ToV6.js"() {
     init_parse();
     init_stringify();
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v35.js
+// node_modules/uuid/dist/esm-node/v35.js
 function stringToBytes(str) {
   str = unescape(encodeURIComponent(str));
   const bytes = [];
@@ -8401,7 +8781,7 @@ function v35(name, version5, hashfunc) {
 }
 var DNS, URL2;
 var init_v35 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v35.js"() {
+  "node_modules/uuid/dist/esm-node/v35.js"() {
     init_stringify();
     init_parse();
     DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -8409,7 +8789,7 @@ var init_v35 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/md5.js
+// node_modules/uuid/dist/esm-node/md5.js
 import crypto5 from "node:crypto";
 function md5(bytes) {
   if (Array.isArray(bytes)) {
@@ -8421,15 +8801,15 @@ function md5(bytes) {
 }
 var md5_default;
 var init_md5 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/md5.js"() {
+  "node_modules/uuid/dist/esm-node/md5.js"() {
     md5_default = md5;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v3.js
+// node_modules/uuid/dist/esm-node/v3.js
 var v3, v3_default;
 var init_v3 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v3.js"() {
+  "node_modules/uuid/dist/esm-node/v3.js"() {
     init_v35();
     init_md5();
     v3 = v35("v3", 48, md5_default);
@@ -8437,18 +8817,18 @@ var init_v3 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/native.js
+// node_modules/uuid/dist/esm-node/native.js
 import crypto6 from "node:crypto";
 var native_default;
 var init_native = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/native.js"() {
+  "node_modules/uuid/dist/esm-node/native.js"() {
     native_default = {
       randomUUID: crypto6.randomUUID
     };
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v4.js
+// node_modules/uuid/dist/esm-node/v4.js
 function v4(options, buf, offset) {
   if (native_default.randomUUID && !buf && !options) {
     return native_default.randomUUID();
@@ -8468,7 +8848,7 @@ function v4(options, buf, offset) {
 }
 var v4_default;
 var init_v4 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v4.js"() {
+  "node_modules/uuid/dist/esm-node/v4.js"() {
     init_native();
     init_rng();
     init_stringify();
@@ -8476,7 +8856,7 @@ var init_v4 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/sha1.js
+// node_modules/uuid/dist/esm-node/sha1.js
 import crypto7 from "node:crypto";
 function sha1(bytes) {
   if (Array.isArray(bytes)) {
@@ -8488,15 +8868,15 @@ function sha1(bytes) {
 }
 var sha1_default;
 var init_sha1 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/sha1.js"() {
+  "node_modules/uuid/dist/esm-node/sha1.js"() {
     sha1_default = sha1;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v5.js
+// node_modules/uuid/dist/esm-node/v5.js
 var v5, v5_default;
 var init_v5 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v5.js"() {
+  "node_modules/uuid/dist/esm-node/v5.js"() {
     init_v35();
     init_sha1();
     v5 = v35("v5", 80, sha1_default);
@@ -8504,7 +8884,7 @@ var init_v5 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v6.js
+// node_modules/uuid/dist/esm-node/v6.js
 function v6(options = {}, buf, offset = 0) {
   let bytes = v1_default({
     ...options,
@@ -8520,14 +8900,14 @@ function v6(options = {}, buf, offset = 0) {
   return unsafeStringify(bytes);
 }
 var init_v6 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v6.js"() {
+  "node_modules/uuid/dist/esm-node/v6.js"() {
     init_stringify();
     init_v1();
     init_v1ToV6();
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v6ToV1.js
+// node_modules/uuid/dist/esm-node/v6ToV1.js
 function v6ToV1(uuid) {
   const v6Bytes = typeof uuid === "string" ? parse_default(uuid) : uuid;
   const v1Bytes = _v6ToV1(v6Bytes);
@@ -8537,13 +8917,13 @@ function _v6ToV1(v6Bytes) {
   return Uint8Array.of((v6Bytes[3] & 15) << 4 | v6Bytes[4] >> 4 & 15, (v6Bytes[4] & 15) << 4 | (v6Bytes[5] & 240) >> 4, (v6Bytes[5] & 15) << 4 | v6Bytes[6] & 15, v6Bytes[7], (v6Bytes[1] & 15) << 4 | (v6Bytes[2] & 240) >> 4, (v6Bytes[2] & 15) << 4 | (v6Bytes[3] & 240) >> 4, 16 | (v6Bytes[0] & 240) >> 4, (v6Bytes[0] & 15) << 4 | (v6Bytes[1] & 240) >> 4, v6Bytes[8], v6Bytes[9], v6Bytes[10], v6Bytes[11], v6Bytes[12], v6Bytes[13], v6Bytes[14], v6Bytes[15]);
 }
 var init_v6ToV1 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v6ToV1.js"() {
+  "node_modules/uuid/dist/esm-node/v6ToV1.js"() {
     init_parse();
     init_stringify();
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v7.js
+// node_modules/uuid/dist/esm-node/v7.js
 function v7(options, buf, offset) {
   options = options || {};
   let i = buf && offset || 0;
@@ -8607,7 +8987,7 @@ function v7(options, buf, offset) {
 }
 var _seqLow, _seqHigh, _msecs, v7_default;
 var init_v7 = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/v7.js"() {
+  "node_modules/uuid/dist/esm-node/v7.js"() {
     init_rng();
     init_stringify();
     _seqLow = null;
@@ -8617,7 +8997,7 @@ var init_v7 = __esm({
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/version.js
+// node_modules/uuid/dist/esm-node/version.js
 function version3(uuid) {
   if (!validate_default(uuid)) {
     throw TypeError("Invalid UUID");
@@ -8626,13 +9006,13 @@ function version3(uuid) {
 }
 var version_default;
 var init_version = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/version.js"() {
+  "node_modules/uuid/dist/esm-node/version.js"() {
     init_validate();
     version_default = version3;
   }
 });
 
-// node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/index.js
+// node_modules/uuid/dist/esm-node/index.js
 var esm_node_exports = {};
 __export(esm_node_exports, {
   MAX: () => max_default,
@@ -8651,7 +9031,7 @@ __export(esm_node_exports, {
   version: () => version_default
 });
 var init_esm_node = __esm({
-  "node_modules/.pnpm/uuid@10.0.0/node_modules/uuid/dist/esm-node/index.js"() {
+  "node_modules/uuid/dist/esm-node/index.js"() {
     init_max();
     init_nil();
     init_parse();
@@ -8669,9 +9049,9 @@ var init_esm_node = __esm({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/request.js
+// node_modules/svix/dist/request.js
 var require_request = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/request.js"(exports) {
+  "node_modules/svix/dist/request.js"(exports) {
     "use strict";
     var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
@@ -8844,9 +9224,9 @@ var require_request = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/application.js
+// node_modules/svix/dist/api/application.js
 var require_application = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/application.js"(exports) {
+  "node_modules/svix/dist/api/application.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Application = void 0;
@@ -8910,9 +9290,9 @@ var require_application = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/apiTokenOut.js
+// node_modules/svix/dist/models/apiTokenOut.js
 var require_apiTokenOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/apiTokenOut.js"(exports) {
+  "node_modules/svix/dist/models/apiTokenOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApiTokenOutSerializer = void 0;
@@ -8941,9 +9321,9 @@ var require_apiTokenOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalCapability.js
+// node_modules/svix/dist/models/appPortalCapability.js
 var require_appPortalCapability = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalCapability.js"(exports) {
+  "node_modules/svix/dist/models/appPortalCapability.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AppPortalCapabilitySerializer = exports.AppPortalCapability = void 0;
@@ -8967,9 +9347,9 @@ var require_appPortalCapability = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalAccessIn.js
+// node_modules/svix/dist/models/appPortalAccessIn.js
 var require_appPortalAccessIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalAccessIn.js"(exports) {
+  "node_modules/svix/dist/models/appPortalAccessIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AppPortalAccessInSerializer = void 0;
@@ -9002,9 +9382,9 @@ var require_appPortalAccessIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalAccessOut.js
+// node_modules/svix/dist/models/appPortalAccessOut.js
 var require_appPortalAccessOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appPortalAccessOut.js"(exports) {
+  "node_modules/svix/dist/models/appPortalAccessOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AppPortalAccessOutSerializer = void 0;
@@ -9025,9 +9405,9 @@ var require_appPortalAccessOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationTokenExpireIn.js
+// node_modules/svix/dist/models/applicationTokenExpireIn.js
 var require_applicationTokenExpireIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/applicationTokenExpireIn.js"(exports) {
+  "node_modules/svix/dist/models/applicationTokenExpireIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ApplicationTokenExpireInSerializer = void 0;
@@ -9048,9 +9428,9 @@ var require_applicationTokenExpireIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rotatePollerTokenIn.js
+// node_modules/svix/dist/models/rotatePollerTokenIn.js
 var require_rotatePollerTokenIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rotatePollerTokenIn.js"(exports) {
+  "node_modules/svix/dist/models/rotatePollerTokenIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RotatePollerTokenInSerializer = void 0;
@@ -9071,9 +9451,9 @@ var require_rotatePollerTokenIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamPortalAccessIn.js
+// node_modules/svix/dist/models/streamPortalAccessIn.js
 var require_streamPortalAccessIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamPortalAccessIn.js"(exports) {
+  "node_modules/svix/dist/models/streamPortalAccessIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamPortalAccessInSerializer = void 0;
@@ -9096,9 +9476,9 @@ var require_streamPortalAccessIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/dashboardAccessOut.js
+// node_modules/svix/dist/models/dashboardAccessOut.js
 var require_dashboardAccessOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/dashboardAccessOut.js"(exports) {
+  "node_modules/svix/dist/models/dashboardAccessOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DashboardAccessOutSerializer = void 0;
@@ -9119,9 +9499,9 @@ var require_dashboardAccessOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/authentication.js
+// node_modules/svix/dist/api/authentication.js
 var require_authentication = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/authentication.js"(exports) {
+  "node_modules/svix/dist/api/authentication.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Authentication = void 0;
@@ -9188,9 +9568,9 @@ var require_authentication = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskStatus.js
+// node_modules/svix/dist/models/backgroundTaskStatus.js
 var require_backgroundTaskStatus = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskStatus.js"(exports) {
+  "node_modules/svix/dist/models/backgroundTaskStatus.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BackgroundTaskStatusSerializer = exports.BackgroundTaskStatus = void 0;
@@ -9211,9 +9591,9 @@ var require_backgroundTaskStatus = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskType.js
+// node_modules/svix/dist/models/backgroundTaskType.js
 var require_backgroundTaskType = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskType.js"(exports) {
+  "node_modules/svix/dist/models/backgroundTaskType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BackgroundTaskTypeSerializer = exports.BackgroundTaskType = void 0;
@@ -9239,9 +9619,9 @@ var require_backgroundTaskType = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskOut.js
+// node_modules/svix/dist/models/backgroundTaskOut.js
 var require_backgroundTaskOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/backgroundTaskOut.js"(exports) {
+  "node_modules/svix/dist/models/backgroundTaskOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BackgroundTaskOutSerializer = void 0;
@@ -9268,9 +9648,9 @@ var require_backgroundTaskOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseBackgroundTaskOut.js
+// node_modules/svix/dist/models/listResponseBackgroundTaskOut.js
 var require_listResponseBackgroundTaskOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseBackgroundTaskOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseBackgroundTaskOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseBackgroundTaskOutSerializer = void 0;
@@ -9296,9 +9676,9 @@ var require_listResponseBackgroundTaskOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/backgroundTask.js
+// node_modules/svix/dist/api/backgroundTask.js
 var require_backgroundTask = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/backgroundTask.js"(exports) {
+  "node_modules/svix/dist/api/backgroundTask.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BackgroundTask = void 0;
@@ -9333,9 +9713,9 @@ var require_backgroundTask = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorKind.js
+// node_modules/svix/dist/models/connectorKind.js
 var require_connectorKind = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorKind.js"(exports) {
+  "node_modules/svix/dist/models/connectorKind.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorKindSerializer = exports.ConnectorKind = void 0;
@@ -9371,9 +9751,9 @@ var require_connectorKind = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorProduct.js
+// node_modules/svix/dist/models/connectorProduct.js
 var require_connectorProduct = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorProduct.js"(exports) {
+  "node_modules/svix/dist/models/connectorProduct.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorProductSerializer = exports.ConnectorProduct = void 0;
@@ -9393,9 +9773,9 @@ var require_connectorProduct = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorIn.js
+// node_modules/svix/dist/models/connectorIn.js
 var require_connectorIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorIn.js"(exports) {
+  "node_modules/svix/dist/models/connectorIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorInSerializer = void 0;
@@ -9434,9 +9814,9 @@ var require_connectorIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorOut.js
+// node_modules/svix/dist/models/connectorOut.js
 var require_connectorOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorOut.js"(exports) {
+  "node_modules/svix/dist/models/connectorOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorOutSerializer = void 0;
@@ -9485,9 +9865,9 @@ var require_connectorOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorPatch.js
+// node_modules/svix/dist/models/connectorPatch.js
 var require_connectorPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorPatch.js"(exports) {
+  "node_modules/svix/dist/models/connectorPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorPatchSerializer = void 0;
@@ -9521,9 +9901,9 @@ var require_connectorPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorUpdate.js
+// node_modules/svix/dist/models/connectorUpdate.js
 var require_connectorUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/connectorUpdate.js"(exports) {
+  "node_modules/svix/dist/models/connectorUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConnectorUpdateSerializer = void 0;
@@ -9557,9 +9937,9 @@ var require_connectorUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseConnectorOut.js
+// node_modules/svix/dist/models/listResponseConnectorOut.js
 var require_listResponseConnectorOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseConnectorOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseConnectorOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseConnectorOutSerializer = void 0;
@@ -9585,9 +9965,9 @@ var require_listResponseConnectorOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/connector.js
+// node_modules/svix/dist/api/connector.js
 var require_connector = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/connector.js"(exports) {
+  "node_modules/svix/dist/api/connector.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Connector = void 0;
@@ -9644,9 +10024,9 @@ var require_connector = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersIn.js
+// node_modules/svix/dist/models/endpointHeadersIn.js
 var require_endpointHeadersIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersIn.js"(exports) {
+  "node_modules/svix/dist/models/endpointHeadersIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointHeadersInSerializer = void 0;
@@ -9665,9 +10045,9 @@ var require_endpointHeadersIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersOut.js
+// node_modules/svix/dist/models/endpointHeadersOut.js
 var require_endpointHeadersOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersOut.js"(exports) {
+  "node_modules/svix/dist/models/endpointHeadersOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointHeadersOutSerializer = void 0;
@@ -9688,9 +10068,9 @@ var require_endpointHeadersOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersPatchIn.js
+// node_modules/svix/dist/models/endpointHeadersPatchIn.js
 var require_endpointHeadersPatchIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointHeadersPatchIn.js"(exports) {
+  "node_modules/svix/dist/models/endpointHeadersPatchIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointHeadersPatchInSerializer = void 0;
@@ -9711,9 +10091,9 @@ var require_endpointHeadersPatchIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointIn.js
+// node_modules/svix/dist/models/endpointIn.js
 var require_endpointIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointIn.js"(exports) {
+  "node_modules/svix/dist/models/endpointIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointInSerializer = void 0;
@@ -9752,9 +10132,9 @@ var require_endpointIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointOut.js
+// node_modules/svix/dist/models/endpointOut.js
 var require_endpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointOut.js"(exports) {
+  "node_modules/svix/dist/models/endpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointOutSerializer = void 0;
@@ -9795,9 +10175,9 @@ var require_endpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointPatch.js
+// node_modules/svix/dist/models/endpointPatch.js
 var require_endpointPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointPatch.js"(exports) {
+  "node_modules/svix/dist/models/endpointPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointPatchSerializer = void 0;
@@ -9834,9 +10214,9 @@ var require_endpointPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointSecretOut.js
+// node_modules/svix/dist/models/endpointSecretOut.js
 var require_endpointSecretOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointSecretOut.js"(exports) {
+  "node_modules/svix/dist/models/endpointSecretOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointSecretOutSerializer = void 0;
@@ -9855,9 +10235,9 @@ var require_endpointSecretOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointSecretRotateIn.js
+// node_modules/svix/dist/models/endpointSecretRotateIn.js
 var require_endpointSecretRotateIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointSecretRotateIn.js"(exports) {
+  "node_modules/svix/dist/models/endpointSecretRotateIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointSecretRotateInSerializer = void 0;
@@ -9876,9 +10256,9 @@ var require_endpointSecretRotateIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointStats.js
+// node_modules/svix/dist/models/endpointStats.js
 var require_endpointStats = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointStats.js"(exports) {
+  "node_modules/svix/dist/models/endpointStats.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointStatsSerializer = void 0;
@@ -9903,9 +10283,9 @@ var require_endpointStats = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationIn.js
+// node_modules/svix/dist/models/endpointTransformationIn.js
 var require_endpointTransformationIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationIn.js"(exports) {
+  "node_modules/svix/dist/models/endpointTransformationIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointTransformationInSerializer = void 0;
@@ -9926,9 +10306,9 @@ var require_endpointTransformationIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationOut.js
+// node_modules/svix/dist/models/endpointTransformationOut.js
 var require_endpointTransformationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationOut.js"(exports) {
+  "node_modules/svix/dist/models/endpointTransformationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointTransformationOutSerializer = void 0;
@@ -9951,9 +10331,9 @@ var require_endpointTransformationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationPatch.js
+// node_modules/svix/dist/models/endpointTransformationPatch.js
 var require_endpointTransformationPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointTransformationPatch.js"(exports) {
+  "node_modules/svix/dist/models/endpointTransformationPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointTransformationPatchSerializer = void 0;
@@ -9974,9 +10354,9 @@ var require_endpointTransformationPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointUpdate.js
+// node_modules/svix/dist/models/endpointUpdate.js
 var require_endpointUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointUpdate.js"(exports) {
+  "node_modules/svix/dist/models/endpointUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointUpdateSerializer = void 0;
@@ -10011,9 +10391,9 @@ var require_endpointUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventExampleIn.js
+// node_modules/svix/dist/models/eventExampleIn.js
 var require_eventExampleIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventExampleIn.js"(exports) {
+  "node_modules/svix/dist/models/eventExampleIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventExampleInSerializer = void 0;
@@ -10034,9 +10414,9 @@ var require_eventExampleIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEndpointOut.js
+// node_modules/svix/dist/models/listResponseEndpointOut.js
 var require_listResponseEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseEndpointOutSerializer = void 0;
@@ -10062,9 +10442,9 @@ var require_listResponseEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageOut.js
+// node_modules/svix/dist/models/messageOut.js
 var require_messageOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageOut.js"(exports) {
+  "node_modules/svix/dist/models/messageOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageOutSerializer = void 0;
@@ -10097,9 +10477,9 @@ var require_messageOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/recoverIn.js
+// node_modules/svix/dist/models/recoverIn.js
 var require_recoverIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/recoverIn.js"(exports) {
+  "node_modules/svix/dist/models/recoverIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RecoverInSerializer = void 0;
@@ -10120,9 +10500,9 @@ var require_recoverIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/recoverOut.js
+// node_modules/svix/dist/models/recoverOut.js
 var require_recoverOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/recoverOut.js"(exports) {
+  "node_modules/svix/dist/models/recoverOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RecoverOutSerializer = void 0;
@@ -10147,9 +10527,9 @@ var require_recoverOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/replayIn.js
+// node_modules/svix/dist/models/replayIn.js
 var require_replayIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/replayIn.js"(exports) {
+  "node_modules/svix/dist/models/replayIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ReplayInSerializer = void 0;
@@ -10170,9 +10550,9 @@ var require_replayIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/replayOut.js
+// node_modules/svix/dist/models/replayOut.js
 var require_replayOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/replayOut.js"(exports) {
+  "node_modules/svix/dist/models/replayOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ReplayOutSerializer = void 0;
@@ -10197,9 +10577,9 @@ var require_replayOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/endpoint.js
+// node_modules/svix/dist/api/endpoint.js
 var require_endpoint = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/endpoint.js"(exports) {
+  "node_modules/svix/dist/api/endpoint.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Endpoint = void 0;
@@ -10370,9 +10750,9 @@ var require_endpoint = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeIn.js
+// node_modules/svix/dist/models/eventTypeIn.js
 var require_eventTypeIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeIn.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeInSerializer = void 0;
@@ -10405,9 +10785,9 @@ var require_eventTypeIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/environmentIn.js
+// node_modules/svix/dist/models/environmentIn.js
 var require_environmentIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/environmentIn.js"(exports) {
+  "node_modules/svix/dist/models/environmentIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EnvironmentInSerializer = void 0;
@@ -10434,9 +10814,9 @@ var require_environmentIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeOut.js
+// node_modules/svix/dist/models/eventTypeOut.js
 var require_eventTypeOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeOut.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeOutSerializer = void 0;
@@ -10473,9 +10853,9 @@ var require_eventTypeOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/environmentOut.js
+// node_modules/svix/dist/models/environmentOut.js
 var require_environmentOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/environmentOut.js"(exports) {
+  "node_modules/svix/dist/models/environmentOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EnvironmentOutSerializer = void 0;
@@ -10504,9 +10884,9 @@ var require_environmentOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/environment.js
+// node_modules/svix/dist/api/environment.js
 var require_environment = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/environment.js"(exports) {
+  "node_modules/svix/dist/api/environment.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Environment = void 0;
@@ -10533,9 +10913,9 @@ var require_environment = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiIn.js
+// node_modules/svix/dist/models/eventTypeImportOpenApiIn.js
 var require_eventTypeImportOpenApiIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiIn.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeImportOpenApiIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeImportOpenApiInSerializer = void 0;
@@ -10560,9 +10940,9 @@ var require_eventTypeImportOpenApiIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeFromOpenApi.js
+// node_modules/svix/dist/models/eventTypeFromOpenApi.js
 var require_eventTypeFromOpenApi = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeFromOpenApi.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeFromOpenApi.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeFromOpenApiSerializer = void 0;
@@ -10593,9 +10973,9 @@ var require_eventTypeFromOpenApi = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiOutData.js
+// node_modules/svix/dist/models/eventTypeImportOpenApiOutData.js
 var require_eventTypeImportOpenApiOutData = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiOutData.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeImportOpenApiOutData.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeImportOpenApiOutDataSerializer = void 0;
@@ -10619,9 +10999,9 @@ var require_eventTypeImportOpenApiOutData = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiOut.js
+// node_modules/svix/dist/models/eventTypeImportOpenApiOut.js
 var require_eventTypeImportOpenApiOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeImportOpenApiOut.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeImportOpenApiOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeImportOpenApiOutSerializer = void 0;
@@ -10641,9 +11021,9 @@ var require_eventTypeImportOpenApiOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypePatch.js
+// node_modules/svix/dist/models/eventTypePatch.js
 var require_eventTypePatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypePatch.js"(exports) {
+  "node_modules/svix/dist/models/eventTypePatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypePatchSerializer = void 0;
@@ -10674,9 +11054,9 @@ var require_eventTypePatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeUpdate.js
+// node_modules/svix/dist/models/eventTypeUpdate.js
 var require_eventTypeUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventTypeUpdate.js"(exports) {
+  "node_modules/svix/dist/models/eventTypeUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventTypeUpdateSerializer = void 0;
@@ -10707,9 +11087,9 @@ var require_eventTypeUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEventTypeOut.js
+// node_modules/svix/dist/models/listResponseEventTypeOut.js
 var require_listResponseEventTypeOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEventTypeOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseEventTypeOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseEventTypeOutSerializer = void 0;
@@ -10735,9 +11115,9 @@ var require_listResponseEventTypeOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/eventType.js
+// node_modules/svix/dist/api/eventType.js
 var require_eventType = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/eventType.js"(exports) {
+  "node_modules/svix/dist/api/eventType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventType = void 0;
@@ -10806,9 +11186,9 @@ var require_eventType = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/health.js
+// node_modules/svix/dist/api/health.js
 var require_health = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/health.js"(exports) {
+  "node_modules/svix/dist/api/health.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Health = void 0;
@@ -10826,9 +11206,9 @@ var require_health = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceConsumerPortalAccessIn.js
+// node_modules/svix/dist/models/ingestSourceConsumerPortalAccessIn.js
 var require_ingestSourceConsumerPortalAccessIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceConsumerPortalAccessIn.js"(exports) {
+  "node_modules/svix/dist/models/ingestSourceConsumerPortalAccessIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestSourceConsumerPortalAccessInSerializer = void 0;
@@ -10849,9 +11229,9 @@ var require_ingestSourceConsumerPortalAccessIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointHeadersIn.js
+// node_modules/svix/dist/models/ingestEndpointHeadersIn.js
 var require_ingestEndpointHeadersIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointHeadersIn.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointHeadersIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointHeadersInSerializer = void 0;
@@ -10870,9 +11250,9 @@ var require_ingestEndpointHeadersIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointHeadersOut.js
+// node_modules/svix/dist/models/ingestEndpointHeadersOut.js
 var require_ingestEndpointHeadersOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointHeadersOut.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointHeadersOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointHeadersOutSerializer = void 0;
@@ -10893,9 +11273,9 @@ var require_ingestEndpointHeadersOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointIn.js
+// node_modules/svix/dist/models/ingestEndpointIn.js
 var require_ingestEndpointIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointIn.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointInSerializer = void 0;
@@ -10926,9 +11306,9 @@ var require_ingestEndpointIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointOut.js
+// node_modules/svix/dist/models/ingestEndpointOut.js
 var require_ingestEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointOutSerializer = void 0;
@@ -10963,9 +11343,9 @@ var require_ingestEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointSecretIn.js
+// node_modules/svix/dist/models/ingestEndpointSecretIn.js
 var require_ingestEndpointSecretIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointSecretIn.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointSecretIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointSecretInSerializer = void 0;
@@ -10984,9 +11364,9 @@ var require_ingestEndpointSecretIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointSecretOut.js
+// node_modules/svix/dist/models/ingestEndpointSecretOut.js
 var require_ingestEndpointSecretOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointSecretOut.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointSecretOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointSecretOutSerializer = void 0;
@@ -11005,9 +11385,9 @@ var require_ingestEndpointSecretOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointTransformationOut.js
+// node_modules/svix/dist/models/ingestEndpointTransformationOut.js
 var require_ingestEndpointTransformationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointTransformationOut.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointTransformationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointTransformationOutSerializer = void 0;
@@ -11028,9 +11408,9 @@ var require_ingestEndpointTransformationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointTransformationPatch.js
+// node_modules/svix/dist/models/ingestEndpointTransformationPatch.js
 var require_ingestEndpointTransformationPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointTransformationPatch.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointTransformationPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointTransformationPatchSerializer = void 0;
@@ -11051,9 +11431,9 @@ var require_ingestEndpointTransformationPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointUpdate.js
+// node_modules/svix/dist/models/ingestEndpointUpdate.js
 var require_ingestEndpointUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestEndpointUpdate.js"(exports) {
+  "node_modules/svix/dist/models/ingestEndpointUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpointUpdateSerializer = void 0;
@@ -11082,9 +11462,9 @@ var require_ingestEndpointUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIngestEndpointOut.js
+// node_modules/svix/dist/models/listResponseIngestEndpointOut.js
 var require_listResponseIngestEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIngestEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseIngestEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseIngestEndpointOutSerializer = void 0;
@@ -11110,9 +11490,9 @@ var require_listResponseIngestEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingestEndpoint.js
+// node_modules/svix/dist/api/ingestEndpoint.js
 var require_ingestEndpoint = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingestEndpoint.js"(exports) {
+  "node_modules/svix/dist/api/ingestEndpoint.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestEndpoint = void 0;
@@ -11212,9 +11592,9 @@ var require_ingestEndpoint = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/adobeSignConfig.js
+// node_modules/svix/dist/models/adobeSignConfig.js
 var require_adobeSignConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/adobeSignConfig.js"(exports) {
+  "node_modules/svix/dist/models/adobeSignConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AdobeSignConfigSerializer = void 0;
@@ -11233,9 +11613,9 @@ var require_adobeSignConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/airwallexConfig.js
+// node_modules/svix/dist/models/airwallexConfig.js
 var require_airwallexConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/airwallexConfig.js"(exports) {
+  "node_modules/svix/dist/models/airwallexConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AirwallexConfigSerializer = void 0;
@@ -11254,9 +11634,9 @@ var require_airwallexConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/checkbookConfig.js
+// node_modules/svix/dist/models/checkbookConfig.js
 var require_checkbookConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/checkbookConfig.js"(exports) {
+  "node_modules/svix/dist/models/checkbookConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CheckbookConfigSerializer = void 0;
@@ -11275,9 +11655,9 @@ var require_checkbookConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/cronConfig.js
+// node_modules/svix/dist/models/cronConfig.js
 var require_cronConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/cronConfig.js"(exports) {
+  "node_modules/svix/dist/models/cronConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CronConfigSerializer = void 0;
@@ -11300,9 +11680,9 @@ var require_cronConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/docusignConfig.js
+// node_modules/svix/dist/models/docusignConfig.js
 var require_docusignConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/docusignConfig.js"(exports) {
+  "node_modules/svix/dist/models/docusignConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DocusignConfigSerializer = void 0;
@@ -11321,9 +11701,9 @@ var require_docusignConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/easypostConfig.js
+// node_modules/svix/dist/models/easypostConfig.js
 var require_easypostConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/easypostConfig.js"(exports) {
+  "node_modules/svix/dist/models/easypostConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EasypostConfigSerializer = void 0;
@@ -11342,9 +11722,9 @@ var require_easypostConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/githubConfig.js
+// node_modules/svix/dist/models/githubConfig.js
 var require_githubConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/githubConfig.js"(exports) {
+  "node_modules/svix/dist/models/githubConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GithubConfigSerializer = void 0;
@@ -11363,9 +11743,9 @@ var require_githubConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/hubspotConfig.js
+// node_modules/svix/dist/models/hubspotConfig.js
 var require_hubspotConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/hubspotConfig.js"(exports) {
+  "node_modules/svix/dist/models/hubspotConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HubspotConfigSerializer = void 0;
@@ -11384,9 +11764,9 @@ var require_hubspotConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/orumIoConfig.js
+// node_modules/svix/dist/models/orumIoConfig.js
 var require_orumIoConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/orumIoConfig.js"(exports) {
+  "node_modules/svix/dist/models/orumIoConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OrumIoConfigSerializer = void 0;
@@ -11405,9 +11785,9 @@ var require_orumIoConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pandaDocConfig.js
+// node_modules/svix/dist/models/pandaDocConfig.js
 var require_pandaDocConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pandaDocConfig.js"(exports) {
+  "node_modules/svix/dist/models/pandaDocConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PandaDocConfigSerializer = void 0;
@@ -11426,9 +11806,9 @@ var require_pandaDocConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/portIoConfig.js
+// node_modules/svix/dist/models/portIoConfig.js
 var require_portIoConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/portIoConfig.js"(exports) {
+  "node_modules/svix/dist/models/portIoConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PortIoConfigSerializer = void 0;
@@ -11447,9 +11827,9 @@ var require_portIoConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rutterConfig.js
+// node_modules/svix/dist/models/rutterConfig.js
 var require_rutterConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rutterConfig.js"(exports) {
+  "node_modules/svix/dist/models/rutterConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RutterConfigSerializer = void 0;
@@ -11468,9 +11848,9 @@ var require_rutterConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/segmentConfig.js
+// node_modules/svix/dist/models/segmentConfig.js
 var require_segmentConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/segmentConfig.js"(exports) {
+  "node_modules/svix/dist/models/segmentConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SegmentConfigSerializer = void 0;
@@ -11489,9 +11869,9 @@ var require_segmentConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/shopifyConfig.js
+// node_modules/svix/dist/models/shopifyConfig.js
 var require_shopifyConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/shopifyConfig.js"(exports) {
+  "node_modules/svix/dist/models/shopifyConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ShopifyConfigSerializer = void 0;
@@ -11510,9 +11890,9 @@ var require_shopifyConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/slackConfig.js
+// node_modules/svix/dist/models/slackConfig.js
 var require_slackConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/slackConfig.js"(exports) {
+  "node_modules/svix/dist/models/slackConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SlackConfigSerializer = void 0;
@@ -11531,9 +11911,9 @@ var require_slackConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/stripeConfig.js
+// node_modules/svix/dist/models/stripeConfig.js
 var require_stripeConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/stripeConfig.js"(exports) {
+  "node_modules/svix/dist/models/stripeConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StripeConfigSerializer = void 0;
@@ -11552,9 +11932,9 @@ var require_stripeConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/svixConfig.js
+// node_modules/svix/dist/models/svixConfig.js
 var require_svixConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/svixConfig.js"(exports) {
+  "node_modules/svix/dist/models/svixConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SvixConfigSerializer = void 0;
@@ -11573,9 +11953,9 @@ var require_svixConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/telnyxConfig.js
+// node_modules/svix/dist/models/telnyxConfig.js
 var require_telnyxConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/telnyxConfig.js"(exports) {
+  "node_modules/svix/dist/models/telnyxConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.TelnyxConfigSerializer = void 0;
@@ -11594,9 +11974,9 @@ var require_telnyxConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/vapiConfig.js
+// node_modules/svix/dist/models/vapiConfig.js
 var require_vapiConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/vapiConfig.js"(exports) {
+  "node_modules/svix/dist/models/vapiConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.VapiConfigSerializer = void 0;
@@ -11615,9 +11995,9 @@ var require_vapiConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/veriffConfig.js
+// node_modules/svix/dist/models/veriffConfig.js
 var require_veriffConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/veriffConfig.js"(exports) {
+  "node_modules/svix/dist/models/veriffConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.VeriffConfigSerializer = void 0;
@@ -11636,9 +12016,9 @@ var require_veriffConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/zoomConfig.js
+// node_modules/svix/dist/models/zoomConfig.js
 var require_zoomConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/zoomConfig.js"(exports) {
+  "node_modules/svix/dist/models/zoomConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ZoomConfigSerializer = void 0;
@@ -11657,9 +12037,9 @@ var require_zoomConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceIn.js
+// node_modules/svix/dist/models/ingestSourceIn.js
 var require_ingestSourceIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceIn.js"(exports) {
+  "node_modules/svix/dist/models/ingestSourceIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestSourceInSerializer = void 0;
@@ -11902,9 +12282,9 @@ var require_ingestSourceIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/adobeSignConfigOut.js
+// node_modules/svix/dist/models/adobeSignConfigOut.js
 var require_adobeSignConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/adobeSignConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/adobeSignConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AdobeSignConfigOutSerializer = void 0;
@@ -11919,9 +12299,9 @@ var require_adobeSignConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/airwallexConfigOut.js
+// node_modules/svix/dist/models/airwallexConfigOut.js
 var require_airwallexConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/airwallexConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/airwallexConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AirwallexConfigOutSerializer = void 0;
@@ -11936,9 +12316,9 @@ var require_airwallexConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/checkbookConfigOut.js
+// node_modules/svix/dist/models/checkbookConfigOut.js
 var require_checkbookConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/checkbookConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/checkbookConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CheckbookConfigOutSerializer = void 0;
@@ -11953,9 +12333,9 @@ var require_checkbookConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/docusignConfigOut.js
+// node_modules/svix/dist/models/docusignConfigOut.js
 var require_docusignConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/docusignConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/docusignConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DocusignConfigOutSerializer = void 0;
@@ -11970,9 +12350,9 @@ var require_docusignConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/easypostConfigOut.js
+// node_modules/svix/dist/models/easypostConfigOut.js
 var require_easypostConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/easypostConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/easypostConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EasypostConfigOutSerializer = void 0;
@@ -11987,9 +12367,9 @@ var require_easypostConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/githubConfigOut.js
+// node_modules/svix/dist/models/githubConfigOut.js
 var require_githubConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/githubConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/githubConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GithubConfigOutSerializer = void 0;
@@ -12004,9 +12384,9 @@ var require_githubConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/hubspotConfigOut.js
+// node_modules/svix/dist/models/hubspotConfigOut.js
 var require_hubspotConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/hubspotConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/hubspotConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HubspotConfigOutSerializer = void 0;
@@ -12021,9 +12401,9 @@ var require_hubspotConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/orumIoConfigOut.js
+// node_modules/svix/dist/models/orumIoConfigOut.js
 var require_orumIoConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/orumIoConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/orumIoConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OrumIoConfigOutSerializer = void 0;
@@ -12042,9 +12422,9 @@ var require_orumIoConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pandaDocConfigOut.js
+// node_modules/svix/dist/models/pandaDocConfigOut.js
 var require_pandaDocConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pandaDocConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/pandaDocConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PandaDocConfigOutSerializer = void 0;
@@ -12059,9 +12439,9 @@ var require_pandaDocConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/portIoConfigOut.js
+// node_modules/svix/dist/models/portIoConfigOut.js
 var require_portIoConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/portIoConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/portIoConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PortIoConfigOutSerializer = void 0;
@@ -12076,9 +12456,9 @@ var require_portIoConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rutterConfigOut.js
+// node_modules/svix/dist/models/rutterConfigOut.js
 var require_rutterConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rutterConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/rutterConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RutterConfigOutSerializer = void 0;
@@ -12093,9 +12473,9 @@ var require_rutterConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/segmentConfigOut.js
+// node_modules/svix/dist/models/segmentConfigOut.js
 var require_segmentConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/segmentConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/segmentConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SegmentConfigOutSerializer = void 0;
@@ -12110,9 +12490,9 @@ var require_segmentConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/shopifyConfigOut.js
+// node_modules/svix/dist/models/shopifyConfigOut.js
 var require_shopifyConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/shopifyConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/shopifyConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ShopifyConfigOutSerializer = void 0;
@@ -12127,9 +12507,9 @@ var require_shopifyConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/slackConfigOut.js
+// node_modules/svix/dist/models/slackConfigOut.js
 var require_slackConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/slackConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/slackConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SlackConfigOutSerializer = void 0;
@@ -12144,9 +12524,9 @@ var require_slackConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/stripeConfigOut.js
+// node_modules/svix/dist/models/stripeConfigOut.js
 var require_stripeConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/stripeConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/stripeConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StripeConfigOutSerializer = void 0;
@@ -12161,9 +12541,9 @@ var require_stripeConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/svixConfigOut.js
+// node_modules/svix/dist/models/svixConfigOut.js
 var require_svixConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/svixConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/svixConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SvixConfigOutSerializer = void 0;
@@ -12178,9 +12558,9 @@ var require_svixConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/telnyxConfigOut.js
+// node_modules/svix/dist/models/telnyxConfigOut.js
 var require_telnyxConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/telnyxConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/telnyxConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.TelnyxConfigOutSerializer = void 0;
@@ -12199,9 +12579,9 @@ var require_telnyxConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/vapiConfigOut.js
+// node_modules/svix/dist/models/vapiConfigOut.js
 var require_vapiConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/vapiConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/vapiConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.VapiConfigOutSerializer = void 0;
@@ -12216,9 +12596,9 @@ var require_vapiConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/veriffConfigOut.js
+// node_modules/svix/dist/models/veriffConfigOut.js
 var require_veriffConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/veriffConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/veriffConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.VeriffConfigOutSerializer = void 0;
@@ -12233,9 +12613,9 @@ var require_veriffConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/zoomConfigOut.js
+// node_modules/svix/dist/models/zoomConfigOut.js
 var require_zoomConfigOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/zoomConfigOut.js"(exports) {
+  "node_modules/svix/dist/models/zoomConfigOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ZoomConfigOutSerializer = void 0;
@@ -12250,9 +12630,9 @@ var require_zoomConfigOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceOut.js
+// node_modules/svix/dist/models/ingestSourceOut.js
 var require_ingestSourceOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ingestSourceOut.js"(exports) {
+  "node_modules/svix/dist/models/ingestSourceOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestSourceOutSerializer = void 0;
@@ -12503,9 +12883,9 @@ var require_ingestSourceOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIngestSourceOut.js
+// node_modules/svix/dist/models/listResponseIngestSourceOut.js
 var require_listResponseIngestSourceOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIngestSourceOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseIngestSourceOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseIngestSourceOutSerializer = void 0;
@@ -12531,9 +12911,9 @@ var require_listResponseIngestSourceOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rotateTokenOut.js
+// node_modules/svix/dist/models/rotateTokenOut.js
 var require_rotateTokenOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/rotateTokenOut.js"(exports) {
+  "node_modules/svix/dist/models/rotateTokenOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RotateTokenOutSerializer = void 0;
@@ -12552,9 +12932,9 @@ var require_rotateTokenOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingestSource.js
+// node_modules/svix/dist/api/ingestSource.js
 var require_ingestSource = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingestSource.js"(exports) {
+  "node_modules/svix/dist/api/ingestSource.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IngestSource = void 0;
@@ -12609,9 +12989,9 @@ var require_ingestSource = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingest.js
+// node_modules/svix/dist/api/ingest.js
 var require_ingest = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/ingest.js"(exports) {
+  "node_modules/svix/dist/api/ingest.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Ingest = void 0;
@@ -12642,9 +13022,9 @@ var require_ingest = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationIn.js
+// node_modules/svix/dist/models/integrationIn.js
 var require_integrationIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationIn.js"(exports) {
+  "node_modules/svix/dist/models/integrationIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IntegrationInSerializer = void 0;
@@ -12665,9 +13045,9 @@ var require_integrationIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationKeyOut.js
+// node_modules/svix/dist/models/integrationKeyOut.js
 var require_integrationKeyOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationKeyOut.js"(exports) {
+  "node_modules/svix/dist/models/integrationKeyOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IntegrationKeyOutSerializer = void 0;
@@ -12686,9 +13066,9 @@ var require_integrationKeyOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationOut.js
+// node_modules/svix/dist/models/integrationOut.js
 var require_integrationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationOut.js"(exports) {
+  "node_modules/svix/dist/models/integrationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IntegrationOutSerializer = void 0;
@@ -12715,9 +13095,9 @@ var require_integrationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationUpdate.js
+// node_modules/svix/dist/models/integrationUpdate.js
 var require_integrationUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/integrationUpdate.js"(exports) {
+  "node_modules/svix/dist/models/integrationUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.IntegrationUpdateSerializer = void 0;
@@ -12738,9 +13118,9 @@ var require_integrationUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIntegrationOut.js
+// node_modules/svix/dist/models/listResponseIntegrationOut.js
 var require_listResponseIntegrationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseIntegrationOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseIntegrationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseIntegrationOutSerializer = void 0;
@@ -12766,9 +13146,9 @@ var require_listResponseIntegrationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/integration.js
+// node_modules/svix/dist/api/integration.js
 var require_integration = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/integration.js"(exports) {
+  "node_modules/svix/dist/api/integration.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Integration = void 0;
@@ -12836,9 +13216,9 @@ var require_integration = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/expungeAllContentsOut.js
+// node_modules/svix/dist/models/expungeAllContentsOut.js
 var require_expungeAllContentsOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/expungeAllContentsOut.js"(exports) {
+  "node_modules/svix/dist/models/expungeAllContentsOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ExpungeAllContentsOutSerializer = void 0;
@@ -12863,9 +13243,9 @@ var require_expungeAllContentsOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageOut.js
+// node_modules/svix/dist/models/listResponseMessageOut.js
 var require_listResponseMessageOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseMessageOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseMessageOutSerializer = void 0;
@@ -12891,9 +13271,9 @@ var require_listResponseMessageOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointConsumerSeekIn.js
+// node_modules/svix/dist/models/pollingEndpointConsumerSeekIn.js
 var require_pollingEndpointConsumerSeekIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointConsumerSeekIn.js"(exports) {
+  "node_modules/svix/dist/models/pollingEndpointConsumerSeekIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PollingEndpointConsumerSeekInSerializer = void 0;
@@ -12912,9 +13292,9 @@ var require_pollingEndpointConsumerSeekIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointConsumerSeekOut.js
+// node_modules/svix/dist/models/pollingEndpointConsumerSeekOut.js
 var require_pollingEndpointConsumerSeekOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointConsumerSeekOut.js"(exports) {
+  "node_modules/svix/dist/models/pollingEndpointConsumerSeekOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PollingEndpointConsumerSeekOutSerializer = void 0;
@@ -12933,9 +13313,9 @@ var require_pollingEndpointConsumerSeekOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointMessageOut.js
+// node_modules/svix/dist/models/pollingEndpointMessageOut.js
 var require_pollingEndpointMessageOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointMessageOut.js"(exports) {
+  "node_modules/svix/dist/models/pollingEndpointMessageOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PollingEndpointMessageOutSerializer = void 0;
@@ -12970,9 +13350,9 @@ var require_pollingEndpointMessageOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointOut.js
+// node_modules/svix/dist/models/pollingEndpointOut.js
 var require_pollingEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/pollingEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/pollingEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PollingEndpointOutSerializer = void 0;
@@ -12996,9 +13376,9 @@ var require_pollingEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/messagePoller.js
+// node_modules/svix/dist/api/messagePoller.js
 var require_messagePoller = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/messagePoller.js"(exports) {
+  "node_modules/svix/dist/api/messagePoller.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessagePoller = void 0;
@@ -13048,9 +13428,9 @@ var require_messagePoller = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageIn.js
+// node_modules/svix/dist/models/messageIn.js
 var require_messageIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageIn.js"(exports) {
+  "node_modules/svix/dist/models/messageIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageInSerializer = void 0;
@@ -13088,9 +13468,9 @@ var require_messageIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/message.js
+// node_modules/svix/dist/api/message.js
 var require_message = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/message.js"(exports) {
+  "node_modules/svix/dist/api/message.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.messageInRaw = exports.Message = void 0;
@@ -13170,9 +13550,9 @@ var require_message = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/emptyResponse.js
+// node_modules/svix/dist/models/emptyResponse.js
 var require_emptyResponse = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/emptyResponse.js"(exports) {
+  "node_modules/svix/dist/models/emptyResponse.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EmptyResponseSerializer = void 0;
@@ -13187,9 +13567,9 @@ var require_emptyResponse = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageStatus.js
+// node_modules/svix/dist/models/messageStatus.js
 var require_messageStatus = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageStatus.js"(exports) {
+  "node_modules/svix/dist/models/messageStatus.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageStatusSerializer = exports.MessageStatus = void 0;
@@ -13211,9 +13591,9 @@ var require_messageStatus = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageStatusText.js
+// node_modules/svix/dist/models/messageStatusText.js
 var require_messageStatusText = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageStatusText.js"(exports) {
+  "node_modules/svix/dist/models/messageStatusText.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageStatusTextSerializer = exports.MessageStatusText = void 0;
@@ -13235,9 +13615,9 @@ var require_messageStatusText = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointMessageOut.js
+// node_modules/svix/dist/models/endpointMessageOut.js
 var require_endpointMessageOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointMessageOut.js"(exports) {
+  "node_modules/svix/dist/models/endpointMessageOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointMessageOutSerializer = void 0;
@@ -13278,9 +13658,9 @@ var require_endpointMessageOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEndpointMessageOut.js
+// node_modules/svix/dist/models/listResponseEndpointMessageOut.js
 var require_listResponseEndpointMessageOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseEndpointMessageOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseEndpointMessageOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseEndpointMessageOutSerializer = void 0;
@@ -13306,9 +13686,9 @@ var require_listResponseEndpointMessageOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageAttemptTriggerType.js
+// node_modules/svix/dist/models/messageAttemptTriggerType.js
 var require_messageAttemptTriggerType = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageAttemptTriggerType.js"(exports) {
+  "node_modules/svix/dist/models/messageAttemptTriggerType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageAttemptTriggerTypeSerializer = exports.MessageAttemptTriggerType = void 0;
@@ -13328,9 +13708,9 @@ var require_messageAttemptTriggerType = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageAttemptOut.js
+// node_modules/svix/dist/models/messageAttemptOut.js
 var require_messageAttemptOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageAttemptOut.js"(exports) {
+  "node_modules/svix/dist/models/messageAttemptOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageAttemptOutSerializer = void 0;
@@ -13375,9 +13755,9 @@ var require_messageAttemptOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageAttemptOut.js
+// node_modules/svix/dist/models/listResponseMessageAttemptOut.js
 var require_listResponseMessageAttemptOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageAttemptOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseMessageAttemptOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseMessageAttemptOutSerializer = void 0;
@@ -13403,9 +13783,9 @@ var require_listResponseMessageAttemptOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageEndpointOut.js
+// node_modules/svix/dist/models/messageEndpointOut.js
 var require_messageEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/messageEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/messageEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageEndpointOutSerializer = void 0;
@@ -13452,9 +13832,9 @@ var require_messageEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageEndpointOut.js
+// node_modules/svix/dist/models/listResponseMessageEndpointOut.js
 var require_listResponseMessageEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseMessageEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseMessageEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseMessageEndpointOutSerializer = void 0;
@@ -13480,9 +13860,9 @@ var require_listResponseMessageEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/messageAttempt.js
+// node_modules/svix/dist/api/messageAttempt.js
 var require_messageAttempt = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/messageAttempt.js"(exports) {
+  "node_modules/svix/dist/api/messageAttempt.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageAttempt = void 0;
@@ -13588,9 +13968,9 @@ var require_messageAttempt = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointOut.js
+// node_modules/svix/dist/models/operationalWebhookEndpointOut.js
 var require_operationalWebhookEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointOutSerializer = void 0;
@@ -13627,9 +14007,9 @@ var require_operationalWebhookEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseOperationalWebhookEndpointOut.js
+// node_modules/svix/dist/models/listResponseOperationalWebhookEndpointOut.js
 var require_listResponseOperationalWebhookEndpointOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseOperationalWebhookEndpointOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseOperationalWebhookEndpointOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseOperationalWebhookEndpointOutSerializer = void 0;
@@ -13655,9 +14035,9 @@ var require_listResponseOperationalWebhookEndpointOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointHeadersIn.js
+// node_modules/svix/dist/models/operationalWebhookEndpointHeadersIn.js
 var require_operationalWebhookEndpointHeadersIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointHeadersIn.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointHeadersIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointHeadersInSerializer = void 0;
@@ -13676,9 +14056,9 @@ var require_operationalWebhookEndpointHeadersIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointHeadersOut.js
+// node_modules/svix/dist/models/operationalWebhookEndpointHeadersOut.js
 var require_operationalWebhookEndpointHeadersOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointHeadersOut.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointHeadersOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointHeadersOutSerializer = void 0;
@@ -13699,9 +14079,9 @@ var require_operationalWebhookEndpointHeadersOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointIn.js
+// node_modules/svix/dist/models/operationalWebhookEndpointIn.js
 var require_operationalWebhookEndpointIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointIn.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointInSerializer = void 0;
@@ -13734,9 +14114,9 @@ var require_operationalWebhookEndpointIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointSecretIn.js
+// node_modules/svix/dist/models/operationalWebhookEndpointSecretIn.js
 var require_operationalWebhookEndpointSecretIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointSecretIn.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointSecretIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointSecretInSerializer = void 0;
@@ -13755,9 +14135,9 @@ var require_operationalWebhookEndpointSecretIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointSecretOut.js
+// node_modules/svix/dist/models/operationalWebhookEndpointSecretOut.js
 var require_operationalWebhookEndpointSecretOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointSecretOut.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointSecretOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointSecretOutSerializer = void 0;
@@ -13776,9 +14156,9 @@ var require_operationalWebhookEndpointSecretOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointUpdate.js
+// node_modules/svix/dist/models/operationalWebhookEndpointUpdate.js
 var require_operationalWebhookEndpointUpdate = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/operationalWebhookEndpointUpdate.js"(exports) {
+  "node_modules/svix/dist/models/operationalWebhookEndpointUpdate.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpointUpdateSerializer = void 0;
@@ -13809,9 +14189,9 @@ var require_operationalWebhookEndpointUpdate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/operationalWebhookEndpoint.js
+// node_modules/svix/dist/api/operationalWebhookEndpoint.js
 var require_operationalWebhookEndpoint = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/operationalWebhookEndpoint.js"(exports) {
+  "node_modules/svix/dist/api/operationalWebhookEndpoint.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhookEndpoint = void 0;
@@ -13887,9 +14267,9 @@ var require_operationalWebhookEndpoint = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/operationalWebhook.js
+// node_modules/svix/dist/api/operationalWebhook.js
 var require_operationalWebhook = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/operationalWebhook.js"(exports) {
+  "node_modules/svix/dist/api/operationalWebhook.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OperationalWebhook = void 0;
@@ -13906,9 +14286,9 @@ var require_operationalWebhook = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/aggregateEventTypesOut.js
+// node_modules/svix/dist/models/aggregateEventTypesOut.js
 var require_aggregateEventTypesOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/aggregateEventTypesOut.js"(exports) {
+  "node_modules/svix/dist/models/aggregateEventTypesOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AggregateEventTypesOutSerializer = void 0;
@@ -13933,9 +14313,9 @@ var require_aggregateEventTypesOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appUsageStatsIn.js
+// node_modules/svix/dist/models/appUsageStatsIn.js
 var require_appUsageStatsIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appUsageStatsIn.js"(exports) {
+  "node_modules/svix/dist/models/appUsageStatsIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AppUsageStatsInSerializer = void 0;
@@ -13958,9 +14338,9 @@ var require_appUsageStatsIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appUsageStatsOut.js
+// node_modules/svix/dist/models/appUsageStatsOut.js
 var require_appUsageStatsOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/appUsageStatsOut.js"(exports) {
+  "node_modules/svix/dist/models/appUsageStatsOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AppUsageStatsOutSerializer = void 0;
@@ -13987,9 +14367,9 @@ var require_appUsageStatsOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/statistics.js
+// node_modules/svix/dist/api/statistics.js
 var require_statistics = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/statistics.js"(exports) {
+  "node_modules/svix/dist/api/statistics.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Statistics = void 0;
@@ -14016,9 +14396,9 @@ var require_statistics = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/httpSinkHeadersPatchIn.js
+// node_modules/svix/dist/models/httpSinkHeadersPatchIn.js
 var require_httpSinkHeadersPatchIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/httpSinkHeadersPatchIn.js"(exports) {
+  "node_modules/svix/dist/models/httpSinkHeadersPatchIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HttpSinkHeadersPatchInSerializer = void 0;
@@ -14037,9 +14417,9 @@ var require_httpSinkHeadersPatchIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkTransformationOut.js
+// node_modules/svix/dist/models/sinkTransformationOut.js
 var require_sinkTransformationOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkTransformationOut.js"(exports) {
+  "node_modules/svix/dist/models/sinkTransformationOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkTransformationOutSerializer = void 0;
@@ -14060,9 +14440,9 @@ var require_sinkTransformationOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypeOut.js
+// node_modules/svix/dist/models/streamEventTypeOut.js
 var require_streamEventTypeOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypeOut.js"(exports) {
+  "node_modules/svix/dist/models/streamEventTypeOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamEventTypeOutSerializer = void 0;
@@ -14093,9 +14473,9 @@ var require_streamEventTypeOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamEventTypeOut.js
+// node_modules/svix/dist/models/listResponseStreamEventTypeOut.js
 var require_listResponseStreamEventTypeOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamEventTypeOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseStreamEventTypeOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseStreamEventTypeOutSerializer = void 0;
@@ -14121,9 +14501,9 @@ var require_listResponseStreamEventTypeOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypeIn.js
+// node_modules/svix/dist/models/streamEventTypeIn.js
 var require_streamEventTypeIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypeIn.js"(exports) {
+  "node_modules/svix/dist/models/streamEventTypeIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamEventTypeInSerializer = void 0;
@@ -14150,9 +14530,9 @@ var require_streamEventTypeIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypePatch.js
+// node_modules/svix/dist/models/streamEventTypePatch.js
 var require_streamEventTypePatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamEventTypePatch.js"(exports) {
+  "node_modules/svix/dist/models/streamEventTypePatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamEventTypePatchSerializer = void 0;
@@ -14179,9 +14559,9 @@ var require_streamEventTypePatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingEventType.js
+// node_modules/svix/dist/api/streamingEventType.js
 var require_streamingEventType = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingEventType.js"(exports) {
+  "node_modules/svix/dist/api/streamingEventType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamingEventType = void 0;
@@ -14240,9 +14620,9 @@ var require_streamingEventType = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventIn.js
+// node_modules/svix/dist/models/eventIn.js
 var require_eventIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventIn.js"(exports) {
+  "node_modules/svix/dist/models/eventIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventInSerializer = void 0;
@@ -14263,9 +14643,9 @@ var require_eventIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamIn.js
+// node_modules/svix/dist/models/streamIn.js
 var require_streamIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamIn.js"(exports) {
+  "node_modules/svix/dist/models/streamIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamInSerializer = void 0;
@@ -14288,9 +14668,9 @@ var require_streamIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/createStreamEventsIn.js
+// node_modules/svix/dist/models/createStreamEventsIn.js
 var require_createStreamEventsIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/createStreamEventsIn.js"(exports) {
+  "node_modules/svix/dist/models/createStreamEventsIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CreateStreamEventsInSerializer = void 0;
@@ -14313,9 +14693,9 @@ var require_createStreamEventsIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/createStreamEventsOut.js
+// node_modules/svix/dist/models/createStreamEventsOut.js
 var require_createStreamEventsOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/createStreamEventsOut.js"(exports) {
+  "node_modules/svix/dist/models/createStreamEventsOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CreateStreamEventsOutSerializer = void 0;
@@ -14330,9 +14710,9 @@ var require_createStreamEventsOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventOut.js
+// node_modules/svix/dist/models/eventOut.js
 var require_eventOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventOut.js"(exports) {
+  "node_modules/svix/dist/models/eventOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventOutSerializer = void 0;
@@ -14355,9 +14735,9 @@ var require_eventOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventStreamOut.js
+// node_modules/svix/dist/models/eventStreamOut.js
 var require_eventStreamOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/eventStreamOut.js"(exports) {
+  "node_modules/svix/dist/models/eventStreamOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EventStreamOutSerializer = void 0;
@@ -14381,9 +14761,9 @@ var require_eventStreamOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingEvents.js
+// node_modules/svix/dist/api/streamingEvents.js
 var require_streamingEvents = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingEvents.js"(exports) {
+  "node_modules/svix/dist/api/streamingEvents.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamingEvents = void 0;
@@ -14418,9 +14798,9 @@ var require_streamingEvents = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/azureBlobStorageConfig.js
+// node_modules/svix/dist/models/azureBlobStorageConfig.js
 var require_azureBlobStorageConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/azureBlobStorageConfig.js"(exports) {
+  "node_modules/svix/dist/models/azureBlobStorageConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AzureBlobStorageConfigSerializer = void 0;
@@ -14443,9 +14823,9 @@ var require_azureBlobStorageConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/googleCloudStorageConfig.js
+// node_modules/svix/dist/models/googleCloudStorageConfig.js
 var require_googleCloudStorageConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/googleCloudStorageConfig.js"(exports) {
+  "node_modules/svix/dist/models/googleCloudStorageConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GoogleCloudStorageConfigSerializer = void 0;
@@ -14466,9 +14846,9 @@ var require_googleCloudStorageConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/s3Config.js
+// node_modules/svix/dist/models/s3Config.js
 var require_s3Config = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/s3Config.js"(exports) {
+  "node_modules/svix/dist/models/s3Config.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.S3ConfigSerializer = void 0;
@@ -14493,9 +14873,9 @@ var require_s3Config = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkHttpConfig.js
+// node_modules/svix/dist/models/sinkHttpConfig.js
 var require_sinkHttpConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkHttpConfig.js"(exports) {
+  "node_modules/svix/dist/models/sinkHttpConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkHttpConfigSerializer = void 0;
@@ -14518,9 +14898,9 @@ var require_sinkHttpConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkOtelV1Config.js
+// node_modules/svix/dist/models/sinkOtelV1Config.js
 var require_sinkOtelV1Config = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkOtelV1Config.js"(exports) {
+  "node_modules/svix/dist/models/sinkOtelV1Config.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkOtelV1ConfigSerializer = void 0;
@@ -14541,9 +14921,9 @@ var require_sinkOtelV1Config = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkStatus.js
+// node_modules/svix/dist/models/sinkStatus.js
 var require_sinkStatus = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkStatus.js"(exports) {
+  "node_modules/svix/dist/models/sinkStatus.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkStatusSerializer = exports.SinkStatus = void 0;
@@ -14565,9 +14945,9 @@ var require_sinkStatus = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkOut.js
+// node_modules/svix/dist/models/streamSinkOut.js
 var require_streamSinkOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkOut.js"(exports) {
+  "node_modules/svix/dist/models/streamSinkOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamSinkOutSerializer = void 0;
@@ -14658,9 +15038,9 @@ var require_streamSinkOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamSinkOut.js
+// node_modules/svix/dist/models/listResponseStreamSinkOut.js
 var require_listResponseStreamSinkOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamSinkOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseStreamSinkOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseStreamSinkOutSerializer = void 0;
@@ -14686,9 +15066,9 @@ var require_listResponseStreamSinkOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkSecretOut.js
+// node_modules/svix/dist/models/sinkSecretOut.js
 var require_sinkSecretOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkSecretOut.js"(exports) {
+  "node_modules/svix/dist/models/sinkSecretOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkSecretOutSerializer = void 0;
@@ -14707,9 +15087,9 @@ var require_sinkSecretOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkTransformIn.js
+// node_modules/svix/dist/models/sinkTransformIn.js
 var require_sinkTransformIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkTransformIn.js"(exports) {
+  "node_modules/svix/dist/models/sinkTransformIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkTransformInSerializer = void 0;
@@ -14728,9 +15108,9 @@ var require_sinkTransformIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkStatusIn.js
+// node_modules/svix/dist/models/sinkStatusIn.js
 var require_sinkStatusIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/sinkStatusIn.js"(exports) {
+  "node_modules/svix/dist/models/sinkStatusIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SinkStatusInSerializer = exports.SinkStatusIn = void 0;
@@ -14750,9 +15130,9 @@ var require_sinkStatusIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkIn.js
+// node_modules/svix/dist/models/streamSinkIn.js
 var require_streamSinkIn = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkIn.js"(exports) {
+  "node_modules/svix/dist/models/streamSinkIn.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamSinkInSerializer = void 0;
@@ -14831,9 +15211,9 @@ var require_streamSinkIn = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/amazonS3PatchConfig.js
+// node_modules/svix/dist/models/amazonS3PatchConfig.js
 var require_amazonS3PatchConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/amazonS3PatchConfig.js"(exports) {
+  "node_modules/svix/dist/models/amazonS3PatchConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AmazonS3PatchConfigSerializer = void 0;
@@ -14858,9 +15238,9 @@ var require_amazonS3PatchConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/azureBlobStoragePatchConfig.js
+// node_modules/svix/dist/models/azureBlobStoragePatchConfig.js
 var require_azureBlobStoragePatchConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/azureBlobStoragePatchConfig.js"(exports) {
+  "node_modules/svix/dist/models/azureBlobStoragePatchConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.AzureBlobStoragePatchConfigSerializer = void 0;
@@ -14883,9 +15263,9 @@ var require_azureBlobStoragePatchConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/googleCloudStoragePatchConfig.js
+// node_modules/svix/dist/models/googleCloudStoragePatchConfig.js
 var require_googleCloudStoragePatchConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/googleCloudStoragePatchConfig.js"(exports) {
+  "node_modules/svix/dist/models/googleCloudStoragePatchConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GoogleCloudStoragePatchConfigSerializer = void 0;
@@ -14906,9 +15286,9 @@ var require_googleCloudStoragePatchConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/httpPatchConfig.js
+// node_modules/svix/dist/models/httpPatchConfig.js
 var require_httpPatchConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/httpPatchConfig.js"(exports) {
+  "node_modules/svix/dist/models/httpPatchConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HttpPatchConfigSerializer = void 0;
@@ -14927,9 +15307,9 @@ var require_httpPatchConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/otelTracingPatchConfig.js
+// node_modules/svix/dist/models/otelTracingPatchConfig.js
 var require_otelTracingPatchConfig = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/otelTracingPatchConfig.js"(exports) {
+  "node_modules/svix/dist/models/otelTracingPatchConfig.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OtelTracingPatchConfigSerializer = void 0;
@@ -14948,9 +15328,9 @@ var require_otelTracingPatchConfig = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkPatch.js
+// node_modules/svix/dist/models/streamSinkPatch.js
 var require_streamSinkPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamSinkPatch.js"(exports) {
+  "node_modules/svix/dist/models/streamSinkPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamSinkPatchSerializer = void 0;
@@ -15029,9 +15409,9 @@ var require_streamSinkPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingSink.js
+// node_modules/svix/dist/api/streamingSink.js
 var require_streamingSink = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingSink.js"(exports) {
+  "node_modules/svix/dist/api/streamingSink.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamingSink = void 0;
@@ -15117,9 +15497,9 @@ var require_streamingSink = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamOut.js
+// node_modules/svix/dist/models/streamOut.js
 var require_streamOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamOut.js"(exports) {
+  "node_modules/svix/dist/models/streamOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamOutSerializer = void 0;
@@ -15148,9 +15528,9 @@ var require_streamOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamOut.js
+// node_modules/svix/dist/models/listResponseStreamOut.js
 var require_listResponseStreamOut = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/listResponseStreamOut.js"(exports) {
+  "node_modules/svix/dist/models/listResponseStreamOut.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ListResponseStreamOutSerializer = void 0;
@@ -15176,9 +15556,9 @@ var require_listResponseStreamOut = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamPatch.js
+// node_modules/svix/dist/models/streamPatch.js
 var require_streamPatch = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/streamPatch.js"(exports) {
+  "node_modules/svix/dist/models/streamPatch.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamPatchSerializer = void 0;
@@ -15201,9 +15581,9 @@ var require_streamPatch = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingStream.js
+// node_modules/svix/dist/api/streamingStream.js
 var require_streamingStream = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streamingStream.js"(exports) {
+  "node_modules/svix/dist/api/streamingStream.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamingStream = void 0;
@@ -15258,9 +15638,9 @@ var require_streamingStream = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streaming.js
+// node_modules/svix/dist/api/streaming.js
 var require_streaming = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/api/streaming.js"(exports) {
+  "node_modules/svix/dist/api/streaming.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Streaming = void 0;
@@ -15312,9 +15692,9 @@ var require_streaming = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/HttpErrors.js
+// node_modules/svix/dist/HttpErrors.js
 var require_HttpErrors = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/HttpErrors.js"(exports) {
+  "node_modules/svix/dist/HttpErrors.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HTTPValidationError = exports.ValidationError = exports.HttpErrorOut = void 0;
@@ -15387,9 +15767,9 @@ var require_HttpErrors = __commonJS({
   }
 });
 
-// node_modules/.pnpm/standardwebhooks@1.0.0/node_modules/standardwebhooks/dist/timing_safe_equal.js
+// node_modules/standardwebhooks/dist/timing_safe_equal.js
 var require_timing_safe_equal = __commonJS({
-  "node_modules/.pnpm/standardwebhooks@1.0.0/node_modules/standardwebhooks/dist/timing_safe_equal.js"(exports) {
+  "node_modules/standardwebhooks/dist/timing_safe_equal.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.timingSafeEqual = void 0;
@@ -15422,9 +15802,9 @@ var require_timing_safe_equal = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@stablelib+base64@1.0.1/node_modules/@stablelib/base64/lib/base64.js
+// node_modules/@stablelib/base64/lib/base64.js
 var require_base64 = __commonJS({
-  "node_modules/.pnpm/@stablelib+base64@1.0.1/node_modules/@stablelib/base64/lib/base64.js"(exports) {
+  "node_modules/@stablelib/base64/lib/base64.js"(exports) {
     "use strict";
     var __extends2 = exports && exports.__extends || /* @__PURE__ */ function() {
       var extendStatics2 = function(d, b) {
@@ -15635,9 +16015,9 @@ var require_base64 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/fast-sha256@1.3.0/node_modules/fast-sha256/sha256.js
+// node_modules/fast-sha256/sha256.js
 var require_sha256 = __commonJS({
-  "node_modules/.pnpm/fast-sha256@1.3.0/node_modules/fast-sha256/sha256.js"(exports, module) {
+  "node_modules/fast-sha256/sha256.js"(exports, module) {
     (function(root, factory) {
       var exports2 = {};
       factory(exports2);
@@ -16059,9 +16439,9 @@ var require_sha256 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/standardwebhooks@1.0.0/node_modules/standardwebhooks/dist/index.js
+// node_modules/standardwebhooks/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/.pnpm/standardwebhooks@1.0.0/node_modules/standardwebhooks/dist/index.js"(exports) {
+  "node_modules/standardwebhooks/dist/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Webhook = exports.WebhookVerificationError = void 0;
@@ -16166,9 +16546,9 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/webhook.js
+// node_modules/svix/dist/webhook.js
 var require_webhook = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/webhook.js"(exports) {
+  "node_modules/svix/dist/webhook.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Webhook = exports.WebhookVerificationError = void 0;
@@ -16200,9 +16580,9 @@ var require_webhook = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointDisabledTrigger.js
+// node_modules/svix/dist/models/endpointDisabledTrigger.js
 var require_endpointDisabledTrigger = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/endpointDisabledTrigger.js"(exports) {
+  "node_modules/svix/dist/models/endpointDisabledTrigger.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EndpointDisabledTriggerSerializer = exports.EndpointDisabledTrigger = void 0;
@@ -16222,9 +16602,9 @@ var require_endpointDisabledTrigger = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ordering.js
+// node_modules/svix/dist/models/ordering.js
 var require_ordering = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/ordering.js"(exports) {
+  "node_modules/svix/dist/models/ordering.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.OrderingSerializer = exports.Ordering = void 0;
@@ -16244,9 +16624,9 @@ var require_ordering = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/statusCodeClass.js
+// node_modules/svix/dist/models/statusCodeClass.js
 var require_statusCodeClass = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/statusCodeClass.js"(exports) {
+  "node_modules/svix/dist/models/statusCodeClass.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StatusCodeClassSerializer = exports.StatusCodeClass = void 0;
@@ -16270,9 +16650,9 @@ var require_statusCodeClass = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/index.js
+// node_modules/svix/dist/models/index.js
 var require_models = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/models/index.js"(exports) {
+  "node_modules/svix/dist/models/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StatusCodeClass = exports.SinkStatusIn = exports.SinkStatus = exports.Ordering = exports.MessageStatusText = exports.MessageStatus = exports.MessageAttemptTriggerType = exports.EndpointDisabledTrigger = exports.ConnectorProduct = exports.ConnectorKind = exports.BackgroundTaskType = exports.BackgroundTaskStatus = exports.AppPortalCapability = void 0;
@@ -16331,9 +16711,9 @@ var require_models = __commonJS({
   }
 });
 
-// node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/index.js
+// node_modules/svix/dist/index.js
 var require_dist2 = __commonJS({
-  "node_modules/.pnpm/svix@1.84.1/node_modules/svix/dist/index.js"(exports) {
+  "node_modules/svix/dist/index.js"(exports) {
     "use strict";
     var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -16484,14 +16864,14 @@ var require_dist2 = __commonJS({
 // src/index.ts
 import { randomUUID as randomUUID2 } from "crypto";
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/platform/NodePlatformFunctions.js
+// node_modules/stripe/esm/platform/NodePlatformFunctions.js
 import * as crypto3 from "crypto";
 import { EventEmitter } from "events";
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/crypto/NodeCryptoProvider.js
+// node_modules/stripe/esm/crypto/NodeCryptoProvider.js
 import * as crypto2 from "crypto";
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/crypto/CryptoProvider.js
+// node_modules/stripe/esm/crypto/CryptoProvider.js
 var CryptoProvider = class {
   /**
    * Computes a SHA-256 HMAC given a secret and a payload (encoded in UTF-8).
@@ -16528,7 +16908,7 @@ var CryptoProvider = class {
 var CryptoProviderOnlySupportsAsyncError = class extends Error {
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/crypto/NodeCryptoProvider.js
+// node_modules/stripe/esm/crypto/NodeCryptoProvider.js
 var NodeCryptoProvider = class extends CryptoProvider {
   /** @override */
   computeHMACSignature(payload, secret) {
@@ -16545,11 +16925,11 @@ var NodeCryptoProvider = class extends CryptoProvider {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/net/NodeHttpClient.js
+// node_modules/stripe/esm/net/NodeHttpClient.js
 import * as http_ from "http";
 import * as https_ from "https";
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/net/HttpClient.js
+// node_modules/stripe/esm/net/HttpClient.js
 var HttpClient = class _HttpClient {
   /** The client name used for diagnostics. */
   getClientName() {
@@ -16589,7 +16969,7 @@ var HttpClientResponse = class {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/net/NodeHttpClient.js
+// node_modules/stripe/esm/net/NodeHttpClient.js
 var http = http_.default || http_;
 var https = https_.default || https_;
 var defaultHttpAgent = new http.Agent({ keepAlive: true });
@@ -16673,7 +17053,7 @@ var NodeHttpClientResponse = class extends HttpClientResponse {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/utils.js
+// node_modules/stripe/esm/utils.js
 var OPTIONS_KEYS = [
   "apiKey",
   "idempotencyKey",
@@ -16684,6 +17064,7 @@ var OPTIONS_KEYS = [
   "host",
   "authenticator",
   "stripeContext",
+  "headers",
   "additionalHeaders",
   "streaming"
 ];
@@ -16830,8 +17211,11 @@ function getOptionsFromArgs(args) {
         }
         opts.authenticator = params.authenticator;
       }
+      if (params.headers) {
+        Object.assign(opts.headers, params.headers);
+      }
       if (params.additionalHeaders) {
-        opts.headers = params.additionalHeaders;
+        Object.assign(opts.headers, params.additionalHeaders);
       }
       if (params.streaming) {
         opts.streaming = true;
@@ -16939,6 +17323,28 @@ function determineProcessUserAgentProperties() {
     platform: process.platform
   };
 }
+var AI_AGENTS = [
+  // The beginning of the section generated from our OpenAPI spec
+  ["ANTIGRAVITY_CLI_ALIAS", "antigravity"],
+  ["CLAUDECODE", "claude_code"],
+  ["CLINE_ACTIVE", "cline"],
+  ["CODEX_SANDBOX", "codex_cli"],
+  ["CODEX_THREAD_ID", "codex_cli"],
+  ["CODEX_SANDBOX_NETWORK_DISABLED", "codex_cli"],
+  ["CODEX_CI", "codex_cli"],
+  ["CURSOR_AGENT", "cursor"],
+  ["GEMINI_CLI", "gemini_cli"],
+  ["OPENCODE", "open_code"]
+  // The end of the section generated from our OpenAPI spec
+];
+function detectAIAgent(env) {
+  for (const [envVar, agentName] of AI_AGENTS) {
+    if (env[envVar]) {
+      return agentName;
+    }
+  }
+  return "";
+}
 function createApiKeyAuthenticator(apiKey) {
   const authenticator = (request) => {
     request.headers.Authorization = "Bearer " + apiKey;
@@ -16988,7 +17394,7 @@ function parseHeadersForFetch(headers) {
   });
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/net/FetchHttpClient.js
+// node_modules/stripe/esm/net/FetchHttpClient.js
 var FetchHttpClient = class _FetchHttpClient extends HttpClient {
   constructor(fetchFn) {
     super();
@@ -17088,7 +17494,7 @@ var FetchHttpClientResponse = class _FetchHttpClientResponse extends HttpClientR
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/crypto/SubtleCryptoProvider.js
+// node_modules/stripe/esm/crypto/SubtleCryptoProvider.js
 var SubtleCryptoProvider = class extends CryptoProvider {
   constructor(subtleCrypto) {
     super();
@@ -17123,7 +17529,7 @@ for (let i = 0; i < byteHexMapping.length; i++) {
   byteHexMapping[i] = i.toString(16).padStart(2, "0");
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/platform/PlatformFunctions.js
+// node_modules/stripe/esm/platform/PlatformFunctions.js
 var PlatformFunctions = class {
   constructor() {
     this._fetchFn = null;
@@ -17212,7 +17618,7 @@ var PlatformFunctions = class {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/Error.js
+// node_modules/stripe/esm/Error.js
 var Error_exports = {};
 __export(Error_exports, {
   StripeAPIError: () => StripeAPIError,
@@ -17352,7 +17758,7 @@ var TemporarySessionExpiredError = class extends StripeError {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/platform/NodePlatformFunctions.js
+// node_modules/stripe/esm/platform/NodePlatformFunctions.js
 import { exec } from "child_process";
 var StreamProcessingError = class extends StripeError {
 };
@@ -17456,7 +17862,7 @@ var NodePlatformFunctions = class extends PlatformFunctions {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/RequestSender.js
+// node_modules/stripe/esm/RequestSender.js
 var MAX_RETRY_AFTER_WAIT = 60;
 var RequestSender = class _RequestSender {
   constructor(stripe, maxBufferedRequestMetric) {
@@ -17659,7 +18065,15 @@ var RequestSender = class _RequestSender {
   _getUserAgentString(apiMode) {
     const packageVersion = this._stripe.getConstant("PACKAGE_VERSION");
     const appInfo = this._stripe._appInfo ? this._stripe.getAppInfoAsString() : "";
-    return `Stripe/${apiMode} NodeBindings/${packageVersion} ${appInfo}`.trim();
+    const aiAgent = this._stripe.getConstant("AI_AGENT");
+    let uaString = `Stripe/${apiMode} NodeBindings/${packageVersion}`;
+    if (appInfo) {
+      uaString += ` ${appInfo}`;
+    }
+    if (aiAgent) {
+      uaString += ` AIAgent/${aiAgent}`;
+    }
+    return uaString;
   }
   _getTelemetryHeader() {
     if (this._stripe.getTelemetryEnabled() && this._stripe._prevRequestMetrics.length > 0) {
@@ -17829,7 +18243,7 @@ var RequestSender = class _RequestSender {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/autoPagination.js
+// node_modules/stripe/esm/autoPagination.js
 var V1Iterator = class {
   constructor(firstPagePromise, requestArgs, spec, stripeResource) {
     this.index = 0;
@@ -18079,7 +18493,7 @@ function isReverseIteration(requestArgs) {
   return !!dataFromArgs.ending_before;
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/StripeMethod.js
+// node_modules/stripe/esm/StripeMethod.js
 function stripeMethod(spec) {
   if (spec.path !== void 0 && spec.fullPath !== void 0) {
     throw new Error(`Method spec specified both a 'path' (${spec.path}) and a 'fullPath' (${spec.fullPath}).`);
@@ -18093,7 +18507,7 @@ function stripeMethod(spec) {
   };
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/StripeResource.js
+// node_modules/stripe/esm/StripeResource.js
 StripeResource.extend = protoExtend;
 StripeResource.method = stripeMethod;
 StripeResource.MAX_BUFFERED_REQUEST_METRICS = 100;
@@ -18232,7 +18646,7 @@ StripeResource.prototype = {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/StripeContext.js
+// node_modules/stripe/esm/StripeContext.js
 var StripeContext = class _StripeContext {
   /**
    * Creates a new StripeContext with the given segments.
@@ -18282,7 +18696,7 @@ var StripeContext = class _StripeContext {
   }
 };
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/Webhooks.js
+// node_modules/stripe/esm/Webhooks.js
 function createWebhooks(platformFunctions) {
   const Webhook2 = {
     DEFAULT_TOLERANCE: 300,
@@ -18461,10 +18875,10 @@ function createWebhooks(platformFunctions) {
   return Webhook2;
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/apiVersion.js
-var ApiVersion = "2026-01-28.clover";
+// node_modules/stripe/esm/apiVersion.js
+var ApiVersion = "2026-02-25.clover";
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources.js
+// node_modules/stripe/esm/resources.js
 var resources_exports = {};
 __export(resources_exports, {
   Account: () => Accounts3,
@@ -18544,7 +18958,7 @@ __export(resources_exports, {
   WebhookEndpoints: () => WebhookEndpoints
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/ResourceNamespace.js
+// node_modules/stripe/esm/ResourceNamespace.js
 function ResourceNamespace(stripe, resources) {
   for (const name in resources) {
     if (!Object.prototype.hasOwnProperty.call(resources, name)) {
@@ -18561,13 +18975,13 @@ function resourceNamespace(namespace, resources) {
   };
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/AccountLinks.js
+// node_modules/stripe/esm/resources/V2/Core/AccountLinks.js
 var stripeMethod2 = StripeResource.method;
 var AccountLinks = StripeResource.extend({
   create: stripeMethod2({ method: "POST", fullPath: "/v2/core/account_links" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/AccountTokens.js
+// node_modules/stripe/esm/resources/V2/Core/AccountTokens.js
 var stripeMethod3 = StripeResource.method;
 var AccountTokens = StripeResource.extend({
   create: stripeMethod3({ method: "POST", fullPath: "/v2/core/account_tokens" }),
@@ -18577,7 +18991,7 @@ var AccountTokens = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/FinancialConnections/Accounts.js
+// node_modules/stripe/esm/resources/FinancialConnections/Accounts.js
 var stripeMethod4 = StripeResource.method;
 var Accounts = StripeResource.extend({
   retrieve: stripeMethod4({
@@ -18612,7 +19026,7 @@ var Accounts = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/Accounts/Persons.js
+// node_modules/stripe/esm/resources/V2/Core/Accounts/Persons.js
 var stripeMethod5 = StripeResource.method;
 var Persons = StripeResource.extend({
   create: stripeMethod5({
@@ -18638,7 +19052,7 @@ var Persons = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/Accounts/PersonTokens.js
+// node_modules/stripe/esm/resources/V2/Core/Accounts/PersonTokens.js
 var stripeMethod6 = StripeResource.method;
 var PersonTokens = StripeResource.extend({
   create: stripeMethod6({
@@ -18651,7 +19065,7 @@ var PersonTokens = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/Accounts.js
+// node_modules/stripe/esm/resources/V2/Core/Accounts.js
 var stripeMethod7 = StripeResource.method;
 var Accounts2 = StripeResource.extend({
   constructor: function(...args) {
@@ -18673,7 +19087,7 @@ var Accounts2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Entitlements/ActiveEntitlements.js
+// node_modules/stripe/esm/resources/Entitlements/ActiveEntitlements.js
 var stripeMethod8 = StripeResource.method;
 var ActiveEntitlements = StripeResource.extend({
   retrieve: stripeMethod8({
@@ -18687,7 +19101,7 @@ var ActiveEntitlements = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/Alerts.js
+// node_modules/stripe/esm/resources/Billing/Alerts.js
 var stripeMethod9 = StripeResource.method;
 var Alerts = StripeResource.extend({
   create: stripeMethod9({ method: "POST", fullPath: "/v1/billing/alerts" }),
@@ -18711,13 +19125,13 @@ var Alerts = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tax/Associations.js
+// node_modules/stripe/esm/resources/Tax/Associations.js
 var stripeMethod10 = StripeResource.method;
 var Associations = StripeResource.extend({
   find: stripeMethod10({ method: "GET", fullPath: "/v1/tax/associations/find" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Authorizations.js
+// node_modules/stripe/esm/resources/Issuing/Authorizations.js
 var stripeMethod11 = StripeResource.method;
 var Authorizations = StripeResource.extend({
   retrieve: stripeMethod11({
@@ -18743,7 +19157,7 @@ var Authorizations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Issuing/Authorizations.js
+// node_modules/stripe/esm/resources/TestHelpers/Issuing/Authorizations.js
 var stripeMethod12 = StripeResource.method;
 var Authorizations2 = StripeResource.extend({
   create: stripeMethod12({
@@ -18776,7 +19190,7 @@ var Authorizations2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tax/Calculations.js
+// node_modules/stripe/esm/resources/Tax/Calculations.js
 var stripeMethod13 = StripeResource.method;
 var Calculations = StripeResource.extend({
   create: stripeMethod13({ method: "POST", fullPath: "/v1/tax/calculations" }),
@@ -18791,7 +19205,7 @@ var Calculations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Cardholders.js
+// node_modules/stripe/esm/resources/Issuing/Cardholders.js
 var stripeMethod14 = StripeResource.method;
 var Cardholders = StripeResource.extend({
   create: stripeMethod14({ method: "POST", fullPath: "/v1/issuing/cardholders" }),
@@ -18810,7 +19224,7 @@ var Cardholders = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Cards.js
+// node_modules/stripe/esm/resources/Issuing/Cards.js
 var stripeMethod15 = StripeResource.method;
 var Cards = StripeResource.extend({
   create: stripeMethod15({ method: "POST", fullPath: "/v1/issuing/cards" }),
@@ -18823,7 +19237,7 @@ var Cards = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Issuing/Cards.js
+// node_modules/stripe/esm/resources/TestHelpers/Issuing/Cards.js
 var stripeMethod16 = StripeResource.method;
 var Cards2 = StripeResource.extend({
   deliverCard: stripeMethod16({
@@ -18848,7 +19262,7 @@ var Cards2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/BillingPortal/Configurations.js
+// node_modules/stripe/esm/resources/BillingPortal/Configurations.js
 var stripeMethod17 = StripeResource.method;
 var Configurations = StripeResource.extend({
   create: stripeMethod17({
@@ -18870,7 +19284,7 @@ var Configurations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Terminal/Configurations.js
+// node_modules/stripe/esm/resources/Terminal/Configurations.js
 var stripeMethod18 = StripeResource.method;
 var Configurations2 = StripeResource.extend({
   create: stripeMethod18({
@@ -18896,7 +19310,7 @@ var Configurations2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/ConfirmationTokens.js
+// node_modules/stripe/esm/resources/TestHelpers/ConfirmationTokens.js
 var stripeMethod19 = StripeResource.method;
 var ConfirmationTokens = StripeResource.extend({
   create: stripeMethod19({
@@ -18905,7 +19319,7 @@ var ConfirmationTokens = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Terminal/ConnectionTokens.js
+// node_modules/stripe/esm/resources/Terminal/ConnectionTokens.js
 var stripeMethod20 = StripeResource.method;
 var ConnectionTokens = StripeResource.extend({
   create: stripeMethod20({
@@ -18914,7 +19328,7 @@ var ConnectionTokens = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/CreditBalanceSummary.js
+// node_modules/stripe/esm/resources/Billing/CreditBalanceSummary.js
 var stripeMethod21 = StripeResource.method;
 var CreditBalanceSummary = StripeResource.extend({
   retrieve: stripeMethod21({
@@ -18923,7 +19337,7 @@ var CreditBalanceSummary = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/CreditBalanceTransactions.js
+// node_modules/stripe/esm/resources/Billing/CreditBalanceTransactions.js
 var stripeMethod22 = StripeResource.method;
 var CreditBalanceTransactions = StripeResource.extend({
   retrieve: stripeMethod22({
@@ -18937,7 +19351,7 @@ var CreditBalanceTransactions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/CreditGrants.js
+// node_modules/stripe/esm/resources/Billing/CreditGrants.js
 var stripeMethod23 = StripeResource.method;
 var CreditGrants = StripeResource.extend({
   create: stripeMethod23({ method: "POST", fullPath: "/v1/billing/credit_grants" }),
@@ -18964,7 +19378,7 @@ var CreditGrants = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/CreditReversals.js
+// node_modules/stripe/esm/resources/Treasury/CreditReversals.js
 var stripeMethod24 = StripeResource.method;
 var CreditReversals = StripeResource.extend({
   create: stripeMethod24({
@@ -18982,7 +19396,7 @@ var CreditReversals = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Customers.js
+// node_modules/stripe/esm/resources/TestHelpers/Customers.js
 var stripeMethod25 = StripeResource.method;
 var Customers = StripeResource.extend({
   fundCashBalance: stripeMethod25({
@@ -18991,7 +19405,7 @@ var Customers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/DebitReversals.js
+// node_modules/stripe/esm/resources/Treasury/DebitReversals.js
 var stripeMethod26 = StripeResource.method;
 var DebitReversals = StripeResource.extend({
   create: stripeMethod26({
@@ -19009,7 +19423,7 @@ var DebitReversals = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Disputes.js
+// node_modules/stripe/esm/resources/Issuing/Disputes.js
 var stripeMethod27 = StripeResource.method;
 var Disputes = StripeResource.extend({
   create: stripeMethod27({ method: "POST", fullPath: "/v1/issuing/disputes" }),
@@ -19032,7 +19446,7 @@ var Disputes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Radar/EarlyFraudWarnings.js
+// node_modules/stripe/esm/resources/Radar/EarlyFraudWarnings.js
 var stripeMethod28 = StripeResource.method;
 var EarlyFraudWarnings = StripeResource.extend({
   retrieve: stripeMethod28({
@@ -19046,7 +19460,7 @@ var EarlyFraudWarnings = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/EventDestinations.js
+// node_modules/stripe/esm/resources/V2/Core/EventDestinations.js
 var stripeMethod29 = StripeResource.method;
 var EventDestinations = StripeResource.extend({
   create: stripeMethod29({
@@ -19084,7 +19498,7 @@ var EventDestinations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Core/Events.js
+// node_modules/stripe/esm/resources/V2/Core/Events.js
 var stripeMethod30 = StripeResource.method;
 var Events = StripeResource.extend({
   retrieve(...args) {
@@ -19132,14 +19546,17 @@ var Events = StripeResource.extend({
         fullPath: pulledEvent.related_object.url
       }).apply(this, [
         {
-          stripeContext: pulledEvent.context
+          stripeContext: pulledEvent.context,
+          headers: {
+            "Stripe-Request-Trigger": `event=${pulledEvent.id}`
+          }
         }
       ])
     ) });
   }
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Entitlements/Features.js
+// node_modules/stripe/esm/resources/Entitlements/Features.js
 var stripeMethod31 = StripeResource.method;
 var Features = StripeResource.extend({
   create: stripeMethod31({ method: "POST", fullPath: "/v1/entitlements/features" }),
@@ -19158,7 +19575,7 @@ var Features = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/FinancialAccounts.js
+// node_modules/stripe/esm/resources/Treasury/FinancialAccounts.js
 var stripeMethod32 = StripeResource.method;
 var FinancialAccounts = StripeResource.extend({
   create: stripeMethod32({
@@ -19192,7 +19609,7 @@ var FinancialAccounts = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Treasury/InboundTransfers.js
+// node_modules/stripe/esm/resources/TestHelpers/Treasury/InboundTransfers.js
 var stripeMethod33 = StripeResource.method;
 var InboundTransfers = StripeResource.extend({
   fail: stripeMethod33({
@@ -19209,7 +19626,7 @@ var InboundTransfers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/InboundTransfers.js
+// node_modules/stripe/esm/resources/Treasury/InboundTransfers.js
 var stripeMethod34 = StripeResource.method;
 var InboundTransfers2 = StripeResource.extend({
   create: stripeMethod34({
@@ -19231,7 +19648,7 @@ var InboundTransfers2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Terminal/Locations.js
+// node_modules/stripe/esm/resources/Terminal/Locations.js
 var stripeMethod35 = StripeResource.method;
 var Locations = StripeResource.extend({
   create: stripeMethod35({ method: "POST", fullPath: "/v1/terminal/locations" }),
@@ -19254,7 +19671,7 @@ var Locations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/MeterEventAdjustments.js
+// node_modules/stripe/esm/resources/Billing/MeterEventAdjustments.js
 var stripeMethod36 = StripeResource.method;
 var MeterEventAdjustments = StripeResource.extend({
   create: stripeMethod36({
@@ -19263,7 +19680,7 @@ var MeterEventAdjustments = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Billing/MeterEventAdjustments.js
+// node_modules/stripe/esm/resources/V2/Billing/MeterEventAdjustments.js
 var stripeMethod37 = StripeResource.method;
 var MeterEventAdjustments2 = StripeResource.extend({
   create: stripeMethod37({
@@ -19272,7 +19689,7 @@ var MeterEventAdjustments2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Billing/MeterEventSession.js
+// node_modules/stripe/esm/resources/V2/Billing/MeterEventSession.js
 var stripeMethod38 = StripeResource.method;
 var MeterEventSession = StripeResource.extend({
   create: stripeMethod38({
@@ -19281,7 +19698,7 @@ var MeterEventSession = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Billing/MeterEventStream.js
+// node_modules/stripe/esm/resources/V2/Billing/MeterEventStream.js
 var stripeMethod39 = StripeResource.method;
 var MeterEventStream = StripeResource.extend({
   create: stripeMethod39({
@@ -19291,19 +19708,19 @@ var MeterEventStream = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/MeterEvents.js
+// node_modules/stripe/esm/resources/Billing/MeterEvents.js
 var stripeMethod40 = StripeResource.method;
 var MeterEvents = StripeResource.extend({
   create: stripeMethod40({ method: "POST", fullPath: "/v1/billing/meter_events" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/V2/Billing/MeterEvents.js
+// node_modules/stripe/esm/resources/V2/Billing/MeterEvents.js
 var stripeMethod41 = StripeResource.method;
 var MeterEvents2 = StripeResource.extend({
   create: stripeMethod41({ method: "POST", fullPath: "/v2/billing/meter_events" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Billing/Meters.js
+// node_modules/stripe/esm/resources/Billing/Meters.js
 var stripeMethod42 = StripeResource.method;
 var Meters = StripeResource.extend({
   create: stripeMethod42({ method: "POST", fullPath: "/v1/billing/meters" }),
@@ -19329,7 +19746,7 @@ var Meters = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Terminal/OnboardingLinks.js
+// node_modules/stripe/esm/resources/Terminal/OnboardingLinks.js
 var stripeMethod43 = StripeResource.method;
 var OnboardingLinks = StripeResource.extend({
   create: stripeMethod43({
@@ -19338,7 +19755,7 @@ var OnboardingLinks = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Climate/Orders.js
+// node_modules/stripe/esm/resources/Climate/Orders.js
 var stripeMethod44 = StripeResource.method;
 var Orders = StripeResource.extend({
   create: stripeMethod44({ method: "POST", fullPath: "/v1/climate/orders" }),
@@ -19361,7 +19778,7 @@ var Orders = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Treasury/OutboundPayments.js
+// node_modules/stripe/esm/resources/TestHelpers/Treasury/OutboundPayments.js
 var stripeMethod45 = StripeResource.method;
 var OutboundPayments = StripeResource.extend({
   update: stripeMethod45({
@@ -19382,7 +19799,7 @@ var OutboundPayments = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/OutboundPayments.js
+// node_modules/stripe/esm/resources/Treasury/OutboundPayments.js
 var stripeMethod46 = StripeResource.method;
 var OutboundPayments2 = StripeResource.extend({
   create: stripeMethod46({
@@ -19404,7 +19821,7 @@ var OutboundPayments2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Treasury/OutboundTransfers.js
+// node_modules/stripe/esm/resources/TestHelpers/Treasury/OutboundTransfers.js
 var stripeMethod47 = StripeResource.method;
 var OutboundTransfers = StripeResource.extend({
   update: stripeMethod47({
@@ -19425,7 +19842,7 @@ var OutboundTransfers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/OutboundTransfers.js
+// node_modules/stripe/esm/resources/Treasury/OutboundTransfers.js
 var stripeMethod48 = StripeResource.method;
 var OutboundTransfers2 = StripeResource.extend({
   create: stripeMethod48({
@@ -19447,7 +19864,7 @@ var OutboundTransfers2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Radar/PaymentEvaluations.js
+// node_modules/stripe/esm/resources/Radar/PaymentEvaluations.js
 var stripeMethod49 = StripeResource.method;
 var PaymentEvaluations = StripeResource.extend({
   create: stripeMethod49({
@@ -19456,7 +19873,7 @@ var PaymentEvaluations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/PersonalizationDesigns.js
+// node_modules/stripe/esm/resources/Issuing/PersonalizationDesigns.js
 var stripeMethod50 = StripeResource.method;
 var PersonalizationDesigns = StripeResource.extend({
   create: stripeMethod50({
@@ -19478,7 +19895,7 @@ var PersonalizationDesigns = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Issuing/PersonalizationDesigns.js
+// node_modules/stripe/esm/resources/TestHelpers/Issuing/PersonalizationDesigns.js
 var stripeMethod51 = StripeResource.method;
 var PersonalizationDesigns2 = StripeResource.extend({
   activate: stripeMethod51({
@@ -19495,7 +19912,7 @@ var PersonalizationDesigns2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/PhysicalBundles.js
+// node_modules/stripe/esm/resources/Issuing/PhysicalBundles.js
 var stripeMethod52 = StripeResource.method;
 var PhysicalBundles = StripeResource.extend({
   retrieve: stripeMethod52({
@@ -19509,7 +19926,7 @@ var PhysicalBundles = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Climate/Products.js
+// node_modules/stripe/esm/resources/Climate/Products.js
 var stripeMethod53 = StripeResource.method;
 var Products = StripeResource.extend({
   retrieve: stripeMethod53({
@@ -19523,7 +19940,7 @@ var Products = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Terminal/Readers.js
+// node_modules/stripe/esm/resources/Terminal/Readers.js
 var stripeMethod54 = StripeResource.method;
 var Readers = StripeResource.extend({
   create: stripeMethod54({ method: "POST", fullPath: "/v1/terminal/readers" }),
@@ -19578,7 +19995,7 @@ var Readers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Terminal/Readers.js
+// node_modules/stripe/esm/resources/TestHelpers/Terminal/Readers.js
 var stripeMethod55 = StripeResource.method;
 var Readers2 = StripeResource.extend({
   presentPaymentMethod: stripeMethod55({
@@ -19595,7 +20012,7 @@ var Readers2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Treasury/ReceivedCredits.js
+// node_modules/stripe/esm/resources/TestHelpers/Treasury/ReceivedCredits.js
 var stripeMethod56 = StripeResource.method;
 var ReceivedCredits = StripeResource.extend({
   create: stripeMethod56({
@@ -19604,7 +20021,7 @@ var ReceivedCredits = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/ReceivedCredits.js
+// node_modules/stripe/esm/resources/Treasury/ReceivedCredits.js
 var stripeMethod57 = StripeResource.method;
 var ReceivedCredits2 = StripeResource.extend({
   retrieve: stripeMethod57({
@@ -19618,7 +20035,7 @@ var ReceivedCredits2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Treasury/ReceivedDebits.js
+// node_modules/stripe/esm/resources/TestHelpers/Treasury/ReceivedDebits.js
 var stripeMethod58 = StripeResource.method;
 var ReceivedDebits = StripeResource.extend({
   create: stripeMethod58({
@@ -19627,7 +20044,7 @@ var ReceivedDebits = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/ReceivedDebits.js
+// node_modules/stripe/esm/resources/Treasury/ReceivedDebits.js
 var stripeMethod59 = StripeResource.method;
 var ReceivedDebits2 = StripeResource.extend({
   retrieve: stripeMethod59({
@@ -19641,7 +20058,7 @@ var ReceivedDebits2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Refunds.js
+// node_modules/stripe/esm/resources/TestHelpers/Refunds.js
 var stripeMethod60 = StripeResource.method;
 var Refunds = StripeResource.extend({
   expire: stripeMethod60({
@@ -19650,7 +20067,7 @@ var Refunds = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tax/Registrations.js
+// node_modules/stripe/esm/resources/Tax/Registrations.js
 var stripeMethod61 = StripeResource.method;
 var Registrations = StripeResource.extend({
   create: stripeMethod61({ method: "POST", fullPath: "/v1/tax/registrations" }),
@@ -19669,7 +20086,7 @@ var Registrations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Reporting/ReportRuns.js
+// node_modules/stripe/esm/resources/Reporting/ReportRuns.js
 var stripeMethod62 = StripeResource.method;
 var ReportRuns = StripeResource.extend({
   create: stripeMethod62({ method: "POST", fullPath: "/v1/reporting/report_runs" }),
@@ -19684,7 +20101,7 @@ var ReportRuns = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Reporting/ReportTypes.js
+// node_modules/stripe/esm/resources/Reporting/ReportTypes.js
 var stripeMethod63 = StripeResource.method;
 var ReportTypes = StripeResource.extend({
   retrieve: stripeMethod63({
@@ -19698,7 +20115,7 @@ var ReportTypes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Forwarding/Requests.js
+// node_modules/stripe/esm/resources/Forwarding/Requests.js
 var stripeMethod64 = StripeResource.method;
 var Requests = StripeResource.extend({
   create: stripeMethod64({ method: "POST", fullPath: "/v1/forwarding/requests" }),
@@ -19713,7 +20130,7 @@ var Requests = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Sigma/ScheduledQueryRuns.js
+// node_modules/stripe/esm/resources/Sigma/ScheduledQueryRuns.js
 var stripeMethod65 = StripeResource.method;
 var ScheduledQueryRuns = StripeResource.extend({
   retrieve: stripeMethod65({
@@ -19727,7 +20144,7 @@ var ScheduledQueryRuns = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Apps/Secrets.js
+// node_modules/stripe/esm/resources/Apps/Secrets.js
 var stripeMethod66 = StripeResource.method;
 var Secrets = StripeResource.extend({
   create: stripeMethod66({ method: "POST", fullPath: "/v1/apps/secrets" }),
@@ -19743,7 +20160,7 @@ var Secrets = StripeResource.extend({
   find: stripeMethod66({ method: "GET", fullPath: "/v1/apps/secrets/find" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/BillingPortal/Sessions.js
+// node_modules/stripe/esm/resources/BillingPortal/Sessions.js
 var stripeMethod67 = StripeResource.method;
 var Sessions = StripeResource.extend({
   create: stripeMethod67({
@@ -19752,7 +20169,7 @@ var Sessions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Checkout/Sessions.js
+// node_modules/stripe/esm/resources/Checkout/Sessions.js
 var stripeMethod68 = StripeResource.method;
 var Sessions2 = StripeResource.extend({
   create: stripeMethod68({ method: "POST", fullPath: "/v1/checkout/sessions" }),
@@ -19780,7 +20197,7 @@ var Sessions2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/FinancialConnections/Sessions.js
+// node_modules/stripe/esm/resources/FinancialConnections/Sessions.js
 var stripeMethod69 = StripeResource.method;
 var Sessions3 = StripeResource.extend({
   create: stripeMethod69({
@@ -19793,14 +20210,14 @@ var Sessions3 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tax/Settings.js
+// node_modules/stripe/esm/resources/Tax/Settings.js
 var stripeMethod70 = StripeResource.method;
 var Settings = StripeResource.extend({
   retrieve: stripeMethod70({ method: "GET", fullPath: "/v1/tax/settings" }),
   update: stripeMethod70({ method: "POST", fullPath: "/v1/tax/settings" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Climate/Suppliers.js
+// node_modules/stripe/esm/resources/Climate/Suppliers.js
 var stripeMethod71 = StripeResource.method;
 var Suppliers = StripeResource.extend({
   retrieve: stripeMethod71({
@@ -19814,7 +20231,7 @@ var Suppliers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/TestClocks.js
+// node_modules/stripe/esm/resources/TestHelpers/TestClocks.js
 var stripeMethod72 = StripeResource.method;
 var TestClocks = StripeResource.extend({
   create: stripeMethod72({
@@ -19840,7 +20257,7 @@ var TestClocks = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Tokens.js
+// node_modules/stripe/esm/resources/Issuing/Tokens.js
 var stripeMethod73 = StripeResource.method;
 var Tokens = StripeResource.extend({
   retrieve: stripeMethod73({
@@ -19858,7 +20275,7 @@ var Tokens = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/TransactionEntries.js
+// node_modules/stripe/esm/resources/Treasury/TransactionEntries.js
 var stripeMethod74 = StripeResource.method;
 var TransactionEntries = StripeResource.extend({
   retrieve: stripeMethod74({
@@ -19872,7 +20289,7 @@ var TransactionEntries = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/FinancialConnections/Transactions.js
+// node_modules/stripe/esm/resources/FinancialConnections/Transactions.js
 var stripeMethod75 = StripeResource.method;
 var Transactions = StripeResource.extend({
   retrieve: stripeMethod75({
@@ -19886,7 +20303,7 @@ var Transactions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Issuing/Transactions.js
+// node_modules/stripe/esm/resources/Issuing/Transactions.js
 var stripeMethod76 = StripeResource.method;
 var Transactions2 = StripeResource.extend({
   retrieve: stripeMethod76({
@@ -19904,7 +20321,7 @@ var Transactions2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tax/Transactions.js
+// node_modules/stripe/esm/resources/Tax/Transactions.js
 var stripeMethod77 = StripeResource.method;
 var Transactions3 = StripeResource.extend({
   retrieve: stripeMethod77({
@@ -19926,7 +20343,7 @@ var Transactions3 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TestHelpers/Issuing/Transactions.js
+// node_modules/stripe/esm/resources/TestHelpers/Issuing/Transactions.js
 var stripeMethod78 = StripeResource.method;
 var Transactions4 = StripeResource.extend({
   createForceCapture: stripeMethod78({
@@ -19943,7 +20360,7 @@ var Transactions4 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Treasury/Transactions.js
+// node_modules/stripe/esm/resources/Treasury/Transactions.js
 var stripeMethod79 = StripeResource.method;
 var Transactions5 = StripeResource.extend({
   retrieve: stripeMethod79({
@@ -19957,7 +20374,7 @@ var Transactions5 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Radar/ValueListItems.js
+// node_modules/stripe/esm/resources/Radar/ValueListItems.js
 var stripeMethod80 = StripeResource.method;
 var ValueListItems = StripeResource.extend({
   create: stripeMethod80({
@@ -19979,7 +20396,7 @@ var ValueListItems = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Radar/ValueLists.js
+// node_modules/stripe/esm/resources/Radar/ValueLists.js
 var stripeMethod81 = StripeResource.method;
 var ValueLists = StripeResource.extend({
   create: stripeMethod81({ method: "POST", fullPath: "/v1/radar/value_lists" }),
@@ -20002,7 +20419,7 @@ var ValueLists = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Identity/VerificationReports.js
+// node_modules/stripe/esm/resources/Identity/VerificationReports.js
 var stripeMethod82 = StripeResource.method;
 var VerificationReports = StripeResource.extend({
   retrieve: stripeMethod82({
@@ -20016,7 +20433,7 @@ var VerificationReports = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Identity/VerificationSessions.js
+// node_modules/stripe/esm/resources/Identity/VerificationSessions.js
 var stripeMethod83 = StripeResource.method;
 var VerificationSessions = StripeResource.extend({
   create: stripeMethod83({
@@ -20046,7 +20463,7 @@ var VerificationSessions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Accounts.js
+// node_modules/stripe/esm/resources/Accounts.js
 var stripeMethod84 = StripeResource.method;
 var Accounts3 = StripeResource.extend({
   create: stripeMethod84({ method: "POST", fullPath: "/v1/accounts" }),
@@ -20139,19 +20556,19 @@ var Accounts3 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/AccountLinks.js
+// node_modules/stripe/esm/resources/AccountLinks.js
 var stripeMethod85 = StripeResource.method;
 var AccountLinks2 = StripeResource.extend({
   create: stripeMethod85({ method: "POST", fullPath: "/v1/account_links" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/AccountSessions.js
+// node_modules/stripe/esm/resources/AccountSessions.js
 var stripeMethod86 = StripeResource.method;
 var AccountSessions = StripeResource.extend({
   create: stripeMethod86({ method: "POST", fullPath: "/v1/account_sessions" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/ApplePayDomains.js
+// node_modules/stripe/esm/resources/ApplePayDomains.js
 var stripeMethod87 = StripeResource.method;
 var ApplePayDomains = StripeResource.extend({
   create: stripeMethod87({ method: "POST", fullPath: "/v1/apple_pay/domains" }),
@@ -20170,7 +20587,7 @@ var ApplePayDomains = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/ApplicationFees.js
+// node_modules/stripe/esm/resources/ApplicationFees.js
 var stripeMethod88 = StripeResource.method;
 var ApplicationFees = StripeResource.extend({
   retrieve: stripeMethod88({
@@ -20201,20 +20618,20 @@ var ApplicationFees = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Balance.js
+// node_modules/stripe/esm/resources/Balance.js
 var stripeMethod89 = StripeResource.method;
 var Balance = StripeResource.extend({
   retrieve: stripeMethod89({ method: "GET", fullPath: "/v1/balance" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/BalanceSettings.js
+// node_modules/stripe/esm/resources/BalanceSettings.js
 var stripeMethod90 = StripeResource.method;
 var BalanceSettings = StripeResource.extend({
   retrieve: stripeMethod90({ method: "GET", fullPath: "/v1/balance_settings" }),
   update: stripeMethod90({ method: "POST", fullPath: "/v1/balance_settings" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/BalanceTransactions.js
+// node_modules/stripe/esm/resources/BalanceTransactions.js
 var stripeMethod91 = StripeResource.method;
 var BalanceTransactions = StripeResource.extend({
   retrieve: stripeMethod91({
@@ -20228,7 +20645,7 @@ var BalanceTransactions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Charges.js
+// node_modules/stripe/esm/resources/Charges.js
 var stripeMethod92 = StripeResource.method;
 var Charges = StripeResource.extend({
   create: stripeMethod92({ method: "POST", fullPath: "/v1/charges" }),
@@ -20250,7 +20667,7 @@ var Charges = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/ConfirmationTokens.js
+// node_modules/stripe/esm/resources/ConfirmationTokens.js
 var stripeMethod93 = StripeResource.method;
 var ConfirmationTokens2 = StripeResource.extend({
   retrieve: stripeMethod93({
@@ -20259,7 +20676,7 @@ var ConfirmationTokens2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/CountrySpecs.js
+// node_modules/stripe/esm/resources/CountrySpecs.js
 var stripeMethod94 = StripeResource.method;
 var CountrySpecs = StripeResource.extend({
   retrieve: stripeMethod94({
@@ -20273,7 +20690,7 @@ var CountrySpecs = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Coupons.js
+// node_modules/stripe/esm/resources/Coupons.js
 var stripeMethod95 = StripeResource.method;
 var Coupons = StripeResource.extend({
   create: stripeMethod95({ method: "POST", fullPath: "/v1/coupons" }),
@@ -20287,7 +20704,7 @@ var Coupons = StripeResource.extend({
   del: stripeMethod95({ method: "DELETE", fullPath: "/v1/coupons/{coupon}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/CreditNotes.js
+// node_modules/stripe/esm/resources/CreditNotes.js
 var stripeMethod96 = StripeResource.method;
 var CreditNotes = StripeResource.extend({
   create: stripeMethod96({ method: "POST", fullPath: "/v1/credit_notes" }),
@@ -20315,13 +20732,13 @@ var CreditNotes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/CustomerSessions.js
+// node_modules/stripe/esm/resources/CustomerSessions.js
 var stripeMethod97 = StripeResource.method;
 var CustomerSessions = StripeResource.extend({
   create: stripeMethod97({ method: "POST", fullPath: "/v1/customer_sessions" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Customers.js
+// node_modules/stripe/esm/resources/Customers.js
 var stripeMethod98 = StripeResource.method;
 var Customers2 = StripeResource.extend({
   create: stripeMethod98({ method: "POST", fullPath: "/v1/customers" }),
@@ -20433,7 +20850,7 @@ var Customers2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Disputes.js
+// node_modules/stripe/esm/resources/Disputes.js
 var stripeMethod99 = StripeResource.method;
 var Disputes2 = StripeResource.extend({
   retrieve: stripeMethod99({ method: "GET", fullPath: "/v1/disputes/{dispute}" }),
@@ -20449,7 +20866,7 @@ var Disputes2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/EphemeralKeys.js
+// node_modules/stripe/esm/resources/EphemeralKeys.js
 var stripeMethod100 = StripeResource.method;
 var EphemeralKeys = StripeResource.extend({
   create: stripeMethod100({
@@ -20464,7 +20881,7 @@ var EphemeralKeys = StripeResource.extend({
   del: stripeMethod100({ method: "DELETE", fullPath: "/v1/ephemeral_keys/{key}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Events.js
+// node_modules/stripe/esm/resources/Events.js
 var stripeMethod101 = StripeResource.method;
 var Events2 = StripeResource.extend({
   retrieve: stripeMethod101({ method: "GET", fullPath: "/v1/events/{id}" }),
@@ -20475,7 +20892,7 @@ var Events2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/ExchangeRates.js
+// node_modules/stripe/esm/resources/ExchangeRates.js
 var stripeMethod102 = StripeResource.method;
 var ExchangeRates = StripeResource.extend({
   retrieve: stripeMethod102({
@@ -20489,7 +20906,7 @@ var ExchangeRates = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/FileLinks.js
+// node_modules/stripe/esm/resources/FileLinks.js
 var stripeMethod103 = StripeResource.method;
 var FileLinks = StripeResource.extend({
   create: stripeMethod103({ method: "POST", fullPath: "/v1/file_links" }),
@@ -20502,7 +20919,7 @@ var FileLinks = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/multipart.js
+// node_modules/stripe/esm/multipart.js
 var multipartDataGenerator = (method, data, headers) => {
   const segno = (Math.round(Math.random() * 1e16) + Math.round(Math.random() * 1e16)).toString();
   headers["Content-Type"] = `multipart/form-data; boundary=${segno}`;
@@ -20553,7 +20970,7 @@ function multipartRequestDataProcessor(method, data, headers, callback) {
   }).catch((err) => callback(err, null));
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Files.js
+// node_modules/stripe/esm/resources/Files.js
 var stripeMethod104 = StripeResource.method;
 var Files = StripeResource.extend({
   create: stripeMethod104({
@@ -20573,7 +20990,7 @@ var Files = StripeResource.extend({
   requestDataProcessor: multipartRequestDataProcessor
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/InvoiceItems.js
+// node_modules/stripe/esm/resources/InvoiceItems.js
 var stripeMethod105 = StripeResource.method;
 var InvoiceItems = StripeResource.extend({
   create: stripeMethod105({ method: "POST", fullPath: "/v1/invoiceitems" }),
@@ -20596,7 +21013,7 @@ var InvoiceItems = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/InvoicePayments.js
+// node_modules/stripe/esm/resources/InvoicePayments.js
 var stripeMethod106 = StripeResource.method;
 var InvoicePayments = StripeResource.extend({
   retrieve: stripeMethod106({
@@ -20610,7 +21027,7 @@ var InvoicePayments = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/InvoiceRenderingTemplates.js
+// node_modules/stripe/esm/resources/InvoiceRenderingTemplates.js
 var stripeMethod107 = StripeResource.method;
 var InvoiceRenderingTemplates = StripeResource.extend({
   retrieve: stripeMethod107({
@@ -20632,7 +21049,7 @@ var InvoiceRenderingTemplates = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Invoices.js
+// node_modules/stripe/esm/resources/Invoices.js
 var stripeMethod108 = StripeResource.method;
 var Invoices = StripeResource.extend({
   create: stripeMethod108({ method: "POST", fullPath: "/v1/invoices" }),
@@ -20697,13 +21114,13 @@ var Invoices = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Mandates.js
+// node_modules/stripe/esm/resources/Mandates.js
 var stripeMethod109 = StripeResource.method;
 var Mandates = StripeResource.extend({
   retrieve: stripeMethod109({ method: "GET", fullPath: "/v1/mandates/{mandate}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/OAuth.js
+// node_modules/stripe/esm/resources/OAuth.js
 var stripeMethod110 = StripeResource.method;
 var oAuthHost = "connect.stripe.com";
 var OAuth = StripeResource.extend({
@@ -20743,7 +21160,7 @@ var OAuth = StripeResource.extend({
   }
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentAttemptRecords.js
+// node_modules/stripe/esm/resources/PaymentAttemptRecords.js
 var stripeMethod111 = StripeResource.method;
 var PaymentAttemptRecords = StripeResource.extend({
   retrieve: stripeMethod111({
@@ -20757,7 +21174,7 @@ var PaymentAttemptRecords = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentIntents.js
+// node_modules/stripe/esm/resources/PaymentIntents.js
 var stripeMethod112 = StripeResource.method;
 var PaymentIntents = StripeResource.extend({
   create: stripeMethod112({ method: "POST", fullPath: "/v1/payment_intents" }),
@@ -20810,7 +21227,7 @@ var PaymentIntents = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentLinks.js
+// node_modules/stripe/esm/resources/PaymentLinks.js
 var stripeMethod113 = StripeResource.method;
 var PaymentLinks = StripeResource.extend({
   create: stripeMethod113({ method: "POST", fullPath: "/v1/payment_links" }),
@@ -20834,7 +21251,7 @@ var PaymentLinks = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentMethodConfigurations.js
+// node_modules/stripe/esm/resources/PaymentMethodConfigurations.js
 var stripeMethod114 = StripeResource.method;
 var PaymentMethodConfigurations = StripeResource.extend({
   create: stripeMethod114({
@@ -20856,7 +21273,7 @@ var PaymentMethodConfigurations = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentMethodDomains.js
+// node_modules/stripe/esm/resources/PaymentMethodDomains.js
 var stripeMethod115 = StripeResource.method;
 var PaymentMethodDomains = StripeResource.extend({
   create: stripeMethod115({
@@ -20882,7 +21299,7 @@ var PaymentMethodDomains = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentMethods.js
+// node_modules/stripe/esm/resources/PaymentMethods.js
 var stripeMethod116 = StripeResource.method;
 var PaymentMethods = StripeResource.extend({
   create: stripeMethod116({ method: "POST", fullPath: "/v1/payment_methods" }),
@@ -20909,7 +21326,7 @@ var PaymentMethods = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PaymentRecords.js
+// node_modules/stripe/esm/resources/PaymentRecords.js
 var stripeMethod117 = StripeResource.method;
 var PaymentRecords = StripeResource.extend({
   retrieve: stripeMethod117({ method: "GET", fullPath: "/v1/payment_records/{id}" }),
@@ -20943,7 +21360,7 @@ var PaymentRecords = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Payouts.js
+// node_modules/stripe/esm/resources/Payouts.js
 var stripeMethod118 = StripeResource.method;
 var Payouts = StripeResource.extend({
   create: stripeMethod118({ method: "POST", fullPath: "/v1/payouts" }),
@@ -20964,7 +21381,7 @@ var Payouts = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Plans.js
+// node_modules/stripe/esm/resources/Plans.js
 var stripeMethod119 = StripeResource.method;
 var Plans = StripeResource.extend({
   create: stripeMethod119({ method: "POST", fullPath: "/v1/plans" }),
@@ -20978,7 +21395,7 @@ var Plans = StripeResource.extend({
   del: stripeMethod119({ method: "DELETE", fullPath: "/v1/plans/{plan}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Prices.js
+// node_modules/stripe/esm/resources/Prices.js
 var stripeMethod120 = StripeResource.method;
 var Prices = StripeResource.extend({
   create: stripeMethod120({ method: "POST", fullPath: "/v1/prices" }),
@@ -20996,7 +21413,7 @@ var Prices = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Products.js
+// node_modules/stripe/esm/resources/Products.js
 var stripeMethod121 = StripeResource.method;
 var Products2 = StripeResource.extend({
   create: stripeMethod121({ method: "POST", fullPath: "/v1/products" }),
@@ -21032,7 +21449,7 @@ var Products2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/PromotionCodes.js
+// node_modules/stripe/esm/resources/PromotionCodes.js
 var stripeMethod122 = StripeResource.method;
 var PromotionCodes = StripeResource.extend({
   create: stripeMethod122({ method: "POST", fullPath: "/v1/promotion_codes" }),
@@ -21051,7 +21468,7 @@ var PromotionCodes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Quotes.js
+// node_modules/stripe/esm/resources/Quotes.js
 var stripeMethod123 = StripeResource.method;
 var Quotes = StripeResource.extend({
   create: stripeMethod123({ method: "POST", fullPath: "/v1/quotes" }),
@@ -21086,7 +21503,7 @@ var Quotes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Refunds.js
+// node_modules/stripe/esm/resources/Refunds.js
 var stripeMethod124 = StripeResource.method;
 var Refunds2 = StripeResource.extend({
   create: stripeMethod124({ method: "POST", fullPath: "/v1/refunds" }),
@@ -21103,7 +21520,7 @@ var Refunds2 = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Reviews.js
+// node_modules/stripe/esm/resources/Reviews.js
 var stripeMethod125 = StripeResource.method;
 var Reviews = StripeResource.extend({
   retrieve: stripeMethod125({ method: "GET", fullPath: "/v1/reviews/{review}" }),
@@ -21118,7 +21535,7 @@ var Reviews = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/SetupAttempts.js
+// node_modules/stripe/esm/resources/SetupAttempts.js
 var stripeMethod126 = StripeResource.method;
 var SetupAttempts = StripeResource.extend({
   list: stripeMethod126({
@@ -21128,7 +21545,7 @@ var SetupAttempts = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/SetupIntents.js
+// node_modules/stripe/esm/resources/SetupIntents.js
 var stripeMethod127 = StripeResource.method;
 var SetupIntents = StripeResource.extend({
   create: stripeMethod127({ method: "POST", fullPath: "/v1/setup_intents" }),
@@ -21159,7 +21576,7 @@ var SetupIntents = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/ShippingRates.js
+// node_modules/stripe/esm/resources/ShippingRates.js
 var stripeMethod128 = StripeResource.method;
 var ShippingRates = StripeResource.extend({
   create: stripeMethod128({ method: "POST", fullPath: "/v1/shipping_rates" }),
@@ -21178,7 +21595,7 @@ var ShippingRates = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Sources.js
+// node_modules/stripe/esm/resources/Sources.js
 var stripeMethod129 = StripeResource.method;
 var Sources = StripeResource.extend({
   create: stripeMethod129({ method: "POST", fullPath: "/v1/sources" }),
@@ -21195,7 +21612,7 @@ var Sources = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/SubscriptionItems.js
+// node_modules/stripe/esm/resources/SubscriptionItems.js
 var stripeMethod130 = StripeResource.method;
 var SubscriptionItems = StripeResource.extend({
   create: stripeMethod130({ method: "POST", fullPath: "/v1/subscription_items" }),
@@ -21218,7 +21635,7 @@ var SubscriptionItems = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/SubscriptionSchedules.js
+// node_modules/stripe/esm/resources/SubscriptionSchedules.js
 var stripeMethod131 = StripeResource.method;
 var SubscriptionSchedules = StripeResource.extend({
   create: stripeMethod131({
@@ -21248,7 +21665,7 @@ var SubscriptionSchedules = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Subscriptions.js
+// node_modules/stripe/esm/resources/Subscriptions.js
 var stripeMethod132 = StripeResource.method;
 var Subscriptions = StripeResource.extend({
   create: stripeMethod132({ method: "POST", fullPath: "/v1/subscriptions" }),
@@ -21288,7 +21705,7 @@ var Subscriptions = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TaxCodes.js
+// node_modules/stripe/esm/resources/TaxCodes.js
 var stripeMethod133 = StripeResource.method;
 var TaxCodes = StripeResource.extend({
   retrieve: stripeMethod133({ method: "GET", fullPath: "/v1/tax_codes/{id}" }),
@@ -21299,7 +21716,7 @@ var TaxCodes = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TaxIds.js
+// node_modules/stripe/esm/resources/TaxIds.js
 var stripeMethod134 = StripeResource.method;
 var TaxIds = StripeResource.extend({
   create: stripeMethod134({ method: "POST", fullPath: "/v1/tax_ids" }),
@@ -21312,7 +21729,7 @@ var TaxIds = StripeResource.extend({
   del: stripeMethod134({ method: "DELETE", fullPath: "/v1/tax_ids/{id}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/TaxRates.js
+// node_modules/stripe/esm/resources/TaxRates.js
 var stripeMethod135 = StripeResource.method;
 var TaxRates = StripeResource.extend({
   create: stripeMethod135({ method: "POST", fullPath: "/v1/tax_rates" }),
@@ -21325,14 +21742,14 @@ var TaxRates = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Tokens.js
+// node_modules/stripe/esm/resources/Tokens.js
 var stripeMethod136 = StripeResource.method;
 var Tokens2 = StripeResource.extend({
   create: stripeMethod136({ method: "POST", fullPath: "/v1/tokens" }),
   retrieve: stripeMethod136({ method: "GET", fullPath: "/v1/tokens/{token}" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Topups.js
+// node_modules/stripe/esm/resources/Topups.js
 var stripeMethod137 = StripeResource.method;
 var Topups = StripeResource.extend({
   create: stripeMethod137({ method: "POST", fullPath: "/v1/topups" }),
@@ -21346,7 +21763,7 @@ var Topups = StripeResource.extend({
   cancel: stripeMethod137({ method: "POST", fullPath: "/v1/topups/{topup}/cancel" })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/Transfers.js
+// node_modules/stripe/esm/resources/Transfers.js
 var stripeMethod138 = StripeResource.method;
 var Transfers = StripeResource.extend({
   create: stripeMethod138({ method: "POST", fullPath: "/v1/transfers" }),
@@ -21376,7 +21793,7 @@ var Transfers = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources/WebhookEndpoints.js
+// node_modules/stripe/esm/resources/WebhookEndpoints.js
 var stripeMethod139 = StripeResource.method;
 var WebhookEndpoints = StripeResource.extend({
   create: stripeMethod139({ method: "POST", fullPath: "/v1/webhook_endpoints" }),
@@ -21399,7 +21816,7 @@ var WebhookEndpoints = StripeResource.extend({
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/resources.js
+// node_modules/stripe/esm/resources.js
 var Apps = resourceNamespace("apps", { Secrets });
 var Billing = resourceNamespace("billing", {
   Alerts,
@@ -21525,7 +21942,7 @@ var V2 = resourceNamespace("v2", {
   })
 });
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/stripe.core.js
+// node_modules/stripe/esm/stripe.core.js
 var DEFAULT_HOST = "api.stripe.com";
 var DEFAULT_PORT = "443";
 var DEFAULT_BASE_PATH = "/v1/";
@@ -21552,9 +21969,11 @@ var ALLOWED_CONFIG_PROPERTIES = [
 ];
 var defaultRequestSenderFactory = (stripe) => new RequestSender(stripe, StripeResource.MAX_BUFFERED_REQUEST_METRICS);
 function createStripe(platformFunctions, requestSender = defaultRequestSenderFactory) {
-  Stripe2.PACKAGE_VERSION = "20.3.1";
+  Stripe2.PACKAGE_VERSION = "20.4.1";
   Stripe2.API_VERSION = ApiVersion;
-  Stripe2.USER_AGENT = Object.assign({ bindings_version: Stripe2.PACKAGE_VERSION, lang: "node", publisher: "stripe", uname: null, typescript: false }, determineProcessUserAgentProperties());
+  const aiAgent = typeof process !== "undefined" && process.env ? detectAIAgent(process.env) : "";
+  Stripe2.AI_AGENT = aiAgent;
+  Stripe2.USER_AGENT = Object.assign(Object.assign({ bindings_version: Stripe2.PACKAGE_VERSION, lang: "node", publisher: "stripe", uname: null, typescript: false }, determineProcessUserAgentProperties()), aiAgent ? { ai_agent: aiAgent } : {});
   Stripe2.StripeResource = StripeResource;
   Stripe2.StripeContext = StripeContext;
   Stripe2.resources = resources_exports;
@@ -21841,7 +22260,10 @@ function createStripe(platformFunctions, requestSender = defaultRequestSenderFac
       }
       eventNotification.fetchEvent = () => {
         return this._requestSender._rawRequest("GET", `/v2/core/events/${eventNotification.id}`, void 0, {
-          stripeContext: eventNotification.context
+          stripeContext: eventNotification.context,
+          headers: {
+            "Stripe-Request-Trigger": `event=${eventNotification.id}`
+          }
         }, ["fetch_event"]);
       };
       eventNotification.fetchRelatedObject = () => {
@@ -21849,7 +22271,10 @@ function createStripe(platformFunctions, requestSender = defaultRequestSenderFac
           return Promise.resolve(null);
         }
         return this._requestSender._rawRequest("GET", eventNotification.related_object.url, void 0, {
-          stripeContext: eventNotification.context
+          stripeContext: eventNotification.context,
+          headers: {
+            "Stripe-Request-Trigger": `event=${eventNotification.id}`
+          }
         }, ["fetch_related_object"]);
       };
       return eventNotification;
@@ -21858,11 +22283,11 @@ function createStripe(platformFunctions, requestSender = defaultRequestSenderFac
   return Stripe2;
 }
 
-// node_modules/.pnpm/stripe@20.3.1_@types+node@25.2.3/node_modules/stripe/esm/stripe.esm.node.js
+// node_modules/stripe/esm/stripe.esm.node.js
 var Stripe = createStripe(new NodePlatformFunctions());
 var stripe_esm_node_default = Stripe;
 
-// node_modules/.pnpm/@supabase+supabase-js@2.95.3/node_modules/@supabase/supabase-js/dist/index.mjs
+// node_modules/@supabase/supabase-js/dist/index.mjs
 var dist_exports = {};
 __export(dist_exports, {
   FunctionRegion: () => import_functions_js.FunctionRegion,
@@ -21876,7 +22301,7 @@ __export(dist_exports, {
 });
 var import_functions_js = __toESM(require_main(), 1);
 
-// node_modules/.pnpm/@supabase+postgrest-js@2.95.3/node_modules/@supabase/postgrest-js/dist/index.mjs
+// node_modules/@supabase/postgrest-js/dist/index.mjs
 var PostgrestError = class extends Error {
   /**
   * @example
@@ -22740,6 +23165,760 @@ var PostgrestQueryBuilder = class {
   * @remarks
   * When using `count` with `.range()` or `.limit()`, the returned `count` is the total number of rows
   * that match your filters, not the number of rows in the current page. Use this to build pagination UI.
+  
+  * - By default, Supabase projects return a maximum of 1,000 rows. This setting can be changed in your project's [API settings](/dashboard/project/_/settings/api). It's recommended that you keep it low to limit the payload size of accidental or malicious requests. You can use `range()` queries to paginate through your data.
+  * - `select()` can be combined with [Filters](/docs/reference/javascript/using-filters)
+  * - `select()` can be combined with [Modifiers](/docs/reference/javascript/using-modifiers)
+  * - `apikey` is a reserved keyword if you're using the [Supabase Platform](/docs/guides/platform) and [should be avoided as a column name](https://github.com/supabase/supabase/issues/5465). *
+  * @category Database
+  *
+  * @example Getting your data
+  * ```js
+  * const { data, error } = await supabase
+  *   .from('characters')
+  *   .select()
+  * ```
+  *
+  * @exampleSql Getting your data
+  * ```sql
+  * create table
+  *   characters (id int8 primary key, name text);
+  *
+  * insert into
+  *   characters (id, name)
+  * values
+  *   (1, 'Harry'),
+  *   (2, 'Frodo'),
+  *   (3, 'Katniss');
+  * ```
+  *
+  * @exampleResponse Getting your data
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "Harry"
+  *     },
+  *     {
+  *       "id": 2,
+  *       "name": "Frodo"
+  *     },
+  *     {
+  *       "id": 3,
+  *       "name": "Katniss"
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @example Selecting specific columns
+  * ```js
+  * const { data, error } = await supabase
+  *   .from('characters')
+  *   .select('name')
+  * ```
+  *
+  * @exampleSql Selecting specific columns
+  * ```sql
+  * create table
+  *   characters (id int8 primary key, name text);
+  *
+  * insert into
+  *   characters (id, name)
+  * values
+  *   (1, 'Frodo'),
+  *   (2, 'Harry'),
+  *   (3, 'Katniss');
+  * ```
+  *
+  * @exampleResponse Selecting specific columns
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "name": "Frodo"
+  *     },
+  *     {
+  *       "name": "Harry"
+  *     },
+  *     {
+  *       "name": "Katniss"
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Query referenced tables
+  * If your database has foreign key relationships, you can query related tables too.
+  *
+  * @example Query referenced tables
+  * ```js
+  * const { data, error } = await supabase
+  *   .from('orchestral_sections')
+  *   .select(`
+  *     name,
+  *     instruments (
+  *       name
+  *     )
+  *   `)
+  * ```
+  *
+  * @exampleSql Query referenced tables
+  * ```sql
+  * create table
+  *   orchestral_sections (id int8 primary key, name text);
+  * create table
+  *   instruments (
+  *     id int8 primary key,
+  *     section_id int8 not null references orchestral_sections,
+  *     name text
+  *   );
+  *
+  * insert into
+  *   orchestral_sections (id, name)
+  * values
+  *   (1, 'strings'),
+  *   (2, 'woodwinds');
+  * insert into
+  *   instruments (id, section_id, name)
+  * values
+  *   (1, 2, 'flute'),
+  *   (2, 1, 'violin');
+  * ```
+  *
+  * @exampleResponse Query referenced tables
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "name": "strings",
+  *       "instruments": [
+  *         {
+  *           "name": "violin"
+  *         }
+  *       ]
+  *     },
+  *     {
+  *       "name": "woodwinds",
+  *       "instruments": [
+  *         {
+  *           "name": "flute"
+  *         }
+  *       ]
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Query referenced tables with spaces in their names
+  * If your table name contains spaces, you must use double quotes in the `select` statement to reference the table.
+  *
+  * @example Query referenced tables with spaces in their names
+  * ```js
+  * const { data, error } = await supabase
+  *   .from('orchestral sections')
+  *   .select(`
+  *     name,
+  *     "musical instruments" (
+  *       name
+  *     )
+  *   `)
+  * ```
+  *
+  * @exampleSql Query referenced tables with spaces in their names
+  * ```sql
+  * create table
+  *   "orchestral sections" (id int8 primary key, name text);
+  * create table
+  *   "musical instruments" (
+  *     id int8 primary key,
+  *     section_id int8 not null references "orchestral sections",
+  *     name text
+  *   );
+  *
+  * insert into
+  *   "orchestral sections" (id, name)
+  * values
+  *   (1, 'strings'),
+  *   (2, 'woodwinds');
+  * insert into
+  *   "musical instruments" (id, section_id, name)
+  * values
+  *   (1, 2, 'flute'),
+  *   (2, 1, 'violin');
+  * ```
+  *
+  * @exampleResponse Query referenced tables with spaces in their names
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "name": "strings",
+  *       "musical instruments": [
+  *         {
+  *           "name": "violin"
+  *         }
+  *       ]
+  *     },
+  *     {
+  *       "name": "woodwinds",
+  *       "musical instruments": [
+  *         {
+  *           "name": "flute"
+  *         }
+  *       ]
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Query referenced tables through a join table
+  * If you're in a situation where your tables are **NOT** directly
+  * related, but instead are joined by a _join table_, you can still use
+  * the `select()` method to query the related data. The join table needs
+  * to have the foreign keys as part of its composite primary key.
+  *
+  * @example Query referenced tables through a join table
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('users')
+  *   .select(`
+  *     name,
+  *     teams (
+  *       name
+  *     )
+  *   `)
+  *   
+  * ```
+  *
+  * @exampleSql Query referenced tables through a join table
+  * ```sql
+  * create table
+  *   users (
+  *     id int8 primary key,
+  *     name text
+  *   );
+  * create table
+  *   teams (
+  *     id int8 primary key,
+  *     name text
+  *   );
+  * -- join table
+  * create table
+  *   users_teams (
+  *     user_id int8 not null references users,
+  *     team_id int8 not null references teams,
+  *     -- both foreign keys must be part of a composite primary key
+  *     primary key (user_id, team_id)
+  *   );
+  *
+  * insert into
+  *   users (id, name)
+  * values
+  *   (1, 'Kiran'),
+  *   (2, 'Evan');
+  * insert into
+  *   teams (id, name)
+  * values
+  *   (1, 'Green'),
+  *   (2, 'Blue');
+  * insert into
+  *   users_teams (user_id, team_id)
+  * values
+  *   (1, 1),
+  *   (1, 2),
+  *   (2, 2);
+  * ```
+  *
+  * @exampleResponse Query referenced tables through a join table
+  * ```json
+  *   {
+  *     "data": [
+  *       {
+  *         "name": "Kiran",
+  *         "teams": [
+  *           {
+  *             "name": "Green"
+  *           },
+  *           {
+  *             "name": "Blue"
+  *           }
+  *         ]
+  *       },
+  *       {
+  *         "name": "Evan",
+  *         "teams": [
+  *           {
+  *             "name": "Blue"
+  *           }
+  *         ]
+  *       }
+  *     ],
+  *     "status": 200,
+  *     "statusText": "OK"
+  *   }
+  *   
+  * ```
+  *
+  * @exampleDescription Query the same referenced table multiple times
+  * If you need to query the same referenced table twice, use the name of the
+  * joined column to identify which join to use. You can also give each
+  * column an alias.
+  *
+  * @example Query the same referenced table multiple times
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('messages')
+  *   .select(`
+  *     content,
+  *     from:sender_id(name),
+  *     to:receiver_id(name)
+  *   `)
+  *
+  * // To infer types, use the name of the table (in this case `users`) and
+  * // the name of the foreign key constraint.
+  * const { data, error } = await supabase
+  *   .from('messages')
+  *   .select(`
+  *     content,
+  *     from:users!messages_sender_id_fkey(name),
+  *     to:users!messages_receiver_id_fkey(name)
+  *   `)
+  * ```
+  *
+  * @exampleSql Query the same referenced table multiple times
+  * ```sql
+  *  create table
+  *  users (id int8 primary key, name text);
+  *
+  *  create table
+  *    messages (
+  *      sender_id int8 not null references users,
+  *      receiver_id int8 not null references users,
+  *      content text
+  *    );
+  *
+  *  insert into
+  *    users (id, name)
+  *  values
+  *    (1, 'Kiran'),
+  *    (2, 'Evan');
+  *
+  *  insert into
+  *    messages (sender_id, receiver_id, content)
+  *  values
+  *    (1, 2, '👋');
+  *  ```
+  * ```
+  *
+  * @exampleResponse Query the same referenced table multiple times
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "content": "👋",
+  *       "from": {
+  *         "name": "Kiran"
+  *       },
+  *       "to": {
+  *         "name": "Evan"
+  *       }
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Query nested foreign tables through a join table
+  * You can use the result of a joined table to gather data in
+  * another foreign table. With multiple references to the same foreign
+  * table you must specify the column on which to conduct the join.
+  *
+  * @example Query nested foreign tables through a join table
+  * ```ts
+  *   const { data, error } = await supabase
+  *     .from('games')
+  *     .select(`
+  *       game_id:id,
+  *       away_team:teams!games_away_team_fkey (
+  *         users (
+  *           id,
+  *           name
+  *         )
+  *       )
+  *     `)
+  *   
+  * ```
+  *
+  * @exampleSql Query nested foreign tables through a join table
+  * ```sql
+  * ```sql
+  * create table
+  *   users (
+  *     id int8 primary key,
+  *     name text
+  *   );
+  * create table
+  *   teams (
+  *     id int8 primary key,
+  *     name text
+  *   );
+  * -- join table
+  * create table
+  *   users_teams (
+  *     user_id int8 not null references users,
+  *     team_id int8 not null references teams,
+  *
+  *     primary key (user_id, team_id)
+  *   );
+  * create table
+  *   games (
+  *     id int8 primary key,
+  *     home_team int8 not null references teams,
+  *     away_team int8 not null references teams,
+  *     name text
+  *   );
+  *
+  * insert into users (id, name)
+  * values
+  *   (1, 'Kiran'),
+  *   (2, 'Evan');
+  * insert into
+  *   teams (id, name)
+  * values
+  *   (1, 'Green'),
+  *   (2, 'Blue');
+  * insert into
+  *   users_teams (user_id, team_id)
+  * values
+  *   (1, 1),
+  *   (1, 2),
+  *   (2, 2);
+  * insert into
+  *   games (id, home_team, away_team, name)
+  * values
+  *   (1, 1, 2, 'Green vs Blue'),
+  *   (2, 2, 1, 'Blue vs Green');
+  * ```
+  *
+  * @exampleResponse Query nested foreign tables through a join table
+  * ```json
+  *   {
+  *     "data": [
+  *       {
+  *         "game_id": 1,
+  *         "away_team": {
+  *           "users": [
+  *             {
+  *               "id": 1,
+  *               "name": "Kiran"
+  *             },
+  *             {
+  *               "id": 2,
+  *               "name": "Evan"
+  *             }
+  *           ]
+  *         }
+  *       },
+  *       {
+  *         "game_id": 2,
+  *         "away_team": {
+  *           "users": [
+  *             {
+  *               "id": 1,
+  *               "name": "Kiran"
+  *             }
+  *           ]
+  *         }
+  *       }
+  *     ],
+  *     "status": 200,
+  *     "statusText": "OK"
+  *   }
+  *   
+  * ```
+  *
+  * @exampleDescription Filtering through referenced tables
+  * If the filter on a referenced table's column is not satisfied, the referenced
+  * table returns `[]` or `null` but the parent table is not filtered out.
+  * If you want to filter out the parent table rows, use the `!inner` hint
+  *
+  * @example Filtering through referenced tables
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('instruments')
+  *   .select('name, orchestral_sections(*)')
+  *   .eq('orchestral_sections.name', 'percussion')
+  * ```
+  *
+  * @exampleSql Filtering through referenced tables
+  * ```sql
+  * create table
+  *   orchestral_sections (id int8 primary key, name text);
+  * create table
+  *   instruments (
+  *     id int8 primary key,
+  *     section_id int8 not null references orchestral_sections,
+  *     name text
+  *   );
+  *
+  * insert into
+  *   orchestral_sections (id, name)
+  * values
+  *   (1, 'strings'),
+  *   (2, 'woodwinds');
+  * insert into
+  *   instruments (id, section_id, name)
+  * values
+  *   (1, 2, 'flute'),
+  *   (2, 1, 'violin');
+  * ```
+  *
+  * @exampleResponse Filtering through referenced tables
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "name": "flute",
+  *       "orchestral_sections": null
+  *     },
+  *     {
+  *       "name": "violin",
+  *       "orchestral_sections": null
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Querying referenced table with count
+  * You can get the number of rows in a related table by using the
+  * **count** property.
+  *
+  * @example Querying referenced table with count
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('orchestral_sections')
+  *   .select(`*, instruments(count)`)
+  * ```
+  *
+  * @exampleSql Querying referenced table with count
+  * ```sql
+  * create table orchestral_sections (
+  *   "id" "uuid" primary key default "extensions"."uuid_generate_v4"() not null,
+  *   "name" text
+  * );
+  *
+  * create table characters (
+  *   "id" "uuid" primary key default "extensions"."uuid_generate_v4"() not null,
+  *   "name" text,
+  *   "section_id" "uuid" references public.orchestral_sections on delete cascade
+  * );
+  *
+  * with section as (
+  *   insert into orchestral_sections (name)
+  *   values ('strings') returning id
+  * )
+  * insert into instruments (name, section_id) values
+  * ('violin', (select id from section)),
+  * ('viola', (select id from section)),
+  * ('cello', (select id from section)),
+  * ('double bass', (select id from section));
+  * ```
+  *
+  * @exampleResponse Querying referenced table with count
+  * ```json
+  * [
+  *   {
+  *     "id": "693694e7-d993-4360-a6d7-6294e325d9b6",
+  *     "name": "strings",
+  *     "instruments": [
+  *       {
+  *         "count": 4
+  *       }
+  *     ]
+  *   }
+  * ]
+  * ```
+  *
+  * @exampleDescription Querying with count option
+  * You can get the number of rows by using the
+  * [count](/docs/reference/javascript/select#parameters) option.
+  *
+  * @example Querying with count option
+  * ```ts
+  * const { count, error } = await supabase
+  *   .from('characters')
+  *   .select('*', { count: 'exact', head: true })
+  * ```
+  *
+  * @exampleSql Querying with count option
+  * ```sql
+  * create table
+  *   characters (id int8 primary key, name text);
+  *
+  * insert into
+  *   characters (id, name)
+  * values
+  *   (1, 'Luke'),
+  *   (2, 'Leia'),
+  *   (3, 'Han');
+  * ```
+  *
+  * @exampleResponse Querying with count option
+  * ```json
+  * {
+  *   "count": 3,
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Querying JSON data
+  * You can select and filter data inside of
+  * [JSON](/docs/guides/database/json) columns. Postgres offers some
+  * [operators](/docs/guides/database/json#query-the-jsonb-data) for
+  * querying JSON data.
+  *
+  * @example Querying JSON data
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('users')
+  *   .select(`
+  *     id, name,
+  *     address->city
+  *   `)
+  * ```
+  *
+  * @exampleSql Querying JSON data
+  * ```sql
+  * create table
+  *   users (
+  *     id int8 primary key,
+  *     name text,
+  *     address jsonb
+  *   );
+  *
+  * insert into
+  *   users (id, name, address)
+  * values
+  *   (1, 'Frodo', '{"city":"Hobbiton"}');
+  * ```
+  *
+  * @exampleResponse Querying JSON data
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "Frodo",
+  *       "city": "Hobbiton"
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Querying referenced table with inner join
+  * If you don't want to return the referenced table contents, you can leave the parenthesis empty.
+  * Like `.select('name, orchestral_sections!inner()')`.
+  *
+  * @example Querying referenced table with inner join
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('instruments')
+  *   .select('name, orchestral_sections!inner(name)')
+  *   .eq('orchestral_sections.name', 'woodwinds')
+  *   .limit(1)
+  * ```
+  *
+  * @exampleSql Querying referenced table with inner join
+  * ```sql
+  * create table orchestral_sections (
+  *   "id" "uuid" primary key default "extensions"."uuid_generate_v4"() not null,
+  *   "name" text
+  * );
+  *
+  * create table instruments (
+  *   "id" "uuid" primary key default "extensions"."uuid_generate_v4"() not null,
+  *   "name" text,
+  *   "section_id" "uuid" references public.orchestral_sections on delete cascade
+  * );
+  *
+  * with section as (
+  *   insert into orchestral_sections (name)
+  *   values ('woodwinds') returning id
+  * )
+  * insert into instruments (name, section_id) values
+  * ('flute', (select id from section)),
+  * ('clarinet', (select id from section)),
+  * ('bassoon', (select id from section)),
+  * ('piccolo', (select id from section));
+  * ```
+  *
+  * @exampleResponse Querying referenced table with inner join
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "name": "flute",
+  *       "orchestral_sections": {"name": "woodwinds"}
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Switching schemas per query
+  * In addition to setting the schema during initialization, you can also switch schemas on a per-query basis.
+  * Make sure you've set up your [database privileges and API settings](/docs/guides/api/using-custom-schemas).
+  *
+  * @example Switching schemas per query
+  * ```ts
+  * const { data, error } = await supabase
+  *   .schema('myschema')
+  *   .from('mytable')
+  *   .select()
+  * ```
+  *
+  * @exampleSql Switching schemas per query
+  * ```sql
+  * create schema myschema;
+  *
+  * create table myschema.mytable (
+  *   id uuid primary key default gen_random_uuid(),
+  *   data text
+  * );
+  *
+  * insert into myschema.mytable (data) values ('mydata');
+  * ```
+  *
+  * @exampleResponse Switching schemas per query
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": "4162e008-27b0-4c0f-82dc-ccaeee9a624d",
+  *       "data": "mydata"
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
   */
   select(columns, options) {
     const { head: head2 = false, count } = options !== null && options !== void 0 ? options : {};
@@ -22787,6 +23966,91 @@ var PostgrestQueryBuilder = class {
   * @param options.defaultToNull - Make missing fields default to `null`.
   * Otherwise, use the default value for the column. Only applies for bulk
   * inserts.
+  *
+  * @category Database
+  *
+  * @example Create a record
+  * ```ts
+  * const { error } = await supabase
+  *   .from('countries')
+  *   .insert({ id: 1, name: 'Mordor' })
+  * ```
+  *
+  * @exampleSql Create a record
+  * ```sql
+  * create table
+  *   countries (id int8 primary key, name text);
+  * ```
+  *
+  * @exampleResponse Create a record
+  * ```json
+  * {
+  *   "status": 201,
+  *   "statusText": "Created"
+  * }
+  * ```
+  *
+  * @example Create a record and return it
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('countries')
+  *   .insert({ id: 1, name: 'Mordor' })
+  *   .select()
+  * ```
+  *
+  * @exampleSql Create a record and return it
+  * ```sql
+  * create table
+  *   countries (id int8 primary key, name text);
+  * ```
+  *
+  * @exampleResponse Create a record and return it
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "Mordor"
+  *     }
+  *   ],
+  *   "status": 201,
+  *   "statusText": "Created"
+  * }
+  * ```
+  *
+  * @exampleDescription Bulk create
+  * A bulk create operation is handled in a single transaction.
+  * If any of the inserts fail, none of the rows are inserted.
+  *
+  * @example Bulk create
+  * ```ts
+  * const { error } = await supabase
+  *   .from('countries')
+  *   .insert([
+  *     { id: 1, name: 'Mordor' },
+  *     { id: 1, name: 'The Shire' },
+  *   ])
+  * ```
+  *
+  * @exampleSql Bulk create
+  * ```sql
+  * create table
+  *   countries (id int8 primary key, name text);
+  * ```
+  *
+  * @exampleResponse Bulk create
+  * ```json
+  * {
+  *   "error": {
+  *     "code": "23505",
+  *     "details": "Key (id)=(1) already exists.",
+  *     "hint": null,
+  *     "message": "duplicate key value violates unique constraint \"countries_pkey\""
+  *   },
+  *   "status": 409,
+  *   "statusText": "Conflict"
+  * }
+  * ```
   */
   insert(values, { count, defaultToNull = true } = {}) {
     var _this$fetch;
@@ -22895,6 +24159,129 @@ var PostgrestQueryBuilder = class {
   * //   error: null
   * // }
   * ```
+  *
+  * @category Database
+  *
+  * @remarks
+  * - Primary keys must be included in `values` to use upsert.
+  *
+  * @example Upsert your data
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('instruments')
+  *   .upsert({ id: 1, name: 'piano' })
+  *   .select()
+  * ```
+  *
+  * @exampleSql Upsert your data
+  * ```sql
+  * create table
+  *   instruments (id int8 primary key, name text);
+  *
+  * insert into
+  *   instruments (id, name)
+  * values
+  *   (1, 'harpsichord');
+  * ```
+  *
+  * @exampleResponse Upsert your data
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "piano"
+  *     }
+  *   ],
+  *   "status": 201,
+  *   "statusText": "Created"
+  * }
+  * ```
+  *
+  * @example Bulk Upsert your data
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('instruments')
+  *   .upsert([
+  *     { id: 1, name: 'piano' },
+  *     { id: 2, name: 'harp' },
+  *   ])
+  *   .select()
+  * ```
+  *
+  * @exampleSql Bulk Upsert your data
+  * ```sql
+  * create table
+  *   instruments (id int8 primary key, name text);
+  *
+  * insert into
+  *   instruments (id, name)
+  * values
+  *   (1, 'harpsichord');
+  * ```
+  *
+  * @exampleResponse Bulk Upsert your data
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "piano"
+  *     },
+  *     {
+  *       "id": 2,
+  *       "name": "harp"
+  *     }
+  *   ],
+  *   "status": 201,
+  *   "statusText": "Created"
+  * }
+  * ```
+  *
+  * @exampleDescription Upserting into tables with constraints
+  * In the following query, `upsert()` implicitly uses the `id`
+  * (primary key) column to determine conflicts. If there is no existing
+  * row with the same `id`, `upsert()` inserts a new row, which
+  * will fail in this case as there is already a row with `handle` `"saoirse"`.
+  * Using the `onConflict` option, you can instruct `upsert()` to use
+  * another column with a unique constraint to determine conflicts.
+  *
+  * @example Upserting into tables with constraints
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('users')
+  *   .upsert({ id: 42, handle: 'saoirse', display_name: 'Saoirse' })
+  *   .select()
+  * ```
+  *
+  * @exampleSql Upserting into tables with constraints
+  * ```sql
+  * create table
+  *   users (
+  *     id int8 generated by default as identity primary key,
+  *     handle text not null unique,
+  *     display_name text
+  *   );
+  *
+  * insert into
+  *   users (id, handle, display_name)
+  * values
+  *   (1, 'saoirse', null);
+  * ```
+  *
+  * @exampleResponse Upserting into tables with constraints
+  * ```json
+  * {
+  *   "error": {
+  *     "code": "23505",
+  *     "details": "Key (handle)=(saoirse) already exists.",
+  *     "hint": null,
+  *     "message": "duplicate key value violates unique constraint \"users_handle_key\""
+  *   },
+  *   "status": 409,
+  *   "statusText": "Conflict"
+  * }
+  * ```
   */
   upsert(values, { onConflict, ignoreDuplicates = false, count, defaultToNull = true } = {}) {
     var _this$fetch2;
@@ -22941,6 +24328,124 @@ var PostgrestQueryBuilder = class {
   *
   * `"estimated"`: Uses exact count for low numbers and planned count for high
   * numbers.
+  *
+  * @category Database
+  *
+  * @remarks
+  * - `update()` should always be combined with [Filters](/docs/reference/javascript/using-filters) to target the item(s) you wish to update.
+  *
+  * @example Updating your data
+  * ```ts
+  * const { error } = await supabase
+  *   .from('instruments')
+  *   .update({ name: 'piano' })
+  *   .eq('id', 1)
+  * ```
+  *
+  * @exampleSql Updating your data
+  * ```sql
+  * create table
+  *   instruments (id int8 primary key, name text);
+  *
+  * insert into
+  *   instruments (id, name)
+  * values
+  *   (1, 'harpsichord');
+  * ```
+  *
+  * @exampleResponse Updating your data
+  * ```json
+  * {
+  *   "status": 204,
+  *   "statusText": "No Content"
+  * }
+  * ```
+  *
+  * @example Update a record and return it
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('instruments')
+  *   .update({ name: 'piano' })
+  *   .eq('id', 1)
+  *   .select()
+  * ```
+  *
+  * @exampleSql Update a record and return it
+  * ```sql
+  * create table
+  *   instruments (id int8 primary key, name text);
+  *
+  * insert into
+  *   instruments (id, name)
+  * values
+  *   (1, 'harpsichord');
+  * ```
+  *
+  * @exampleResponse Update a record and return it
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "piano"
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
+  *
+  * @exampleDescription Updating JSON data
+  * Postgres offers some
+  * [operators](/docs/guides/database/json#query-the-jsonb-data) for
+  * working with JSON data. Currently, it is only possible to update the entire JSON document.
+  *
+  * @example Updating JSON data
+  * ```ts
+  * const { data, error } = await supabase
+  *   .from('users')
+  *   .update({
+  *     address: {
+  *       street: 'Melrose Place',
+  *       postcode: 90210
+  *     }
+  *   })
+  *   .eq('address->postcode', 90210)
+  *   .select()
+  * ```
+  *
+  * @exampleSql Updating JSON data
+  * ```sql
+  * create table
+  *   users (
+  *     id int8 primary key,
+  *     name text,
+  *     address jsonb
+  *   );
+  *
+  * insert into
+  *   users (id, name, address)
+  * values
+  *   (1, 'Michael', '{ "postcode": 90210 }');
+  * ```
+  *
+  * @exampleResponse Updating JSON data
+  * ```json
+  * {
+  *   "data": [
+  *     {
+  *       "id": 1,
+  *       "name": "Michael",
+  *       "address": {
+  *         "street": "Melrose Place",
+  *         "postcode": 90210
+  *       }
+  *     }
+  *   ],
+  *   "status": 200,
+  *   "statusText": "OK"
+  * }
+  * ```
   */
   update(values, { count } = {}) {
     var _this$fetch3;
@@ -23188,10 +24693,10 @@ var PostgrestClient = class PostgrestClient2 {
   }
 };
 
-// node_modules/.pnpm/@supabase+supabase-js@2.95.3/node_modules/@supabase/supabase-js/dist/index.mjs
+// node_modules/@supabase/supabase-js/dist/index.mjs
 var import_realtime_js = __toESM(require_main2(), 1);
 
-// node_modules/.pnpm/iceberg-js@0.8.1/node_modules/iceberg-js/dist/index.mjs
+// node_modules/iceberg-js/dist/index.mjs
 var IcebergError = class extends Error {
   constructor(message, opts) {
     super(message);
@@ -23724,7 +25229,7 @@ var IcebergRestCatalog = class {
   }
 };
 
-// node_modules/.pnpm/@supabase+storage-js@2.95.3/node_modules/@supabase/storage-js/dist/index.mjs
+// node_modules/@supabase/storage-js/dist/index.mjs
 var StorageError = class extends Error {
   constructor(message, namespace = "storage", status, statusCode) {
     super(message);
@@ -23843,7 +25348,7 @@ var _getErrorMessage = (err) => {
   return err.msg || err.message || err.error_description || (typeof err.error === "string" ? err.error : (_err$error = err.error) === null || _err$error === void 0 ? void 0 : _err$error.message) || JSON.stringify(err);
 };
 var handleError = async (error, reject, options, namespace) => {
-  if (error && typeof error === "object" && "status" in error && "ok" in error && typeof error.status === "number" && !(options === null || options === void 0 ? void 0 : options.noResolveJson)) {
+  if (error && typeof error === "object" && "status" in error && "ok" in error && typeof error.status === "number") {
     const responseError = error;
     const status = responseError.status || 500;
     if (typeof responseError.json === "function") responseError.json().then((err) => {
@@ -23936,6 +25441,18 @@ var BaseApiClient = class {
   */
   throwOnError() {
     this.shouldThrowOnError = true;
+    return this;
+  }
+  /**
+  * Set an HTTP header for the request.
+  * Creates a shallow copy of headers to avoid mutating shared state.
+  *
+  * @param name - Header name
+  * @param value - Header value
+  * @returns this - For method chaining
+  */
+  setHeader(name, value) {
+    this.headers = _objectSpread22(_objectSpread22({}, this.headers), {}, { [name]: value });
     return this;
   }
   /**
@@ -24439,7 +25956,8 @@ var StorageFileApi = class extends BaseApiClient {
       let _path = _this8._getFinalPath(path);
       let data = await post(_this8.fetch, `${_this8.url}/object/sign/${_path}`, _objectSpread22({ expiresIn }, (options === null || options === void 0 ? void 0 : options.transform) ? { transform: options.transform } : {}), { headers: _this8.headers });
       const downloadQueryParam = (options === null || options === void 0 ? void 0 : options.download) ? `&download=${options.download === true ? "" : options.download}` : "";
-      return { signedUrl: encodeURI(`${_this8.url}${data.signedURL}${downloadQueryParam}`) };
+      const returnedPath = (options === null || options === void 0 ? void 0 : options.transform) && data.signedURL.includes("/object/sign/") ? data.signedURL.replace("/object/sign/", "/render/image/sign/") : data.signedURL;
+      return { signedUrl: encodeURI(`${_this8.url}${returnedPath}${downloadQueryParam}`) };
     });
   }
   /**
@@ -24563,6 +26081,9 @@ var StorageFileApi = class extends BaseApiClient {
   /**
   * Retrieves the details of an existing file.
   *
+  * Returns detailed file metadata including size, content type, and timestamps.
+  * Note: The API returns `last_modified` field, not `updated_at`.
+  *
   * @category File Buckets
   * @param path The file path, including the file name. For example `folder/image.png`.
   * @returns Promise with response containing file metadata or error
@@ -24573,6 +26094,11 @@ var StorageFileApi = class extends BaseApiClient {
   *   .storage
   *   .from('avatars')
   *   .info('folder/avatar1.png')
+  *
+  * if (data) {
+  *   console.log('Last modified:', data.lastModified)
+  *   console.log('Size:', data.size)
+  * }
   * ```
   */
   async info(path) {
@@ -24608,9 +26134,10 @@ var StorageFileApi = class extends BaseApiClient {
       };
     } catch (error) {
       if (_this11.shouldThrowOnError) throw error;
-      if (isStorageError(error) && error instanceof StorageUnknownError) {
-        const originalError = error.originalError;
-        if ([400, 404].includes(originalError === null || originalError === void 0 ? void 0 : originalError.status)) return {
+      if (isStorageError(error)) {
+        var _error$originalError;
+        const status = error instanceof StorageApiError ? error.status : error instanceof StorageUnknownError ? (_error$originalError = error.originalError) === null || _error$originalError === void 0 ? void 0 : _error$originalError.status : void 0;
+        if (status !== void 0 && [400, 404].includes(status)) return {
           data: false,
           error
         };
@@ -24683,6 +26210,9 @@ var StorageFileApi = class extends BaseApiClient {
   /**
   * Deletes files within the same bucket
   *
+  * Returns an array of FileObject entries for the deleted files. Note that deprecated
+  * fields like `bucket_id` may or may not be present in the response - do not rely on them.
+  *
   * @category File Buckets
   * @param paths An array of files to delete, including the path and file name. For example [`'folder/image.png'`].
   * @returns Promise with response containing array of deleted file objects or error
@@ -24721,11 +26251,16 @@ var StorageFileApi = class extends BaseApiClient {
   /**
   * Lists all the files and folders within a path of the bucket.
   *
+  * **Important:** For folder entries, fields like `id`, `updated_at`, `created_at`,
+  * `last_accessed_at`, and `metadata` will be `null`. Only files have these fields populated.
+  * Additionally, deprecated fields like `bucket_id`, `owner`, and `buckets` are NOT returned
+  * by this method.
+  *
   * @category File Buckets
   * @param path The folder path.
   * @param options Search options including limit (defaults to 100), offset, sortBy, and search
   * @param parameters Optional fetch parameters including signal for cancellation
-  * @returns Promise with response containing array of files or error
+  * @returns Promise with response containing array of files/folders or error
   *
   * @example List files in a bucket
   * ```js
@@ -24737,9 +26272,20 @@ var StorageFileApi = class extends BaseApiClient {
   *     offset: 0,
   *     sortBy: { column: 'name', order: 'asc' },
   *   })
+  *
+  * // Handle files vs folders
+  * data?.forEach(item => {
+  *   if (item.id !== null) {
+  *     // It's a file
+  *     console.log('File:', item.name, 'Size:', item.metadata?.size)
+  *   } else {
+  *     // It's a folder
+  *     console.log('Folder:', item.name)
+  *   }
+  * })
   * ```
   *
-  * Response:
+  * Response (file entry):
   * ```json
   * {
   *   "data": [
@@ -24785,11 +26331,50 @@ var StorageFileApi = class extends BaseApiClient {
     });
   }
   /**
+  * Lists all the files and folders within a bucket using the V2 API with pagination support.
+  *
+  * **Important:** Folder entries in the `folders` array only contain `name` and optionally `key` —
+  * they have no `id`, timestamps, or `metadata` fields. Full file metadata is only available
+  * on entries in the `objects` array.
+  *
   * @experimental this method signature might change in the future
   *
   * @category File Buckets
-  * @param options search options
-  * @param parameters
+  * @param options Search options including prefix, cursor for pagination, limit, with_delimiter
+  * @param parameters Optional fetch parameters including signal for cancellation
+  * @returns Promise with response containing folders/objects arrays with pagination info or error
+  *
+  * @example List files with pagination
+  * ```js
+  * const { data, error } = await supabase
+  *   .storage
+  *   .from('avatars')
+  *   .listV2({
+  *     prefix: 'folder/',
+  *     limit: 100,
+  *   })
+  *
+  * // Handle pagination
+  * if (data?.hasNext) {
+  *   const nextPage = await supabase
+  *     .storage
+  *     .from('avatars')
+  *     .listV2({
+  *       prefix: 'folder/',
+  *       cursor: data.nextCursor,
+  *     })
+  * }
+  *
+  * // Handle files vs folders
+  * data?.objects.forEach(file => {
+  *   if (file.id !== null) {
+  *     console.log('File:', file.name, 'Size:', file.metadata?.size)
+  *   }
+  * })
+  * data?.folders.forEach(folder => {
+  *   console.log('Folder:', folder.name)
+  * })
+  * ```
   */
   async listV2(options, parameters) {
     var _this14 = this;
@@ -24821,7 +26406,7 @@ var StorageFileApi = class extends BaseApiClient {
     return params.join("&");
   }
 };
-var version = "2.95.3";
+var version = "2.99.1";
 var DEFAULT_HEADERS = { "X-Client-Info": `storage-js/${version}` };
 var StorageBucketApi = class extends BaseApiClient {
   constructor(url, headers = {}, fetch$1, opts) {
@@ -26065,11 +27650,11 @@ var StorageClient = class extends StorageBucketApi {
   }
 };
 
-// node_modules/.pnpm/@supabase+supabase-js@2.95.3/node_modules/@supabase/supabase-js/dist/index.mjs
+// node_modules/@supabase/supabase-js/dist/index.mjs
 var import_auth_js = __toESM(require_main3(), 1);
 __reExport(dist_exports, __toESM(require_main2(), 1));
 __reExport(dist_exports, __toESM(require_main3(), 1));
-var version2 = "2.95.3";
+var version2 = "2.99.1";
 var JS_ENV = "";
 if (typeof Deno !== "undefined") JS_ENV = "deno";
 else if (typeof document !== "undefined") JS_ENV = "web";
@@ -26192,6 +27777,9 @@ var SupabaseAuthClient = class extends import_auth_js.AuthClient {
 var SupabaseClient = class {
   /**
   * Create a new client for use in the browser.
+  *
+  * @category Initializing
+  *
   * @param supabaseUrl The unique Supabase URL which is supplied when you create a new project in your project dashboard.
   * @param supabaseKey The unique Supabase Key which is supplied when you create a new project in your project dashboard.
   * @param options.db.schema You can switch in between schemas. The schema needs to be on the list of exposed schemas inside Supabase.
@@ -26202,11 +27790,175 @@ var SupabaseClient = class {
   * @param options.storage Options passed along to the storage-js constructor.
   * @param options.global.fetch A custom fetch implementation.
   * @param options.global.headers Any additional headers to send with each network request.
-  * @example
+  *
+  * @example Creating a client
+  * ```js
+  * import { createClient } from '@supabase/supabase-js'
+  *
+  * // Create a single supabase client for interacting with your database
+  * const supabase = createClient('https://xyzcompany.supabase.co', 'publishable-or-anon-key')
+  * ```
+  *
+  * @example With a custom domain
+  * ```js
+  * import { createClient } from '@supabase/supabase-js'
+  *
+  * // Use a custom domain as the supabase URL
+  * const supabase = createClient('https://my-custom-domain.com', 'publishable-or-anon-key')
+  * ```
+  *
+  * @example With additional parameters
+  * ```js
+  * import { createClient } from '@supabase/supabase-js'
+  *
+  * const options = {
+  *   db: {
+  *     schema: 'public',
+  *   },
+  *   auth: {
+  *     autoRefreshToken: true,
+  *     persistSession: true,
+  *     detectSessionInUrl: true
+  *   },
+  *   global: {
+  *     headers: { 'x-my-custom-header': 'my-app-name' },
+  *   },
+  * }
+  * const supabase = createClient("https://xyzcompany.supabase.co", "publishable-or-anon-key", options)
+  * ```
+  *
+  * @exampleDescription With custom schemas
+  * By default the API server points to the `public` schema. You can enable other database schemas within the Dashboard.
+  * Go to [Settings > API > Exposed schemas](/dashboard/project/_/settings/api) and add the schema which you want to expose to the API.
+  *
+  * Note: each client connection can only access a single schema, so the code above can access the `other_schema` schema but cannot access the `public` schema.
+  *
+  * @example With custom schemas
+  * ```js
+  * import { createClient } from '@supabase/supabase-js'
+  *
+  * const supabase = createClient('https://xyzcompany.supabase.co', 'publishable-or-anon-key', {
+  *   // Provide a custom schema. Defaults to "public".
+  *   db: { schema: 'other_schema' }
+  * })
+  * ```
+  *
+  * @exampleDescription Custom fetch implementation
+  * `supabase-js` uses the [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) library to make HTTP requests,
+  * but an alternative `fetch` implementation can be provided as an option.
+  * This is most useful in environments where `cross-fetch` is not compatible (for instance Cloudflare Workers).
+  *
+  * @example Custom fetch implementation
+  * ```js
+  * import { createClient } from '@supabase/supabase-js'
+  *
+  * const supabase = createClient('https://xyzcompany.supabase.co', 'publishable-or-anon-key', {
+  *   global: { fetch: fetch.bind(globalThis) }
+  * })
+  * ```
+  *
+  * @exampleDescription React Native options with AsyncStorage
+  * For React Native we recommend using `AsyncStorage` as the storage implementation for Supabase Auth.
+  *
+  * @example React Native options with AsyncStorage
+  * ```js
+  * import 'react-native-url-polyfill/auto'
+  * import { createClient } from '@supabase/supabase-js'
+  * import AsyncStorage from "@react-native-async-storage/async-storage";
+  *
+  * const supabase = createClient("https://xyzcompany.supabase.co", "publishable-or-anon-key", {
+  *   auth: {
+  *     storage: AsyncStorage,
+  *     autoRefreshToken: true,
+  *     persistSession: true,
+  *     detectSessionInUrl: false,
+  *   },
+  * });
+  * ```
+  *
+  * @exampleDescription React Native options with Expo SecureStore
+  * If you wish to encrypt the user's session information, you can use `aes-js` and store the encryption key in Expo SecureStore.
+  * The `aes-js` library, a reputable JavaScript-only implementation of the AES encryption algorithm in CTR mode.
+  * A new 256-bit encryption key is generated using the `react-native-get-random-values` library.
+  * This key is stored inside Expo's SecureStore, while the value is encrypted and placed inside AsyncStorage.
+  *
+  * Please make sure that:
+  * - You keep the `expo-secure-store`, `aes-js` and `react-native-get-random-values` libraries up-to-date.
+  * - Choose the correct [`SecureStoreOptions`](https://docs.expo.dev/versions/latest/sdk/securestore/#securestoreoptions) for your app's needs.
+  *   E.g. [`SecureStore.WHEN_UNLOCKED`](https://docs.expo.dev/versions/latest/sdk/securestore/#securestorewhen_unlocked) regulates when the data can be accessed.
+  * - Carefully consider optimizations or other modifications to the above example, as those can lead to introducing subtle security vulnerabilities.
+  *
+  * @example React Native options with Expo SecureStore
+  * ```ts
+  * import 'react-native-url-polyfill/auto'
+  * import { createClient } from '@supabase/supabase-js'
+  * import AsyncStorage from '@react-native-async-storage/async-storage';
+  * import * as SecureStore from 'expo-secure-store';
+  * import * as aesjs from 'aes-js';
+  * import 'react-native-get-random-values';
+  *
+  * // As Expo's SecureStore does not support values larger than 2048
+  * // bytes, an AES-256 key is generated and stored in SecureStore, while
+  * // it is used to encrypt/decrypt values stored in AsyncStorage.
+  * class LargeSecureStore {
+  *   private async _encrypt(key: string, value: string) {
+  *     const encryptionKey = crypto.getRandomValues(new Uint8Array(256 / 8));
+  *
+  *     const cipher = new aesjs.ModeOfOperation.ctr(encryptionKey, new aesjs.Counter(1));
+  *     const encryptedBytes = cipher.encrypt(aesjs.utils.utf8.toBytes(value));
+  *
+  *     await SecureStore.setItemAsync(key, aesjs.utils.hex.fromBytes(encryptionKey));
+  *
+  *     return aesjs.utils.hex.fromBytes(encryptedBytes);
+  *   }
+  *
+  *   private async _decrypt(key: string, value: string) {
+  *     const encryptionKeyHex = await SecureStore.getItemAsync(key);
+  *     if (!encryptionKeyHex) {
+  *       return encryptionKeyHex;
+  *     }
+  *
+  *     const cipher = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(encryptionKeyHex), new aesjs.Counter(1));
+  *     const decryptedBytes = cipher.decrypt(aesjs.utils.hex.toBytes(value));
+  *
+  *     return aesjs.utils.utf8.fromBytes(decryptedBytes);
+  *   }
+  *
+  *   async getItem(key: string) {
+  *     const encrypted = await AsyncStorage.getItem(key);
+  *     if (!encrypted) { return encrypted; }
+  *
+  *     return await this._decrypt(key, encrypted);
+  *   }
+  *
+  *   async removeItem(key: string) {
+  *     await AsyncStorage.removeItem(key);
+  *     await SecureStore.deleteItemAsync(key);
+  *   }
+  *
+  *   async setItem(key: string, value: string) {
+  *     const encrypted = await this._encrypt(key, value);
+  *
+  *     await AsyncStorage.setItem(key, encrypted);
+  *   }
+  * }
+  *
+  * const supabase = createClient("https://xyzcompany.supabase.co", "publishable-or-anon-key", {
+  *   auth: {
+  *     storage: new LargeSecureStore(),
+  *     autoRefreshToken: true,
+  *     persistSession: true,
+  *     detectSessionInUrl: false,
+  *   },
+  * });
+  * ```
+  *
+  * @example With a database query
   * ```ts
   * import { createClient } from '@supabase/supabase-js'
   *
   * const supabase = createClient('https://xyzcompany.supabase.co', 'public-anon-key')
+  *
   * const { data } = await supabase.from('profiles').select('*')
   * ```
   */
@@ -26407,7 +28159,7 @@ function shouldShowDeprecationWarning() {
 }
 if (shouldShowDeprecationWarning()) console.warn("\u26A0\uFE0F  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217");
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/decode-strings.js
+// node_modules/postal-mime/src/decode-strings.js
 var textEncoder = new TextEncoder();
 var base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 var base64Lookup = new Uint8Array(256);
@@ -26607,7 +28359,7 @@ function decodeParameterValueContinuations(header) {
   });
 }
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/pass-through-decoder.js
+// node_modules/postal-mime/src/pass-through-decoder.js
 var PassThroughDecoder = class {
   constructor() {
     this.chunks = [];
@@ -26621,7 +28373,7 @@ var PassThroughDecoder = class {
   }
 };
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/base64-decoder.js
+// node_modules/postal-mime/src/base64-decoder.js
 var Base64Decoder = class {
   constructor(opts) {
     opts = opts || {};
@@ -26659,7 +28411,7 @@ var Base64Decoder = class {
   }
 };
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/qp-decoder.js
+// node_modules/postal-mime/src/qp-decoder.js
 var VALID_QP_REGEX = /^=[a-f0-9]{2}$/i;
 var QP_SPLIT_REGEX = /(?==[a-f0-9]{2})/i;
 var SOFT_LINE_BREAK_REGEX = /=\r?\n/g;
@@ -26755,7 +28507,7 @@ var QPDecoder = class {
   }
 };
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/mime-node.js
+// node_modules/postal-mime/src/mime-node.js
 var MimeNode = class {
   constructor(options) {
     this.options = options || {};
@@ -27029,7 +28781,7 @@ var MimeNode = class {
   }
 };
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/html-entities.js
+// node_modules/postal-mime/src/html-entities.js
 var htmlEntities = {
   "&AElig": "\xC6",
   "&AElig;": "\xC6",
@@ -29265,7 +31017,7 @@ var htmlEntities = {
 };
 var html_entities_default = htmlEntities;
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/text-format.js
+// node_modules/postal-mime/src/text-format.js
 function decodeHTMLEntities(str) {
   return str.replace(/&(#\d+|#x[a-f0-9]+|[a-z]+\d*);?/gi, (match, entity) => {
     if (typeof html_entities_default[match] === "string") {
@@ -29486,7 +31238,7 @@ function formatHtmlHeader(message) {
   return template;
 }
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/address-parser.js
+// node_modules/postal-mime/src/address-parser.js
 function _handleAddress(tokens, depth) {
   let isGroup = false;
   let state = "text";
@@ -29772,7 +31524,7 @@ function addressParser(str, options) {
 }
 var address_parser_default = addressParser;
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/base64-encoder.js
+// node_modules/postal-mime/src/base64-encoder.js
 function base64ArrayBuffer(arrayBuffer) {
   var base64 = "";
   var encodings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -29805,7 +31557,7 @@ function base64ArrayBuffer(arrayBuffer) {
   return base64;
 }
 
-// node_modules/.pnpm/postal-mime@2.7.3/node_modules/postal-mime/src/postal-mime.js
+// node_modules/postal-mime/src/postal-mime.js
 var MAX_NESTING_DEPTH = 256;
 var MAX_HEADERS_SIZE = 2 * 1024 * 1024;
 var PostalMime = class _PostalMime {
@@ -30234,9 +31986,9 @@ var PostalMime = class _PostalMime {
   }
 };
 
-// node_modules/.pnpm/resend@6.9.2/node_modules/resend/dist/index.mjs
+// node_modules/resend/dist/index.mjs
 var import_svix = __toESM(require_dist2(), 1);
-var version4 = "6.9.2";
+var version4 = "6.9.3";
 function buildPaginationQuery(options) {
   const searchParams = new URLSearchParams();
   if (options.limit !== void 0) searchParams.set("limit", options.limit.toString());
@@ -31522,8 +33274,9 @@ async function handler(event) {
               console.warn("[splits] Skipping: missing organization_id in metadata");
               break;
             }
-            const { data: orgRow } = await supabase.from("organizations").select("stripe_connect_account_id").eq("id", organizationId2).single();
-            const formOwnerConnectId = connectAccountId ?? orgRow?.stripe_connect_account_id;
+            const { data: orgRow } = await supabase.from("organizations").select("stripe_connect_account_id, name, owner_user_id").eq("id", organizationId2).single();
+            const formOwnerOrg = orgRow;
+            const formOwnerConnectId = connectAccountId ?? formOwnerOrg?.stripe_connect_account_id;
             if (!formOwnerConnectId) {
               console.warn("[splits] Skipping: org has no stripe_connect_account_id", { organizationId: organizationId2 });
               break;
@@ -31579,14 +33332,35 @@ async function handler(event) {
             } else {
               console.warn("[splits] No transfer promises (amounts may be < 1 cent)", { piId: pi.id });
             }
-          }
-          const splitOrgId = metadata.organization_id;
-          if (splitOrgId && pi.id) {
-            const { data: existingDonation } = await supabase.from("donations").select("id").eq("stripe_payment_intent_id", pi.id).maybeSingle();
-            if (!existingDonation) {
-              const donationAmountCents2 = parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+            const peerOrgInfoMap = /* @__PURE__ */ new Map();
+            await Promise.all(
+              stripeSplits.map(async (entry) => {
+                if (!entry.accountId) return;
+                const { data: peerOrg } = await supabase.from("organizations").select("id, name, owner_user_id").eq("stripe_connect_account_id", entry.accountId).maybeSingle();
+                if (peerOrg) peerOrgInfoMap.set(entry.accountId, peerOrg);
+              })
+            );
+            const formOwnerOrgName = formOwnerOrg?.name ?? "Organization";
+            const splitsBreakdown = [
+              { organization_id: organizationId2, organization_name: formOwnerOrgName, percentage: formOwnerPct, amount_cents: Math.round(formOwnerPct / 100 * netAmount) },
+              ...stripeSplits.map((entry) => {
+                const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+                return {
+                  organization_id: peerOrg?.id ?? null,
+                  organization_name: peerOrg?.name ?? `Account ${entry.accountId}`,
+                  percentage: entry.percentage ?? 0,
+                  amount_cents: Math.round((entry.percentage ?? 0) / 100 * netAmount)
+                };
+              })
+            ];
+            const donationAmountCents2 = parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+            let mainDonationId = null;
+            const { data: existingDonation } = await supabase.from("donations").select("id").eq("stripe_payment_intent_id", pi.id).eq("organization_id", organizationId2).maybeSingle();
+            if (existingDonation) {
+              mainDonationId = existingDonation.id;
+            } else {
               const receiptToken2 = randomUUID2();
-              await supabase.from("donations").insert({
+              const { data: mainInserted } = await supabase.from("donations").insert({
                 amount_cents: donationAmountCents2,
                 currency: pi.currency ?? "usd",
                 donor_email: metadata.donor_email || null,
@@ -31595,12 +33369,44 @@ async function handler(event) {
                 stripe_payment_intent_id: pi.id,
                 stripe_charge_id: chargeId,
                 status: "succeeded",
-                organization_id: splitOrgId,
+                organization_id: organizationId2,
                 campaign_id: metadata.campaign_id || null,
                 user_id: metadata.user_id || null,
                 receipt_token: receiptToken2,
-                metadata: { payment_intent: pi.id, split_mode: "stripe_connect" }
-              });
+                metadata: {
+                  payment_intent: pi.id,
+                  split_mode: "stripe_connect",
+                  splits_breakdown: splitsBreakdown
+                }
+              }).select("id").single();
+              mainDonationId = mainInserted?.id ?? null;
+            }
+            for (const entry of stripeSplits) {
+              const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+              if (!peerOrg?.id) continue;
+              const peerAmt = Math.round((entry.percentage ?? 0) / 100 * netAmount);
+              if (peerAmt < 1) continue;
+              const { data: existingPeer } = await supabase.from("donations").select("id").eq("stripe_payment_intent_id", pi.id).eq("organization_id", peerOrg.id).maybeSingle();
+              if (!existingPeer) {
+                await supabase.from("donations").insert({
+                  amount_cents: peerAmt,
+                  currency: pi.currency ?? "usd",
+                  donor_email: metadata.donor_email || null,
+                  donor_name: metadata.donor_name || null,
+                  stripe_payment_intent_id: pi.id,
+                  stripe_charge_id: chargeId,
+                  status: "succeeded",
+                  organization_id: peerOrg.id,
+                  receipt_token: null,
+                  metadata: {
+                    payment_intent: pi.id,
+                    split_mode: "stripe_connect_peer",
+                    parent_donation_id: mainDonationId,
+                    split_percentage: entry.percentage
+                  }
+                });
+                console.log("[splits] Created peer donation for", peerOrg.name, peerAmt, "cents");
+              }
             }
           }
           break;

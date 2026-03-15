@@ -4,6 +4,10 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, DEFAULT_FROM } from "@/lib/email/resend";
 
 const UNSUBSCRIBE_PLACEHOLDER = "{{unsubscribe_url}}";
+const IS_DEV = process.env.NODE_ENV === "development";
+const HAS_RESEND = !!(
+  process.env.RESEND_API_KEY?.trim() || process.env.Resend_API_Key?.trim()
+);
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,11 +54,54 @@ export async function POST(req: NextRequest) {
     const emails = [...new Set(recipients.map((r) => r.email.trim().toLowerCase()))];
 
     if (emails.length === 0) {
-      return NextResponse.json({ error: "No recipients (add contacts with email, or they may have unsubscribed)" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No recipients — add contacts with email addresses, or they may have unsubscribed." },
+        { status: 400 }
+      );
     }
 
+    // ── Dev mode: Resend not configured — log to console and simulate success ──
+    if (IS_DEV && !HAS_RESEND) {
+      console.log("\n╔══════════════════════════════════════════════════════╗");
+      console.log("║  📧  BROADCAST EMAIL (dev preview — not actually sent)  ║");
+      console.log("╠══════════════════════════════════════════════════════╣");
+      console.log(`║  To:      ${emails.length} recipient(s)`);
+      console.log(`║  From:    ${DEFAULT_FROM}`);
+      console.log(`║  Subject: ${subject}`);
+      console.log("╠══════════════════════════════════════════════════════╣");
+      console.log(body.body ?? "(no plain text body)");
+      console.log("╚══════════════════════════════════════════════════════╝\n");
+
+      const serviceClient = createServiceClient();
+      const { data: devLog } = await serviceClient
+        .from("broadcast_log")
+        .insert({ organization_id: orgId, subject, recipient_count: emails.length })
+        .select("id")
+        .single();
+
+      const devId = (devLog as { id: string } | null)?.id ?? null;
+      return NextResponse.json({
+        ok: true,
+        sent: emails.length,
+        total: emails.length,
+        id: devId,
+        dev: true,
+      });
+    }
+
+    // ── Production: Resend not configured ──
+    if (!HAS_RESEND) {
+      return NextResponse.json(
+        { error: "Email service not configured. Add RESEND_API_KEY to your environment variables." },
+        { status: 503 }
+      );
+    }
+
+    // ── Send via Resend ──
     let sent = 0;
+    let lastError = "";
     const batchSize = 50;
+
     for (let i = 0; i < emails.length; i += batchSize) {
       const batch = emails.slice(i, i + batchSize);
       const result = await sendEmail({
@@ -63,17 +110,35 @@ export async function POST(req: NextRequest) {
         html,
         from: DEFAULT_FROM,
       });
-      if (result.ok) sent += batch.length;
+      if (result.ok) {
+        sent += batch.length;
+      } else {
+        lastError = result.error;
+        console.error(`[broadcast] batch ${i / batchSize + 1} failed:`, result.error);
+      }
+    }
+
+    // If nothing was delivered at all, surface the error instead of silently logging 0
+    if (sent === 0) {
+      return NextResponse.json(
+        {
+          error: lastError
+            ? `Failed to send: ${lastError}`
+            : "Email delivery failed. Check your RESEND_API_KEY and RESEND_FROM_EMAIL configuration.",
+        },
+        { status: 500 }
+      );
     }
 
     const serviceClient = createServiceClient();
-    await serviceClient.from("broadcast_log").insert({
-      organization_id: orgId,
-      subject,
-      recipient_count: sent,
-    });
+    const { data: logRow } = await serviceClient
+      .from("broadcast_log")
+      .insert({ organization_id: orgId, subject, recipient_count: sent })
+      .select("id")
+      .single();
 
-    return NextResponse.json({ ok: true, sent, total: emails.length });
+    const broadcastId = (logRow as { id: string } | null)?.id ?? null;
+    return NextResponse.json({ ok: true, sent, total: emails.length, id: broadcastId });
   } catch (e) {
     console.error("broadcast POST:", e);
     return NextResponse.json(

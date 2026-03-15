@@ -57,8 +57,9 @@ export function DashboardNavBar() {
   const notificationsAnchorRef = useRef<HTMLButtonElement>(null);
   const connectionRequestsAnchorRef = useRef<HTMLButtonElement>(null);
 
+  const userId = user?.id;
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       setUnreadCount(0);
       setConnectionRequestCount(0);
       return;
@@ -74,9 +75,9 @@ export function DashboardNavBar() {
         setConnectionRequestCount(incoming.length);
       })
       .catch(() => setConnectionRequestCount(0));
-  }, [user]);
+  }, [userId]);
 
-  if (!user) return null;
+  if (!userId) return null;
 
   return (
     <div

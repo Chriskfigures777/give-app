@@ -575,12 +575,12 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
         >
           <div
             className="goal-panel-enter relative flex h-full w-full max-w-lg flex-col overflow-hidden"
-            style={{ background: "hsl(var(--dashboard-bg))" }}
+            style={{ background: "#f9fafb" }}
           >
             {/* Preview header */}
             <div
-              className="flex items-center justify-between border-b border-dashboard-border px-5 py-4 shrink-0"
-              style={{ background: "hsl(var(--dashboard-card))" }}
+              className="flex items-center justify-between border-b px-5 py-4 shrink-0"
+              style={{ background: "#ffffff", borderColor: "#e5e7eb" }}
             >
               <div className="flex items-center gap-2.5">
                 <div
@@ -590,20 +590,20 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                   <Eye className="h-4 w-4" style={{ color: accentColor }} />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-dashboard-text">Survey Preview</h2>
-                  <p className="text-xs text-dashboard-text-muted">Respondent view — colors match your theme</p>
+                  <h2 className="text-sm font-bold text-gray-900">Survey Preview</h2>
+                  <p className="text-xs text-gray-500">Respondent view</p>
                 </div>
               </div>
               <button
                 onClick={() => setPreviewOpen(false)}
-                className="rounded-lg p-1.5 text-dashboard-text-muted hover:bg-white/8 hover:text-dashboard-text transition-all"
+                className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Preview body */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            {/* Preview body — matches published survey's bg-gray-50 */}
+            <div className="flex-1 overflow-y-auto">
               <SurveyResponseForm
                 surveyId={surveyId}
                 title={survey.title}

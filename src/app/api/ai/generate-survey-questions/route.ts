@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     const { remaining } = await getRemainingCredits(orgId);
     if (remaining < 1) {
       return NextResponse.json(
-        { error: "No AI credits remaining this month. Upgrade or try again next month." },
+        { error: "No AI credits remaining. Buy more credits in Plan & Billing, or try again next month." },
         { status: 402 }
       );
     }

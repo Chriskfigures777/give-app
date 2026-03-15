@@ -34,6 +34,8 @@ export function SurveysNewClient({ fromNoteId }: Props) {
           setLoadingFromNote(false);
           return;
         }
+        // Cached but empty — remove stale entry and fall through to API
+        localStorage.removeItem(`note_questions_${fromNoteId}`);
       }
     } catch { /* localStorage unavailable */ }
 
@@ -42,8 +44,17 @@ export function SurveysNewClient({ fromNoteId }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ noteId: fromNoteId, count: 6 }),
     })
-      .then((r) => r.json())
-      .then((d) => {
+      .then(async (r) => {
+        const d = await r.json();
+        if (!r.ok) {
+          const msg = (d as { error?: string }).error;
+          if (r.status === 402) {
+            setError("No AI credits remaining. Buy more credits in Plan & Billing, or you can still build the survey manually below.");
+          } else {
+            setError(msg ?? "Failed to load questions from note");
+          }
+          return;
+        }
         if ((d as { questions?: unknown[] }).questions?.length) {
           setInitialQuestions(
             (d as { questions: Array<{ text: string; type?: string; options?: string[] }> }).questions.map((q) => ({
@@ -109,7 +120,7 @@ export function SurveysNewClient({ fromNoteId }: Props) {
   if (loadingFromNote) {
     return (
       <div className="rounded-2xl border border-dashboard-border bg-dashboard-card p-8 text-center text-dashboard-text-muted">
-        Loading questions from note…
+        Loading questions from your note…
       </div>
     );
   }

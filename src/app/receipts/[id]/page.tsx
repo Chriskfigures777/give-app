@@ -30,6 +30,7 @@ export default async function ReceiptPage({ params, searchParams }: Props) {
       receipt_token,
       currency,
       organization_id,
+      metadata,
       organizations(name, slug),
       donation_campaigns(name)
     `)
@@ -37,6 +38,13 @@ export default async function ReceiptPage({ params, searchParams }: Props) {
     .single();
 
   if (error || !donation) notFound();
+
+  type SplitBreakdownEntry = {
+    organization_id: string | null;
+    organization_name: string;
+    percentage: number;
+    amount_cents: number;
+  };
 
   const d = donation as {
     id: string;
@@ -49,6 +57,7 @@ export default async function ReceiptPage({ params, searchParams }: Props) {
     receipt_token: string | null;
     currency: string;
     organization_id: string | null;
+    metadata: Record<string, unknown> | null;
     organizations: { name: string; slug: string } | null;
     donation_campaigns: { name: string } | null;
   };
@@ -75,6 +84,12 @@ export default async function ReceiptPage({ params, searchParams }: Props) {
   const orgName = d.organizations?.name ?? "Organization";
   const orgSlug = d.organizations?.slug ?? null;
   const campaignName = d.donation_campaigns?.name ?? "General";
+
+  const meta = d.metadata as Record<string, unknown> | null;
+  const splitsBreakdown =
+    meta?.split_mode === "stripe_connect" && Array.isArray(meta?.splits_breakdown)
+      ? (meta.splits_breakdown as SplitBreakdownEntry[])
+      : null;
 
   const { url: mediaUrl, isVideo } = await getReceiptVideoUrl();
 
@@ -130,11 +145,33 @@ export default async function ReceiptPage({ params, searchParams }: Props) {
               <span className="font-medium text-slate-900">{date}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Amount</span>
+              <span className="text-slate-500">Total Amount</span>
               <span className="text-lg font-semibold text-emerald-600">
                 ${amount.toFixed(2)} USD
               </span>
             </div>
+            {splitsBreakdown && splitsBreakdown.length > 0 && (
+              <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
+                  Split Allocation
+                </p>
+                <div className="space-y-2">
+                  {splitsBreakdown.map((entry, i) => (
+                    <div key={i} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="shrink-0 rounded-full bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
+                          {entry.percentage}%
+                        </span>
+                        <span className="truncate text-slate-700">{entry.organization_name}</span>
+                      </div>
+                      <span className="ml-2 shrink-0 font-medium text-slate-900">
+                        ${(entry.amount_cents / 100).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-slate-500">Receipt ID</span>
               <span className="font-mono text-xs text-slate-600">{d.id}</span>

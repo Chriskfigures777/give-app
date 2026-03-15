@@ -103,6 +103,15 @@ type EventResult = {
   org: { name: string; slug: string } | null;
 };
 
+type PeopleResult = {
+  id: string;
+  type: "organization" | "user";
+  name: string;
+  slug?: string;
+  role?: string;
+  avatar_url?: string | null;
+};
+
 const DEBOUNCE_MS = 300;
 
 export function DashboardSearch() {
@@ -112,6 +121,7 @@ export function DashboardSearch() {
   const [loading, setLoading] = useState(false);
   const [orgs, setOrgs] = useState<OrgResult[]>([]);
   const [events, setEvents] = useState<EventResult[]>([]);
+  const [people, setPeople] = useState<PeopleResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -130,10 +140,12 @@ export function DashboardSearch() {
     | { type: "page"; data: DashboardPage }
     | { type: "org"; data: OrgResult }
     | { type: "event"; data: EventResult }
+    | { type: "person"; data: PeopleResult }
   > = [
     ...filteredPages.map((p) => ({ type: "page" as const, data: p })),
     ...orgs.map((o) => ({ type: "org" as const, data: o })),
     ...events.map((e) => ({ type: "event" as const, data: e })),
+    ...people.map((p) => ({ type: "person" as const, data: p })),
   ];
 
   const showDropdown = focused || query.length > 0;
@@ -142,19 +154,37 @@ export function DashboardSearch() {
     if (term.length < 2) {
       setOrgs([]);
       setEvents([]);
+      setPeople([]);
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
-      const params = new URLSearchParams({ q: term, type: "all", limit: "5" });
-      const res = await fetch(`/api/search?${params}`);
-      const data = await res.json();
-      setOrgs(data.organizations ?? []);
-      setEvents(data.events ?? []);
+      const [publicRes, peersRes] = await Promise.allSettled([
+        fetch(`/api/search?${new URLSearchParams({ q: term, type: "all", limit: "5" })}`),
+        fetch(`/api/peers/search?${new URLSearchParams({ q: term, limit: "8" })}`),
+      ]);
+
+      if (publicRes.status === "fulfilled" && publicRes.value.ok) {
+        const data = await publicRes.value.json();
+        setOrgs(data.organizations ?? []);
+        setEvents(data.events ?? []);
+      } else {
+        setOrgs([]);
+        setEvents([]);
+      }
+
+      if (peersRes.status === "fulfilled" && peersRes.value.ok) {
+        const data = await peersRes.value.json();
+        // Only show user-type results here (org results already come from /api/search)
+        setPeople((data.results ?? []).filter((r: PeopleResult) => r.type === "user").slice(0, 5));
+      } else {
+        setPeople([]);
+      }
     } catch {
       setOrgs([]);
       setEvents([]);
+      setPeople([]);
     } finally {
       setLoading(false);
     }
@@ -165,6 +195,7 @@ export function DashboardSearch() {
     if (!query.trim()) {
       setOrgs([]);
       setEvents([]);
+      setPeople([]);
       setLoading(false);
       return;
     }
@@ -183,6 +214,7 @@ export function DashboardSearch() {
     setQuery("");
     setOrgs([]);
     setEvents([]);
+    setPeople([]);
     setActiveIndex(0);
     inputRef.current?.focus();
   }, []);
@@ -192,9 +224,11 @@ export function DashboardSearch() {
       setQuery("");
       setOrgs([]);
       setEvents([]);
+      setPeople([]);
       setFocused(false);
       if (item.type === "page") router.push(item.data.href);
-      else if (item.type === "org") router.push(`/org/${item.data.slug}`);
+      else if (item.type === "org") router.push(`/org/${(item.data as OrgResult).slug}`);
+      else if (item.type === "person") router.push(`/u/${item.data.id}`);
       else router.push(`/events/${item.data.id}`);
     },
     [router]
@@ -438,12 +472,65 @@ export function DashboardSearch() {
                       </div>
                     )}
 
+                    {/* People */}
+                    {people.length > 0 && (
+                      <div className="border-t border-slate-100 px-2 pt-1 dark:border-slate-800">
+                        <p className="px-2 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                          People
+                        </p>
+                        {people.map((person, i) => {
+                          const globalIdx = filteredPages.length + orgs.length + events.length + i;
+                          const initials = person.name
+                            .split(" ")
+                            .map((w: string) => w[0])
+                            .join("")
+                            .toUpperCase()
+                            .slice(0, 2);
+                          return (
+                            <button
+                              key={person.id}
+                              type="button"
+                              data-index={globalIdx}
+                              onClick={() => selectItem({ type: "person", data: person })}
+                              onMouseEnter={() => setActiveIndex(globalIdx)}
+                              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                                activeIndex === globalIdx
+                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+                                  : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+                              }`}
+                            >
+                              <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-sky-400 to-blue-600 text-white text-xs font-bold">
+                                {person.avatar_url ? (
+                                  <img
+                                    src={person.avatar_url}
+                                    alt={person.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  initials
+                                )}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-medium">{person.name}</p>
+                              </div>
+                              {person.role && (
+                                <span className="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 capitalize">
+                                  {person.role.replace("_", " ")}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
                     {/* No results */}
                     {q.length >= 2 &&
                       !loading &&
                       filteredPages.length === 0 &&
                       orgs.length === 0 &&
-                      events.length === 0 && (
+                      events.length === 0 &&
+                      people.length === 0 && (
                         <div className="px-4 py-8 text-center">
                           <Search className="mx-auto h-8 w-8 text-slate-200 dark:text-slate-700" />
                           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">

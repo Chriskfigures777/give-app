@@ -30,6 +30,7 @@ import {
   Mail,
   Flag,
   TableProperties,
+  CreditCard as ConnectCardIcon,
 } from "lucide-react";
 import { DashboardShortcuts } from "./dashboard-shortcuts";
 
@@ -146,45 +147,56 @@ export function DashboardNav({
 
       {(isPlatformAdmin || orgId) && (
         <NavSection title="Organization">
-          {(isPlatformAdmin || orgId) && link("/dashboard/donations", "Donations", <Wallet className={iconClass} />)}
-
-          {!isPlatformAdmin && orgId && (
-            <>
-              <li className="shrink-0">
-                <Link
-                  href="/dashboard/connections"
-                  title="Peers"
-                  className={`${navLinkBase} ${
-                    pathname.startsWith("/dashboard/connections") ? navLinkActive : navLinkInactive
-                  }`}
-                  style={pathname.startsWith("/dashboard/connections") ? navLinkActiveBg : undefined}
-                >
-                  <span className={`relative shrink-0 ${pathname.startsWith("/dashboard/connections") ? "text-[#34d399]" : "text-dashboard-text"}`}>
-                    <Handshake className={iconClass} />
-                    {connectionRequestCount > 0 && (
-                      <span className="sidebar-badge absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                        {connectionRequestCount > 9 ? "9+" : connectionRequestCount}
-                      </span>
-                    )}
+          <li className="shrink-0">
+            <Link
+              href="/dashboard/connections"
+              title="Peers"
+              className={`${navLinkBase} ${
+                pathname.startsWith("/dashboard/connections") ? navLinkActive : navLinkInactive
+              }`}
+              style={pathname.startsWith("/dashboard/connections") ? navLinkActiveBg : undefined}
+            >
+              <span className={`relative shrink-0 ${pathname.startsWith("/dashboard/connections") ? "text-[#34d399]" : "text-dashboard-text"}`}>
+                <Handshake className={iconClass} />
+                {connectionRequestCount > 0 && (
+                  <span className="sidebar-badge absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                    {connectionRequestCount > 9 ? "9+" : connectionRequestCount}
                   </span>
-                  <span className="sidebar-nav-label">Peers</span>
-                </Link>
-              </li>
-              {link("/dashboard/events", "Events", <Calendar className={iconClass} />)}
-              {link("/dashboard/campaigns", "Campaigns", <Target className={iconClass} />)}
-              {link("/dashboard/goals", "Goals", <Flag className={iconClass} />)}
-              {link("/dashboard/eisenhower", "Priorities", <LayoutGrid className={iconClass} />)}
-              {link("/dashboard/people", "People", <Contact className={iconClass} />)}
-              {link("/dashboard/givers", "Givers", <Users className={iconClass} />)}
-              {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}
-              {link("/dashboard/pages", "Website builder", <Layout className={iconClass} />)}
-              {link("/dashboard/pages/cms", "Website content", <FileStack className={iconClass} />)}
-              {link("/dashboard/custom-forms", "Payment forms", <Code2 className={iconClass} />)}
-              {link("/dashboard/notes", "Notes", <BookOpen className={iconClass} />)}
-              {link("/dashboard/surveys", "Surveys", <ClipboardList className={iconClass} />)}
-              {link("/dashboard/broadcast", "Send message", <Mail className={iconClass} />)}
-            </>
-          )}
+                )}
+              </span>
+              <span className="sidebar-nav-label">Peers</span>
+            </Link>
+          </li>
+          {link("/dashboard/people", "People", <Contact className={iconClass} />)}
+          {link("/dashboard/events", "Events", <Calendar className={iconClass} />)}
+          {link("/dashboard/goals", "Goals", <Flag className={iconClass} />)}
+          {link("/dashboard/eisenhower", "Priorities", <LayoutGrid className={iconClass} />)}
+          {link("/dashboard/notes", "Notes", <BookOpen className={iconClass} />)}
+          {link("/dashboard/broadcast", "Email", <Mail className={iconClass} />)}
+        </NavSection>
+      )}
+
+      {(isPlatformAdmin || orgId) && (
+        <NavSection title="Donations">
+          {link("/dashboard/donations", "Donations", <Wallet className={iconClass} />)}
+          {!isPlatformAdmin && orgId && link("/dashboard/campaigns", "Campaigns", <Target className={iconClass} />)}
+          {!isPlatformAdmin && orgId && link("/dashboard/givers", "Givers", <Users className={iconClass} />)}
+        </NavSection>
+      )}
+
+      {!isPlatformAdmin && orgId && (
+        <NavSection title="Website">
+          {link("/dashboard/profile", "Public page", <FileText className={iconClass} />)}
+          {link("/dashboard/pages", "Website builder", <Layout className={iconClass} />)}
+          {link("/dashboard/pages/cms", "Website content", <FileStack className={iconClass} />)}
+        </NavSection>
+      )}
+
+      {!isPlatformAdmin && orgId && (
+        <NavSection title="Forms">
+          {link("/dashboard/custom-forms", "Payment forms", <Code2 className={iconClass} />)}
+          {link("/dashboard/surveys", "Surveys", <ClipboardList className={iconClass} />)}
+          {link("/dashboard/connect-card", "Connect Card", <ConnectCardIcon className={iconClass} />)}
         </NavSection>
       )}
 

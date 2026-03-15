@@ -225,11 +225,12 @@ async function main() {
     );
     await new Promise((r) => setTimeout(r, 5000));
 
-    // Clear any env vars (Lambda@Edge cannot have them)
-    console.log("   Clearing environment variables...");
+    // Update runtime and clear any env vars (Lambda@Edge cannot have them)
+    console.log("   Updating runtime and clearing environment variables...");
     await lambda.send(
       new UpdateFunctionConfigurationCommand({
         FunctionName: FUNCTION_NAME,
+        Runtime: "nodejs20.x",
         Environment: { Variables: {} },
       })
     );
@@ -239,7 +240,7 @@ async function main() {
     const created = await lambda.send(
       new CreateFunctionCommand({
         FunctionName: FUNCTION_NAME,
-        Runtime: "nodejs18.x",
+        Runtime: "nodejs20.x",
         Handler: "index.handler",
         Role: roleArn,
         Code: { ZipFile: zipBuffer },

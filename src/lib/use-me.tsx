@@ -45,8 +45,10 @@ export function MeProvider({ children }: { children: ReactNode }) {
     setMe((prev) => (prev ? { ...prev, pendingConnectionRequestsCount: n } : null));
   }, []);
 
+  const userId = user?.id ?? null;
+
   const fetchMe = useCallback(async () => {
-    if (!user) {
+    if (!userId) {
       setMe(null);
       setError(false);
       return;
@@ -73,7 +75,7 @@ export function MeProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [userId]);
 
   useEffect(() => {
     fetchMe();

@@ -20,8 +20,11 @@ import {
   TrendingUp,
   UsersRound,
   X,
+  Zap,
+  Plus,
 } from "lucide-react";
 import type { OrgPlan, PlanStatus } from "@/lib/plan";
+import { CREDIT_BUNDLES } from "@/app/api/billing/buy-credits/credit-bundles";
 
 type Props = {
   currentPlan: OrgPlan;
@@ -32,6 +35,9 @@ type Props = {
   successPlan?: OrgPlan;
   canceled?: boolean;
   trialDaysRemaining?: number | null;
+  creditsInfo: { used: number; cap: number; planCap: number; purchased: number; remaining: number };
+  creditsSuccess?: number;
+  creditsCanceled?: boolean;
 };
 
 const PLAN_DATA = [
@@ -178,11 +184,16 @@ export function BillingPageClient({
   successPlan,
   canceled,
   trialDaysRemaining,
+  creditsInfo,
+  creditsSuccess,
+  creditsCanceled,
 }: Props) {
   const [loading, setLoading] = useState<OrgPlan | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  const [creditsLoading, setCreditsLoading] = useState<string | null>(null);
+  const [creditsBannerDismissed, setCreditsBannerDismissed] = useState(false);
 
   async function handleUpgrade(plan: "growth" | "pro") {
     setLoading(plan);
@@ -216,6 +227,24 @@ export function BillingPageClient({
     }
   }
 
+  async function handleBuyCredits(bundleId: string) {
+    setCreditsLoading(bundleId);
+    setError(null);
+    try {
+      const res = await fetch("/api/billing/buy-credits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bundle: bundleId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to start checkout");
+      if (data.url) window.location.href = data.url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setCreditsLoading(null);
+    }
+  }
+
   const planLabel =
     currentPlan === "free"
       ? "Free Forever"
@@ -234,6 +263,46 @@ export function BillingPageClient({
           Manage your platform subscription. Growth ($29) and Pro ($49) include a 14-day free trial. Team members: +$10/mo each.
         </p>
       </div>
+
+      {/* Credits purchase success banner */}
+      {creditsSuccess && creditsSuccess > 0 && !creditsBannerDismissed && (
+        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/20 p-5">
+          <button
+            type="button"
+            onClick={() => setCreditsBannerDismissed(true)}
+            className="absolute right-4 top-4 text-emerald-400 dark:text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <div className="flex items-start gap-3">
+            <Zap className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500 dark:text-emerald-400" />
+            <div>
+              <p className="font-semibold text-emerald-800 dark:text-emerald-200">
+                {creditsSuccess} AI credits added!
+              </p>
+              <p className="mt-0.5 text-sm text-emerald-600 dark:text-emerald-300">
+                Your credits are ready to use. Generate AI survey questions, notes, and more.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Credits purchase canceled banner */}
+      {creditsCanceled && !creditsBannerDismissed && (
+        <div className="dashboard-fade-in relative overflow-hidden rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/20 p-5">
+          <button
+            type="button"
+            onClick={() => setCreditsBannerDismissed(true)}
+            className="absolute right-4 top-4 text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+            Credit purchase canceled. Your credits have not changed.
+          </p>
+        </div>
+      )}
 
       {/* Success banner */}
       {successPlan && !dismissed && (
@@ -508,6 +577,127 @@ export function BillingPageClient({
               anytime. Team members: +$10/mo each.
             </p>
           </div>
+        </section>
+      )}
+
+      {/* AI Credits section */}
+      {hasOrg && (
+        <section className="dashboard-fade-in">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/20">
+              <Sparkles className="h-4 w-4 text-violet-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-dashboard-text">AI Credits</h2>
+              <p className="text-xs text-dashboard-text-muted">
+                Used for AI-powered features like survey question generation and note assistance.
+              </p>
+            </div>
+          </div>
+
+          {/* Current credits status */}
+          <div className="mb-5 overflow-hidden rounded-2xl border border-dashboard-border bg-dashboard-card">
+            <div className="flex items-center justify-between gap-4 border-b border-dashboard-border px-6 py-4">
+              <div className="flex items-center gap-3">
+                <Zap className="h-4 w-4 text-violet-400" />
+                <span className="text-sm font-semibold text-dashboard-text">This month&apos;s usage</span>
+              </div>
+              <span className="text-sm font-bold text-dashboard-text">
+                {creditsInfo.used} <span className="font-normal text-dashboard-text-muted">/ {creditsInfo.cap} credits used</span>
+              </span>
+            </div>
+            <div className="px-6 py-4">
+              {/* Progress bar */}
+              <div className="mb-3 h-2 overflow-hidden rounded-full bg-dashboard-card-hover">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all"
+                  style={{ width: `${creditsInfo.cap > 0 ? Math.min(100, (creditsInfo.used / creditsInfo.cap) * 100) : 0}%` }}
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-4 text-xs text-dashboard-text-muted">
+                <span>
+                  <span className="font-semibold text-dashboard-text">{creditsInfo.remaining}</span> remaining
+                </span>
+                <span>
+                  Plan allowance: <span className="font-semibold text-dashboard-text">{creditsInfo.planCap}</span>/mo
+                </span>
+                {creditsInfo.purchased > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 dark:bg-violet-900/30 px-2.5 py-0.5 font-semibold text-violet-700 dark:text-violet-300">
+                    <Plus className="h-3 w-3" />
+                    {creditsInfo.purchased} purchased credits
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Credit bundles */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            {CREDIT_BUNDLES.map((bundle) => (
+              <div
+                key={bundle.id}
+                className={`relative flex flex-col rounded-2xl border p-5 transition-all ${
+                  bundle.id === "credits_100"
+                    ? "border-violet-400/60 bg-dashboard-card shadow-lg ring-1 ring-violet-400/20"
+                    : "border-dashboard-border bg-dashboard-card"
+                }`}
+              >
+                {bundle.id === "credits_100" && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-4 py-0.5 text-xs font-bold text-white shadow">
+                    Best value
+                  </span>
+                )}
+
+                <div className="mb-1 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-violet-400" />
+                  <span className="text-sm font-bold text-dashboard-text">{bundle.label}</span>
+                </div>
+
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-dashboard-text">
+                    ${(bundle.price_cents / 100).toFixed(2)}
+                  </span>
+                  <span className="text-xs text-dashboard-text-muted">one-time</span>
+                </div>
+
+                <p className="mt-2 flex-1 text-xs text-dashboard-text-muted leading-relaxed">
+                  {bundle.description}
+                </p>
+
+                <div className="mt-1 mb-4 text-xs text-dashboard-text-muted">
+                  ${((bundle.price_cents - bundle.platform_fee_cents) / 100).toFixed(2)} net&nbsp;·&nbsp;
+                  ${(bundle.price_cents / bundle.credits / 100).toFixed(3)}/credit
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleBuyCredits(bundle.id)}
+                  disabled={creditsLoading !== null}
+                  className={`w-full rounded-xl py-2.5 text-sm font-semibold transition-all disabled:opacity-50 ${
+                    bundle.id === "credits_100"
+                      ? "bg-violet-600 text-white hover:bg-violet-700"
+                      : "bg-dashboard-text text-dashboard hover:opacity-90"
+                  }`}
+                >
+                  {creditsLoading === bundle.id ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      Redirecting...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Plus className="h-3.5 w-3.5" />
+                      Buy {bundle.credits} Credits
+                    </span>
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 text-xs text-dashboard-text-muted">
+            Purchased credits are added to your account immediately after payment and never expire. They are used after your monthly plan allowance is depleted.
+          </p>
         </section>
       )}
     </div>

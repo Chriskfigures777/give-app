@@ -5,6 +5,7 @@
  * by looking up a domain-map.json stored in the S3 bucket.
  *
  * Deployed to us-east-1 (required for Lambda@Edge).
+ * Runtime: nodejs20.x — scales automatically at CloudFront edge nodes.
  */
 
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -20,7 +21,8 @@ const MAP_TTL_MS = 60_000; // refresh mapping every 60s
 const s3 = new S3Client({ region: REGION });
 
 async function loadDomainMap(): Promise<Record<string, string>> {
-  if (domainMap && Date.now() - mapLoadedAt < MAP_TTL_MS) {
+  const now = Date.now();
+  if (domainMap && now - mapLoadedAt < MAP_TTL_MS) {
     return domainMap;
   }
 
@@ -30,9 +32,13 @@ async function loadDomainMap(): Promise<Record<string, string>> {
     );
     const body = await resp.Body?.transformToString("utf-8");
     domainMap = body ? JSON.parse(body) : {};
-    mapLoadedAt = Date.now();
-  } catch {
+    mapLoadedAt = now;
+  } catch (err) {
+    console.error("[edge-router] Failed to load domain-map.json:", err);
+    // Keep stale cache rather than returning empty map — prevents dropping
+    // all custom domains during a transient S3 / network hiccup.
     if (!domainMap) domainMap = {};
+    // Do NOT update mapLoadedAt so the next request retries S3 immediately.
   }
 
   return domainMap!;

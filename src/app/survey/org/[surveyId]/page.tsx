@@ -18,7 +18,7 @@ export default async function OrgSurveyPage({
 
   const { data, error } = await supabase
     .from("organization_surveys")
-    .select("id, title, description, questions, cover_image_url, theme")
+    .select("id, organization_id, title, description, questions, cover_image_url, theme")
     .eq("id", surveyId)
     .eq("status", "published")
     .single();
@@ -27,12 +27,26 @@ export default async function OrgSurveyPage({
 
   const survey = data as {
     id: string;
+    organization_id: string;
     title: string;
     description: string | null;
     questions: Array<{ id?: string; text: string; type: string; options?: string[]; page?: number }>;
     cover_image_url: string | null;
     theme: Record<string, unknown>;
   };
+
+  let orgLogoUrl: string | null = null;
+  let orgName: string | null = null;
+  if (survey.organization_id) {
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("name, logo_url")
+      .eq("id", survey.organization_id)
+      .single();
+    const orgRow = org as { name: string; logo_url: string | null } | null;
+    orgLogoUrl = orgRow?.logo_url ?? null;
+    orgName = orgRow?.name ?? null;
+  }
 
   const questions = Array.isArray(survey.questions) ? survey.questions : [];
   const hasPageAssignments = questions.some((q) => typeof q.page === "number");
@@ -65,55 +79,21 @@ export default async function OrgSurveyPage({
   const coverImageUrl = survey.cover_image_url;
 
   return (
-    <div className="relative min-h-screen">
-
-      {/* ── Full-screen background ── */}
-      {coverImageUrl ? (
-        <>
-          <div
-            className="fixed inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${coverImageUrl})`,
-              filter: "blur(22px) brightness(0.22) saturate(1.3)",
-              transform: "scale(1.08)",
-            }}
-            aria-hidden="true"
-          />
-          <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
-        </>
-      ) : (
-        <div className="fixed inset-0 bg-[#0b0e16]" aria-hidden="true" />
-      )}
-
-      {/* ── Page content ── */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-4 py-10 sm:py-16">
-
-        {/* Accent glow pill */}
-        <div
-          className="mb-8 h-1 w-16 rounded-full"
-          style={{ background: accentColor, boxShadow: `0 0 20px ${accentColor}90` }}
-        />
-
-        {/* Form */}
-        <div className="w-full max-w-lg">
-          <SurveyResponseForm
-            surveyId={survey.id}
-            title={survey.title}
-            description={survey.description}
-            pages={pages}
-            coverImageUrl={coverImageUrl}
-            accentColor={accentColor}
-            videoUrl={videoUrl}
-            fontStyle={fontStyle}
-            buttonShape={buttonShape}
-            formStyle={formStyle}
-            prefillName={prefillName}
-            prefillEmail={prefillEmail}
-          />
-        </div>
-
-        <p className="mt-10 text-xs text-white/20">Powered by Give</p>
-      </div>
-    </div>
+    <SurveyResponseForm
+      surveyId={survey.id}
+      title={survey.title}
+      description={survey.description}
+      pages={pages}
+      coverImageUrl={coverImageUrl}
+      accentColor={accentColor}
+      videoUrl={videoUrl}
+      fontStyle={fontStyle}
+      buttonShape={buttonShape}
+      formStyle={formStyle}
+      prefillName={prefillName}
+      prefillEmail={prefillEmail}
+      orgLogoUrl={orgLogoUrl}
+      orgName={orgName}
+    />
   );
 }

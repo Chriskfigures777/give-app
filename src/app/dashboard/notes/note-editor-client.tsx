@@ -45,6 +45,10 @@ export function NoteEditorClient({
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
   const [generatedQuestions, setGeneratedQuestions] = useState<SurveyQuestion[] | null>(null);
+  const [localCreditsRemaining, setLocalCreditsRemaining] = useState(creditsRemaining);
+  const [questionCount, setQuestionCount] = useState<number>(() => {
+    try { return parseInt(localStorage.getItem("ai_question_count") ?? "5", 10) || 5; } catch { return 5; }
+  });
   const [savedNoteId, setSavedNoteId] = useState<string | null>(noteId);
   const [deleting, setDeleting] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -105,12 +109,17 @@ export function NoteEditorClient({
     const effectiveCoverType = overrideCover !== undefined ? overrideCover.type : coverType;
     try {
       const html = editor.getHTML();
-      const body = {
+      const body: Record<string, unknown> = {
         title: title.trim() || "Untitled",
         content: html,
-        cover_url: effectiveCoverUrl,
-        cover_type: effectiveCoverType,
       };
+      if (effectiveCoverUrl) {
+        body.cover_url = effectiveCoverUrl;
+        body.cover_type = effectiveCoverType;
+      } else if (overrideCover !== undefined) {
+        body.cover_url = null;
+        body.cover_type = null;
+      }
       if (savedNoteId) {
         const res = await fetch(`/api/pastor-notes/${savedNoteId}`, {
           method: "PATCH",
@@ -173,18 +182,19 @@ export function NoteEditorClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: plainText,
-          count: 6,
+          count: questionCount,
           noteId: id,
           noteTitle: title.trim() || "Untitled",
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 402) throw new Error("No AI credits left this month. Upgrade or wait for next month.");
+        if (res.status === 402) throw new Error("No AI credits left. Buy more credits in Plan & Billing.");
         throw new Error((data as { error?: string }).error ?? "Failed to generate");
       }
       const questions = (data as { questions?: SurveyQuestion[] }).questions ?? [];
       setGeneratedQuestions(questions);
+      setLocalCreditsRemaining((c) => Math.max(0, c - 1));
       try { localStorage.setItem(`note_questions_${id}`, JSON.stringify(questions)); } catch { /* ignore */ }
     } catch (e) {
       setGenError(e instanceof Error ? e.message : "Something went wrong");
@@ -389,7 +399,7 @@ export function NoteEditorClient({
         {/* Credits */}
         <span className="hidden lg:flex items-center gap-1.5 shrink-0 rounded-lg border border-dashboard-border/50 bg-white/4 px-2.5 py-1 text-xs text-dashboard-text-muted">
           <Sparkles className="h-3 w-3 text-emerald-400" />
-          <span className="font-semibold text-dashboard-text">{creditsRemaining}</span>/{creditsCap}
+          <span className="font-semibold text-dashboard-text">{localCreditsRemaining}</span>/{creditsCap}
         </span>
 
         {/* Save status */}
@@ -424,15 +434,35 @@ export function NoteEditorClient({
           Save
         </button>
 
-        {/* Generate */}
-        <button
-          onClick={handleGenerate}
-          disabled={saving || generating || creditsRemaining < 1}
-          className="shrink-0 flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-3 py-1.5 text-xs font-semibold text-white transition-all shadow-sm shadow-emerald-500/20"
-        >
-          {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-          <span className="hidden sm:inline">{generating ? "Generating…" : "AI Questions"}</span>
-        </button>
+        {/* Generate — question count picker + button */}
+        <div className="shrink-0 flex items-center rounded-lg overflow-hidden border border-emerald-600/70 shadow-sm shadow-emerald-500/20">
+          <select
+            value={questionCount}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              setQuestionCount(val);
+              try { localStorage.setItem("ai_question_count", String(val)); } catch { /* ignore */ }
+            }}
+            disabled={saving || generating || localCreditsRemaining < 1}
+            title="Number of questions to generate"
+            className="h-full bg-emerald-700/80 hover:bg-emerald-700 disabled:opacity-40 px-2 py-1.5 text-xs font-semibold text-white focus:outline-none cursor-pointer border-r border-emerald-500/50 transition-colors"
+          >
+            {[3, 4, 5, 6, 7, 8, 10, 12, 15].map((n) => (
+              <option key={n} value={n} style={{ background: "#065f46" }}>
+                {n}Q
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleGenerate}
+            disabled={saving || generating || localCreditsRemaining < 1}
+            title={localCreditsRemaining < 1 ? "No AI credits remaining — buy more in Plan & Billing" : "Generate survey questions from this note"}
+            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+          >
+            {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">{generating ? "Generating…" : localCreditsRemaining < 1 ? "No credits" : "AI Questions"}</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Formatting toolbar ── */}
@@ -686,10 +716,10 @@ export function NoteEditorClient({
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-dashboard-text">
-                        {genError ? "Generation failed" : `${generatedQuestions?.length ?? 0} questions generated`}
+                        {genError ? "Generation failed" : `${generatedQuestions?.length ?? 0} of ${questionCount} questions generated`}
                       </h3>
                       {!genError && (
-                        <p className="text-xs text-dashboard-text-muted">Ready to create a survey</p>
+                        <p className="text-xs text-dashboard-text-muted">Ready to create a survey · <span className="text-emerald-400">1 credit used</span></p>
                       )}
                     </div>
                   </div>
@@ -703,7 +733,14 @@ export function NoteEditorClient({
 
                 {genError ? (
                   <div className="p-5">
-                    <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">{genError}</p>
+                    <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">
+                      {genError}
+                      {genError.includes("credits") && (
+                        <Link href="/dashboard/billing" className="ml-2 underline text-rose-300 hover:text-rose-200">
+                          Go to Billing →
+                        </Link>
+                      )}
+                    </p>
                   </div>
                 ) : (
                   <>

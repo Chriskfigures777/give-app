@@ -14,12 +14,18 @@ import {
   Users,
   Loader2,
   X,
-  SlidersHorizontal,
+  LayoutGrid,
+  UserCircle2,
+  Building2,
+  Sparkles,
+  Church,
+  Heart,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { UserTypeBadge } from "@/components/user-type-badge";
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
 
 type OrgItem = {
   kind: "org";
@@ -43,17 +49,10 @@ type UserItem = {
 };
 
 type CommunityItem = OrgItem | UserItem;
-
 type TypeFilter = "all" | "people" | "organization";
-type RoleFilter =
-  | ""
-  | "church"
-  | "nonprofit"
-  | "missionary"
-  | "donor"
-  | "member";
+type RoleFilter = "" | "church" | "nonprofit" | "missionary" | "donor" | "member";
 
-// ── Avatar color map ────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS: Record<string, string> = {
   donor: "bg-rose-100 text-rose-600",
@@ -84,21 +83,43 @@ function getOrgImage(item: OrgItem): string {
   return item.profile_image_url ?? item.logo_url ?? PLACEHOLDER_LOGO;
 }
 
-// ── Skeleton ────────────────────────────────────────────────────────────────
+function getOrgTypeBadge(orgType: string | null) {
+  switch (orgType) {
+    case "church":
+      return { label: "Church", className: "bg-amber-100/90 text-amber-800 backdrop-blur-sm" };
+    case "nonprofit":
+      return { label: "Nonprofit", className: "bg-sky-100/90 text-sky-800 backdrop-blur-sm" };
+    case "missionary":
+      return { label: "Missionary", className: "bg-violet-100/90 text-violet-800 backdrop-blur-sm" };
+    default:
+      return { label: "Organization", className: "bg-white/80 text-slate-600 backdrop-blur-sm" };
+  }
+}
+
+// ── Skeleton ─────────────────────────────────────────────────────────────────
 
 function SkeletonCard() {
   return (
-    <div className="animate-pulse rounded-2xl border border-slate-200/60 bg-white/80 p-5 shadow-sm">
-      <div className="mb-4 h-24 rounded-xl bg-slate-100" />
-      <div className="h-4 w-2/3 rounded bg-slate-100 mb-2" />
-      <div className="h-3 w-1/3 rounded bg-slate-100 mb-3" />
-      <div className="h-3 w-full rounded bg-slate-100 mb-1.5" />
-      <div className="h-3 w-4/5 rounded bg-slate-100" />
+    <div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70 shadow-sm backdrop-blur-xl">
+      <div className="p-1">
+        <div className="feed-shimmer aspect-[3/2] rounded-xl" />
+      </div>
+      <div className="space-y-2.5 p-4">
+        <div className="feed-shimmer h-5 w-3/4 rounded-lg" />
+        <div className="feed-shimmer h-4 w-full rounded-lg" />
+        <div className="feed-shimmer h-4 w-1/2 rounded-lg" />
+        <div className="flex gap-2 pt-1">
+          <div className="feed-shimmer h-6 w-16 rounded-full" />
+          <div className="feed-shimmer h-6 w-20 rounded-full" />
+        </div>
+      </div>
     </div>
   );
 }
 
-// ── Person Card ─────────────────────────────────────────────────────────────
+// ── Person Card ───────────────────────────────────────────────────────────────
+// motion.div is a bare wrapper (no CSS transition classes) — same pattern as
+// OrgResultCard in the Explorer. All hover styles live on the inner div.
 
 function PersonCard({
   item,
@@ -113,76 +134,79 @@ function PersonCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.04 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative flex flex-col rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300 hover:border-sky-200/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
     >
-      <div className="p-5 flex flex-col flex-1">
-        {/* Avatar + badge row */}
-        <div className="flex items-start gap-3 mb-3">
-          <div
-            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-bold ${avatarColor(item.role)}`}
-          >
-            {getInitials(item.name)}
-          </div>
-          <div className="min-w-0 flex-1 pt-0.5">
-            <Link
-              href={`/u/${item.id}`}
-              className="block truncate text-base font-semibold text-slate-900 hover:text-sky-700 transition-colors"
+      <div className="group relative flex flex-col rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-emerald-200/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08),0_2px_8px_rgba(16,185,129,0.08)]">
+        <div className="flex flex-col flex-1 p-4">
+          {/* Avatar + name */}
+          <div className="flex items-start gap-3 mb-3">
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-bold ${avatarColor(item.role)}`}
             >
-              {item.name}
-            </Link>
-            <div className="mt-1">
-              <UserTypeBadge type={item.role} size="xs" />
+              {getInitials(item.name)}
+            </div>
+            <div className="min-w-0 flex-1 pt-0.5">
+              <Link
+                href={`/u/${item.id}`}
+                className="block truncate font-semibold text-slate-900 transition-colors group-hover:text-emerald-700"
+              >
+                {item.name}
+              </Link>
+              <div className="mt-1">
+                <UserTypeBadge type={item.role} size="xs" />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Bio */}
-        {item.bio ? (
-          <p className="line-clamp-2 text-sm leading-relaxed text-slate-500 flex-1 mb-4">
-            {item.bio}
-          </p>
-        ) : (
-          <p className="text-sm italic text-slate-400 flex-1 mb-4">No bio yet.</p>
-        )}
+          {/* Bio */}
+          {item.bio ? (
+            <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-500">
+              {item.bio}
+            </p>
+          ) : (
+            <p className="mb-4 flex-1 text-sm italic text-slate-400">No bio yet.</p>
+          )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 mt-auto">
-          <button
-            type="button"
-            onClick={() => onConnect(item.id, "user")}
-            disabled={connectState !== "idle"}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200 disabled:cursor-default ${
-              connectState === "sent"
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-60"
-            }`}
-          >
-            {connectState === "loading" ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : connectState === "sent" ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <UserPlus className="h-3.5 w-3.5" />
-            )}
-            {connectState === "sent" ? "Sent" : "Connect"}
-          </button>
-          <Link
-            href={`/u/${item.id}`}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:border-sky-200 hover:text-sky-600 hover:bg-sky-50"
-          >
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          {/* Actions */}
+          <div className="mt-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onConnect(item.id, "user")}
+              disabled={connectState !== "idle"}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200 disabled:cursor-default ${
+                connectState === "sent"
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+              }`}
+            >
+              {connectState === "loading" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : connectState === "sent" ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <UserPlus className="h-3.5 w-3.5" />
+              )}
+              {connectState === "sent" ? "Sent" : "Connect"}
+            </button>
+            <Link
+              href={`/u/${item.id}`}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
+            >
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 }
 
-// ── Org Card ────────────────────────────────────────────────────────────────
+// ── Org Card ──────────────────────────────────────────────────────────────────
+// Same pattern: bare motion.div wrapper, styled inner div, CSS transitions
+// only on border/shadow (not transform) to avoid Framer Motion conflicts.
 
 function OrgCard({
   item,
@@ -195,118 +219,126 @@ function OrgCard({
   onConnect: (id: string, type: "organization") => void;
   connectState: "idle" | "loading" | "sent";
 }) {
+  const badge = getOrgTypeBadge(item.org_type);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.04 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative flex flex-col rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300 hover:border-emerald-200/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
     >
-      {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden rounded-t-2xl bg-slate-100">
-        <Image
-          src={getOrgImage(item)}
-          alt={item.name}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent" />
-        {item.org_type && (
+      <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-emerald-200/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08),0_2px_8px_rgba(16,185,129,0.08)]">
+        {/* Image */}
+        <div className="relative aspect-[3/2] overflow-hidden bg-slate-100">
+          <Image
+            src={getOrgImage(item)}
+            alt={item.name}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.08]"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
           <div className="absolute bottom-3 left-3">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur-sm ${
-                item.org_type === "church"
-                  ? "bg-violet-100/90 text-violet-800"
-                  : item.org_type === "nonprofit"
-                  ? "bg-sky-100/90 text-sky-800"
-                  : "bg-amber-100/90 text-amber-800"
-              }`}
-            >
-              {item.org_type.charAt(0).toUpperCase() + item.org_type.slice(1)}
+            <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${badge.className}`}>
+              {badge.label}
             </span>
           </div>
-        )}
-      </div>
+        </div>
 
-      <div className="p-4 flex flex-col flex-1">
-        <Link
-          href={`/org/${item.slug}`}
-          className="text-base font-semibold text-slate-900 hover:text-emerald-700 transition-colors line-clamp-1"
-        >
-          {item.name}
-        </Link>
-
-        {item.city && item.state && (
-          <div className="mt-1.5 flex items-center gap-1 text-xs text-slate-400">
-            <MapPin className="h-3 w-3 shrink-0" />
-            {item.city}, {item.state}
-          </div>
-        )}
-
-        {item.description && (
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-500 flex-1">
-            {item.description}
-          </p>
-        )}
-
-        {/* Actions */}
-        <div className="mt-4 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => onConnect(item.id, "organization")}
-            disabled={connectState !== "idle"}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200 disabled:cursor-default ${
-              connectState === "sent"
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
-            }`}
-          >
-            {connectState === "loading" ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : connectState === "sent" ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <UserPlus className="h-3.5 w-3.5" />
-            )}
-            {connectState === "sent" ? "Sent" : "Connect"}
-          </button>
+        <div className="flex flex-col flex-1 p-4">
           <Link
             href={`/org/${item.slug}`}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:border-emerald-200 hover:text-emerald-600 hover:bg-emerald-50"
+            className="font-semibold text-slate-900 transition-colors group-hover:text-emerald-700 line-clamp-1"
           >
-            <ArrowUpRight className="h-4 w-4" />
+            {item.name}
           </Link>
+
+          {item.city && item.state && (
+            <div className="mt-1.5 flex items-center gap-1 text-xs text-slate-400">
+              <MapPin className="h-3 w-3 shrink-0" />
+              {item.city}, {item.state}
+            </div>
+          )}
+
+          {item.description && (
+            <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-500">
+              {item.description}
+            </p>
+          )}
+
+          {/* Actions */}
+          <div className="mt-4 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onConnect(item.id, "organization")}
+              disabled={connectState !== "idle"}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200 disabled:cursor-default ${
+                connectState === "sent"
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60"
+              }`}
+            >
+              {connectState === "loading" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : connectState === "sent" ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <UserPlus className="h-3.5 w-3.5" />
+              )}
+              {connectState === "sent" ? "Sent" : "Connect"}
+            </button>
+            <Link
+              href={`/org/${item.slug}`}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
+            >
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 }
 
-// ── Main Component ──────────────────────────────────────────────────────────
+// ── Filter config ─────────────────────────────────────────────────────────────
 
-const TYPE_FILTERS: { label: string; value: TypeFilter }[] = [
-  { label: "Everyone", value: "all" },
-  { label: "People", value: "people" },
-  { label: "Organizations", value: "organization" },
+const TYPE_OPTIONS: {
+  id: TypeFilter;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { id: "all", label: "Everyone", icon: LayoutGrid },
+  { id: "people", label: "People", icon: UserCircle2 },
+  { id: "organization", label: "Organizations", icon: Building2 },
 ];
 
-const ROLE_FILTERS: Record<TypeFilter, { label: string; value: RoleFilter }[]> = {
+const ROLE_FILTERS: Record<TypeFilter, { label: string; value: RoleFilter; icon: React.ComponentType<{ className?: string }> }[]> = {
   all: [],
   people: [
-    { label: "All Roles", value: "" },
-    { label: "Donors", value: "donor" },
-    { label: "Missionaries", value: "missionary" },
-    { label: "Members", value: "member" },
+    { label: "All Roles", value: "", icon: LayoutGrid },
+    { label: "Donors", value: "donor", icon: Heart },
+    { label: "Missionaries", value: "missionary", icon: Globe },
+    { label: "Members", value: "member", icon: UserCircle2 },
   ],
   organization: [
-    { label: "All Types", value: "" },
-    { label: "Churches", value: "church" },
-    { label: "Nonprofits", value: "nonprofit" },
-    { label: "Missionaries", value: "missionary" },
+    { label: "All Types", value: "", icon: LayoutGrid },
+    { label: "Churches", value: "church", icon: Church },
+    { label: "Nonprofits", value: "nonprofit", icon: Heart },
+    { label: "Missionaries", value: "missionary", icon: Globe },
   ],
 };
+
+// Quick chips shown inside the hero (below the search pill)
+const QUICK_CHIPS: { label: string; type: TypeFilter; role?: RoleFilter }[] = [
+  { label: "Everyone", type: "all" },
+  { label: "People", type: "people" },
+  { label: "Churches", type: "organization", role: "church" },
+  { label: "Nonprofits", type: "organization", role: "nonprofit" },
+  { label: "Missionaries", type: "organization", role: "missionary" },
+];
+
+// ── Main Component ────────────────────────────────────────────────────────────
 
 export function CommunityClient() {
   const searchParams = useSearchParams();
@@ -319,6 +351,7 @@ export function CommunityClient() {
     Record<string, "idle" | "loading" | "sent">
   >({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchResults = useCallback(
     async (q: string, type: TypeFilter, role: RoleFilter) => {
@@ -339,12 +372,10 @@ export function CommunityClient() {
     []
   );
 
-  // Initial load
   useEffect(() => {
     fetchResults("", "all", "");
   }, [fetchResults]);
 
-  // Debounced search on query change
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -355,9 +386,9 @@ export function CommunityClient() {
     };
   }, [query, typeFilter, roleFilter, fetchResults]);
 
-  const handleTypeChange = (t: TypeFilter) => {
+  const handleTypeChange = (t: TypeFilter, role: RoleFilter = "") => {
     setTypeFilter(t);
-    setRoleFilter("");
+    setRoleFilter(role);
   };
 
   const handleConnect = async (id: string, type: "user" | "organization") => {
@@ -383,135 +414,230 @@ export function CommunityClient() {
   };
 
   const roleOptions = ROLE_FILTERS[typeFilter];
-
-  // Separate into orgs and users for ordered rendering (orgs first when "all")
   const orgs = results.filter((r): r is OrgItem => r.kind === "org");
   const people = results.filter((r): r is UserItem => r.kind === "user");
+  const hasResults = results.length > 0;
+  const hasActiveFilters = typeFilter !== "all" || roleFilter !== "";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/80">
-      {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-sky-600 via-sky-700 to-blue-800 pb-20 pt-14 text-white">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm ring-2 ring-white/20">
-            <Users className="h-7 w-7 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold tracking-tight">Find Your Community</h1>
-          <p className="mx-auto mt-3 max-w-xl text-base text-sky-100/90 leading-relaxed">
-            Connect with donors, missionaries, nonprofits, and churches across
-            the GIVE network.
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/80">
+      {/* Ambient gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -top-[400px] left-1/4 h-[800px] w-[800px] rounded-full bg-emerald-100/30 blur-[120px]" />
+        <div className="absolute -top-[200px] right-1/3 h-[600px] w-[600px] rounded-full bg-teal-100/25 blur-[100px]" />
+        <div className="absolute bottom-0 right-1/4 h-[400px] w-[600px] rounded-full bg-cyan-50/20 blur-[80px]" />
+      </div>
 
-          {/* Search bar */}
-          <div className="mx-auto mt-8 max-w-2xl">
-            <div className="flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-1.5 ring-1 ring-white/20 backdrop-blur-sm focus-within:bg-white/15 focus-within:ring-white/40 transition-all">
-              <Search className="h-5 w-5 shrink-0 text-white/70" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, city, or type…"
-                className="flex-1 bg-transparent py-2.5 text-base text-white placeholder:text-white/60 outline-none"
-              />
-              {query && (
+      {/* Hero */}
+      <section className="relative border-b border-white/60 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 shadow-xl shadow-emerald-900/10">
+        {/* Hero background texture */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <div className="absolute -top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-white/[0.06] blur-[80px]" />
+          <div className="absolute -bottom-1/3 right-0 h-[400px] w-[400px] rounded-full bg-teal-400/10 blur-[60px]" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMC41IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCBmaWxsPSJ1cmwoI2cpIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIi8+PC9zdmc+')] opacity-60" />
+        </div>
+
+        <div className="relative mx-auto max-w-4xl px-6 py-14 md:py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm"
+            >
+              <Users className="h-6 w-6 text-white" />
+            </motion.div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
+              Find Your Community
+            </h1>
+            <p className="mt-4 text-lg text-emerald-100/90">
+              Connect with donors, missionaries, nonprofits, and churches across
+              the GIVE network.
+            </p>
+
+            {/* Search bar — pill style matching HeroSearch */}
+            <div className="relative mx-auto mt-8 w-full max-w-2xl">
+              <div className="relative group">
+                <span className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 text-white/50 transition-colors group-focus-within:text-emerald-400">
+                  <Search className="h-6 w-6" />
+                </span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search people, churches, nonprofits…"
+                  className="w-full rounded-full border border-white/[0.15] bg-white/[0.07] py-5 pl-16 pr-16 text-lg text-white placeholder:text-white/40 shadow-[0_8px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl transition-all duration-300 focus:border-emerald-400/40 focus:bg-white/[0.1] focus:shadow-[0_8px_50px_rgba(16,185,129,0.12)] focus:outline-none focus:ring-2 focus:ring-emerald-400/20 sm:py-6 sm:pl-18 sm:pr-20 sm:text-xl"
+                  autoComplete="off"
+                />
+                {query ? (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2.5 text-white/60 transition-colors hover:text-white sm:right-4 sm:p-3"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                ) : (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-emerald-500 p-2.5 text-white shadow-lg sm:right-4 sm:p-3">
+                    <Search className="h-5 w-5" />
+                  </span>
+                )}
+              </div>
+
+              {/* Quick-filter chips inside hero */}
+              <div className="mt-6 flex flex-wrap justify-center gap-2.5 sm:gap-3">
+                {QUICK_CHIPS.map((chip) => {
+                  const isActive =
+                    typeFilter === chip.type &&
+                    (chip.role ? roleFilter === chip.role : roleFilter === "");
+                  return (
+                    <button
+                      key={chip.label}
+                      type="button"
+                      onClick={() => handleTypeChange(chip.type, chip.role ?? "")}
+                      className={`rounded-full border px-5 py-2.5 text-sm font-medium backdrop-blur-sm transition-all duration-200 sm:px-6 sm:py-3 sm:text-base ${
+                        isActive
+                          ? "border-emerald-400/50 bg-emerald-500/20 text-white"
+                          : "border-white/[0.1] bg-white/[0.06] text-white/70 hover:border-emerald-400/30 hover:bg-emerald-500/10 hover:text-white"
+                      }`}
+                    >
+                      {chip.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Content */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-10">
+        {/* Filters card — matches ExploreFilters */}
+        <div className="mb-8 rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm backdrop-blur-xl sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Type pills */}
+            <div className="flex items-center gap-2">
+              <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Type
+              </span>
+              <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+                {TYPE_OPTIONS.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => handleTypeChange(id)}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium transition-all duration-200 ${
+                      typeFilter === id
+                        ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                        : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-3.5 w-3.5 ${typeFilter === id ? "text-emerald-100" : "text-slate-400"}`}
+                    />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Role sub-filter + clear */}
+            <div className="flex items-center gap-2">
+              {roleOptions.length > 0 && (
+                <>
+                  <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Filter
+                  </span>
+                  <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+                    {roleOptions.map(({ label, value, icon: Icon }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setRoleFilter(value)}
+                        className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium transition-all duration-200 ${
+                          roleFilter === value
+                            ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                            : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                        }`}
+                      >
+                        <Icon
+                          className={`h-3.5 w-3.5 ${roleFilter === value ? "text-emerald-100" : "text-slate-400"}`}
+                        />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {hasActiveFilters && (
                 <button
                   type="button"
-                  onClick={() => setQuery("")}
-                  className="rounded-full p-1 text-white/60 hover:text-white transition-colors"
+                  onClick={() => { setTypeFilter("all"); setRoleFilter(""); }}
+                  className="ml-2 flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 transition-all duration-200 hover:bg-rose-100"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
+                  Clear
                 </button>
               )}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Filters ── */}
-      <div className="sticky top-0 z-20 -mt-6 border-b border-slate-200/60 bg-white/90 backdrop-blur-md shadow-sm">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
-            <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400 mr-1" />
-            {/* Type tabs */}
-            {TYPE_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => handleTypeChange(f.value)}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-                  typeFilter === f.value
-                    ? "bg-sky-600 text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-
-            {/* Sub-filters */}
-            {roleOptions.length > 0 && (
-              <>
-                <span className="mx-1 h-5 w-px shrink-0 bg-slate-200" />
-                {roleOptions.map((r) => (
-                  <button
-                    key={r.value}
-                    type="button"
-                    onClick={() => setRoleFilter(r.value)}
-                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
-                      roleFilter === r.value
-                        ? "bg-slate-800 text-white shadow-sm"
-                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                    }`}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Results ── */}
-      <div className="mx-auto max-w-7xl px-6 py-10">
+        {/* Results */}
         {loading ? (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
-        ) : results.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-              <Users className="h-8 w-8 text-slate-400" />
+        ) : !hasResults ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-3xl border border-white/60 bg-white/70 py-20 text-center shadow-sm backdrop-blur-xl"
+          >
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+              <Search className="h-6 w-6 text-slate-400" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700">No results found</h3>
-            <p className="mt-1 text-sm text-slate-500 max-w-xs">
+            <p className="text-lg font-semibold text-slate-700">No results found</p>
+            <p className="mx-auto mt-2 max-w-sm text-slate-500">
               Try a different search term or adjust the filters above.
             </p>
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="mt-4 text-sm font-medium text-sky-600 hover:text-sky-700"
+                className="mt-4 text-sm font-medium text-emerald-600 hover:text-emerald-700"
               >
                 Clear search
               </button>
             )}
-          </div>
+          </motion.div>
         ) : (
           <AnimatePresence mode="wait">
-            <div className="space-y-10">
+            <div className="space-y-12">
               {/* Organizations */}
               {orgs.length > 0 && (
                 <section>
-                  {typeFilter === "all" && (
-                    <h2 className="mb-5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
-                      <span className="h-px flex-1 bg-slate-200" />
-                      Organizations ({orgs.length})
-                      <span className="h-px flex-1 bg-slate-200" />
-                    </h2>
-                  )}
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100">
+                      <Sparkles className="h-4 w-4 text-emerald-600" />
+                    </div>
+                    <h2 className="text-xl font-bold text-slate-900">Organizations</h2>
+                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                      {orgs.length}
+                    </span>
+                  </div>
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {orgs.map((item, i) => (
                       <OrgCard
@@ -529,13 +655,15 @@ export function CommunityClient() {
               {/* People */}
               {people.length > 0 && (
                 <section>
-                  {typeFilter === "all" && (
-                    <h2 className="mb-5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
-                      <span className="h-px flex-1 bg-slate-200" />
-                      People ({people.length})
-                      <span className="h-px flex-1 bg-slate-200" />
-                    </h2>
-                  )}
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-100">
+                      <Sparkles className="h-4 w-4 text-violet-600" />
+                    </div>
+                    <h2 className="text-xl font-bold text-slate-900">People</h2>
+                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                      {people.length}
+                    </span>
+                  </div>
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {people.map((item, i) => (
                       <PersonCard
@@ -553,6 +681,6 @@ export function CommunityClient() {
           </AnimatePresence>
         )}
       </div>
-    </div>
+    </main>
   );
 }

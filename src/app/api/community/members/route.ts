@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 const MAX_LIMIT = 48;
 const DEFAULT_LIMIT = 24;
@@ -19,7 +19,15 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT, MAX_LIMIT);
     const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10));
 
+    // Require authentication so only logged-in users can discover other members
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ results: [], total: 0 });
+    }
+
+    // Use service client for user_profiles to bypass RLS (which restricts users to their own row)
+    const serviceSupabase = createServiceClient();
 
     type OrgItem = {
       kind: "org";
@@ -92,10 +100,13 @@ export async function GET(req: NextRequest) {
     }
 
     // ── Individual users ───────────────────────────────────────────
+    // Uses service client to bypass RLS so all user profiles are visible, not just the caller's own
     if (type === "all" || type === "people") {
-      let userQ = supabase
+      let userQ = serviceSupabase
         .from("user_profiles")
         .select("id, full_name, email, role, business_description")
+        .neq("id", user.id) // exclude the logged-in user from their own search results
+        .not("role", "in", '("organization_admin","platform_admin")') // org admins appear via their org card
         .order("full_name")
         .range(offset, offset + limit - 1);
 

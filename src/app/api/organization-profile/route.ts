@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("organizations")
-      .select("id, name, slug, logo_url, website_url, profile_image_url, page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals, page_story, page_story_image_url, page_donation_goal_cents, card_preview_image_url, card_preview_video_url, page_about_image_side, page_story_image_side")
+      .select("id, name, slug, logo_url, website_url, profile_image_url, page_hero_video_url, page_hero_image_url, page_summary, page_mission, page_goals, page_story, page_story_image_url, page_donation_goal_cents, card_preview_image_url, card_preview_video_url, page_about_image_side, page_story_image_side, connect_card_settings")
       .eq("id", orgIdParam)
       .single();
 
@@ -75,6 +75,7 @@ export async function PATCH(req: NextRequest) {
       "card_preview_video_url",
       "page_about_image_side",
       "page_story_image_side",
+      "connect_card_settings",
     ];
     for (const key of allowed) {
       if (key in body) {

@@ -175,6 +175,22 @@ export async function GET(req: NextRequest) {
 
       // Walk a GrapeJS component tree (stored JSON) and patch mistyped elements.
       // GrapeJS saves the type field and reuses it on load — isComponent never reruns.
+      // Returns true if a GrapeJS saved-JSON node for an <a> should be treated as a button.
+      // Checks both the classes array (GrapeJS internal format) and attributes.class (raw HTML attr).
+      function isAnchorButton(obj) {
+        var BTN_RE = /\bbtn\b|\bbtn-|\bcta\b|-cta\b/;
+        if (Array.isArray(obj.classes)) {
+          if (obj.classes.some(function(c) {
+            var n = (typeof c === 'string') ? c : (c && c.name) || '';
+            return BTN_RE.test(n);
+          })) return true;
+        }
+        var attrCls = (obj.attributes && obj.attributes['class']) || '';
+        if (attrCls && BTN_RE.test(attrCls)) return true;
+        var role = (obj.attributes && obj.attributes['role']) || '';
+        return role === 'button';
+      }
+
       function fixComponentTypes(node) {
         if (!node || typeof node !== 'object') return node;
         if (Array.isArray(node)) return node.map(fixComponentTypes);
@@ -185,11 +201,18 @@ export async function GET(req: NextRequest) {
           obj.type = 'button-el';
           obj.name = 'Button';
         }
-        // <a> stored as text — fix to link type; keep user-set names unless they look like defaults
-        if (tag === 'a' && obj.type === 'text') {
-          obj.type = 'link';
-          var autoNames = ['Text', 'text', 'div', 'a', 'link', 'Link', ''];
-          if (!obj.name || autoNames.indexOf(obj.name) >= 0) obj.name = 'Link';
+        if (tag === 'a') {
+          var autoNames = ['Text', 'text', 'div', 'a', 'link', 'Link', 'Button', ''];
+          if (isAnchorButton(obj)) {
+            // <a> styled as a button — show as "Button" in the layers tree
+            obj.type = 'button-link';
+            if (!obj.name || autoNames.indexOf(obj.name) >= 0) obj.name = 'Button';
+          } else if (obj.type === 'text') {
+            // <a> saved with wrong type — normalise to link
+            obj.type = 'link';
+            var autoNamesLink = ['Text', 'text', 'div', 'a', 'link', 'Link', ''];
+            if (!obj.name || autoNamesLink.indexOf(obj.name) >= 0) obj.name = 'Link';
+          }
         }
         // Recurse into components array
         if (obj.components) obj.components = fixComponentTypes(obj.components);
@@ -472,7 +495,7 @@ export async function GET(req: NextRequest) {
                 });
               } catch (_) {}
             }
-            var typesToExtend = ['text', 'image', 'link', 'default', '1', 'cell', 'row', 'column', 'section', 'span', 'label', 'button', 'button-el', 'wrapper', 'component'];
+            var typesToExtend = ['text', 'image', 'link', 'button-link', 'default', '1', 'cell', 'row', 'column', 'section', 'span', 'label', 'button', 'button-el', 'wrapper', 'component'];
             typesToExtend.forEach(addCmsTraitToType);
             try {
               var allTypes = DomComponents.getTypes && DomComponents.getTypes();
@@ -530,6 +553,38 @@ export async function GET(req: NextRequest) {
                 model: {
                   defaults: {
                     name: 'Link',
+                    traits: [
+                      { type: 'page_select', name: 'pageLink', label: 'Link to Page', changeProp: true },
+                      { name: 'href', label: 'Link URL' },
+                      { type: 'select', name: 'target', label: 'Open in', options: [
+                        { value: '', name: 'Same window' },
+                        { value: '_blank', name: 'New window' }
+                      ]},
+                      { name: 'title', label: 'Title' },
+                      { type: 'cms_bind', name: 'data-cms-binding', label: 'Bind to CMS' }
+                    ]
+                  }
+                }
+              });
+            } catch(_) {}
+            // Register <a> elements styled as buttons (class contains btn / cta / role=button)
+            // as a "Button" type so the layers tree shows "Button" instead of "Link".
+            // Must be registered AFTER 'link' so GrapeJS checks it first (last-in wins).
+            try {
+              DomComponents.addType('button-link', {
+                isComponent: function(el) {
+                  if (el && el.tagName && el.tagName.toUpperCase() === 'A') {
+                    var cls = el.className || '';
+                    var role = el.getAttribute ? (el.getAttribute('role') || '') : '';
+                    if (/\bbtn\b|\bbtn-|\bcta\b|-cta\b/.test(cls) || role === 'button') {
+                      return { type: 'button-link' };
+                    }
+                  }
+                },
+                extend: 'link',
+                model: {
+                  defaults: {
+                    name: 'Button',
                     traits: [
                       { type: 'page_select', name: 'pageLink', label: 'Link to Page', changeProp: true },
                       { name: 'href', label: 'Link URL' },

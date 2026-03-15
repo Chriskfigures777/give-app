@@ -3208,10 +3208,12 @@ export type Database = {
       }
       organizations: {
         Row: {
+          ai_credits_purchased: number
           card_preview_image_url: string | null
           card_preview_video_url: string | null
           causes: string[] | null
           city: string | null
+          connect_card_settings: Json | null
           created_at: string | null
           description: string | null
           dwolla_customer_url: string | null
@@ -3257,10 +3259,12 @@ export type Database = {
           years_in_operation: number | null
         }
         Insert: {
+          ai_credits_purchased?: number
           card_preview_image_url?: string | null
           card_preview_video_url?: string | null
           causes?: string[] | null
           city?: string | null
+          connect_card_settings?: Json | null
           created_at?: string | null
           description?: string | null
           dwolla_customer_url?: string | null
@@ -3306,10 +3310,12 @@ export type Database = {
           years_in_operation?: number | null
         }
         Update: {
+          ai_credits_purchased?: number
           card_preview_image_url?: string | null
           card_preview_video_url?: string | null
           causes?: string[] | null
           city?: string | null
+          connect_card_settings?: Json | null
           created_at?: string | null
           description?: string | null
           dwolla_customer_url?: string | null
@@ -3368,6 +3374,8 @@ export type Database = {
         Row: {
           author_user_id: string
           content: string
+          cover_type: string | null
+          cover_url: string | null
           created_at: string
           id: string
           organization_id: string
@@ -3377,6 +3385,8 @@ export type Database = {
         Insert: {
           author_user_id: string
           content?: string
+          cover_type?: string | null
+          cover_url?: string | null
           created_at?: string
           id?: string
           organization_id: string
@@ -3386,6 +3396,8 @@ export type Database = {
         Update: {
           author_user_id?: string
           content?: string
+          cover_type?: string | null
+          cover_url?: string | null
           created_at?: string
           id?: string
           organization_id?: string

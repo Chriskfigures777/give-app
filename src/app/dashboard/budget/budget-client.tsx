@@ -86,11 +86,11 @@ function createMonthSheet(year: number, month: number, type: "personal" | "churc
 function CellInput({ value, onChange, placeholder = "", align = "left", muted = false }: { value: string; onChange: (v: string) => void; placeholder?: string; align?: "left" | "right" | "center"; muted?: boolean }) {
   return (
     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-      className={["w-full min-w-0 bg-transparent text-[13px] leading-tight outline-none px-2 py-1.5", "focus:bg-dashboard-card-hover rounded", "placeholder:text-dashboard-text-muted/25 transition-colors duration-100", align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left", muted ? "text-dashboard-text-muted" : "text-dashboard-text"].join(" ")} />
+      className={["w-full min-w-0 bg-transparent text-sm font-medium leading-snug outline-none px-2.5 py-2", "focus:bg-dashboard-card-hover rounded", "placeholder:text-dashboard-text-muted/50 transition-colors duration-100", align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left", muted ? "text-dashboard-text-muted" : "text-dashboard-text"].join(" ")} />
   );
 }
 function Th({ children, align = "left" }: { children?: React.ReactNode; align?: "left" | "right" | "center" }) {
-  return <th className={["px-2 py-2 text-[10px] font-semibold uppercase tracking-wider text-dashboard-text-muted/70 border-b border-dashboard-border whitespace-nowrap bg-dashboard-card-hover", align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left"].join(" ")}>{children}</th>;
+  return <th className={["px-2.5 py-2.5 text-xs font-bold uppercase tracking-wider text-dashboard-text-muted border-b border-dashboard-border whitespace-nowrap bg-dashboard-card-hover", align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left"].join(" ")}>{children}</th>;
 }
 
 // ─── Accordion Section ────────────────────────────────────────────────────────
@@ -104,14 +104,14 @@ function AccordionSection({ title, icon, valueColor, defaultOpen = true, badge, 
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-dashboard-card-hover flex-shrink-0 text-dashboard-text-muted [&>svg]:h-4 [&>svg]:w-4">
             {icon}
           </div>
-          <span className="text-sm font-semibold text-dashboard-text">{title}</span>
+          <span className="text-base font-bold text-dashboard-text">{title}</span>
           {badge && (
-            <span className="rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums" style={{ color: valueColor ?? "#8892a4", background: valueColor ? `${valueColor}18` : "rgba(136,146,164,0.12)" }}>
+            <span className="rounded-full px-2.5 py-0.5 text-sm font-bold tabular-nums" style={{ color: valueColor ?? "#8892a4", background: valueColor ? `${valueColor}18` : "rgba(136,146,164,0.12)" }}>
               {badge}
             </span>
           )}
         </div>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }} className="text-dashboard-text-muted/50 flex-shrink-0">
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2, ease: "easeInOut" }} className="text-dashboard-text-muted flex-shrink-0">
           <ChevronDown className="h-4 w-4" />
         </motion.span>
       </button>
@@ -149,17 +149,17 @@ function IncomeSection({ rows, onRowChange, onAddRow, onDeleteRow }: { rows: Inc
           </tbody>
           <tfoot>
             <tr className="bg-dashboard-card-hover border-t border-dashboard-border">
-              <td className="px-2 py-2.5 text-[11px] font-bold uppercase tracking-wider text-dashboard-text-muted">Total Income</td>
-              <td className="px-2 py-2 text-[13px] font-bold text-right text-[#34d399] tabular-nums">{fmtCurrency(tb)}</td>
-              <td className="px-2 py-2 text-[13px] font-bold text-right text-[#34d399] tabular-nums">{fmtCurrency(ta)}</td>
+              <td className="px-2.5 py-3 text-xs font-bold uppercase tracking-wider text-dashboard-text">Total Income</td>
+              <td className="px-2.5 py-3 text-sm font-bold text-right text-[#34d399] tabular-nums">{fmtCurrency(tb)}</td>
+              <td className="px-2.5 py-3 text-sm font-bold text-right text-[#34d399] tabular-nums">{fmtCurrency(ta)}</td>
               <td />
             </tr>
           </tfoot>
         </table>
       </div>
       <div className="px-4 py-2.5 border-t border-dashboard-border/40">
-        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-xs text-dashboard-text-muted hover:text-dashboard-text transition-colors">
-          <Plus className="h-3.5 w-3.5" />Add income row
+        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-sm font-medium text-dashboard-text-muted hover:text-dashboard-text transition-colors">
+          <Plus className="h-4 w-4" />Add income row
         </button>
       </div>
     </AccordionSection>
@@ -185,7 +185,7 @@ function ExpenseSection({ title, rows, onRowChange, onAddRow, onDeleteRow, addLa
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={r.item} onChange={(v) => onRowChange(r.id, "item", v)} placeholder="Expense" /></td>
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={r.budgetAmt} onChange={(v) => onRowChange(r.id, "budgetAmt", v)} placeholder="0.00" align="right" /></td>
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={r.paidToDate} onChange={(v) => onRowChange(r.id, "paidToDate", v)} placeholder="0.00" align="right" /></td>
-                  <td className={["px-2 py-1.5 border-r border-dashboard-border/40 text-[13px] text-right tabular-nums", rowRem < 0 ? "text-red-400" : rowRem === 0 ? "text-dashboard-text-muted" : "text-dashboard-text"].join(" ")}>{fmtCurrency(rowRem)}</td>
+                  <td className={["px-2.5 py-2 border-r border-dashboard-border/40 text-sm font-medium text-right tabular-nums", rowRem < 0 ? "text-red-400" : rowRem === 0 ? "text-dashboard-text-muted" : "text-dashboard-text"].join(" ")}>{fmtCurrency(rowRem)}</td>
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={r.dueDate} onChange={(v) => onRowChange(r.id, "dueDate", v)} placeholder="—" align="center" muted /></td>
                   <td className="px-2 py-0"><button type="button" onClick={() => onDeleteRow(r.id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-dashboard-text-muted/60 hover:text-red-400 p-1"><Trash2 className="h-3.5 w-3.5" /></button></td>
                 </tr>
@@ -194,18 +194,18 @@ function ExpenseSection({ title, rows, onRowChange, onAddRow, onDeleteRow, addLa
           </tbody>
           <tfoot>
             <tr className="bg-dashboard-card-hover border-t border-dashboard-border">
-              <td className="px-2 py-2.5 text-[11px] font-bold uppercase tracking-wider text-dashboard-text-muted">Total</td>
-              <td className="px-2 py-2 text-[13px] font-bold text-right text-dashboard-text tabular-nums">{fmtCurrency(tb)}</td>
-              <td className="px-2 py-2 text-[13px] font-bold text-right text-dashboard-text tabular-nums">{fmtCurrency(tp)}</td>
-              <td className={["px-2 py-2 text-[13px] font-bold text-right tabular-nums", rem < 0 ? "text-red-400" : "text-dashboard-text"].join(" ")}>{fmtCurrency(rem)}</td>
+              <td className="px-2.5 py-3 text-xs font-bold uppercase tracking-wider text-dashboard-text">Total</td>
+              <td className="px-2.5 py-3 text-sm font-bold text-right text-dashboard-text tabular-nums">{fmtCurrency(tb)}</td>
+              <td className="px-2.5 py-3 text-sm font-bold text-right text-dashboard-text tabular-nums">{fmtCurrency(tp)}</td>
+              <td className={["px-2.5 py-3 text-sm font-bold text-right tabular-nums", rem < 0 ? "text-red-400" : "text-dashboard-text"].join(" ")}>{fmtCurrency(rem)}</td>
               <td colSpan={2} />
             </tr>
           </tfoot>
         </table>
       </div>
       <div className="px-4 py-2.5 border-t border-dashboard-border/40">
-        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-xs text-dashboard-text-muted hover:text-dashboard-text transition-colors">
-          <Plus className="h-3.5 w-3.5" />{addLabel}
+        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-sm font-medium text-dashboard-text-muted hover:text-dashboard-text transition-colors">
+          <Plus className="h-4 w-4" />{addLabel}
         </button>
       </div>
     </AccordionSection>
@@ -224,9 +224,9 @@ function SummarySection({ sheet }: { sheet: BudgetSheet }) {
 
   const SRow = ({ label, b, a, bold }: { label: string; b: number; a: number; bold?: boolean }) => (
     <tr className={["border-b border-dashboard-border/40", bold ? "bg-dashboard-card-hover" : ""].join(" ")}>
-      <td className={["px-3 py-2 text-[12px]", bold ? "font-semibold text-dashboard-text" : "text-dashboard-text-muted"].join(" ")}>{label}</td>
-      <td className={["px-3 py-2 text-[13px] text-right tabular-nums", bold ? (b < 0 ? "font-bold text-red-400" : "font-bold text-[#34d399]") : "text-dashboard-text"].join(" ")}>{fmtCurrency(b)}</td>
-      <td className={["px-3 py-2 text-[13px] text-right tabular-nums", bold ? (a < 0 ? "font-bold text-red-400" : "font-bold text-[#34d399]") : (a < 0 ? "text-red-400" : "text-dashboard-text")].join(" ")}>{fmtCurrency(a)}</td>
+      <td className={["px-3 py-2.5 text-sm", bold ? "font-bold text-dashboard-text" : "font-medium text-dashboard-text-muted"].join(" ")}>{label}</td>
+      <td className={["px-3 py-2.5 text-sm text-right tabular-nums", bold ? (b < 0 ? "font-bold text-red-400" : "font-bold text-[#34d399]") : "font-medium text-dashboard-text"].join(" ")}>{fmtCurrency(b)}</td>
+      <td className={["px-3 py-2.5 text-sm text-right tabular-nums", bold ? (a < 0 ? "font-bold text-red-400" : "font-bold text-[#34d399]") : (a < 0 ? "font-medium text-red-400" : "font-medium text-dashboard-text")].join(" ")}>{fmtCurrency(a)}</td>
     </tr>
   );
 
@@ -251,8 +251,8 @@ function SummarySection({ sheet }: { sheet: BudgetSheet }) {
           { label: "Actual Cash Flow", val: acf, color: acf >= 0 ? "#34d399" : "#f87171" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl p-3 border border-dashboard-border bg-dashboard-card-hover">
-            <p className="text-[10px] uppercase tracking-wider text-dashboard-text-muted/70 mb-1.5">{s.label}</p>
-            <p className="text-base font-bold tabular-nums" style={{ color: s.color }}>{fmtCurrency(s.val)}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted mb-1.5">{s.label}</p>
+            <p className="text-lg font-bold tabular-nums" style={{ color: s.color }}>{fmtCurrency(s.val)}</p>
           </div>
         ))}
       </div>
@@ -271,7 +271,7 @@ function TransactionSection({ rows, onRowChange, onAddRow, onDeleteRow }: { rows
           <thead><tr><Th>Date</Th><Th>Description</Th><Th>Category</Th><Th align="right">Amount</Th><Th /></tr></thead>
           <tbody>
             {rows.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-dashboard-text-muted">No transactions yet — click &quot;Add transaction&quot; below.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-sm font-medium text-dashboard-text-muted">No transactions yet — click &quot;Add transaction&quot; below.</td></tr>
             )}
             {rows.map((row, idx) => {
               const amt = parseNum(row.amount);
@@ -280,8 +280,8 @@ function TransactionSection({ rows, onRowChange, onAddRow, onDeleteRow }: { rows
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={row.date} onChange={(v) => onRowChange(row.id, "date", v)} placeholder="YYYY-MM-DD" muted /></td>
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={row.description} onChange={(v) => onRowChange(row.id, "description", v)} placeholder="Description" /></td>
                   <td className="px-0 py-0 border-r border-dashboard-border/40"><CellInput value={row.category} onChange={(v) => onRowChange(row.id, "category", v)} placeholder="Category" muted /></td>
-                  <td className={["px-2 py-1.5 border-r border-dashboard-border/40 text-[13px] text-right tabular-nums", amt > 0 ? "text-[#34d399]" : amt < 0 ? "text-red-400" : "text-dashboard-text"].join(" ")}>
-                    {row.amount !== "" ? fmtCurrency(amt) : <span className="text-dashboard-text-muted/30">0.00</span>}
+                  <td className={["px-2.5 py-2 border-r border-dashboard-border/40 text-sm font-medium text-right tabular-nums", amt > 0 ? "text-[#34d399]" : amt < 0 ? "text-red-400" : "text-dashboard-text"].join(" ")}>
+                    {row.amount !== "" ? fmtCurrency(amt) : <span className="text-dashboard-text-muted/50">0.00</span>}
                   </td>
                   <td className="px-2 py-0"><button type="button" onClick={() => onDeleteRow(row.id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-dashboard-text-muted/60 hover:text-red-400 p-1"><Trash2 className="h-3.5 w-3.5" /></button></td>
                 </tr>
@@ -291,10 +291,10 @@ function TransactionSection({ rows, onRowChange, onAddRow, onDeleteRow }: { rows
           {rows.length > 0 && (
             <tfoot>
               <tr className="bg-dashboard-card-hover border-t border-dashboard-border">
-                <td colSpan={3} className="px-2 py-2.5 text-[11px] font-bold uppercase tracking-wider text-dashboard-text-muted">Totals</td>
-                <td className="px-2 py-2 text-[13px] font-bold text-right tabular-nums">
+                <td colSpan={3} className="px-2.5 py-3 text-xs font-bold uppercase tracking-wider text-dashboard-text">Totals</td>
+                <td className="px-2.5 py-3 text-sm font-bold text-right tabular-nums">
                   <span className="text-[#34d399]">{fmtCurrency(income)}</span>
-                  <span className="text-dashboard-text-muted/50 mx-1.5">/</span>
+                  <span className="text-dashboard-text-muted mx-1.5">/</span>
                   <span className="text-red-400">{fmtCurrency(expenses)}</span>
                 </td>
                 <td />
@@ -304,8 +304,8 @@ function TransactionSection({ rows, onRowChange, onAddRow, onDeleteRow }: { rows
         </table>
       </div>
       <div className="px-4 py-2.5 border-t border-dashboard-border/40">
-        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-xs text-dashboard-text-muted hover:text-dashboard-text transition-colors">
-          <Plus className="h-3.5 w-3.5" />Add transaction
+        <button type="button" onClick={onAddRow} className="flex items-center gap-1.5 text-sm font-medium text-dashboard-text-muted hover:text-dashboard-text transition-colors">
+          <Plus className="h-4 w-4" />Add transaction
         </button>
       </div>
     </AccordionSection>
@@ -524,8 +524,8 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-          {saving && <span className="flex items-center gap-1 text-xs text-dashboard-text-muted"><Loader2 className="h-3 w-3 animate-spin" />Saving…</span>}
-          {!saving && allSheets.length > 0 && <span className="text-xs text-[#34d399]/60 hidden sm:block">● Saved</span>}
+          {saving && <span className="flex items-center gap-1.5 text-sm font-medium text-dashboard-text-muted"><Loader2 className="h-3.5 w-3.5 animate-spin" />Saving…</span>}
+          {!saving && allSheets.length > 0 && <span className="text-sm font-medium text-[#34d399] hidden sm:block">● Saved</span>}
 
           {/* Export */}
           {hasYear && (
@@ -554,8 +554,8 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
       <div className="flex gap-5">
 
         {/* Left: year list */}
-        <div className="w-44 flex-shrink-0 space-y-1">
-          <p className="px-1 text-[10px] font-semibold uppercase tracking-wider text-dashboard-text-muted/60 mb-2.5">Year Folders</p>
+        <div className="w-52 flex-shrink-0 space-y-1.5">
+          <p className="px-1 text-sm font-bold uppercase tracking-wider text-dashboard-text-muted mb-3">Year Folders</p>
 
           {years.map((yr) => {
             const isOpen = yr === selectedYear;
@@ -565,18 +565,18 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
                 <button
                   type="button"
                   onClick={() => { setSelectedYear(yr); if (!isOpen) setSelectedMonth(new Date().getMonth() + 1); }}
-                  className={["w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left text-sm font-medium transition-colors", isOpen ? "bg-dashboard-card border border-dashboard-border text-dashboard-text" : "text-dashboard-text-muted hover:bg-dashboard-card hover:text-dashboard-text"].join(" ")}
+                  className={["w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-base font-semibold transition-colors", isOpen ? "bg-dashboard-card border border-dashboard-border text-dashboard-text" : "text-dashboard-text-muted hover:bg-dashboard-card hover:text-dashboard-text"].join(" ")}
                 >
-                  <FolderOpen className="h-4 w-4 flex-shrink-0" />
+                  <FolderOpen className="h-5 w-5 flex-shrink-0" />
                   <span>{yr}</span>
-                  <span className="ml-auto text-[10px] tabular-nums text-dashboard-text-muted/50">{mSheets.length}/12</span>
+                  <span className="ml-auto text-sm tabular-nums text-dashboard-text-muted">{mSheets.length}/12</span>
                 </button>
 
                 {/* Month list under active year */}
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div key="months" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }} style={{ overflow: "hidden" }}>
-                      <div className="ml-3 mt-1 mb-1 space-y-0.5 border-l border-dashboard-border pl-3">
+                      <div className="ml-3 mt-1.5 mb-1.5 space-y-0.5 border-l border-dashboard-border pl-3">
                         {MONTH_NAMES.map((mn, mi) => {
                           const m = mi + 1;
                           const exists = mSheets.some((s) => s.month === m);
@@ -586,9 +586,9 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
                               key={m}
                               type="button"
                               onClick={() => { if (exists) { setSelectedMonth(m); setView("spreadsheet"); } }}
-                              className={["w-full flex items-center gap-1.5 px-2 py-1 rounded-lg text-left text-xs transition-colors", isActive ? "bg-dashboard-card-hover text-dashboard-text font-medium" : exists ? "text-dashboard-text-muted hover:text-dashboard-text hover:bg-dashboard-card" : "text-dashboard-text-muted/30 cursor-default"].join(" ")}
+                              className={["w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left text-base transition-colors", isActive ? "bg-dashboard-card-hover text-dashboard-text font-semibold" : exists ? "font-medium text-dashboard-text-muted hover:text-dashboard-text hover:bg-dashboard-card" : "text-dashboard-text-muted/40 cursor-default"].join(" ")}
                             >
-                              <Calendar className="h-3 w-3 flex-shrink-0 opacity-60" />
+                              <Calendar className="h-4 w-4 flex-shrink-0 opacity-60" />
                               {mn.slice(0, 3)}
                               {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#34d399] flex-shrink-0" />}
                             </button>
@@ -641,8 +641,8 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-dashboard-card-hover border border-dashboard-border mx-auto mb-4">
                 <FolderOpen className="h-6 w-6 text-dashboard-text-muted" />
               </div>
-              <p className="text-sm font-semibold text-dashboard-text mb-1">No budget for {selectedYear} yet</p>
-              <p className="text-sm text-dashboard-text-muted mb-6">Create a {selectedYear} budget to automatically generate all 12 monthly sheets.</p>
+              <p className="text-base font-bold text-dashboard-text mb-1">No budget for {selectedYear} yet</p>
+              <p className="text-sm font-medium text-dashboard-text-muted mb-6">Create a {selectedYear} budget to automatically generate all 12 monthly sheets.</p>
               <button type="button" onClick={() => createYear(selectedYear)} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors shadow-sm">
                 <Plus className="h-4 w-4" /> Create {selectedYear} Budget
               </button>
@@ -660,7 +660,7 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
               {!activeSheet ? (
                 <div className="rounded-2xl border border-dashboard-border bg-dashboard-card px-8 py-10 text-center">
                   <Calendar className="h-8 w-8 mx-auto text-dashboard-text-muted/40 mb-3" />
-                  <p className="text-sm text-dashboard-text-muted">Select a month from the left panel to view its budget.</p>
+                  <p className="text-sm font-medium text-dashboard-text-muted">Select a month from the left panel to view its budget.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -676,7 +676,7 @@ export function BudgetClient({ userId, orgId, orgName }: { userId: string; orgId
         </div>
       </div>
 
-      <p className="mt-6 text-xs text-dashboard-text-muted/50 text-center">
+      <p className="mt-6 text-sm text-dashboard-text-muted text-center">
         Click any cell to edit · Changes save automatically
       </p>
     </div>
@@ -692,15 +692,15 @@ function NewYearButton({ existing, onAdd }: { existing: number[]; onAdd: (y: num
 
   return (
     <div className="relative">
-      <button type="button" onClick={() => setOpen((o) => !o)} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed border-dashboard-border text-xs text-dashboard-text-muted hover:text-dashboard-text hover:bg-dashboard-card transition-colors">
-        <Plus className="h-3.5 w-3.5" /> Add Year
+      <button type="button" onClick={() => setOpen((o) => !o)} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-dashed border-dashboard-border text-base font-medium text-dashboard-text-muted hover:text-dashboard-text hover:bg-dashboard-card transition-colors">
+        <Plus className="h-5 w-5" /> Add Year
       </button>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}
             className="absolute left-0 top-full mt-1 z-50 rounded-xl border border-dashboard-border bg-dashboard-card shadow-xl py-1 w-full min-w-[130px]">
             {options.map((y) => (
-              <button key={y} type="button" onClick={() => { onAdd(y); setOpen(false); }} className="w-full px-3 py-1.5 text-left text-xs text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text transition-colors">
+              <button key={y} type="button" onClick={() => { onAdd(y); setOpen(false); }} className="w-full px-3 py-2.5 text-left text-base font-medium text-dashboard-text-muted hover:bg-dashboard-card-hover hover:text-dashboard-text transition-colors">
                 {y} {y === thisYear ? <span className="opacity-50">(current)</span> : y > thisYear ? <span className="opacity-50">(future)</span> : <span className="opacity-50">(past)</span>}
               </button>
             ))}

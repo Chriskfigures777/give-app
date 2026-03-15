@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { CheckCircle2, ChevronRight, ChevronLeft, Send, Loader2 } from "lucide-react";
 
 type Question = { id?: string; text: string; type: string; options?: string[] };
 
@@ -27,9 +28,10 @@ type Props = {
   previewMode?: boolean;
   prefillName?: string | null;
   prefillEmail?: string | null;
+  orgLogoUrl?: string | null;
+  orgName?: string | null;
 };
 
-/** Replace {{name}}, {{first_name}}, {{email}} tokens in question text */
 function interpolate(text: string, name: string, email: string): string {
   const firstName = name.split(" ")[0] ?? name;
   return text
@@ -47,6 +49,15 @@ function getVimeoId(url: string): string | null {
   return m?.[1] ?? null;
 }
 
+function hexToRgb(hex: string): string {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return "16,185,129";
+  return `${r},${g},${b}`;
+}
+
 export function SurveyResponseForm({
   surveyId,
   title,
@@ -57,10 +68,12 @@ export function SurveyResponseForm({
   videoUrl = "",
   fontStyle = "sans",
   buttonShape = "rounded",
-  formStyle = "card",
+  formStyle: _formStyle = "card",
   previewMode = false,
   prefillName = null,
   prefillEmail = null,
+  orgLogoUrl = null,
+  orgName = null,
 }: Props) {
   const [pageIndex, setPageIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -75,10 +88,14 @@ export function SurveyResponseForm({
   const isLastPage = pageIndex === pages.length - 1;
   const isFirstPage = pageIndex === 0;
   const totalPages = pages.length;
+  const pc = accentColor;
+  const pcRgb = hexToRgb(pc);
 
   const ytId = videoUrl ? getYouTubeId(videoUrl) : null;
   const vimeoId = videoUrl ? getVimeoId(videoUrl) : null;
   const hasVideo = !!(ytId || vimeoId);
+
+  const fontFamily = fontStyle === "serif" ? "Georgia, 'Times New Roman', serif" : "inherit";
 
   const setAnswer = (qId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [qId]: value }));
@@ -120,510 +137,283 @@ export function SurveyResponseForm({
     }
   };
 
-  const btnRadius = buttonShape === "pill" ? "9999px" : "12px";
-  const fontFamily = fontStyle === "serif" ? "Georgia, 'Times New Roman', serif" : "inherit";
-
-  // Card style: how the outer wrapper looks
-  const cardStyles: Record<string, React.CSSProperties> = {
-    card: {
-      background: "hsl(var(--dashboard-card))",
-      border: "1px solid hsl(var(--dashboard-border))",
-      borderRadius: 20,
-      overflow: "hidden",
-      boxShadow: "0 8px 40px rgba(0,0,0,0.28)",
-    },
-    minimal: {
-      background: "transparent",
-      border: "none",
-    },
-    bold: {
-      background: "hsl(var(--dashboard-card))",
-      border: `2px solid ${accentColor}40`,
-      borderRadius: 20,
-      overflow: "hidden",
-      boxShadow: `0 8px 48px ${accentColor}18`,
-    },
-  };
-
   if (done) {
     return (
-      <div style={{ ...cardStyles[formStyle], padding: "3rem 2rem", textAlign: "center", fontFamily }}>
-        <div
-          className="mx-auto mb-5 flex h-16 w-16 items-center justify-center text-2xl"
-          style={{ background: `${accentColor}18`, borderRadius: buttonShape === "pill" ? 9999 : 16, border: `2px solid ${accentColor}30` }}
-        >
-          ✓
+      <div className={`${previewMode ? "" : "min-h-screen"} flex flex-col items-center justify-center bg-gray-50 px-4 py-8`}>
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg border border-gray-100" style={{ fontFamily }}>
+          <div className="mb-6 flex justify-center">
+            <div className="rounded-full p-5" style={{ backgroundColor: `rgba(${pcRgb},0.1)` }}>
+              <CheckCircle2 className="h-12 w-12" style={{ color: pc }} />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily }}>Thank you!</h2>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Your response has been recorded.{name ? ` Thanks, ${name.split(" ")[0]}!` : ""}
+          </p>
+          <div className="mt-6 h-1 w-16 mx-auto rounded-full" style={{ backgroundColor: `rgba(${pcRgb},0.3)` }} />
         </div>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: "hsl(var(--dashboard-text))", marginBottom: 8 }}>
-          Thank you!
-        </h2>
-        <p style={{ fontSize: 15, color: "hsl(var(--dashboard-text-muted))" }}>
-          Your response has been recorded.
-        </p>
+        {!previewMode && <p className="mt-6 text-xs text-gray-400">Powered by Exchange</p>}
       </div>
     );
   }
 
   return (
-    <div style={{ ...cardStyles[formStyle], fontFamily }}>
+    <div className={`${previewMode ? "" : "min-h-screen"} flex flex-col bg-gray-50`} style={{ fontFamily }}>
 
-      {/* ── Cover media (first page only) ── */}
-      {pageIndex === 0 && (hasVideo || coverImageUrl) && (
-        <div className="relative w-full overflow-hidden" style={{ height: 260 }}>
-          {hasVideo ? (
-            <div className="absolute inset-0 bg-black">
-              {ytId && (
-                <iframe
-                  src={`https://www.youtube.com/embed/${ytId}?autoplay=0&modestbranding=1&rel=0`}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="Survey video"
-                />
-              )}
-              {vimeoId && (
-                <iframe
-                  src={`https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`}
-                  className="w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  title="Survey video"
-                />
-              )}
-            </div>
-          ) : coverImageUrl ? (
-            <>
-              <Image src={coverImageUrl} alt="" fill className="object-cover" />
-              {/* gradient overlay for legibility */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%)" }}
+      {/* ── Colored header strip ── */}
+      <div className="relative px-4 pt-8 pb-12 text-center" style={{ background: `linear-gradient(135deg, ${pc}, ${pc}dd)` }}>
+        {/* Video or cover image in header */}
+        {pageIndex === 0 && hasVideo && (
+          <div className="mx-auto mb-4 max-w-lg overflow-hidden rounded-xl shadow-lg" style={{ aspectRatio: "16/9" }}>
+            {ytId && (
+              <iframe
+                src={`https://www.youtube.com/embed/${ytId}?autoplay=0&modestbranding=1&rel=0`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Survey video"
               />
-            </>
-          ) : null}
-          {/* Accent strip */}
-          <div className="absolute bottom-0 inset-x-0 h-1" style={{ background: accentColor }} />
-        </div>
-      )}
-
-      {/* ── Progress bar (multi-page) ── */}
-      {totalPages > 1 && (
-        <div className="px-7 pt-5" style={{ background: formStyle === "minimal" ? "transparent" : undefined }}>
-          <div className="flex items-center gap-1.5">
-            {pages.map((_, p) => (
-              <div
-                key={p}
-                className="h-1 flex-1 rounded-full transition-all duration-500"
-                style={{ background: p <= pageIndex ? accentColor : `${accentColor}22` }}
-              />
-            ))}
-          </div>
-          <p style={{ fontSize: 11, color: "hsl(var(--dashboard-text-muted))", marginTop: 6 }}>
-            Page {pageIndex + 1} of {totalPages}
-          </p>
-        </div>
-      )}
-
-      {/* ── Body ── */}
-      <div style={{ padding: formStyle === "minimal" ? "2rem 0" : "2rem 1.75rem 1.75rem" }}>
-
-        {/* Header (first page) */}
-        {pageIndex === 0 && (
-          <div style={{ marginBottom: 28 }}>
-            <h1 style={{
-              fontSize: 26,
-              fontWeight: 800,
-              color: "hsl(var(--dashboard-text))",
-              lineHeight: 1.2,
-              marginBottom: description ? 10 : 0,
-              fontFamily,
-            }}>
-              {title}
-            </h1>
-            {description && (
-              <p style={{ fontSize: 15, color: "hsl(var(--dashboard-text-muted))", lineHeight: 1.6 }}>
-                {description}
-              </p>
             )}
-            {/* Identity: prefilled badge OR manual inputs */}
-            {!previewMode && (
-              isPrefilled ? (
-                /* Personalized greeting badge */
-                <div
-                  style={{
-                    marginTop: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    background: `${accentColor}12`,
-                    border: `1px solid ${accentColor}30`,
-                    borderRadius: 12,
-                    padding: "12px 16px",
-                  }}
-                >
-                  <span
-                    style={{
-                      flexShrink: 0,
-                      width: 36,
-                      height: 36,
-                      borderRadius: "50%",
-                      background: accentColor,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 15,
-                      fontWeight: 800,
-                      color: "white",
-                    }}
-                  >
-                    {(prefillName ?? prefillEmail ?? "?")[0]?.toUpperCase()}
-                  </span>
-                  <div>
-                    <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "hsl(var(--dashboard-text))", fontFamily }}>
-                      {prefillName ? `Responding as ${prefillName}` : "Responding anonymously"}
-                    </p>
-                    {prefillEmail && (
-                      <p style={{ margin: 0, fontSize: 12, color: "hsl(var(--dashboard-text-muted))" }}>{prefillEmail}</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                      Name (optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Your name"
-                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
-                      style={{
-                        width: "100%",
-                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                        border: "1.5px solid hsl(var(--dashboard-border))",
-                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                        padding: "10px 14px",
-                        fontSize: 14,
-                        color: "hsl(var(--dashboard-text))",
-                        outline: "none",
-                        transition: "border-color 0.15s, box-shadow 0.15s",
-                        boxSizing: "border-box",
-                        fontFamily,
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "hsl(var(--dashboard-text-muted))", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                      Email (optional)
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
-                      style={{
-                        width: "100%",
-                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                        border: "1.5px solid hsl(var(--dashboard-border))",
-                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                        padding: "10px 14px",
-                        fontSize: 14,
-                        color: "hsl(var(--dashboard-text))",
-                        outline: "none",
-                        transition: "border-color 0.15s, box-shadow 0.15s",
-                        boxSizing: "border-box",
-                        fontFamily,
-                      }}
-                    />
-                  </div>
-                </div>
-              )
+            {vimeoId && (
+              <iframe
+                src={`https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`}
+                className="w-full h-full"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+                title="Survey video"
+              />
             )}
           </div>
         )}
+        {pageIndex === 0 && !hasVideo && coverImageUrl && (
+          <div className="mx-auto mb-4 max-w-lg overflow-hidden rounded-xl shadow-lg relative" style={{ height: 180 }}>
+            <Image src={coverImageUrl} alt="" fill className="object-cover" />
+          </div>
+        )}
+        {orgLogoUrl && (
+          <img src={orgLogoUrl} alt={orgName ?? ""} className="mx-auto mb-3 h-14 w-14 rounded-2xl object-cover shadow-lg ring-2 ring-white/20" />
+        )}
+        <h1 className="text-xl font-bold text-white" style={{ fontFamily }}>{title}</h1>
+        {description && pageIndex === 0 && (
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/80">{description}</p>
+        )}
+      </div>
 
-        {/* Questions */}
-        {currentPage.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-            {currentPage.map((q, i) => {
-              const qId = (q.id ?? `q-${i}`) as string;
-              const isYesNo =
-                q.type === "yes_no" ||
-                (q.type === "multiple_choice" &&
-                  q.options?.length === 2 &&
-                  q.options[0] === "Yes" &&
-                  q.options[1] === "No");
+      {/* ── Card (overlaps header) ── */}
+      <div className="flex-1 px-4 pb-8 -mt-6">
+        <div className="mx-auto max-w-lg">
+          <div className="rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden">
 
-              const globalIdx = pageIndex === 0 ? i : pageIndex * 4 + i;
+            {/* ── Progress bar ── */}
+            {totalPages > 1 && (
+              <div className="border-b border-gray-100 px-6 py-4">
+                <div className="flex items-center gap-1.5">
+                  {pages.map((_, p) => (
+                    <div
+                      key={p}
+                      className="h-1.5 flex-1 rounded-full transition-all duration-500"
+                      style={{ background: p <= pageIndex ? pc : "#e5e7eb" }}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  Page {pageIndex + 1} of {totalPages}
+                </p>
+              </div>
+            )}
 
-              return (
-                <div key={qId}>
-                  {/* Question label with number */}
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 14 }}>
+            {/* ── Form content ── */}
+            <div className="p-6">
+
+              {/* Identity inputs (first page, not prefilled) */}
+              {pageIndex === 0 && !previewMode && (
+                isPrefilled ? (
+                  <div className="mb-6 flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
                     <span
-                      style={{
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 26,
-                        height: 26,
-                        borderRadius: buttonShape === "pill" ? 9999 : 8,
-                        background: `${accentColor}20`,
-                        color: accentColor,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        marginTop: 2,
-                      }}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                      style={{ backgroundColor: pc }}
                     >
-                      {globalIdx + 1}
+                      {(prefillName ?? prefillEmail ?? "?")[0]?.toUpperCase()}
                     </span>
-                    <label
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "hsl(var(--dashboard-text))",
-                        lineHeight: 1.4,
-                        fontFamily,
-                      }}
-                    >
-                      {interpolate(q.text, name, email)}
-                    </label>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900" style={{ fontFamily }}>
+                        {prefillName ? `Responding as ${prefillName}` : "Responding anonymously"}
+                      </p>
+                      {prefillEmail && <p className="text-xs text-gray-500">{prefillEmail}</p>}
+                    </div>
                   </div>
+                ) : (
+                  <div className="mb-6 space-y-4">
+                    <div>
+                      <label className="form-label">Name (optional)</label>
+                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Email (optional)</label>
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="form-input" />
+                    </div>
+                  </div>
+                )
+              )}
 
-                  {/* Answer area */}
-                  {isYesNo ? (
-                    <div style={{ display: "flex", gap: 12, paddingLeft: 36 }}>
-                      {["Yes", "No"].map((opt) => {
-                        const sel = answers[qId] === opt;
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => setAnswer(qId, opt)}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
-                              borderRadius: btnRadius,
-                              padding: "10px 22px",
-                              fontSize: 15,
-                              fontWeight: 600,
-                              cursor: "pointer",
-                              transition: "all 0.15s",
-                              background: sel ? `${accentColor}18` : "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                              color: sel ? accentColor : "hsl(var(--dashboard-text))",
-                              boxShadow: sel ? `0 0 0 3px ${accentColor}15` : "none",
-                              fontFamily,
-                            }}
-                          >
-                            <span style={{ fontSize: 18 }}>{opt === "Yes" ? "👍" : "👎"}</span>
-                            {opt}
-                          </button>
-                        );
-                      })}
+              {/* Questions */}
+              <div className="space-y-6">
+                {currentPage.map((q, i) => {
+                  const qId = (q.id ?? `q-${i}`) as string;
+                  const isYesNo =
+                    q.type === "yes_no" ||
+                    (q.type === "multiple_choice" && q.options?.length === 2 && q.options[0] === "Yes" && q.options[1] === "No");
+                  const globalIdx = pageIndex === 0 ? i : pageIndex * 4 + i;
+
+                  return (
+                    <div key={qId}>
+                      <div className="flex items-start gap-3 mb-3">
+                        <span
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold mt-0.5"
+                          style={{ backgroundColor: `rgba(${pcRgb},0.1)`, color: pc }}
+                        >
+                          {globalIdx + 1}
+                        </span>
+                        <label className="text-sm font-semibold text-gray-900 leading-snug" style={{ fontFamily }}>
+                          {interpolate(q.text, name, email)}
+                        </label>
+                      </div>
+
+                      <div className="pl-9">
+                        {isYesNo ? (
+                          <div className="flex gap-3">
+                            {["Yes", "No"].map((opt) => {
+                              const sel = answers[qId] === opt;
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => setAnswer(qId, opt)}
+                                  className={`flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium transition-all ${
+                                    sel ? "" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                  }`}
+                                  style={sel ? { borderColor: pc, backgroundColor: `rgba(${pcRgb},0.08)`, color: pc } : undefined}
+                                >
+                                  <span className="text-base">{opt === "Yes" ? "\uD83D\uDC4D" : "\uD83D\uDC4E"}</span>
+                                  {opt}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : q.type === "multiple_choice" && q.options?.length ? (
+                          <div className="space-y-2">
+                            {q.options.map((opt) => {
+                              const sel = answers[qId] === opt;
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => setAnswer(qId, opt)}
+                                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-2.5 text-left text-sm font-medium transition-all ${
+                                    sel ? "" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                  }`}
+                                  style={sel ? { borderColor: pc, backgroundColor: `rgba(${pcRgb},0.08)`, color: pc } : undefined}
+                                >
+                                  <span
+                                    className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-all"
+                                    style={{
+                                      borderColor: sel ? pc : "#d1d5db",
+                                      backgroundColor: sel ? pc : "transparent",
+                                    }}
+                                  >
+                                    {sel && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                                  </span>
+                                  <span style={{ fontFamily }}>{opt}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : q.type === "paragraph" ? (
+                          <textarea
+                            value={answers[qId] ?? ""}
+                            onChange={(e) => setAnswer(qId, e.target.value)}
+                            rows={4}
+                            placeholder="Your answer\u2026"
+                            className="form-input resize-none"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            value={answers[qId] ?? ""}
+                            onChange={(e) => setAnswer(qId, e.target.value)}
+                            placeholder="Your answer\u2026"
+                            className="form-input"
+                          />
+                        )}
+                      </div>
                     </div>
-                  ) : q.type === "multiple_choice" && q.options?.length ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingLeft: 36 }}>
-                      {q.options.map((opt) => {
-                        const sel = answers[qId] === opt;
-                        return (
-                          <label
-                            key={opt}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 12,
-                              cursor: "pointer",
-                              border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
-                              borderRadius: btnRadius,
-                              padding: "11px 16px",
-                              transition: "all 0.15s",
-                              background: sel ? `${accentColor}12` : "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                              boxShadow: sel ? `0 0 0 3px ${accentColor}15` : "none",
-                            }}
-                          >
-                            {/* Custom radio */}
-                            <span
-                              style={{
-                                flexShrink: 0,
-                                width: 18,
-                                height: 18,
-                                borderRadius: "50%",
-                                border: `2px solid ${sel ? accentColor : "hsl(var(--dashboard-border))"}`,
-                                background: sel ? accentColor : "transparent",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                transition: "all 0.15s",
-                              }}
-                            >
-                              {sel && (
-                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "white" }} />
-                              )}
-                            </span>
-                            <input
-                              type="radio"
-                              name={qId}
-                              value={opt}
-                              checked={sel}
-                              onChange={() => setAnswer(qId, opt)}
-                              style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
-                            />
-                            <span style={{ fontSize: 14, fontWeight: 500, color: "hsl(var(--dashboard-text))", fontFamily }}>
-                              {opt}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  ) : q.type === "paragraph" ? (
-                    <textarea
-                      value={answers[qId] ?? ""}
-                      onChange={(e) => setAnswer(qId, e.target.value)}
-                      rows={4}
-                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
-                      placeholder="Your answer…"
-                      style={{
-                        width: "100%",
-                        marginLeft: 36,
-                        maxWidth: "calc(100% - 36px)",
-                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                        border: "1.5px solid hsl(var(--dashboard-border))",
-                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                        padding: "12px 14px",
-                        fontSize: 14,
-                        color: "hsl(var(--dashboard-text))",
-                        outline: "none",
-                        resize: "none",
-                        transition: "border-color 0.15s, box-shadow 0.15s",
-                        boxSizing: "border-box",
-                        fontFamily,
-                      }}
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      value={answers[qId] ?? ""}
-                      onChange={(e) => setAnswer(qId, e.target.value)}
-                      onFocus={(e) => { e.target.style.borderColor = accentColor; e.target.style.boxShadow = `0 0 0 3px ${accentColor}20`; }}
-                      onBlur={(e) => { e.target.style.borderColor = "hsl(var(--dashboard-border))"; e.target.style.boxShadow = "none"; }}
-                      placeholder="Your answer…"
-                      style={{
-                        width: "100%",
-                        marginLeft: 36,
-                        maxWidth: "calc(100% - 36px)",
-                        background: "hsl(var(--dashboard-card-hover, var(--dashboard-card)))",
-                        border: "1.5px solid hsl(var(--dashboard-border))",
-                        borderRadius: btnRadius === "9999px" ? 12 : btnRadius,
-                        padding: "10px 14px",
-                        fontSize: 14,
-                        color: "hsl(var(--dashboard-text))",
-                        outline: "none",
-                        transition: "border-color 0.15s, box-shadow 0.15s",
-                        boxSizing: "border-box",
-                        fontFamily,
-                      }}
-                    />
-                  )}
+                  );
+                })}
+              </div>
+
+              {error && (
+                <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                  {error}
                 </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <p style={{ marginTop: 16, fontSize: 13, color: "#f87171", background: "rgba(239,68,68,0.1)", borderRadius: 10, padding: "10px 14px" }}>
-            {error}
-          </p>
-        )}
-
-        {/* Navigation */}
-        <div style={{ marginTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-          <button
-            type="button"
-            onClick={back}
-            disabled={isFirstPage}
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: isFirstPage ? "transparent" : "hsl(var(--dashboard-text-muted))",
-              background: "none",
-              border: "none",
-              cursor: isFirstPage ? "default" : "pointer",
-              padding: 0,
-              fontFamily,
-            }}
-          >
-            ← Back
-          </button>
-
-          {/* Dot indicators (compact) */}
-          {totalPages > 1 && (
-            <div style={{ display: "flex", gap: 6 }}>
-              {pages.map((_, p) => (
-                <span
-                  key={p}
-                  style={{
-                    display: "block",
-                    width: p === pageIndex ? 18 : 6,
-                    height: 6,
-                    borderRadius: 3,
-                    background: p === pageIndex ? accentColor : `${accentColor}30`,
-                    transition: "all 0.3s",
-                  }}
-                />
-              ))}
+              )}
             </div>
+
+            {/* ── Navigation ── */}
+            <div className="border-t border-gray-100 px-6 py-4">
+              <div className="flex items-center gap-3">
+                {!isFirstPage && (
+                  <button
+                    type="button"
+                    onClick={back}
+                    className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Back
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={next}
+                  disabled={submitting}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ backgroundColor: pc }}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Submitting&hellip;
+                    </>
+                  ) : previewMode ? (
+                    isLastPage ? (
+                      <>Preview done <CheckCircle2 className="h-4 w-4" /></>
+                    ) : (
+                      <>Continue <ChevronRight className="h-4 w-4" /></>
+                    )
+                  ) : isLastPage ? (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Submit
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ChevronRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+              <p className="mt-3 text-center text-xs text-gray-400">
+                {totalPages > 1 ? `Page ${pageIndex + 1} of ${totalPages}` : ""}
+              </p>
+            </div>
+          </div>
+
+          {previewMode && (
+            <p className="mt-3 text-center text-xs text-gray-400">Preview mode — responses are not saved</p>
           )}
-
-          <button
-            type="button"
-            onClick={next}
-            disabled={submitting}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: accentColor,
-              color: "white",
-              border: "none",
-              borderRadius: btnRadius,
-              padding: "11px 24px",
-              fontSize: 15,
-              fontWeight: 700,
-              cursor: submitting ? "not-allowed" : "pointer",
-              opacity: submitting ? 0.6 : 1,
-              transition: "opacity 0.15s, transform 0.1s",
-              boxShadow: `0 4px 16px ${accentColor}40`,
-              fontFamily,
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.88"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
-          >
-            {submitting ? (
-              "Submitting…"
-            ) : previewMode ? (
-              isLastPage ? "Preview done ✓" : "Next →"
-            ) : (
-              isLastPage ? "Submit response" : "Next →"
-            )}
-          </button>
+          {!previewMode && <p className="mt-6 text-center text-xs text-gray-400">Powered by Exchange</p>}
         </div>
-
-        {previewMode && (
-          <p style={{ marginTop: 12, textAlign: "center", fontSize: 11, color: "hsl(var(--dashboard-text-muted))", opacity: 0.6 }}>
-            Preview mode — responses are not saved
-          </p>
-        )}
       </div>
     </div>
   );

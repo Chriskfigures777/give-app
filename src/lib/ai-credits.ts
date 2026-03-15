@@ -1,5 +1,8 @@
 /**
- * AI credits/usage for org (e.g. generate_survey_questions). Cap by plan: free=5, website=20, pro=50 per month.
+ * AI credits/usage for org (e.g. generate_survey_questions).
+ * Cap by plan: free=5, website=20, pro=50 per month.
+ * Orgs can also buy additional credits via Stripe — these are tracked in
+ * organizations.ai_credits_purchased and added on top of the monthly cap.
  */
 import { createServiceClient } from "@/lib/supabase/server";
 
@@ -8,6 +11,7 @@ const FEATURE = "generate_survey_questions";
 const CAP_BY_PLAN: Record<string, number> = {
   free: 5,
   website: 20,
+  growth: 20,
   pro: 50,
 };
 
@@ -29,15 +33,17 @@ export async function getUsageThisMonth(organizationId: string): Promise<number>
   return count ?? 0;
 }
 
-export async function getCap(organizationId: string): Promise<number> {
+export async function getCap(organizationId: string): Promise<{ planCap: number; purchased: number }> {
   const supabase = createServiceClient();
   const { data } = await supabase
     .from("organizations")
-    .select("plan")
+    .select("plan, ai_credits_purchased")
     .eq("id", organizationId)
     .single();
-  const plan = (data as { plan?: string } | null)?.plan ?? "free";
-  return CAP_BY_PLAN[plan] ?? DEFAULT_CAP;
+  const plan = (data as { plan?: string; ai_credits_purchased?: number } | null)?.plan ?? "free";
+  const purchased = (data as { plan?: string; ai_credits_purchased?: number } | null)?.ai_credits_purchased ?? 0;
+  const planCap = CAP_BY_PLAN[plan] ?? DEFAULT_CAP;
+  return { planCap, purchased };
 }
 
 export async function recordUsage(
@@ -54,10 +60,33 @@ export async function recordUsage(
   });
 }
 
-export async function getRemainingCredits(organizationId: string): Promise<{ used: number; cap: number; remaining: number }> {
-  const [used, cap] = await Promise.all([
+export async function getRemainingCredits(organizationId: string): Promise<{
+  used: number;
+  cap: number;
+  planCap: number;
+  purchased: number;
+  remaining: number;
+}> {
+  const [used, { planCap, purchased }] = await Promise.all([
     getUsageThisMonth(organizationId),
     getCap(organizationId),
   ]);
-  return { used, cap, remaining: Math.max(0, cap - used) };
+  const cap = planCap + purchased;
+  return { used, cap, planCap, purchased, remaining: Math.max(0, cap - used) };
+}
+
+/** Deduct from purchased credits first (called after usage is recorded). */
+export async function deductPurchasedCredit(organizationId: string): Promise<void> {
+  const supabase = createServiceClient();
+  // Only deduct if org has purchased credits and usage exceeded plan cap this month.
+  const { planCap, purchased } = await getCap(organizationId);
+  if (purchased <= 0) return;
+  const used = await getUsageThisMonth(organizationId);
+  // If usage is beyond the plan cap, deduct from purchased credits.
+  if (used > planCap) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).rpc("decrement_ai_credits_purchased", {
+      org_id: organizationId,
+    });
+  }
 }

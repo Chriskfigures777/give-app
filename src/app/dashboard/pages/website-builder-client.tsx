@@ -70,7 +70,10 @@ export function WebsiteBuilderClient({
         // Update URL immediately when user clicks a project (before editor loads) so refresh keeps them on the builder
         const projectId = e.data.projectId;
         if (projectId) {
-          router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
+          const currentProjectInUrl = new URLSearchParams(window.location.search).get("project")?.trim() || null;
+          if (currentProjectInUrl !== projectId) {
+            router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
+          }
         }
       } else if (e.data?.type === "editor-project-loaded") {
         const projectId = e.data.projectId;
@@ -84,7 +87,13 @@ export function WebsiteBuilderClient({
         });
         setJustPublishedUrl(null);
         setPublishMode(null);
-        router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
+        // Only update the URL if the project ID isn't already there.
+        // Calling router.replace to the same URL triggers a server re-render that
+        // reloads the iframe, which fires editor-project-loaded again → infinite loop.
+        const currentProjectInUrl = new URLSearchParams(window.location.search).get("project")?.trim() || null;
+        if (currentProjectInUrl !== projectId) {
+          router.replace(`/dashboard/pages?project=${encodeURIComponent(projectId)}`, { scroll: false });
+        }
       } else if (e.data?.type === "editor-project-unloaded") {
         setProjectState(null);
         setJustPublishedUrl(null);

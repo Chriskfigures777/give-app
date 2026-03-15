@@ -246,12 +246,12 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
 
             const { data: orgRow } = await supabase
               .from("organizations")
-              .select("stripe_connect_account_id")
+              .select("stripe_connect_account_id, name, owner_user_id")
               .eq("id", organizationId)
               .single();
+            const formOwnerOrg = orgRow as { stripe_connect_account_id: string | null; name: string; owner_user_id: string | null } | null;
             const formOwnerConnectId =
-              connectAccountId ??
-              (orgRow as { stripe_connect_account_id: string | null } | null)?.stripe_connect_account_id;
+              connectAccountId ?? formOwnerOrg?.stripe_connect_account_id;
             if (!formOwnerConnectId) {
               console.warn("[splits] Skipping: org has no stripe_connect_account_id", { organizationId });
               break;
@@ -315,21 +315,53 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
             } else {
               console.warn("[splits] No transfer promises (amounts may be < 1 cent)", { piId: pi.id });
             }
-          }
 
-          // Create donation record for split payments
-          const splitOrgId = metadata.organization_id as string | undefined;
-          if (splitOrgId && pi.id) {
+            // Resolve peer org info for split breakdown
+            type PeerOrgInfo = { id: string; name: string; owner_user_id: string | null };
+            const peerOrgInfoMap = new Map<string, PeerOrgInfo>();
+            await Promise.all(
+              stripeSplits.map(async (entry) => {
+                if (!entry.accountId) return;
+                const { data: peerOrg } = await supabase
+                  .from("organizations")
+                  .select("id, name, owner_user_id")
+                  .eq("stripe_connect_account_id", entry.accountId)
+                  .maybeSingle();
+                if (peerOrg) peerOrgInfoMap.set(entry.accountId, peerOrg as PeerOrgInfo);
+              })
+            );
+
+            const formOwnerOrgName = formOwnerOrg?.name ?? "Organization";
+            const splitsBreakdown = [
+              { organization_id: organizationId, organization_name: formOwnerOrgName, percentage: formOwnerPct, amount_cents: Math.round((formOwnerPct / 100) * netAmount) },
+              ...stripeSplits.map((entry) => {
+                const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+                return {
+                  organization_id: peerOrg?.id ?? null,
+                  organization_name: peerOrg?.name ?? `Account ${entry.accountId}`,
+                  percentage: entry.percentage ?? 0,
+                  amount_cents: Math.round(((entry.percentage ?? 0) / 100) * netAmount),
+                };
+              }),
+            ];
+
+            // Create main org donation record (with split breakdown for receipt)
+            const donationAmountCents =
+              parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+            let mainDonationId: string | null = null;
+
             const { data: existingDonation } = await supabase
               .from("donations")
               .select("id")
               .eq("stripe_payment_intent_id", pi.id)
+              .eq("organization_id", organizationId)
               .maybeSingle();
-            if (!existingDonation) {
-              const donationAmountCents =
-                parseInt(metadata.donation_amount_cents ?? "0", 10) || pi.amount;
+
+            if (existingDonation) {
+              mainDonationId = (existingDonation as { id: string }).id;
+            } else {
               const receiptToken = randomUUID();
-              await supabase.from("donations").insert({
+              const { data: mainInserted } = await supabase.from("donations").insert({
                 amount_cents: donationAmountCents,
                 currency: pi.currency ?? "usd",
                 donor_email: metadata.donor_email || null,
@@ -338,12 +370,53 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
                 stripe_payment_intent_id: pi.id,
                 stripe_charge_id: chargeId,
                 status: "succeeded",
-                organization_id: splitOrgId,
+                organization_id: organizationId,
                 campaign_id: metadata.campaign_id || null,
                 user_id: metadata.user_id || null,
                 receipt_token: receiptToken,
-                metadata: { payment_intent: pi.id, split_mode: "stripe_connect" },
-              });
+                metadata: {
+                  payment_intent: pi.id,
+                  split_mode: "stripe_connect",
+                  splits_breakdown: splitsBreakdown,
+                },
+              }).select("id").single();
+              mainDonationId = (mainInserted as { id: string } | null)?.id ?? null;
+            }
+
+            // Create per-org donation records for peer orgs
+            for (const entry of stripeSplits) {
+              const peerOrg = entry.accountId ? peerOrgInfoMap.get(entry.accountId) : null;
+              if (!peerOrg?.id) continue;
+              const peerAmt = Math.round(((entry.percentage ?? 0) / 100) * netAmount);
+              if (peerAmt < 1) continue;
+
+              const { data: existingPeer } = await supabase
+                .from("donations")
+                .select("id")
+                .eq("stripe_payment_intent_id", pi.id)
+                .eq("organization_id", peerOrg.id)
+                .maybeSingle();
+
+              if (!existingPeer) {
+                await supabase.from("donations").insert({
+                  amount_cents: peerAmt,
+                  currency: pi.currency ?? "usd",
+                  donor_email: metadata.donor_email || null,
+                  donor_name: metadata.donor_name || null,
+                  stripe_payment_intent_id: pi.id,
+                  stripe_charge_id: chargeId,
+                  status: "succeeded",
+                  organization_id: peerOrg.id,
+                  receipt_token: null,
+                  metadata: {
+                    payment_intent: pi.id,
+                    split_mode: "stripe_connect_peer",
+                    parent_donation_id: mainDonationId,
+                    split_percentage: entry.percentage,
+                  },
+                });
+                console.log("[splits] Created peer donation for", peerOrg.name, peerAmt, "cents");
+              }
             }
           }
           break;
@@ -586,6 +659,35 @@ export async function handler(event: APIGatewayProxyEventV2): Promise<APIGateway
 
       case "checkout.session.completed": {
         const session = stripeEvent.data.object as Stripe.Checkout.Session;
+
+        // ── AI credits one-time purchase ──
+        if (session.metadata?.type === "ai_credits_purchase") {
+          const orgId = session.metadata?.org_id;
+          const creditsStr = session.metadata?.credits;
+          const credits = creditsStr ? parseInt(creditsStr, 10) : 0;
+          if (!orgId || !credits || isNaN(credits)) break;
+
+          if (session.payment_status === "paid") {
+            const { data: orgData } = await supabase
+              .from("organizations")
+              .select("ai_credits_purchased")
+              .eq("id", orgId)
+              .single();
+
+            const current = (orgData as { ai_credits_purchased?: number } | null)?.ai_credits_purchased ?? 0;
+
+            await supabase
+              .from("organizations")
+              .update({
+                ai_credits_purchased: current + credits,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", orgId);
+
+            console.log(`[ai-credits] Added ${credits} credits to org ${orgId} (total: ${current + credits})`);
+          }
+          break;
+        }
 
         // ── Platform plan subscription (billing/paywall) ──
         if (session.metadata?.type === "platform_plan") {

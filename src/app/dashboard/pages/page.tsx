@@ -4,8 +4,9 @@ import { requireAuth } from "@/lib/auth";
 import { getOrgVerification } from "@/lib/verification";
 import { WebsiteBuilderClient } from "./website-builder-client";
 import { VerificationGate } from "@/components/verification-gate";
+import { PaywallGate } from "@/components/paywall-gate";
 import { fetchFormsPageData } from "../forms/forms-data";
-import { getOrgPlan, getEffectiveSplitRecipientLimit } from "@/lib/plan";
+import { getOrgPlan, getEffectiveSplitRecipientLimit, hasAccessToPlan } from "@/lib/plan";
 import { getBaseUrlForDashboard } from "@/lib/request-origin";
 
 export default async function WebsiteBuilderPage({
@@ -35,8 +36,20 @@ export default async function WebsiteBuilderPage({
     }
   }
 
-  const data = await fetchFormsPageData(orgId, supabase);
   const { plan, planStatus } = await getOrgPlan(orgId, supabase);
+
+  if (!isPlatformAdmin && !hasAccessToPlan(plan, planStatus, "growth")) {
+    return (
+      <PaywallGate
+        requiredPlan="growth"
+        featureName="Website Builder"
+        featureDescription="Build and publish a beautiful website for your organization with custom domains, pages, and more."
+        currentPlan={plan}
+      />
+    );
+  }
+
+  const data = await fetchFormsPageData(orgId, supabase);
   const splitRecipientLimit = getEffectiveSplitRecipientLimit(plan, planStatus);
   const baseUrl = await getBaseUrlForDashboard();
 

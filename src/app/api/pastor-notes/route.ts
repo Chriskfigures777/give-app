@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("pastor_notes")
-      .select("id, title, content, cover_url, cover_type, created_at, updated_at, author_user_id")
+      .select("id, title, content, created_at, updated_at, author_user_id")
       .eq("organization_id", orgId)
       .order("updated_at", { ascending: false });
 
@@ -56,17 +56,19 @@ export async function POST(req: NextRequest) {
     const title = typeof body.title === "string" ? body.title.trim() : "";
     const content = typeof body.content === "string" ? body.content : "";
 
+    const row = {
+      organization_id: orgId,
+      author_user_id: user.id,
+      title: title || "Untitled",
+      content: content ?? "",
+      ...(body.cover_url != null ? { cover_url: body.cover_url } : {}),
+      ...(body.cover_type != null ? { cover_type: body.cover_type } : {}),
+    };
+
     const { data, error } = await supabase
       .from("pastor_notes")
-      .insert({
-        organization_id: orgId,
-        author_user_id: user.id,
-        title: title || "Untitled",
-        content: content ?? "",
-        cover_url: body.cover_url ?? null,
-        cover_type: body.cover_type ?? null,
-      })
-      .select("id, title, content, cover_url, cover_type, created_at, updated_at")
+      .insert(row)
+      .select("id, title, content, created_at, updated_at")
       .single();
 
     if (error) {

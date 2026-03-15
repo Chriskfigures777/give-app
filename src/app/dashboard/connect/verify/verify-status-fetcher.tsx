@@ -32,7 +32,8 @@ export function VerifyStatusFetcher() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return null;
 }

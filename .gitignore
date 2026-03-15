@@ -38,3 +38,9 @@ lambda/*/dist/
 
 # TypeScript
 *.tsbuildinfo
+
+# Large binary/document files
+*.xlsx
+*.docx
+*.pptx
+*.m4a

@@ -14,23 +14,27 @@ export default async function EditNotePage({
   const orgId = profile?.organization_id ?? profile?.preferred_organization_id;
   if (!orgId) redirect("/dashboard");
 
-  const { data: note, error } = await supabase
+  type NoteRow = { id: string; title: string; content: string; cover_url?: string | null; cover_type?: string | null };
+
+  const { data: noteData, error } = await supabase
     .from("pastor_notes")
-    .select("id, title, content")
+    .select("id, title, content, cover_url, cover_type")
     .eq("id", id)
     .eq("organization_id", orgId)
     .single();
 
-  if (error || !note) notFound();
+  if (error || !noteData) notFound();
+  const note = noteData as unknown as NoteRow;
 
   const credits = await getRemainingCredits(orgId);
-  const n = note as { title: string; content: string };
 
   return (
     <NoteEditorClient
       noteId={id}
-      initialTitle={n.title ?? ""}
-      initialContent={n.content ?? ""}
+      initialTitle={note.title ?? ""}
+      initialContent={note.content ?? ""}
+      initialCoverUrl={note.cover_url ?? null}
+      initialCoverType={(note.cover_type as "image" | "video" | null) ?? null}
       creditsRemaining={credits.remaining}
       creditsCap={credits.cap}
     />

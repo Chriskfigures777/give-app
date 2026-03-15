@@ -84,9 +84,9 @@ export async function POST(req: Request) {
       (account.requirements?.eventually_due?.length ?? 0) > 0;
     const detailsSubmitted = account.details_submitted === true;
     const verified = chargesEnabled || payoutsEnabled;
-    const onboardingCompleted = hasRequirements
-      ? false
-      : verified || detailsSubmitted;
+    // verified (charges/payouts enabled) always wins — eventually_due items on live
+    // accounts must not override an already-working account back to incomplete.
+    const onboardingCompleted = verified || (!hasRequirements && detailsSubmitted);
 
     await supabase
       .from("organizations")
