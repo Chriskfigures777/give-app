@@ -6,7 +6,7 @@ import {
   Calendar, Mail, Phone, MapPin,
   Heart, Sparkles, ExternalLink, UserCircle, Palette,
   Plus, X, Save, Loader2,
-  Church, Settings,
+  Church, Settings, UserPlus, Check,
 } from "lucide-react";
 import type { Submission, ConnectCardSettings, MinistryOption } from "./page";
 
@@ -111,6 +111,33 @@ export function ConnectCardClient({ orgSlug, orgId, orgName, baseUrl, initialSub
   const [saveErr, setSaveErr] = useState<string | null>(null);
   const [newMinLabel, setNewMinLabel] = useState("");
   const [newMinIcon, setNewMinIcon] = useState("");
+
+  // CRM add-to-people state per submission id
+  const [crmState, setCrmState] = useState<Record<string, "loading" | "done" | "exists">>({});
+
+  async function addSubmissionToCrm(sub: Submission) {
+    if (!sub.visitor_name && !sub.visitor_email) return;
+    setCrmState((p) => ({ ...p, [sub.id]: "loading" }));
+    try {
+      const res = await fetch("/api/organization-contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: sub.visitor_name ?? "",
+          email: sub.visitor_email ?? "",
+          phone: sub.visitor_phone ?? "",
+        }),
+      });
+      const data = await res.json() as { error?: string };
+      if (!res.ok && data.error?.toLowerCase().includes("already")) {
+        setCrmState((p) => ({ ...p, [sub.id]: "exists" }));
+      } else {
+        setCrmState((p) => ({ ...p, [sub.id]: "done" }));
+      }
+    } catch {
+      setCrmState((p) => { const n = { ...p }; delete n[sub.id]; return n; });
+    }
+  }
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
@@ -354,6 +381,34 @@ export function ConnectCardClient({ orgSlug, orgId, orgName, baseUrl, initialSub
                     <Mail className="h-3.5 w-3.5 text-emerald-400" /> Email
                   </a>
                 )}
+                {/* Add to People / CRM */}
+                {(expandedSub.visitor_name || expandedSub.visitor_email) && (() => {
+                  const state = crmState[expandedSub.id];
+                  if (state === "done") return (
+                    <span className="flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-400">
+                      <Check className="h-3.5 w-3.5" /> Added to People
+                    </span>
+                  );
+                  if (state === "exists") return (
+                    <span className="flex items-center gap-1.5 rounded-xl border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-400">
+                      <Check className="h-3.5 w-3.5" /> Already in People
+                    </span>
+                  );
+                  if (state === "loading") return (
+                    <span className="flex items-center gap-1.5 rounded-xl border border-dashboard-border px-3 py-1.5 text-xs font-semibold text-dashboard-text-muted">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Adding…
+                    </span>
+                  );
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => addSubmissionToCrm(expandedSub)}
+                      className="flex items-center gap-1.5 rounded-xl border border-dashboard-border px-3 py-1.5 text-xs font-semibold text-dashboard-text hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all"
+                    >
+                      <UserPlus className="h-3.5 w-3.5" /> Add to People
+                    </button>
+                  );
+                })()}
                 {expandedSub.visitor_email && (
                   <a href="/dashboard/people" className="flex items-center gap-1.5 rounded-xl border border-dashboard-border px-3 py-1.5 text-xs font-medium text-dashboard-text transition-colors hover:bg-dashboard-card-hover">
                     <UserCircle className="h-3.5 w-3.5 text-sky-400" /> View in People

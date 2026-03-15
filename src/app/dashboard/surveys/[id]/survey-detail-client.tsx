@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Copy, Check, Pencil, Mail, ChevronDown,
   ClipboardList, Users, BarChart3, LinkIcon, ChevronRight, Video, Eye, X, UserCheck,
+  UserPlus, Loader2,
 } from "lucide-react";
 import { SurveyResponseForm } from "@/app/survey/org/[surveyId]/survey-response-form";
 
@@ -81,6 +82,28 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
   const [selectedContactIds, setSelectedContactIds] = useState<Set<string>>(new Set());
   const [respondentCategory, setRespondentCategory] = useState<string | null>(survey.respondent_category ?? null);
   const [savingCategory, setSavingCategory] = useState(false);
+  // Track which response IDs have been added to CRM: "idle" | "loading" | "done" | "exists"
+  const [crmState, setCrmState] = useState<Record<string, "loading" | "done" | "exists">>({});
+
+  async function addToCrm(r: ResponseRow) {
+    if (!r.respondent_email && !r.respondent_name) return;
+    setCrmState((p) => ({ ...p, [r.id]: "loading" }));
+    try {
+      const res = await fetch("/api/organization-contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: r.respondent_name ?? "", email: r.respondent_email ?? "", phone: "" }),
+      });
+      const data = await res.json() as { error?: string };
+      if (!res.ok && data.error?.toLowerCase().includes("already")) {
+        setCrmState((p) => ({ ...p, [r.id]: "exists" }));
+      } else {
+        setCrmState((p) => ({ ...p, [r.id]: "done" }));
+      }
+    } catch {
+      setCrmState((p) => { const n = { ...p }; delete n[r.id]; return n; });
+    }
+  }
 
   const cfg = STATUS[status as keyof typeof STATUS] ?? STATUS.draft;
   const questions = Array.isArray(survey.questions) ? (survey.questions as Array<Record<string, unknown>>) : [];
@@ -747,6 +770,7 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                     <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Respondent</th>
                     <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Date</th>
                     <th className="p-3 text-left text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">Answers</th>
+                    <th className="p-3 text-right text-xs font-semibold uppercase tracking-wider text-dashboard-text-muted">CRM</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -771,10 +795,39 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                             {Object.keys(r.answers ?? {}).length} answered
                           </span>
                         </td>
+                        <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
+                          {(r.respondent_name || r.respondent_email) && (() => {
+                            const state = crmState[r.id];
+                            if (state === "done") return (
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                                <Check className="h-3 w-3" /> Added
+                              </span>
+                            );
+                            if (state === "exists") return (
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-400">
+                                <Check className="h-3 w-3" /> In CRM
+                              </span>
+                            );
+                            if (state === "loading") return (
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-dashboard-card-hover px-2.5 py-1 text-xs font-semibold text-dashboard-text-muted">
+                                <Loader2 className="h-3 w-3 animate-spin" /> Adding…
+                              </span>
+                            );
+                            return (
+                              <button
+                                type="button"
+                                onClick={() => addToCrm(r)}
+                                className="inline-flex items-center gap-1 rounded-lg border border-dashboard-border bg-dashboard-card-hover px-2.5 py-1 text-xs font-semibold text-dashboard-text-muted hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all"
+                              >
+                                <UserPlus className="h-3 w-3" /> Add to People
+                              </button>
+                            );
+                          })()}
+                        </td>
                       </tr>
                       {expandedRow === r.id && Object.keys(r.answers ?? {}).length > 0 && (
                         <tr key={`${r.id}-expanded`} className="border-t border-dashboard-border bg-dashboard-card-hover/20">
-                          <td colSpan={3} className="p-4">
+                          <td colSpan={4} className="p-4">
                             <div className="space-y-2">
                               {questions.map((q, qi) => {
                                 const qRow = q as Record<string, unknown>;
