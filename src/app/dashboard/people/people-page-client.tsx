@@ -7,7 +7,7 @@ import {
   Users, TrendingUp, Heart, FileText, ClipboardList,
   UserCircle, UserPlus, X, Loader2, Search, Tag, Send,
   Mail, MessageSquare, Settings2, ChevronDown, SlidersHorizontal,
-  Check,
+  Check, ShieldCheck, ShieldX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -345,10 +345,12 @@ export function PeoplePageClient({
   const [showBroadcast, setShowBroadcast] = useState(false);
   const [showTagManager, setShowTagManager] = useState(false);
   const [tags, setTags] = useState<CrmTag[]>(initialTags);
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", asMember: false });
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
   const thresholdRef = useRef<HTMLDivElement>(null);
+  // Track per-contact member promotion state: "loading" | "done" | "removed"
+  const [memberState, setMemberState] = useState<Record<string, "loading" | "done" | "removed">>({});
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -446,12 +448,32 @@ export function PeoplePageClient({
     if (!form.name.trim() && !form.email.trim()) { setAddError("Enter at least a name or email."); return; }
     setAdding(true);
     try {
-      const res = await fetch("/api/organization-contacts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const res = await fetch("/api/organization-contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, phone: form.phone, asMember: form.asMember }),
+      });
       const data = await res.json() as { error?: string };
       if (!res.ok) { setAddError(data.error ?? "Failed to add contact"); return; }
-      setShowAdd(false); setForm({ name: "", email: "", phone: "" }); router.refresh();
+      setShowAdd(false); setForm({ name: "", email: "", phone: "", asMember: false }); router.refresh();
     } catch { setAddError("Something went wrong."); }
     finally { setAdding(false); }
+  }
+
+  async function toggleMember(contactId: string, currentlyMember: boolean) {
+    setMemberState((p) => ({ ...p, [contactId]: "loading" }));
+    try {
+      const res = await fetch("/api/organization-contacts", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: contactId, addMember: !currentlyMember, removeMember: currentlyMember }),
+      });
+      if (!res.ok) { setMemberState((p) => { const n = { ...p }; delete n[contactId]; return n; }); return; }
+      setMemberState((p) => ({ ...p, [contactId]: currentlyMember ? "removed" : "done" }));
+      router.refresh();
+    } catch {
+      setMemberState((p) => { const n = { ...p }; delete n[contactId]; return n; });
+    }
   }
 
   const refreshTags = useCallback(async () => {
@@ -692,6 +714,9 @@ export function PeoplePageClient({
                 <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border hidden md:table-cell">
                   Last seen
                 </th>
+                <th className="px-4 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-dashboard-text-muted border-b border-dashboard-border">
+                  Member
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -761,6 +786,42 @@ export function PeoplePageClient({
                         ? new Date(c.last_seen_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
                         : <span className="opacity-30">—</span>}
                     </td>
+
+                    {/* Member toggle */}
+                    <td className="px-4 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
+                      {(() => {
+                        const isMember = (c.sources_breakdown?.member ?? 0) > 0;
+                        const state = memberState[c.id];
+                        if (state === "loading") return (
+                          <span className="inline-flex items-center gap-1 text-xs text-dashboard-text-muted">
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          </span>
+                        );
+                        if (isMember) return (
+                          <button
+                            type="button"
+                            title="Remove member status"
+                            onClick={() => toggleMember(c.id, true)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/15 border border-emerald-500/25 px-2.5 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-rose-500/15 hover:border-rose-500/25 hover:text-rose-400 transition-all group"
+                          >
+                            <ShieldCheck className="h-3 w-3 group-hover:hidden" />
+                            <ShieldX className="h-3 w-3 hidden group-hover:block" />
+                            <span className="group-hover:hidden">Member</span>
+                            <span className="hidden group-hover:inline">Remove</span>
+                          </button>
+                        );
+                        return (
+                          <button
+                            type="button"
+                            title="Add as member"
+                            onClick={() => toggleMember(c.id, false)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-dashboard-border px-2.5 py-1 text-[10px] font-semibold text-dashboard-text-muted hover:border-emerald-500/40 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all"
+                          >
+                            <ShieldCheck className="h-3 w-3" /> Make Member
+                          </button>
+                        );
+                      })()}
+                    </td>
                   </tr>
                 );
               })}
@@ -790,6 +851,28 @@ export function PeoplePageClient({
                 <label className="text-sm font-medium text-dashboard-text">Phone <span className="text-dashboard-text-muted font-normal">(optional)</span></label>
                 <input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} placeholder="+1 (555) 000-0000" className="w-full rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-2 text-sm text-dashboard-text focus:outline-none focus:ring-2 focus:ring-emerald-500/40" />
               </div>
+
+              {/* Member toggle */}
+              <label className="flex items-center gap-3 rounded-xl border border-dashboard-border bg-dashboard-card-hover/50 px-4 py-3 cursor-pointer hover:bg-dashboard-card-hover transition-colors">
+                <div className="relative flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={form.asMember}
+                    onChange={(e) => setForm((f) => ({ ...f, asMember: e.target.checked }))}
+                    className="sr-only"
+                  />
+                  <div className={`h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${form.asMember ? "bg-emerald-500 border-emerald-500" : "border-dashboard-border bg-dashboard-card"}`}>
+                    {form.asMember && <Check className="h-3 w-3 text-white" />}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-dashboard-text flex items-center gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Add as Member
+                  </p>
+                  <p className="text-xs text-dashboard-text-muted">Marks this person under the Members source filter</p>
+                </div>
+              </label>
+
               {addError && <p className="text-sm text-rose-400">{addError}</p>}
               <div className="flex gap-3 pt-1">
                 <Button type="button" variant="secondary" onClick={() => { setShowAdd(false); setAddError(null); }} className="flex-1">Cancel</Button>
