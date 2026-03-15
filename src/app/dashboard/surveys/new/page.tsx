@@ -13,7 +13,9 @@ export default async function NewSurveyPage({
   if (!orgId) redirect("/dashboard");
 
   const params = await searchParams;
-  const fromNote = params.fromNote ?? null;
+  // Guard against the literal string "null" being passed (can happen if savedNoteId state was null)
+  const rawNote = params.fromNote ?? null;
+  const fromNote = rawNote && rawNote !== "null" && rawNote !== "undefined" ? rawNote : null;
 
   return (
     <div className="space-y-4 p-2 sm:p-4">

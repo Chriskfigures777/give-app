@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 import {
   FileText, Clock, Video, Image as ImageIcon, AlignLeft,
-  Search, ChevronUp, ChevronDown, ChevronsUpDown, Filter, X,
+  Search, ChevronUp, ChevronDown, ChevronsUpDown, Filter, X, Sparkles,
 } from "lucide-react";
 
 export type NoteCard = {
@@ -177,6 +177,7 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
                 {colHeader("Words", "words", "text-right")}
                 {colHeader("Updated", "updated_at", "whitespace-nowrap")}
                 {colHeader("Created", "created_at", "whitespace-nowrap")}
+                <th className="px-4 py-3 text-right" />
               </tr>
             </thead>
             <tbody>
@@ -258,6 +259,19 @@ export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
                       <span className="text-xs text-dashboard-text-muted" title={created.full}>
                         {created.short}
                       </span>
+                    </td>
+
+                    {/* AI Survey quick action */}
+                    <td className="px-4 py-3.5 text-right">
+                      <Link
+                        href={`/dashboard/notes/${note.id}`}
+                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-white opacity-0 group-hover:opacity-100 transition-all"
+                        title="Open note to generate AI survey questions"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        AI Survey
+                      </Link>
                     </td>
                   </tr>
                 );

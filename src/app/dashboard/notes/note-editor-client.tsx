@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Bold, Italic, List, ListOrdered, Quote,
-  Minus, Undo2, Redo2, Sparkles, Loader2, X, ChevronRight,
+  Minus, Undo2, Redo2, Sparkles, Loader2, X, ChevronDown,
   Check, Trash2, Mic, MicOff, BookOpen, FileText, Image as ImageIcon,
   Video, LayoutTemplate,
 } from "lucide-react";
@@ -44,7 +44,6 @@ export function NoteEditorClient({
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
-  const [generatedQuestions, setGeneratedQuestions] = useState<SurveyQuestion[] | null>(null);
   const [localCreditsRemaining, setLocalCreditsRemaining] = useState(creditsRemaining);
   const [questionCount, setQuestionCount] = useState<number>(() => {
     try { return parseInt(localStorage.getItem("ai_question_count") ?? "5", 10) || 5; } catch { return 5; }
@@ -55,6 +54,20 @@ export function NoteEditorClient({
   const [interimText, setInterimText] = useState("");
   const [bibleOpen, setBibleOpen] = useState(false);
   const [pexelsOpen, setPexelsOpen] = useState(false);
+  const [surveyConfigOpen, setSurveyConfigOpen] = useState(false);
+  const surveyConfigRef = useRef<HTMLDivElement>(null);
+  const [questionTypes, setQuestionTypes] = useState<{
+    multiple_choice: boolean;
+    yes_no: boolean;
+    short_answer: boolean;
+    long_answer: boolean;
+  }>(() => {
+    try {
+      const saved = localStorage.getItem("ai_question_types");
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return { multiple_choice: true, yes_no: true, short_answer: true, long_answer: false };
+  });
 
   // Cover state — null means no cover (text-only header)
   const [coverUrl, setCoverUrl] = useState<string | null>(initialCoverUrl ?? null);
@@ -74,6 +87,17 @@ export function NoteEditorClient({
       recognitionRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (surveyConfigRef.current && !surveyConfigRef.current.contains(e.target as Node)) {
+        setSurveyConfigOpen(false);
+      }
+    }
+    if (surveyConfigOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [surveyConfigOpen]);
+
 
   const FONTS: { label: string; value: string }[] = [
     { label: "Barlow", value: "var(--font-barlow), sans-serif" },
@@ -98,7 +122,6 @@ export function NoteEditorClient({
 
   const editorRef = useRef(editor);
   useEffect(() => { editorRef.current = editor; }, [editor]);
-
   const wordCount = editor?.storage.characterCount.words() ?? 0;
 
   const saveNote = useCallback(async (overrideCover?: { url: string | null; type: "image" | "video" | null }): Promise<string | null> => {
@@ -171,13 +194,21 @@ export function NoteEditorClient({
   const handleGenerate = async () => {
     if (!editor) return;
     setGenError(null);
-    setGeneratedQuestions(null);
     setGenerating(true);
+    setSurveyConfigOpen(false);
     try {
       const id = await saveNote();
       if (!id) throw new Error("Save failed — cannot generate");
       const plainText = editor.getText();
-      const res = await fetch("/api/ai/generate-survey-questions", {
+
+      // Build enabled question types list
+      const enabledTypes = Object.entries(questionTypes)
+        .filter(([, enabled]) => enabled)
+        .map(([type]) => type);
+      if (enabledTypes.length === 0) throw new Error("Select at least one question type.");
+
+      // Step 1: Generate questions from AI
+      const genRes = await fetch("/api/ai/generate-survey-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -185,17 +216,38 @@ export function NoteEditorClient({
           count: questionCount,
           noteId: id,
           noteTitle: title.trim() || "Untitled",
+          questionTypes: enabledTypes,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 402) throw new Error("No AI credits left. Buy more credits in Plan & Billing.");
-        throw new Error((data as { error?: string }).error ?? "Failed to generate");
+      const genData = await genRes.json();
+      if (!genRes.ok) {
+        if (genRes.status === 402) throw new Error("No AI credits left. Buy more credits in Plan & Billing.");
+        throw new Error((genData as { error?: string }).error ?? "Failed to generate");
       }
-      const questions = (data as { questions?: SurveyQuestion[] }).questions ?? [];
-      setGeneratedQuestions(questions);
+      const questions = (genData as { questions?: SurveyQuestion[] }).questions ?? [];
+      if (questions.length === 0) throw new Error("AI returned no questions — please try again.");
       setLocalCreditsRemaining((c) => Math.max(0, c - 1));
-      try { localStorage.setItem(`note_questions_${id}`, JSON.stringify(questions)); } catch { /* ignore */ }
+
+      // Step 2: Immediately create the survey with those questions
+      const surveyRes = await fetch("/api/surveys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim() || "Untitled survey",
+          description: null,
+          questions: questions.map((q, i) => ({
+            id: q.id ?? `q-${i}`,
+            text: q.text,
+            type: q.type,
+            options: q.options,
+          })),
+        }),
+      });
+      const surveyData = await surveyRes.json();
+      if (!surveyRes.ok) throw new Error((surveyData as { error?: string }).error ?? "Failed to create survey");
+
+      // Step 3: Navigate straight to the new survey
+      router.push(`/dashboard/surveys/${(surveyData as { id: string }).id}`);
     } catch (e) {
       setGenError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -434,34 +486,108 @@ export function NoteEditorClient({
           Save
         </button>
 
-        {/* Generate — question count picker + button */}
-        <div className="shrink-0 flex items-center rounded-lg overflow-hidden border border-emerald-600/70 shadow-sm shadow-emerald-500/20">
-          <select
-            value={questionCount}
-            onChange={(e) => {
-              const val = parseInt(e.target.value, 10);
-              setQuestionCount(val);
-              try { localStorage.setItem("ai_question_count", String(val)); } catch { /* ignore */ }
-            }}
-            disabled={saving || generating || localCreditsRemaining < 1}
-            title="Number of questions to generate"
-            className="h-full bg-emerald-700/80 hover:bg-emerald-700 disabled:opacity-40 px-2 py-1.5 text-xs font-semibold text-white focus:outline-none cursor-pointer border-r border-emerald-500/50 transition-colors"
-          >
-            {[3, 4, 5, 6, 7, 8, 10, 12, 15].map((n) => (
-              <option key={n} value={n} style={{ background: "#065f46" }}>
-                {n}Q
-              </option>
-            ))}
-          </select>
+        {/* Generate — config button + popover */}
+        <div ref={surveyConfigRef} className="shrink-0 relative">
           <button
-            onClick={handleGenerate}
+            onClick={() => setSurveyConfigOpen((o) => !o)}
             disabled={saving || generating || localCreditsRemaining < 1}
-            title={localCreditsRemaining < 1 ? "No AI credits remaining — buy more in Plan & Billing" : "Generate survey questions from this note"}
-            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+            title={localCreditsRemaining < 1 ? "No AI credits remaining — buy more in Plan & Billing" : "Configure and create AI survey from this note"}
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1.5 text-xs font-semibold text-white transition-colors shadow-sm shadow-emerald-500/20"
           >
             {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">{generating ? "Generating…" : localCreditsRemaining < 1 ? "No credits" : "AI Questions"}</span>
+            <span className="hidden sm:inline">{generating ? "Creating survey…" : localCreditsRemaining < 1 ? "No credits" : "Create AI Survey"}</span>
+            {!generating && localCreditsRemaining >= 1 && (
+              <ChevronDown className={`h-3 w-3 transition-transform ${surveyConfigOpen ? "rotate-180" : ""}`} />
+            )}
           </button>
+
+          {/* Config dropdown */}
+          {surveyConfigOpen && (
+            <div className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl border border-dashboard-border bg-dashboard-card shadow-2xl shadow-black/30 overflow-hidden">
+              {/* Header */}
+              <div className="px-4 py-3 border-b border-dashboard-border bg-emerald-500/8">
+                <p className="text-xs font-bold text-dashboard-text uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> AI Survey Settings
+                </p>
+              </div>
+
+              <div className="p-4 space-y-4">
+                {/* Question count */}
+                <div>
+                  <p className="text-xs font-semibold text-dashboard-text-muted mb-2">Number of questions</p>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {[3, 5, 6, 8, 10, 12, 15].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => {
+                          setQuestionCount(n);
+                          try { localStorage.setItem("ai_question_count", String(n)); } catch { /* ignore */ }
+                        }}
+                        className={`rounded-lg py-1.5 text-xs font-bold transition-all ${
+                          questionCount === n
+                            ? "bg-emerald-600 text-white shadow-sm"
+                            : "bg-white/6 text-dashboard-text-muted hover:bg-white/12 hover:text-dashboard-text"
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Question types */}
+                <div>
+                  <p className="text-xs font-semibold text-dashboard-text-muted mb-2">Question types to include</p>
+                  <div className="space-y-2">
+                    {[
+                      { key: "multiple_choice", label: "Multiple Choice", desc: "Pick one option" },
+                      { key: "yes_no",          label: "Yes / No",        desc: "Quick thumbs up/down" },
+                      { key: "short_answer",    label: "Short Answer",    desc: "One-line response" },
+                      { key: "long_answer",     label: "Long Answer",     desc: "Paragraph response" },
+                    ].map(({ key, label, desc }) => {
+                      const enabled = questionTypes[key as keyof typeof questionTypes];
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => {
+                            const updated = { ...questionTypes, [key]: !enabled };
+                            setQuestionTypes(updated);
+                            try { localStorage.setItem("ai_question_types", JSON.stringify(updated)); } catch { /* ignore */ }
+                          }}
+                          className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all border ${
+                            enabled
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-dashboard-text"
+                              : "bg-white/3 border-dashboard-border/50 text-dashboard-text-muted hover:bg-white/6"
+                          }`}
+                        >
+                          <div className={`h-4 w-4 rounded flex items-center justify-center shrink-0 border transition-all ${
+                            enabled ? "bg-emerald-600 border-emerald-500" : "border-dashboard-border/60"
+                          }`}>
+                            {enabled && <Check className="h-2.5 w-2.5 text-white" />}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold leading-tight">{label}</p>
+                            <p className="text-[10px] text-dashboard-text-muted leading-tight">{desc}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Generate button */}
+                <button
+                  onClick={handleGenerate}
+                  disabled={saving || generating || !Object.values(questionTypes).some(Boolean)}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2.5 text-sm font-bold text-white transition-all shadow-sm shadow-emerald-500/20"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Generate {questionCount} Questions & Create Survey
+                </button>
+                <p className="text-center text-[10px] text-dashboard-text-muted">Uses 1 AI credit · {localCreditsRemaining} remaining</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -702,87 +828,20 @@ export function NoteEditorClient({
               <EditorContent editor={editor} className="tiptap-doc" />
             </div>
 
-            {/* ── Generated questions panel ── */}
-            {(generatedQuestions !== null || genError) && (
-              <div className="mt-6 rounded-2xl overflow-hidden border border-dashboard-border shadow-2xl ring-1 ring-emerald-500/10">
-                {/* Header */}
-                <div
-                  className="flex items-center justify-between px-5 py-4 border-b border-dashboard-border"
-                  style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.12), rgba(99,102,241,0.08))" }}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-8 w-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-emerald-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-dashboard-text">
-                        {genError ? "Generation failed" : `${generatedQuestions?.length ?? 0} of ${questionCount} questions generated`}
-                      </h3>
-                      {!genError && (
-                        <p className="text-xs text-dashboard-text-muted">Ready to create a survey · <span className="text-emerald-400">1 credit used</span></p>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => { setGeneratedQuestions(null); setGenError(null); }}
-                    className="rounded-lg p-1.5 text-dashboard-text-muted hover:bg-white/8 hover:text-dashboard-text transition-all"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {genError ? (
-                  <div className="p-5">
-                    <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">
-                      {genError}
-                      {genError.includes("credits") && (
-                        <Link href="/dashboard/billing" className="ml-2 underline text-rose-300 hover:text-rose-200">
-                          Go to Billing →
-                        </Link>
-                      )}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <ul className="divide-y divide-dashboard-border/60">
-                      {generatedQuestions?.map((q, i) => (
-                        <li key={i} className="px-5 py-3.5 hover:bg-white/3 transition-colors">
-                          <div className="flex gap-3">
-                            <span
-                              className="shrink-0 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold mt-0.5"
-                              style={{ background: "rgba(16,185,129,0.15)", color: "#10b981" }}
-                            >
-                              {i + 1}
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-dashboard-text">{q.text}</p>
-                              {q.type === "multiple_choice" && q.options?.length ? (
-                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                  {q.options.map((opt) => (
-                                    <span key={opt} className="rounded-full border border-dashboard-border/60 bg-white/4 px-2.5 py-0.5 text-xs text-dashboard-text-muted">
-                                      {opt}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : null}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    <div
-                      className="flex items-center justify-between gap-4 border-t border-dashboard-border px-5 py-4"
-                      style={{ background: "rgba(16,185,129,0.05)" }}
-                    >
-                      <p className="text-xs text-dashboard-text-muted">No extra credits used when creating a survey from these.</p>
-                      <Link href={`/dashboard/surveys/new?fromNote=${savedNoteId}`}>
-                        <button className="flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-bold text-white transition-all shadow-sm shadow-emerald-500/20">
-                          Create survey <ChevronRight className="h-3.5 w-3.5" />
-                        </button>
-                      </Link>
-                    </div>
-                  </>
-                )}
+            {/* Error banner (shown if survey creation fails) */}
+            {genError && (
+              <div className="mt-4 rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-3 flex items-start gap-3">
+                <p className="text-sm text-rose-400 flex-1">
+                  {genError}
+                  {genError.includes("credits") && (
+                    <Link href="/dashboard/billing" className="ml-2 underline text-rose-300 hover:text-rose-200">
+                      Go to Billing →
+                    </Link>
+                  )}
+                </p>
+                <button onClick={() => setGenError(null)} className="text-rose-400 hover:text-rose-300 shrink-0">
+                  <X className="h-4 w-4" />
+                </button>
               </div>
             )}
 

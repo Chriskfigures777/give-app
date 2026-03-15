@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getRemainingCredits } from "@/lib/ai-credits";
 import { NoteEditorClient } from "../note-editor-client";
+import { Suspense } from "react";
 
 export default async function EditNotePage({
   params,
@@ -29,14 +30,16 @@ export default async function EditNotePage({
   const credits = await getRemainingCredits(orgId);
 
   return (
-    <NoteEditorClient
-      noteId={id}
-      initialTitle={note.title ?? ""}
-      initialContent={note.content ?? ""}
-      initialCoverUrl={note.cover_url ?? null}
-      initialCoverType={(note.cover_type as "image" | "video" | null) ?? null}
-      creditsRemaining={credits.remaining}
-      creditsCap={credits.cap}
-    />
+    <Suspense>
+      <NoteEditorClient
+        noteId={id}
+        initialTitle={note.title ?? ""}
+        initialContent={note.content ?? ""}
+        initialCoverUrl={note.cover_url ?? null}
+        initialCoverType={(note.cover_type as "image" | "video" | null) ?? null}
+        creditsRemaining={credits.remaining}
+        creditsCap={credits.cap}
+      />
+    </Suspense>
   );
 }
