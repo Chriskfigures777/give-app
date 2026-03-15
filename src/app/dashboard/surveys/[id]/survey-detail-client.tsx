@@ -85,7 +85,7 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
   const cfg = STATUS[status as keyof typeof STATUS] ?? STATUS.draft;
   const questions = Array.isArray(survey.questions) ? (survey.questions as Array<Record<string, unknown>>) : [];
   const theme = survey.theme ?? {};
-  const accentColor = theme.accent_color ?? "#8b5cf6";
+  const accentColor = theme.accent_color ?? "#10b981";
   const videoUrl = theme.video_url ?? "";
   const fontStyle = theme.font_style ?? "sans";
   const buttonShape = theme.button_shape ?? "rounded";
@@ -491,22 +491,39 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
                 <h3 className="text-sm font-semibold text-dashboard-text">Questions preview</h3>
                 <button
                   onClick={() => setTab("questions")}
-                  className="flex items-center gap-1 text-xs hover:underline"
+                  className="flex items-center gap-1 text-xs font-medium hover:underline"
                   style={{ color: accentColor }}
                 >
                   View all <ChevronRight className="h-3 w-3" />
                 </button>
               </div>
               <ul className="divide-y divide-dashboard-border">
-                {questions.slice(0, 3).map((q, i) => (
-                  <li key={i} className="px-5 py-3 text-sm text-dashboard-text">
-                    <span className="mr-2 text-dashboard-text-muted tabular-nums">{i + 1}.</span>
-                    {String(q.text ?? "")}
-                  </li>
-                ))}
+                {(questions as Array<Record<string, unknown>>).slice(0, 3).map((q, i) => {
+                  const typeKey = String(q.type ?? "short_answer");
+                  const typeLabels: Record<string, string> = {
+                    multiple_choice: "Multiple choice",
+                    yes_no: "Yes / No",
+                    short_answer: "Short answer",
+                    paragraph: "Long answer",
+                  };
+                  return (
+                    <li key={i} className="flex items-start gap-3 px-5 py-3.5">
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-black"
+                        style={{ background: `${accentColor}20`, color: accentColor }}
+                      >
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-dashboard-text leading-snug">{String(q.text ?? "")}</p>
+                        <p className="mt-1 text-xs text-dashboard-text-muted">{typeLabels[typeKey] ?? typeKey.replace(/_/g, " ")}</p>
+                      </div>
+                    </li>
+                  );
+                })}
                 {questions.length > 3 && (
                   <li className="px-5 py-2.5 text-xs text-dashboard-text-muted">
-                    +{questions.length - 3} more questions
+                    +{questions.length - 3} more question{questions.length - 3 !== 1 ? "s" : ""}
                   </li>
                 )}
               </ul>
@@ -517,52 +534,124 @@ export function SurveyDetailClient({ surveyId, survey, responses, surveyLink, co
 
       {/* ── Tab: Questions ── */}
       {tab === "questions" && (
-        <div className="dashboard-fade-in mt-5 rounded-xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
+        <div className="dashboard-fade-in mt-5 space-y-3">
           {questions.length === 0 ? (
-            <p className="p-8 text-center text-sm text-dashboard-text-muted">No questions yet. Edit the survey to add some.</p>
-          ) : (
-            <ul className="divide-y divide-dashboard-border">
-              {questions.map((q, i) => {
-                const row = q as Record<string, unknown>;
-                const isMultiple = row.type === "multiple_choice";
-                const page = typeof row.page === "number" ? row.page + 1 : null;
-                return (
-                  <li key={i} className="px-5 py-4">
-                    <div className="flex items-start gap-3">
-                      <span
-                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                        style={{ background: `${accentColor}20`, color: accentColor }}
-                      >
-                        {i + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-dashboard-text">{String(row.text ?? "")}</p>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-dashboard-card-hover px-2 py-0.5 text-[10px] text-dashboard-text-muted">
-                            {isMultiple ? "Multiple choice" : String(row.type ?? "Short answer").replace(/_/g, " ")}
-                          </span>
-                          {page !== null && (
-                            <span className="rounded-full bg-dashboard-card-hover px-2 py-0.5 text-[10px] text-dashboard-text-muted">
-                              Page {page}
-                            </span>
-                          )}
-                        </div>
-                        {isMultiple && Array.isArray(row.options) && (row.options as string[]).length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1.5">
-                            {(row.options as string[]).map((opt) => (
-                              <span key={opt} className="rounded-full border border-dashboard-border px-2.5 py-0.5 text-xs text-dashboard-text-muted">
-                                {opt}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+            <div className="rounded-xl border border-dashboard-border bg-dashboard-card p-8 text-center shadow-sm">
+              <ClipboardList className="h-8 w-8 text-dashboard-text-muted mx-auto mb-3" />
+              <p className="text-sm font-medium text-dashboard-text">No questions yet</p>
+              <p className="mt-1 text-xs text-dashboard-text-muted">Edit the survey to add some.</p>
+            </div>
+          ) : (() => {
+            // Group questions by page
+            const qs = questions as Array<Record<string, unknown>>;
+            const hasPages = qs.some((q) => typeof q.page === "number");
+            const pageGroups: { pageNum: number; items: Array<{ q: Record<string, unknown>; globalIdx: number }> }[] = [];
+            if (hasPages) {
+              const byPage = new Map<number, Array<{ q: Record<string, unknown>; globalIdx: number }>>();
+              qs.forEach((q, i) => {
+                const p = typeof q.page === "number" ? q.page : 0;
+                if (!byPage.has(p)) byPage.set(p, []);
+                byPage.get(p)!.push({ q, globalIdx: i });
+              });
+              Array.from(byPage.entries()).sort((a, b) => a[0] - b[0]).forEach(([p, items]) => {
+                pageGroups.push({ pageNum: p + 1, items });
+              });
+            } else {
+              pageGroups.push({ pageNum: 0, items: qs.map((q, i) => ({ q, globalIdx: i })) });
+            }
+
+            const TYPE_LABELS: Record<string, string> = {
+              multiple_choice: "Multiple choice",
+              yes_no: "Yes / No",
+              short_answer: "Short answer",
+              paragraph: "Long answer",
+            };
+            const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+              multiple_choice: { bg: "bg-blue-500/10", text: "text-blue-400" },
+              yes_no: { bg: "bg-emerald-500/10", text: "text-emerald-400" },
+              short_answer: { bg: "bg-slate-500/10", text: "text-slate-400" },
+              paragraph: { bg: "bg-violet-500/10", text: "text-violet-400" },
+            };
+
+            return (
+              <>
+                {pageGroups.map(({ pageNum, items }) => (
+                  <div key={pageNum} className="rounded-xl border border-dashboard-border bg-dashboard-card overflow-hidden shadow-sm">
+                    {hasPages && (
+                      <div className="flex items-center gap-2 border-b border-dashboard-border bg-dashboard-card-hover/40 px-5 py-2.5">
+                        <span
+                          className="rounded-md px-2 py-0.5 text-xs font-bold"
+                          style={{ background: `${accentColor}20`, color: accentColor }}
+                        >
+                          Page {pageNum}
+                        </span>
+                        <span className="text-xs text-dashboard-text-muted">{items.length} question{items.length !== 1 ? "s" : ""}</span>
                       </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                    )}
+                    <ul className="divide-y divide-dashboard-border">
+                      {items.map(({ q: row, globalIdx: i }) => {
+                        const typeKey = String(row.type ?? "short_answer");
+                        const typeLabel = TYPE_LABELS[typeKey] ?? typeKey.replace(/_/g, " ");
+                        const typeColor = TYPE_COLORS[typeKey] ?? { bg: "bg-dashboard-card-hover", text: "text-dashboard-text-muted" };
+                        const isMultiple = typeKey === "multiple_choice";
+                        const isYesNo = typeKey === "yes_no";
+
+                        return (
+                          <li key={i} className="px-5 py-4">
+                            <div className="flex items-start gap-3">
+                              {/* Question number badge */}
+                              <span
+                                className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black"
+                                style={{ background: `${accentColor}20`, color: accentColor }}
+                              >
+                                {i + 1}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                {/* Question text */}
+                                <p className="text-sm font-semibold leading-snug text-dashboard-text">
+                                  {String(row.text ?? "")}
+                                </p>
+                                {/* Type pill */}
+                                <div className="mt-2">
+                                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ${typeColor.bg} ${typeColor.text}`}>
+                                    {typeLabel}
+                                  </span>
+                                </div>
+                                {/* Multiple choice options */}
+                                {isMultiple && Array.isArray(row.options) && (row.options as string[]).length > 0 && (
+                                  <div className="mt-3 space-y-1.5">
+                                    {(row.options as string[]).map((opt, oi) => (
+                                      <div key={oi} className="flex items-center gap-2">
+                                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-dashboard-border text-[10px] font-bold text-dashboard-text-muted">
+                                          {String.fromCharCode(65 + oi)}
+                                        </span>
+                                        <span className="text-sm text-dashboard-text">{opt}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {/* Yes/No options */}
+                                {isYesNo && (
+                                  <div className="mt-3 flex gap-2">
+                                    <span className="rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-1.5 text-xs font-semibold text-dashboard-text">
+                                      Yes
+                                    </span>
+                                    <span className="rounded-lg border border-dashboard-border bg-dashboard-card-hover px-3 py-1.5 text-xs font-semibold text-dashboard-text">
+                                      No
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </>
+            );
+          })()}
         </div>
       )}
 

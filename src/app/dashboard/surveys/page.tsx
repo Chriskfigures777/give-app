@@ -89,7 +89,7 @@ export default async function SurveysPage() {
           {surveys.map((s) => {
             const cfg = STATUS_CONFIG[s.status] ?? STATUS_CONFIG.draft;
             const qCount = Array.isArray(s.questions) ? s.questions.length : 0;
-            const accentColor = s.theme?.accent_color ?? "#8b5cf6";
+            const accentColor = s.theme?.accent_color ?? "#10b981";
             const hasVideo = !!(s.theme?.video_url);
 
             return (
