@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free giving platform for your church — 15-minute demo?</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .offer-box{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:20px 24px;margin:20px 0;}
+  .offer-box p{margin:0 0 6px;color:#065f46;font-size:15px;}
+  .offer-box p:last-child{margin:0;}
+  .offer-box .highlight{font-weight:700;font-size:16px;color:#047857;}
+  .what-you-get{background:#f9fafb;border-radius:8px;padding:20px 24px;margin:20px 0;}
+  .what-you-get p{margin:0 0 8px;font-size:14px;font-weight:700;color:#18181b;}
+  .what-you-get ul{padding:0;list-style:none;margin:0;}
+  .what-you-get ul li{font-size:14px;line-height:1.65;color:#3f3f46;padding:3px 0 3px 20px;position:relative;}
+  .what-you-get ul li::before{content:"✓";position:absolute;left:0;color:#059669;font-weight:700;}
+  .cta-block{text-align:center;margin:28px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .no-obligation{font-size:13px;color:#a1a1aa;text-align:center;margin-top:10px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>My name is Christopher Figures — I'm a Grand Rapids founder who has spent the last year building <strong>The Exchange</strong>: a platform that combines church giving, a website builder, automatic donation splits to missionaries and partner ministries, and embedded banking — all in one place.</p>
+    <p>I'm reaching out to a handful of Grand Rapids churches personally because I believe this community is the ideal place to prove this model.</p>
+    <div class="offer-box">
+      <p class="highlight">Here's my offer for {{ params.CHURCH_NAME }}:</p>
+      <p>I'm giving you a <strong>free lifetime Growth plan</strong> (normally $29/month) in exchange for honest feedback and, if it works for you, a testimonial we can share with other churches.</p>
+      <p style="margin-top:8px;font-weight:600;color:#059669;">No obligation to pay. Ever.</p>
+    </div>
+    <div class="what-you-get">
+      <p>What you get with The Exchange:</p>
+      <ul>
+        <li>Professional donation forms + recurring giving</li>
+        <li>Full website builder with custom domain</li>
+        <li>Sermon &amp; podcast CMS</li>
+        <li>Automatic payment splits to missionaries</li>
+        <li>QR codes for in-person giving</li>
+        <li>Embeddable forms for any existing website</li>
+      </ul>
+    </div>
+    <p>Would you be open to a <strong>15-minute demo this week</strong>? I can show you how {{ params.CHURCH_NAME }} could be set up and receiving donations in under 30 minutes.</p>
+    <div class="cta-block">
+      <a href="{{ params.CALENDLY_URL }}" class="btn">Book a 15-Minute Demo</a>
+      <p class="no-obligation">Or just reply to this email — I'll reach out directly.</p>
+    </div>
+    <hr>
+    <div class="sig">
+      <p>— Christopher Figures<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a><br>Grand Rapids, MI</p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

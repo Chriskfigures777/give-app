@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your church website — in 30 minutes or less</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .feature-grid{background:#f9fafb;border-radius:8px;padding:20px 24px;margin:20px 0;}
+  .feature-grid ul{padding:0;list-style:none;margin:0;}
+  .feature-grid ul li{font-size:14px;line-height:1.7;color:#3f3f46;padding:3px 0 3px 22px;position:relative;}
+  .feature-grid ul li::before{content:"✓";position:absolute;left:0;color:#059669;font-weight:700;}
+  .savings-callout{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:16px 20px;margin:20px 0;text-align:center;}
+  .savings-callout p{margin:0;color:#065f46;font-size:14px;font-weight:600;}
+  .cta-block{text-align:center;margin:32px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .try-it{background:#f4f4f5;border-radius:8px;padding:16px 20px;margin:20px 0;}
+  .try-it p{margin:0;font-size:14px;color:#3f3f46;}
+  .try-it code{background:#e4e4e7;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>Did you know The Exchange includes a <strong>full website builder</strong>?</p>
+    <p>Not a basic template. A real, publishable church website with:</p>
+    <div class="feature-grid">
+      <ul>
+        <li>11 professionally designed church templates</li>
+        <li>Custom colors, fonts, and branding</li>
+        <li>Sermon and podcast CMS built in</li>
+        <li>Donation form embedded on your site</li>
+        <li>Custom domain support (use your own domain)</li>
+      </ul>
+    </div>
+    <div class="savings-callout">
+      <p>If you're paying for Squarespace, Wix, or Church Community Builder — you can cancel.<br>The Exchange replaces it.</p>
+    </div>
+    <div class="try-it">
+      <p><strong>Try it now:</strong> Dashboard → <code>Website Builder</code> → choose a template → publish</p>
+    </div>
+    <p>The Basic plan ($29/month) includes the website builder with custom domain. You're on a trial right now — so it's <strong>fully active for 14 days</strong>.</p>
+    <div class="cta-block">
+      <a href="{{ params.DASHBOARD_URL }}" class="btn">Open Website Builder</a>
+    </div>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

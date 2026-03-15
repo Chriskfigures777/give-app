@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to The Exchange</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;letter-spacing:-.5px;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .greeting{font-size:16px;color:#18181b;margin:0 0 20px;}
+  .hero{font-size:20px;font-weight:700;color:#18181b;margin:0 0 24px;line-height:1.3;}
+  .step-block{background:#f9fafb;border-radius:8px;padding:20px 24px;margin:20px 0;}
+  .step-block p{margin:0 0 8px;font-size:14px;}
+  .step-block ol{padding-left:18px;margin:0;}
+  .step-block ol li{font-size:14px;line-height:1.6;color:#3f3f46;padding:3px 0;}
+  .cta-block{text-align:center;margin:32px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .arrow-line{font-size:16px;color:#059669;font-weight:700;margin:0 0 16px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig{font-size:15px;color:#3f3f46;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi {{ contact.FNAME }},</p>
+    <p class="hero">Welcome to The Exchange — let's get your first donation in 5 minutes.</p>
+    <p>I'm Christopher, the founder. Thanks for signing up.</p>
+    <p>You now have <strong>14 days</strong> to explore the full platform. Here's the one thing I want you to do today:</p>
+    <p class="arrow-line">➡ Set up your first donation form. It takes less than 5 minutes.</p>
+    <div class="step-block">
+      <p><strong>Here's how:</strong></p>
+      <ol>
+        <li>Log into your dashboard</li>
+        <li>Click <strong>"Donation Forms"</strong> → <strong>"Create New Form"</strong></li>
+        <li>Add your church name, logo, and a custom amount</li>
+        <li>Copy the link or embed code and share it</li>
+      </ol>
+    </div>
+    <p>That's it. Your church can start receiving donations today.</p>
+    <div class="cta-block">
+      <a href="{{ params.DASHBOARD_URL }}" class="btn">Go to Your Dashboard</a>
+    </div>
+    <p>Over the next 14 days, I'll walk you through the full platform: website builder, payment splits, church banking, and more.</p>
+    <p>Questions? Just reply to this email. I read every one.</p>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>
+      Founder, The Exchange<br>
+      <a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

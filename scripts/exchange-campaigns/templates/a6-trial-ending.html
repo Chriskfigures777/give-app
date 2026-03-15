@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4 days left on your trial</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .urgent-banner{background:#fef3c7;border-bottom:2px solid #fbbf24;padding:12px 24px;text-align:center;}
+  .urgent-banner p{margin:0;color:#92400e;font-size:13px;font-weight:700;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .expires-badge{display:inline-block;background:#fef3c7;border:1px solid #fbbf24;color:#92400e;font-size:13px;font-weight:700;padding:6px 16px;border-radius:99px;margin-bottom:20px;}
+  .loses-block{background:#fef9f0;border-radius:8px;padding:18px 24px;margin:16px 0;}
+  .loses-block p{margin:0 0 6px;font-size:14px;color:#b45309;font-weight:600;}
+  .loses-list{padding:0;list-style:none;margin:0;}
+  .loses-list li{font-size:14px;line-height:1.65;color:#78350f;padding:3px 0 3px 20px;position:relative;}
+  .loses-list li::before{content:"✗";position:absolute;left:0;color:#ef4444;font-weight:700;}
+  .plans-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+  .plans-table th{padding:10px 14px;text-align:left;color:#71717a;font-weight:600;border-bottom:2px solid #e4e4e7;font-size:12px;text-transform:uppercase;}
+  .plans-table td{padding:10px 14px;border-bottom:1px solid #f0f0f0;color:#3f3f46;vertical-align:top;}
+  .plans-table td:first-child{font-weight:600;color:#18181b;}
+  .cta-block{text-align:center;margin:28px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .sub-note{font-size:13px;color:#a1a1aa;text-align:center;margin-top:8px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="urgent-banner"><p>⏰ Your 14-day trial ends in 4 days</p></div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>Your 14-day free trial ends in <strong>4 days</strong>.</p>
+    <p>Here's what happens if you don't upgrade:</p>
+    <div class="loses-block">
+      <p>Features that will be paused:</p>
+      <ul class="loses-list">
+        <li>Your website goes offline</li>
+        <li>Payment splits are paused</li>
+        <li>Advanced analytics are locked</li>
+      </ul>
+      <p style="margin-top:10px;color:#059669;">What stays active on Free: your donation forms + donor data</p>
+    </div>
+    <p>Here's what it costs to keep everything:</p>
+    <table class="plans-table">
+      <thead><tr><th>Plan</th><th>Price</th><th>What's included</th></tr></thead>
+      <tbody>
+        <tr><td>Basic</td><td>$29/mo</td><td>Giving forms, website, CMS, splits, QR codes</td></tr>
+        <tr><td>Pro</td><td>$49/mo</td><td>Everything + embedded banking + debit cards</td></tr>
+        <tr><td>All-In</td><td>$89/mo</td><td>Everything + payroll for up to 3 staff</td></tr>
+      </tbody>
+    </table>
+    <p>You can upgrade in under 60 seconds.</p>
+    <div class="cta-block">
+      <a href="{{ params.BILLING_URL }}" class="btn">Choose a Plan — Upgrade Now</a>
+      <p class="sub-note">Cancel anytime. No long-term contracts.</p>
+    </div>
+    <p>Any questions about which plan is right for you? Just reply to this email.</p>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

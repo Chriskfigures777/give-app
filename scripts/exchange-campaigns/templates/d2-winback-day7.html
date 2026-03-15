@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What other churches are doing with The Exchange</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .story-card{background:#f9fafb;border-radius:8px;padding:20px 24px;margin:16px 0;border-left:4px solid #059669;}
+  .story-card p{margin:0;font-size:14px;line-height:1.65;color:#3f3f46;}
+  .story-card .result{font-weight:700;color:#059669;font-size:15px;margin-bottom:6px;}
+  .cta-block{text-align:center;margin:28px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .sub-note{font-size:13px;color:#a1a1aa;text-align:center;margin-top:8px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>I wanted to share what some of our founding partner churches are doing with The Exchange:</p>
+    <div class="story-card">
+      <p class="result">$800/mo → $29/mo</p>
+      <p>One Grand Rapids church went from $800/month on Pushpay to $29/month on The Exchange. Same features. Same donation volume. <strong>$9,000 back in their ministry budget per year.</strong></p>
+    </div>
+    <div class="story-card">
+      <p class="result">Automatic missionary support — zero manual work</p>
+      <p>Another church uses payment splits to automatically send 10% of every offering to a missionary their congregation supports in Kenya. Every month. Zero manual work.</p>
+    </div>
+    <div class="story-card">
+      <p class="result">Professional giving form in 12 minutes</p>
+      <p>A small nonprofit used the embedded form to add professional giving to their existing WordPress site in 12 minutes. No new website needed.</p>
+    </div>
+    <p>The Free plan is still yours. When you're ready to unlock the full platform, it's $29/month.</p>
+    <div class="cta-block">
+      <a href="{{ params.BILLING_URL }}" class="btn">Unlock the Full Platform — $29/mo</a>
+      <p class="sub-note">Cancel anytime. No long-term contracts.</p>
+    </div>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

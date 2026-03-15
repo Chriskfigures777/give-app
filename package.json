@@ -30,7 +30,11 @@
     "db:migrate:chat-realtime": "node --env-file=.env.local scripts/apply-chat-realtime-migration.mjs",
     "generate:church-template": "node scripts/generate-church-template.mjs",
     "generate:template-variants": "node scripts/generate-template-variants.mjs",
-    "generate:all-templates": "node scripts/generate-unique-templates.mjs && node scripts/generate-all-templates.mjs"
+    "generate:all-templates": "node scripts/generate-unique-templates.mjs && node scripts/generate-all-templates.mjs",
+    "brevo:setup": "node --env-file=.env.local scripts/setup-exchange-campaigns.mjs",
+    "brevo:setup:dry-run": "node scripts/setup-exchange-campaigns.mjs --dry-run",
+    "brevo:setup:lists": "node --env-file=.env.local scripts/setup-exchange-campaigns.mjs --only-lists",
+    "brevo:setup:templates": "node --env-file=.env.local scripts/setup-exchange-campaigns.mjs --only-templates"
   },
   "packageManager": "pnpm@9.14.2",
   "engines": {

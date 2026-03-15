@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What The Exchange costs vs. what you're paying now</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .scenario{background:#f9fafb;border-radius:8px;padding:14px 20px;margin:0 0 16px;text-align:center;}
+  .scenario p{margin:0;font-size:13px;color:#71717a;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  table{width:100%;border-collapse:collapse;margin:8px 0 20px;font-size:14px;}
+  table th{padding:10px 14px;text-align:left;color:#71717a;font-weight:600;border-bottom:2px solid #e4e4e7;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
+  table td{padding:10px 14px;border-bottom:1px solid #f0f0f0;color:#3f3f46;}
+  table tr.winner td{color:#065f46;font-weight:700;background:#ecfdf5;}
+  .savings-hero{text-align:center;margin:24px 0;}
+  .savings-hero .amount{font-size:36px;font-weight:800;color:#059669;line-height:1;}
+  .savings-hero .label{font-size:14px;color:#71717a;margin-top:4px;}
+  .includes{background:#ecfdf5;border-radius:8px;padding:20px 24px;margin:20px 0;}
+  .includes p{margin:0 0 8px;font-size:14px;font-weight:700;color:#065f46;}
+  .includes ul{padding:0;list-style:none;margin:0;}
+  .includes ul li{font-size:13px;line-height:1.7;color:#065f46;padding:2px 0 2px 18px;position:relative;}
+  .includes ul li::before{content:"✓";position:absolute;left:0;font-weight:700;}
+  .cta-block{text-align:center;margin:28px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  .sub-note{font-size:13px;color:#a1a1aa;text-align:center;margin-top:8px;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>Let's talk numbers.</p>
+    <div class="scenario"><p>If your church processes $10,000/month in donations:</p></div>
+    <table>
+      <thead><tr><th>Platform</th><th>Monthly Fee</th><th>Transaction Fee</th><th>Total/mo</th></tr></thead>
+      <tbody>
+        <tr><td>Tithe.ly</td><td>$29</td><td>2.9% = $290</td><td>$319</td></tr>
+        <tr><td>Pushpay</td><td>~$99</td><td>1.99% = $199</td><td>~$298</td></tr>
+        <tr class="winner"><td>The Exchange ✓</td><td>$29</td><td>1% = $100</td><td><strong>$129</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="savings-hero">
+      <div class="amount">$2,000+</div>
+      <div class="label">back in your ministry budget every year</div>
+    </div>
+    <p>And that includes:</p>
+    <div class="includes">
+      <ul>
+        <li>Donation forms + recurring giving</li>
+        <li>Website builder + CMS</li>
+        <li>Automatic payment splits to missionaries</li>
+        <li>QR codes for in-person giving</li>
+        <li>Embeddable forms for any website</li>
+        <li>Org networking</li>
+      </ul>
+    </div>
+    <p>None of the others include all of that.</p>
+    <p>Your trial ends in <strong>6 days</strong>. Upgrade to Basic ($29/mo) to keep everything running.</p>
+    <div class="cta-block">
+      <a href="{{ params.BILLING_URL }}" class="btn">Upgrade to Basic — $29/mo</a>
+      <p class="sub-note">Cancel anytime. No contracts.</p>
+    </div>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You've processed donations on The Exchange</title>
+<style>
+  body{margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:600px;margin:0 auto;padding:24px 16px;}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .header{background:#059669;padding:28px 32px;text-align:center;}
+  .logo{color:#fff;font-size:22px;font-weight:700;}
+  .tagline{color:#a7f3d0;font-size:12px;margin-top:4px;}
+  .body{padding:36px 32px;}
+  p{font-size:15px;line-height:1.65;color:#3f3f46;margin:0 0 16px;}
+  .stats-row{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:140px;background:#f9fafb;border-radius:8px;padding:16px;text-align:center;}
+  .stat-card .value{font-size:24px;font-weight:800;color:#059669;}
+  .stat-card .label{font-size:12px;color:#71717a;margin-top:4px;}
+  .unlock-list{padding:0;list-style:none;margin:0 0 16px;}
+  .unlock-list li{font-size:15px;line-height:1.65;color:#3f3f46;padding:6px 0 6px 24px;position:relative;border-bottom:1px solid #f9fafb;}
+  .unlock-list li::before{content:"✅";position:absolute;left:0;}
+  .unlock-list li:last-child{border-bottom:none;}
+  .price-callout{background:#ecfdf5;border-radius:8px;padding:20px 24px;margin:20px 0;text-align:center;}
+  .price-callout .price{font-size:32px;font-weight:800;color:#059669;}
+  .price-callout .per{font-size:14px;color:#065f46;}
+  .price-callout .equiv{font-size:13px;color:#6ee7b7;margin-top:4px;}
+  .cta-block{text-align:center;margin:28px 0;}
+  .btn{display:inline-block;background:#059669;color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;}
+  hr{border:none;border-top:1px solid #f0f0f0;margin:28px 0;}
+  .sig a{color:#059669;text-decoration:none;}
+  .footer{padding:20px 32px;background:#f9fafb;border-top:1px solid #f0f0f0;text-align:center;}
+  .footer p{font-size:12px;color:#a1a1aa;margin:0;}
+  .footer a{color:#71717a;}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card">
+  <div class="header">
+    <div class="logo">The Exchange</div>
+    <div class="tagline">Church Giving &amp; Ministry Platform</div>
+  </div>
+  <div class="body">
+    <p>Hi {{ contact.FNAME }},</p>
+    <p>Quick update on your church's activity on The Exchange:</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="value">{{ params.TOTAL_DONATIONS }}</div>
+        <div class="label">Total donated</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">{{ params.DONOR_COUNT }}</div>
+        <div class="label">Donors</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">{{ params.SAVINGS_VS_TITHELY }}</div>
+        <div class="label">Saved vs. Tithe.ly</div>
+      </div>
+    </div>
+    <p>You're on the Free plan — and it's working for you. But here's what you're missing:</p>
+    <ul class="unlock-list">
+      <li>Website builder with custom domain</li>
+      <li>Payment splits — automatically support partner ministries</li>
+      <li>Sermon and podcast CMS</li>
+      <li>QR codes for in-person giving</li>
+      <li>Recurring donation management</li>
+    </ul>
+    <div class="price-callout">
+      <div class="price">$29<span style="font-size:16px;font-weight:400;">/month</span></div>
+      <div class="per">Upgrade to Basic</div>
+      <div class="equiv">Less than one daily coffee for a full church platform.</div>
+    </div>
+    <div class="cta-block">
+      <a href="{{ params.BILLING_URL }}" class="btn">Upgrade to Basic</a>
+    </div>
+    <hr>
+    <div class="sig">
+      <p>— Christopher<br>Founder, The Exchange<br><a href="https://theexchangeapp.com">theexchangeapp.com</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>The Exchange &bull; Grand Rapids, MI &bull; <a href="{{ unsubscribe }}">Unsubscribe</a></p>
+  </div>
+</div></div>
+</body>
+</html>
