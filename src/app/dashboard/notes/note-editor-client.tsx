@@ -66,7 +66,8 @@ export function NoteEditorClient({
       const saved = localStorage.getItem("ai_question_types");
       if (saved) return JSON.parse(saved);
     } catch { /* ignore */ }
-    return { multiple_choice: true, yes_no: true, short_answer: true, long_answer: false };
+    // Default: short answer + long answer primary, yes/no + multiple choice included
+    return { multiple_choice: true, yes_no: true, short_answer: true, long_answer: true };
   });
 
   // Cover state — null means no cover (text-only header)

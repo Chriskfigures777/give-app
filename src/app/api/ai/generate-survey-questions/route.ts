@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     // Build question type instructions from caller's preference
     const allowedTypes = Array.isArray(body.questionTypes) && body.questionTypes.length > 0
       ? body.questionTypes
-      : ["multiple_choice", "short_answer"];
+      : ["short_answer", "long_answer", "yes_no", "multiple_choice"];
 
     const typeDescriptions: Record<string, string> = {
       multiple_choice: '"multiple_choice" (include "options": ["A","B","C","D"] with 3-4 choices)',
@@ -95,14 +95,32 @@ export async function POST(req: NextRequest) {
       .join("\n");
 
     const client = new Anthropic({ apiKey });
-    const prompt = `You are helping a church or faith-based nonprofit create a short survey to gauge engagement or understanding of ministry content.
+    const prompt = `You are a deeply thoughtful pastoral counselor and theologian helping a church craft a transformational post-sermon survey. Your goal is NOT to create simple comprehension checks — you are creating questions that invite genuine spiritual reflection, personal examination, and life application.
 
-Below is the ministry/sermon note content. Generate exactly ${count} survey questions that a leader could use to understand how people responded to this content. Questions should be clear, respectful, and appropriate for a faith context.
+QUALITY STANDARD — every question must:
+1. Be deeply personal and introspective — ask people to examine their own heart, life, and faith
+2. Reference the specific scripture, themes, or stories from the sermon content below
+3. Invite vulnerability and honest self-reflection (e.g. "Where in your life do you struggle with…", "What does this passage reveal about how you…", "How has your understanding of X changed…")
+4. Require genuine thought — no question should be answerable in 2 words
+5. Use language that is warm, pastoral, and inviting — never clinical or academic
+6. Connect the biblical text directly to the person's current real life circumstances
+
+EXAMPLES OF SHALLOW questions to AVOID:
+- "What did you think of today's message?" (too vague)
+- "Did you enjoy the sermon?" (yes/no with no depth)
+- "What is Romans 8:28 about?" (comprehension test, not reflection)
+
+EXAMPLES OF DEEP questions to AIM FOR:
+- "Romans 8:28 promises that God works all things for good — but is there a specific situation in your life right now where that feels impossible to believe? What would it mean for you personally if you truly trusted that promise in that situation?"
+- "The sermon spoke about trusting God's plan when we cannot see the outcome. Where in your life are you most tempted to take control rather than surrender to God? What fear is underneath that?"
+- "Reflect on a moment when you experienced God turning something painful into something purposeful. How did that shape the way you approach suffering today?"
+
+Generate exactly ${count} survey questions based on the ministry content below.
 
 ALLOWED question types (only use these):
 ${typeInstructions}
 
-Distribute the questions across the allowed types as evenly as possible.
+Distribute across the allowed types. Long answer and short answer questions should carry the deepest introspective questions. Multiple choice options should themselves be meaningful and reflective (not trivial). Yes/No should still include follow-up framing in the question text (e.g. "...and if so, how has that changed you?").
 
 IMPORTANT: Return ONLY a raw JSON array with no markdown, no code fences, no explanation. Just the JSON array starting with [ and ending with ].
 Each item: { "text": "question text", "type": "<one of the allowed types above>", "options": [...] }
@@ -114,7 +132,7 @@ ${content.slice(0, 25000)}
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-5-20250929",
-      max_tokens: 2048,
+      max_tokens: 4096,
       messages: [{ role: "user", content: prompt }],
     });
 
