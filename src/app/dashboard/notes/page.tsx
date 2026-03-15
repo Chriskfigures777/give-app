@@ -15,7 +15,7 @@ export default async function NotesPage() {
       .from("pastor_notes")
       .select("id, title, content, created_at, updated_at")
       .eq("organization_id", orgId)
-      .order("updated_at", { ascending: false }),
+      .order("created_at", { ascending: false }),
     getRemainingCredits(orgId),
   ]);
 

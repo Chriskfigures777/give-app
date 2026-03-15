@@ -2,9 +2,17 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
-  FileText, Clock, Video, Image as ImageIcon, AlignLeft,
-  Search, ChevronUp, ChevronDown, ChevronsUpDown, Filter, X, Sparkles,
+  FolderOpen,
+  Calendar,
+  FileText,
+  Search,
+  X,
+  Sparkles,
+  AlignLeft,
+  BookOpen,
+  ChevronRight,
 } from "lucide-react";
 
 export type NoteCard = {
@@ -14,6 +22,13 @@ export type NoteCard = {
   created_at: string;
   updated_at: string;
 };
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -30,259 +45,308 @@ function getNoteAccentColor(id: string): string {
   return colors[sum % colors.length];
 }
 
-function formatDate(dateStr: string): { short: string; full: string } {
-  const d = new Date(dateStr);
-  const diffDays = Math.floor((Date.now() - d.getTime()) / 86400000);
-  const short =
-    diffDays === 0 ? "Today"
-    : diffDays === 1 ? "Yesterday"
-    : diffDays < 7 ? `${diffDays}d ago`
-    : d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: diffDays > 365 ? "numeric" : undefined });
-  const full = d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
-  return { short, full };
+function relDate(iso: string): string {
+  const d = new Date(iso);
+  const diff = Math.floor((Date.now() - d.getTime()) / 86400000);
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  if (diff < 7) return `${diff}d ago`;
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: diff > 365 ? "numeric" : undefined });
 }
 
-type SortKey = "title" | "updated_at" | "created_at" | "words";
-type SortDir = "asc" | "desc";
-type TypeFilter = "all" | "image" | "video" | "text";
+// ── Tree-building ─────────────────────────────────────────────────────────────
 
-function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
-  if (col !== sortKey) return <ChevronsUpDown className="h-3 w-3 text-dashboard-text-muted opacity-50" />;
-  return sortDir === "asc"
-    ? <ChevronUp className="h-3 w-3 text-emerald-400" />
-    : <ChevronDown className="h-3 w-3 text-emerald-400" />;
-}
+type MonthEntry = { month: number; notes: NoteCard[] };
+type YearFolder = { year: number; months: MonthEntry[] };
 
-const TYPE_LABELS: Record<TypeFilter, string> = {
-  all: "All types",
-  image: "Image cover",
-  video: "Video cover",
-  text: "Text only",
-};
+function buildTree(notes: NoteCard[]): YearFolder[] {
+  const yearMap = new Map<number, Map<number, NoteCard[]>>();
 
-export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
-  const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("updated_at");
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
-
-  function toggleSort(key: SortKey) {
-    if (sortKey === key) setSortDir(d => d === "asc" ? "desc" : "asc");
-    else { setSortKey(key); setSortDir("desc"); }
+  for (const n of notes) {
+    const d = new Date(n.created_at);
+    const yr = d.getFullYear();
+    const mo = d.getMonth() + 1;
+    if (!yearMap.has(yr)) yearMap.set(yr, new Map());
+    const moMap = yearMap.get(yr)!;
+    if (!moMap.has(mo)) moMap.set(mo, []);
+    moMap.get(mo)!.push(n);
   }
 
-  const rows = useMemo(() => {
-    const enriched = notes.map(n => ({
-      ...n,
-      words: countWords(n.content),
-      preview: stripHtml(n.content).slice(0, 100),
-      noteType: "text" as TypeFilter,
+  return Array.from(yearMap.entries())
+    .sort(([a], [b]) => b - a)
+    .map(([year, moMap]) => ({
+      year,
+      months: Array.from(moMap.entries())
+        .sort(([a], [b]) => b - a)
+        .map(([month, ns]) => ({ month, notes: ns })),
     }));
+}
 
-    const q = search.toLowerCase().trim();
-    let filtered = enriched.filter(n => {
-      if (typeFilter !== "all" && n.noteType !== typeFilter) return false;
-      if (q && !n.title.toLowerCase().includes(q) && !n.preview.toLowerCase().includes(q)) return false;
-      return true;
-    });
+// ── NoteRow ───────────────────────────────────────────────────────────────────
 
-    filtered.sort((a, b) => {
-      let va: string | number, vb: string | number;
-      if (sortKey === "words") { va = a.words; vb = b.words; }
-      else if (sortKey === "title") { va = a.title.toLowerCase(); vb = b.title.toLowerCase(); }
-      else { va = a[sortKey]; vb = b[sortKey]; }
-      if (va < vb) return sortDir === "asc" ? -1 : 1;
-      if (va > vb) return sortDir === "asc" ? 1 : -1;
-      return 0;
-    });
-
-    return filtered;
-  }, [notes, search, sortKey, sortDir, typeFilter]);
-
-  const colHeader = (label: string, key: SortKey, extraClass = "") => (
-    <th
-      className={`px-4 py-3 text-left cursor-pointer select-none whitespace-nowrap group ${extraClass}`}
-      onClick={() => toggleSort(key)}
-    >
-      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-dashboard-text-muted uppercase tracking-wider group-hover:text-dashboard-text transition-colors">
-        {label}
-        <SortIcon col={key} sortKey={sortKey} sortDir={sortDir} />
-      </span>
-    </th>
-  );
+function NoteRow({ note }: { note: NoteCard }) {
+  const accent = getNoteAccentColor(note.id);
+  const preview = stripHtml(note.content).slice(0, 120);
+  const words = countWords(note.content);
 
   return (
-    <div className="dashboard-fade-in-delay-1 rounded-2xl border border-dashboard-border/80 bg-dashboard-card overflow-hidden shadow-sm">
-      {/* Toolbar — inside the notes card so header and list feel unified */}
-      <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5 sm:py-4 border-b border-dashboard-border/60">
-        {/* Search */}
-        <div className="relative flex-1 min-w-[180px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-dashboard-text-muted pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search notes…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-dashboard-border/60 bg-dashboard-card-hover/50 pl-9 pr-9 py-2.5 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
-          />
-          {search && (
+    <Link
+      href={`/dashboard/notes/${note.id}`}
+      className="group flex items-start gap-4 rounded-2xl border border-dashboard-border bg-dashboard-card p-4 shadow-sm transition-all hover:bg-dashboard-card-hover hover:shadow-md"
+    >
+      {/* Color avatar */}
+      <div
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white text-sm font-bold mt-0.5"
+        style={{ backgroundColor: accent }}
+      >
+        {(note.title || "U")[0].toUpperCase()}
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-dashboard-text truncate">
+          {note.title || "Untitled"}
+        </p>
+        {preview ? (
+          <p className="mt-0.5 text-xs text-dashboard-text-muted line-clamp-2 leading-relaxed">
+            {preview}{note.content.length > 120 ? "…" : ""}
+          </p>
+        ) : (
+          <p className="mt-0.5 text-xs italic text-dashboard-text-muted/50">No content</p>
+        )}
+        <div className="mt-1.5 flex items-center gap-3">
+          <span className="flex items-center gap-1 text-[11px] text-dashboard-text-muted">
+            <FileText className="h-3 w-3" />
+            {words.toLocaleString()} words
+          </span>
+          <span className="text-[11px] text-dashboard-text-muted">
+            Updated {relDate(note.updated_at)}
+          </span>
+        </div>
+      </div>
+
+      {/* AI Survey quick-action */}
+      <span
+        className="hidden sm:inline-flex items-center gap-1 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 px-2.5 py-1.5 text-[11px] font-semibold text-white opacity-0 group-hover:opacity-100 transition-all shrink-0 mt-0.5"
+      >
+        <Sparkles className="h-3 w-3" />
+        AI Survey
+      </span>
+    </Link>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
+export function NotesGalleryClient({ notes }: { notes: NoteCard[] }) {
+  const tree = buildTree(notes);
+
+  const [openYear, setOpenYear]       = useState<number | null>(tree[0]?.year ?? null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(tree[0]?.year ?? null);
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(
+    tree[0]?.months[0]?.month ?? null
+  );
+  const [search, setSearch] = useState("");
+
+  // Notes for selected year+month
+  const monthNotes = useMemo(() => {
+    if (selectedYear === null || selectedMonth === null) return [];
+    return (
+      tree
+        .find((f) => f.year === selectedYear)
+        ?.months.find((m) => m.month === selectedMonth)
+        ?.notes ?? []
+    );
+  }, [tree, selectedYear, selectedMonth]);
+
+  // Apply search filter
+  const visibleNotes = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return monthNotes;
+    return monthNotes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        stripHtml(n.content).toLowerCase().includes(q)
+    );
+  }, [monthNotes, search]);
+
+  const selectedMonthName =
+    selectedMonth !== null ? MONTH_NAMES[selectedMonth - 1] : null;
+
+  return (
+    <div className="dashboard-fade-in-delay-2 flex gap-5">
+
+      {/* ── LEFT: Year / Month sidebar ── */}
+      <div className="w-52 flex-shrink-0 space-y-1.5">
+        <p className="px-1 text-xs font-bold uppercase tracking-widest text-dashboard-text-muted mb-3">
+          Year Folders
+        </p>
+
+        {tree.map((folder) => {
+          const isOpen = folder.year === openYear;
+          const totalInYear = folder.months.reduce((s, m) => s + m.notes.length, 0);
+
+          return (
+            <div key={folder.year}>
+              {/* Year row */}
+              <button
+                type="button"
+                onClick={() => {
+                  const willOpen = !isOpen;
+                  setOpenYear(willOpen ? folder.year : null);
+                  if (willOpen) {
+                    setSelectedYear(folder.year);
+                    setSelectedMonth(folder.months[0]?.month ?? null);
+                    setSearch("");
+                  }
+                }}
+                className={[
+                  "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-semibold transition-colors",
+                  isOpen
+                    ? "bg-dashboard-card border border-dashboard-border text-dashboard-text"
+                    : "text-dashboard-text-muted hover:bg-dashboard-card hover:text-dashboard-text",
+                ].join(" ")}
+              >
+                <FolderOpen className="h-4 w-4 flex-shrink-0" />
+                <span>{folder.year}</span>
+                <span className="ml-auto text-xs tabular-nums text-dashboard-text-muted">
+                  {totalInYear}
+                </span>
+                <ChevronRight
+                  className="h-3.5 w-3.5 text-dashboard-text-muted flex-shrink-0 transition-transform duration-200"
+                  style={{ transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
+                />
+              </button>
+
+              {/* Month children */}
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="months"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div className="ml-3 mt-1 mb-1 space-y-0.5 border-l border-dashboard-border pl-3">
+                      {folder.months.map(({ month, notes: mNotes }) => {
+                        const isActive =
+                          selectedYear === folder.year && selectedMonth === month;
+                        return (
+                          <button
+                            key={month}
+                            type="button"
+                            onClick={() => {
+                              setSelectedYear(folder.year);
+                              setSelectedMonth(month);
+                              setSearch("");
+                            }}
+                            className={[
+                              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left text-sm transition-colors",
+                              isActive
+                                ? "bg-dashboard-card-hover text-dashboard-text font-semibold"
+                                : "font-medium text-dashboard-text-muted hover:text-dashboard-text hover:bg-dashboard-card",
+                            ].join(" ")}
+                          >
+                            <Calendar className="h-3.5 w-3.5 flex-shrink-0 opacity-60" />
+                            <span>{MONTH_NAMES[month - 1].slice(0, 3)}</span>
+                            <span className="ml-auto text-xs tabular-nums text-dashboard-text-muted">
+                              {mNotes.length}
+                            </span>
+                            {isActive && (
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── RIGHT: Note list ── */}
+      <div className="flex-1 min-w-0 space-y-3">
+
+        {/* Breadcrumb + search bar */}
+        {selectedYear && selectedMonthName && (
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 text-sm text-dashboard-text-muted">
+              <span className="font-semibold text-dashboard-text">{selectedYear}</span>
+              <span>/</span>
+              <span>{selectedMonthName}</span>
+              <span className="ml-1 text-xs tabular-nums">
+                ({monthNotes.length} note{monthNotes.length !== 1 ? "s" : ""})
+              </span>
+            </div>
+
+            {/* Search within the selected month */}
+            <div className="relative flex-1 min-w-[160px] max-w-xs ml-auto">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-dashboard-text-muted pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search notes…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-xl border border-dashboard-border bg-dashboard-card-hover/50 pl-9 pr-8 py-2 text-sm text-dashboard-text placeholder:text-dashboard-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted hover:text-dashboard-text transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Note cards */}
+        {visibleNotes.length > 0 ? (
+          visibleNotes.map((n) => <NoteRow key={n.id} note={n} />)
+        ) : monthNotes.length > 0 && search ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-dashboard-border bg-dashboard-card/50 py-14 text-center">
+            <Search className="h-6 w-6 text-dashboard-text-muted mb-3" />
+            <p className="text-sm font-semibold text-dashboard-text">No results</p>
+            <p className="mt-1 text-xs text-dashboard-text-muted">
+              No notes match &ldquo;{search}&rdquo; in {selectedMonthName} {selectedYear}
+            </p>
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted hover:text-dashboard-text transition-colors"
+              className="mt-3 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
             >
-              <X className="h-3.5 w-3.5" />
+              Clear search
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-dashboard-border bg-dashboard-card/50 py-14 text-center">
+            <div className="mb-3 rounded-2xl bg-emerald-500/10 p-3">
+              <BookOpen className="h-6 w-6 text-emerald-400" />
+            </div>
+            <p className="text-sm font-semibold text-dashboard-text">No notes</p>
+            <p className="mt-1 text-xs text-dashboard-text-muted">
+              {selectedMonthName
+                ? `Nothing in ${selectedMonthName} ${selectedYear}`
+                : "Select a month to view notes"}
+            </p>
+          </div>
+        )}
 
-        {/* Type filter pills */}
-        <div className="flex items-center gap-1 p-1 rounded-xl border border-dashboard-border/60 bg-dashboard-card-hover/50">
-          <Filter className="h-3.5 w-3.5 text-dashboard-text-muted ml-2 mr-1 shrink-0" />
-          {(["all", "image", "video", "text"] as TypeFilter[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTypeFilter(t)}
-              className={[
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
-                typeFilter === t
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "text-dashboard-text-muted hover:text-dashboard-text",
-              ].join(" ")}
-            >
-              {TYPE_LABELS[t]}
+        {/* Search result count */}
+        {search && visibleNotes.length > 0 && (
+          <p className="text-xs text-dashboard-text-muted text-right">
+            {visibleNotes.length} of {monthNotes.length} note{monthNotes.length !== 1 ? "s" : ""} shown
+            <button onClick={() => setSearch("")} className="ml-2 text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">
+              Clear
             </button>
-          ))}
-        </div>
-
-        {/* Count */}
-        <span className="text-xs text-dashboard-text-muted ml-auto shrink-0">
-          {rows.length} {rows.length === 1 ? "note" : "notes"}
-          {rows.length !== notes.length && <span className="text-dashboard-text-muted"> of {notes.length}</span>}
-        </span>
+          </p>
+        )}
       </div>
-
-      {/* Table — same card, no extra border; header reads as part of notes section */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-dashboard-border/60 bg-dashboard-card-hover/20">
-                <th className="w-8 px-4 py-3" />
-                {colHeader("Title", "title", "min-w-[200px]")}
-                <th className="px-4 py-3 text-left">
-                  <span className="text-xs font-semibold text-dashboard-text-muted uppercase tracking-wider">Preview</span>
-                </th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">
-                  <span className="text-xs font-semibold text-dashboard-text-muted uppercase tracking-wider">Type</span>
-                </th>
-                {colHeader("Words", "words", "text-right")}
-                {colHeader("Updated", "updated_at", "whitespace-nowrap")}
-                {colHeader("Created", "created_at", "whitespace-nowrap")}
-                <th className="px-4 py-3 text-right" />
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center text-sm text-dashboard-text-muted">
-                    No notes match your search or filter.
-                  </td>
-                </tr>
-              )}
-              {rows.map((note, idx) => {
-                const accent = getNoteAccentColor(note.id);
-                const updated = formatDate(note.updated_at);
-                const created = formatDate(note.created_at);
-                const TypeIcon = note.noteType === "video" ? Video : note.noteType === "image" ? ImageIcon : AlignLeft;
-                return (
-                  <tr
-                    key={note.id}
-                    className="group transition-colors border-b border-dashboard-border/40 last:border-b-0"
-                  >
-                    {/* Color dot */}
-                    <td className="px-4 py-3.5">
-                      <div
-                        className="h-2.5 w-2.5 rounded-full shrink-0"
-                        style={{ background: accent, boxShadow: `0 0 6px ${accent}60` }}
-                      />
-                    </td>
-
-                    {/* Title */}
-                    <td className="px-4 py-3.5">
-                      <Link
-                        href={`/dashboard/notes/${note.id}`}
-                        className="text-sm font-semibold text-dashboard-text hover:text-white transition-colors line-clamp-1"
-                      >
-                        {note.title || "Untitled"}
-                      </Link>
-                    </td>
-
-                    {/* Preview */}
-                    <td className="px-4 py-3.5 max-w-[280px] xl:max-w-sm">
-                      <p className="text-xs text-dashboard-text-muted line-clamp-1">
-                        {note.preview || <span className="italic opacity-50">No content</span>}
-                        {note.content.length > 100 ? "…" : ""}
-                      </p>
-                    </td>
-
-                    {/* Type */}
-                    <td className="px-4 py-3.5">
-                      <span
-                        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold"
-                        style={{
-                          background: accent + "18",
-                          color: accent,
-                          border: `1px solid ${accent}30`,
-                        }}
-                      >
-                        <TypeIcon className="h-3 w-3" />
-                        {note.noteType === "video" ? "Video" : note.noteType === "image" ? "Image" : "Text"}
-                      </span>
-                    </td>
-
-                    {/* Words */}
-                    <td className="px-4 py-3.5 text-right">
-                      <span className="inline-flex items-center gap-1 text-xs text-dashboard-text-muted">
-                        <FileText className="h-3 w-3 shrink-0" />
-                        {note.words.toLocaleString()}
-                      </span>
-                    </td>
-
-                    {/* Updated */}
-                    <td className="px-4 py-3.5">
-                      <span className="text-xs text-dashboard-text-muted" title={updated.full}>
-                        {updated.short}
-                      </span>
-                    </td>
-
-                    {/* Created */}
-                    <td className="px-4 py-3.5">
-                      <span className="text-xs text-dashboard-text-muted" title={created.full}>
-                        {created.short}
-                      </span>
-                    </td>
-
-                    {/* AI Survey quick action */}
-                    <td className="px-4 py-3.5 text-right">
-                      <Link
-                        href={`/dashboard/notes/${note.id}`}
-                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-white opacity-0 group-hover:opacity-100 transition-all"
-                        title="Open note to generate AI survey questions"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Sparkles className="h-3 w-3" />
-                        AI Survey
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-      </div>
-      {/* Row hover highlight */}
-      <style>{`
-        tbody tr:hover { background: hsl(var(--dashboard-card-hover) / 0.4); }
-      `}</style>
     </div>
   );
 }
